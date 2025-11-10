@@ -13,7 +13,7 @@ import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import useDownloader from "../../hooks/useDownloader";
-import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
+import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
 const style = {
@@ -107,6 +107,7 @@ const ImageUpload = ({
   const handleUploadImage = (e) => {
     if (canCrop) onSelectFile(e);
     else inputChangeHandler(e);
+    e.target.value = "";
   };
 
   const onSelectFile = (e) => {
@@ -117,19 +118,16 @@ const ImageUpload = ({
     }
   };
 
-  // когда картинка загрузилась — сохраняем ref и делаем crop по центру
-  const onImageLoad = (e) => {
-    const { width, height } = e.currentTarget;
-    setCrop(
-      centerCrop(
-        makeAspectCrop({ unit: "%", width: 90 }, 1, width, height),
-        width,
-        height,
-      ),
-    );
+  const onImageLoad = () => {
+    setCrop({
+      unit: "%",
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+    });
   };
 
-  // делаем Canvas preview
   const onCropComplete = (crop) => {
     const canvas = document.createElement("canvas");
     setCompletedCrop(crop);
@@ -178,8 +176,7 @@ const ImageUpload = ({
     }
   };
 
-  // экспортируем вырезанное изображение
-  const getCroppedBlob = () => {
+  const getCroppedBlob = async () => {
     if (previewCanvasRef.current) {
       return new Promise((resolve) => {
         previewCanvasRef.current.toBlob(
@@ -191,15 +188,7 @@ const ImageUpload = ({
         );
       });
     } else {
-      return new Promise((resolve) => {
-        imageRef.current.toBlob(
-          (blob) => {
-            resolve(blob);
-          },
-          "image/jpeg",
-          0.95,
-        );
-      });
+      return fetch(imageSrc).then((res) => res.blob());
     }
   };
 

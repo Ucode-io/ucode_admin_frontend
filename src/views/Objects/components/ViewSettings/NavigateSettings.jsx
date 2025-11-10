@@ -17,17 +17,19 @@ function NavigateSettings({ form }) {
         />
       </Box>
 
-      <NavigateGenerator form={form} />
+      <NavigateGenerator form={form} name="attributes.navigate.params" />
 
       <Box marginTop="16px">
         <p style={{ marginBottom: "6px" }}>Object URL</p>
         <HFTextField
           fullWidth
           control={form.control}
-          name="attributes.url_object"
+          name="attributes.url_object.url"
           placeholder={"/url/{{$variable}}"}
         />
       </Box>
+
+      <NavigateGenerator form={form} name="attributes.url_object.params" />
 
       <Box marginTop="16px">
         <p style={{ marginBottom: "6px" }}>PDF URL</p>

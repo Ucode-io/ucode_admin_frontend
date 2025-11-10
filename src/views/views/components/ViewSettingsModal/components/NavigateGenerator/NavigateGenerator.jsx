@@ -2,10 +2,9 @@ import {Box} from "@mui/material";
 import {useFieldArray} from "react-hook-form";
 import cls from "./styles.module.scss";
 import HFTextField from "@/components/FormElements/HFTextField";
-import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import { Delete } from "@mui/icons-material";
 
-function NavigateGenerator({form}) {
+function NavigateGenerator({ form }) {
   const {
     fields: values,
     append,
@@ -20,10 +19,6 @@ function NavigateGenerator({form}) {
       key: "",
       value: "",
     });
-  };
-
-  const deleteField = (index) => {
-    remove(index);
   };
 
   return (

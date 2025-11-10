@@ -448,14 +448,20 @@ export const NewUiViewsWithGroups = ({
 
   const navigateCreatePage = () => {
     if (projectInfo?.new_layout) {
-      if (view?.attributes?.url_object) {
+      if (view?.attributes?.url_object?.url) {
+        const urlParams = view?.attributes?.url_object?.params;
+
+        const params = new URLSearchParams(
+          Object.fromEntries(urlParams.map((item) => [item.key, item.value])),
+        ).toString();
+
         if (new_router) {
           navigate(
-            `/${menuId}/page/${view?.attributes?.url_object}?create=true`,
+            `/${menuId}/page/${view?.attributes?.url_object?.url}?create=true&${params}`,
           );
         } else {
           navigate(
-            `/main/${appId}/page/${view?.attributes?.url_object}?create=true`,
+            `/main/${appId}/page/${view?.attributes?.url_object?.url}?create=true&${params}`,
           );
         }
       } else {
@@ -663,7 +669,8 @@ export const NewUiViewsWithGroups = ({
         ? DrawerTableView
         : TableView;
 
-  const tableName = tableInfo?.label;
+  const tableName =
+    tableInfo?.attributes?.[`label_${i18n.language}`] || tableInfo?.label;
 
   const viewName = relationView
     ? view?.attributes?.[`name_${i18n?.language}`] || view?.table_label

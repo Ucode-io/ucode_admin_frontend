@@ -382,7 +382,6 @@ export const DynamicTable = ({
   ]);
 
   const [isLoading, setIsLoading] = useState(false);
-  console.log({isLoading})
 
   const showSkeleton = loader || isLoading;
 

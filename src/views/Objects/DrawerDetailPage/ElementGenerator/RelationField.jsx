@@ -3,7 +3,7 @@ import {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import { useQuery, useQueryClient } from "react-query";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useSearchParams } from "react-router-dom";
 import styles from "./style.module.scss";
 import request from "../../../../utils/request";
@@ -16,6 +16,7 @@ import Select from "react-select";
 import { Box, Tooltip } from "@mui/material";
 import IconGenerator from "../../../../components/IconPicker/IconGenerator";
 import { getRelationFieldTabsLabel } from "../../../../utils/getRelationFieldLabel";
+import { showAlert } from "@/store/alert/alert.thunk";
 
 const RelationField = ({
   control,
@@ -550,10 +551,12 @@ const AutoCompleteElement = ({
     setValue((prev) => prev.filter((el) => el !== row.guid));
   };
 
+  const dispatch = useDispatch();
+
   return (
     <Tooltip
       title={
-        localValue.length
+        localValue?.length
           ? localValue?.map((option) => {
               const value = computedViewFields?.map((el, index) => {
                 if (field?.attributes?.enable_multi_language) {
@@ -601,7 +604,11 @@ const AutoCompleteElement = ({
           className=""
           isMulti={isMulti}
           onChange={(e) => {
-            changeHandler(e);
+            if (e === null && required) {
+              dispatch(showAlert("This field is required"));
+            } else {
+              changeHandler(e);
+            }
           }}
           onMenuScrollToBottom={loadMoreItems}
           // inputChangeHandler={(e) => inputChangeHandler(e)}

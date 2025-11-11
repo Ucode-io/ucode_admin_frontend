@@ -40,10 +40,11 @@ const YDatePicker = ({
       end.setHours(23, 59, 59);
     }
 
-    const localISOStringStart = start.toLocaleString("sv-SE").replace(" ", "T");
-    const localISOStringEnd = end.toLocaleString("sv-SE").replace(" ", "T");
+    // const localISOStringStart = start.toLocaleString("sv-SE").replace(" ", "T");
+    // const localISOStringEnd = end.toLocaleString("sv-SE").replace(" ", "T");
 
-    onChange({ $gte: localISOStringStart, $lt: localISOStringEnd });
+    // onChange({ $gte: localISOStringStart, $lt: localISOStringEnd });
+    onChange({ $gte: start, $lt: end });
     setRange(value);
   };
 

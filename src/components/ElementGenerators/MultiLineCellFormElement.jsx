@@ -59,12 +59,14 @@ export default function MultiLineCellFormElement({
         className={cls.multiLineCellFormElement}
         style={{
           display: "flex",
-        }}>
+        }}
+      >
         <button
           className={cls.multiLineCellFormElementBtn}
-          onClick={() => handleCopy(value)}>
+          onClick={() => handleCopy(value)}
+        >
           <span>
-            <ContentCopyIcon style={{width: "17px", height: "17px"}} />
+            <ContentCopyIcon style={{ width: "17px", height: "17px" }} />
           </span>
         </button>
         <p
@@ -89,11 +91,12 @@ export default function MultiLineCellFormElement({
                   cursor: "text",
                   minHeight: "16px",
                 }
-          }>
+          }
+        >
           {stripHtmlTags(
             value
               ? `${value?.slice(0, 36)}${value?.length > 200 ? "..." : ""}`
-              : ""
+              : "",
           )}
         </p>
 
@@ -101,7 +104,15 @@ export default function MultiLineCellFormElement({
           id={id}
           open={open}
           anchorEl={anchorEl}
-          onClose={handleClose}
+          // onClose={handleClose}
+          onClose={() => {
+            if (field?.required && !value) {
+              dispatch(showAlert("This field is required"));
+              return;
+            } else {
+              handleClose();
+            }
+          }}
           anchorOrigin={{
             vertical: "top",
             horizontal: "left",
@@ -109,7 +120,8 @@ export default function MultiLineCellFormElement({
           transformOrigin={{
             vertical: "top",
             horizontal: "left",
-          }}>
+          }}
+        >
           <HFTextEditor
             id="multi_line"
             control={control}

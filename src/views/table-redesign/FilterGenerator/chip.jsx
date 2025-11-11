@@ -53,3 +53,5 @@ export const Chip = forwardRef(
     </Flex>
   )
 );
+
+Chip.displayName = "Chip";

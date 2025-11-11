@@ -21,7 +21,7 @@ const Microfrontend = () => {
   if (isLoading) return <RingLoaderWithWrapper style={{height: "100vh"}} />;
 
   if (!link) return null;
-  console.log({ link });
+
   return <MicrofrontendComponent key={link} link={link} />;
 };
 export default Microfrontend;

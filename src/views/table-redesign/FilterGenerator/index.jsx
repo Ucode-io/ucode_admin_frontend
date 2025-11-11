@@ -127,6 +127,7 @@ export const Filter = ({
           value={filters[name]}
           name={name}
           onChange={(val) => onChange(val, name)}
+          withTime
         />
       );
 

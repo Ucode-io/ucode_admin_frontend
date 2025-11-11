@@ -40,7 +40,11 @@ const YDatePicker = ({
       end.setHours(23, 59, 59);
     }
 
-    onChange({$gte: start, $lt: end});
+    // const localISOStringStart = start.toLocaleString("sv-SE").replace(" ", "T");
+    // const localISOStringEnd = end.toLocaleString("sv-SE").replace(" ", "T");
+
+    // onChange({ $gte: localISOStringStart, $lt: localISOStringEnd });
+    onChange({ $gte: start, $lt: end });
     setRange(value);
   };
 
@@ -58,13 +62,29 @@ const YDatePicker = ({
   const rangeSelected = start instanceof Date && end instanceof Date;
 
   return (
-    <DatePicker
-      size="sm"
-      type="range"
-      allowSingleDateInRange
-      value={range}
-      onChange={handleRangeChange}
-    />
+    <>
+      <DatePicker
+        size="sm"
+        type="range"
+        allowSingleDateInRange
+        value={range}
+        onChange={handleRangeChange}
+      />
+      {withTime && (
+        <Box display="flex" gap="10px" mt="10px" width="100%">
+          <TimeInput
+            style={{ width: "100%" }}
+            onChange={(e) => setStartTime(e.target.value)}
+            value={startTime}
+          />
+          <TimeInput
+            style={{ width: "100%" }}
+            onChange={(e) => setEndTime(e.target.value)}
+            value={endTime}
+          />
+        </Box>
+      )}
+    </>
   );
 };
 

@@ -26,6 +26,8 @@ const FilterAutoComplete = ({
       .filter((el) => el);
   }, [value, options]);
 
+  console.log(computedValue);
+
   const openMenu = (event) => {
     setChosenField(field);
     setAnchorEl(event.currentTarget);
@@ -89,7 +91,8 @@ const FilterAutoComplete = ({
         showCloseIcon={value?.length ?? 0}
         {...props}
       >
-        {computedValue?.[0]?.label ??
+        {computedValue?.[0]?.[`label_${i18n?.language}`] ??
+          computedValue?.[0]?.label ??
           (field?.attributes?.[`label_${i18n?.language}`] || value[0])}
         {(value?.length ?? 0) > 1 && (
           <span style={{ color: "#6d757e" }}>{` +${value.length - 1}`}</span>

@@ -1,12 +1,12 @@
-import React, {lazy, Suspense, useEffect, useRef} from "react";
-import {Controller, useWatch} from "react-hook-form";
+import React, { lazy, Suspense, useEffect, useMemo, useRef } from "react";
+import { Controller, useWatch } from "react-hook-form";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import "react-quill/dist/quill.snow.css";
 import FRowMultiLine from "./FRowMultiLine";
 import "./reactQuill.scss";
-import {Quill} from "react-quill";
-import {useDispatch} from "react-redux";
-import {showAlert} from "../../store/alert/alert.thunk";
+import { Quill } from "react-quill";
+import { useDispatch } from "react-redux";
+import { showAlert } from "../../store/alert/alert.thunk";
 import DOMPurify from "dompurify";
 
 const ReactQuill = lazy(() => import("react-quill"));

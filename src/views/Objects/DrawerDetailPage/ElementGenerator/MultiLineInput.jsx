@@ -1,9 +1,11 @@
 import {Box, Popover, Tooltip} from "@mui/material";
-import {useState} from "react";
-import {useWatch} from "react-hook-form";
+import { useMemo, useState } from "react";
 import HFTextEditor from "../../../../components/FormElements/HFTextEditor";
 import {Lock} from "@mui/icons-material";
 import useDebounce from "../../../../hooks/useDebounce";
+import DOMPurify from "dompurify";
+import { useDispatch } from "react-redux";
+import { showAlert } from "@/store/alert/alert.thunk";
 
 const MultiLineInput = ({
   control,
@@ -19,6 +21,8 @@ const MultiLineInput = ({
 }) => {
   const value = watch(name);
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const dispatch = useDispatch();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -36,6 +40,33 @@ const MultiLineInput = ({
   };
 
   const inputUpdateObject = useDebounce(() => updateObject(), 500);
+
+  const firstValue = useMemo(() => {
+    return DOMPurify.sanitize(value, {
+      ALLOWED_TAGS: [
+        "p",
+        "strong",
+        "em",
+        "u",
+        "a",
+        "ul",
+        "ol",
+        "li",
+        "span",
+        "br",
+        "img",
+      ],
+      ALLOWED_ATTR: [
+        "href",
+        "style",
+        "target",
+        "src",
+        "width",
+        "height",
+        "alt",
+      ],
+    });
+  }, []);
 
   return (
     <>
@@ -56,7 +87,7 @@ const MultiLineInput = ({
           title={
             value
               ? stripHtmlTags(
-                  `${value?.slice(0, 100)}${value?.length > 100 ? "..." : ""}`
+                  `${value?.slice(0, 100)}${value?.length > 100 ? "..." : ""}`,
                 )
               : ""
           }
@@ -77,7 +108,7 @@ const MultiLineInput = ({
           >
             {value ? (
               stripHtmlTags(
-                `${value?.slice(0, 100)}${value?.length > 100 ? "..." : ""}`
+                `${value?.slice(0, 100)}${value?.length > 100 ? "..." : ""}`,
               )
             ) : (
               <span style={{ color: "#adb5bd" }}>Empty</span>
@@ -106,7 +137,14 @@ const MultiLineInput = ({
           id={id}
           open={open}
           anchorEl={anchorEl}
-          onClose={handleClose}
+          onClose={() => {
+            if (isRequired && !value) {
+              dispatch(showAlert("This field is required"));
+              return;
+            } else {
+              handleClose();
+            }
+          }}
           anchorOrigin={{
             vertical: "top",
             horizontal: "left",

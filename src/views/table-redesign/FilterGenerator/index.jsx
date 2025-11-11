@@ -76,7 +76,7 @@ export const Filter = ({
         };
     });
   }, [field.attributes?.options, field.type]);
-
+  console.log(filters[name]);
   switch (field.type) {
     case "LOOKUP":
     case "LOOKUPS":
@@ -100,7 +100,7 @@ export const Filter = ({
           options={computedOptions}
           value={filters[name] ?? []}
           onChange={(val) => onChange(val?.length ? val : undefined, name)}
-          label={field.label}
+          label={field?.[`label_${i18n?.language}`] ?? field?.label}
           field={field}
         />
       );

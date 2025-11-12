@@ -381,11 +381,11 @@ const NewRouter = () => {
             </Route>
           </Route>
 
-          <Route
+          {/* <Route
             path=":menuId"
             element={<ReloadWrapper component={NewObjectsPage} />}
-          />
-          <Route path="new-optimization/:menuId" element={<Views />} />
+          /> */}
+          <Route path=":menuId" element={<Views />} />
           <Route path=":menuId/templates" element={<DocumentTemplates />} />
 
           <Route path=":menuId/object/:tableSlug/docs" element={<DocView />} />

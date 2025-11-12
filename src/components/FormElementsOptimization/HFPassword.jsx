@@ -31,13 +31,16 @@ function HFPassword({
       required={field?.required}
       placeholder={field?.attributes?.placeholder}
       row={row}
+      autoComplete="off"
+      type={showPassword ? "text" : "password"}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
             <IconButton
               aria-label="toggle password visibility"
               onClick={togglePasswordVisibility}
-              style={newUi ? {padding: "4px"} : undefined}>
+              style={newUi ? { padding: "4px" } : undefined}
+            >
               {showPassword ? <Visibility /> : <VisibilityOff />}
             </IconButton>
           </InputAdornment>

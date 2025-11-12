@@ -255,14 +255,12 @@ export const HeaderFilter = ({
                 </Button>
               </PermissionWrapperV2>
             )}
-            <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-              <ViewOptions
-                handleOpenPopup={handleOpenPopup}
-                isChanged={isChanged}
-                setIsChanged={setIsChanged}
-                settingsForm={settingsForm}
-              />
-            </PermissionWrapperV2>
+            <ViewOptions
+              handleOpenPopup={handleOpenPopup}
+              isChanged={isChanged}
+              setIsChanged={setIsChanged}
+              settingsForm={settingsForm}
+            />
           </>
         )}
       </Flex>

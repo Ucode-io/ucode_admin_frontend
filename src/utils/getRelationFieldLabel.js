@@ -2,7 +2,7 @@ import {get} from "@ngard/tiny-get";
 import {format, isValid} from "date-fns";
 import {numberWithSpaces} from "@/utils/formatNumbers";
 
-export const getRelationFieldLabel = (field, option) => {
+export const getRelationFieldLabel = (field, option, lang) => {
   if (!option) return "";
   let label = "";
 
@@ -12,7 +12,8 @@ export const getRelationFieldLabel = (field, option) => {
       result = format(new Date(option[el?.slug]), "dd.MM.yyyy");
     else if (el?.type === "DATE_TIME")
       result = format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm");
-    else if (el?.type === "NUMBER") result = numberWithSpaces(option?.[el?.slug]);
+    else if (el?.type === "NUMBER")
+      result = numberWithSpaces(option?.[el?.slug]);
     else result = option[el?.slug];
 
     label += `${result ?? ""} `;
@@ -39,7 +40,10 @@ export const getRelationFieldTabsLabel = (field, option, lang) => {
       result = isValid(new Date(option?.[el?.slug]))
         ? format(new Date(option?.[el?.slug]), "dd.MM.yyyy HH:mm")
         : "";
-    else if (el?.type === "NUMBER") result = numberWithSpaces(option?.[el?.slug]);
+    else if (el?.type === "NUMBER")
+      result = numberWithSpaces(option?.[el?.slug]);
+    else if (el?.type === "STATUS")
+      result = option?.[`name_${lang}`] || option?.name || option[el?.slug];
     else {
       const pattern = new RegExp(`_${lang}`);
 

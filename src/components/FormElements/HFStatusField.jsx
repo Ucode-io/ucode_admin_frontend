@@ -21,6 +21,7 @@ function HFStatusField({
         name={name}
         control={control}
         render={({ field: { onChange, value }, fieldState: { error } }) => {
+          console.log({ value });
           return (
             <Select
               disabled={disabled}

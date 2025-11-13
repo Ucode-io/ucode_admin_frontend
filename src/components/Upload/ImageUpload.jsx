@@ -340,7 +340,7 @@ const ImageUpload = ({
                   justifyContent: "flex-start",
                   color: "#fff",
                 }}
-                onClick={closeButtonHandler}
+                onClick={deleteImage}
               >
                 <DeleteIcon style={{ width: "17px", height: "17px" }} />
                 Remove Image

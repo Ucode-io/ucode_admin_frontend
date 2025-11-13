@@ -5,6 +5,7 @@ import {Chip} from "./chip";
 import SearchInput from "@/components/SearchInput";
 import useDebounce from "@/hooks/useDebounce";
 import {useTranslation} from "react-i18next";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
 const FilterAutoComplete = ({
   options = [],
@@ -40,16 +41,43 @@ const FilterAutoComplete = ({
   };
 
   const rowClickHandler = (option) => {
-    if (value?.includes(option.value)) {
-      onChange(value.filter((item) => item !== option.value));
+    if (field.type === FIELD_TYPES.MULTISELECT) {
+      // Keep this for backward compatibility
+      if (option?.slug) {
+        if (value?.includes(option.slug)) {
+          onChange(value.filter((item) => item !== option.slug));
+        } else {
+          onChange([...value, option.slug]);
+        }
+      } else {
+        if (value?.includes(option.value)) {
+          onChange(value.filter((item) => item !== option.value));
+        } else {
+          onChange([...value, option.value]);
+        }
+      }
     } else {
-      onChange([...value, option.value]);
+      if (value?.includes(option.value)) {
+        onChange(value.filter((item) => item !== option.value));
+      } else {
+        onChange([...value, option.value]);
+      }
     }
   };
 
   const onClearButtonClick = (e) => {
     e.stopPropagation();
     onChange(undefined);
+  };
+
+  const isChecked = (option) => {
+    // const computedSlugs = options.map((item) => item.slug);
+    // const computedValues = options.map((item) => item.value);
+    if (field.type === FIELD_TYPES.STATUS) {
+      return value.includes(option.value);
+    } else if (field.type === FIELD_TYPES.MULTISELECT) {
+      return value.includes(option.slug) || value.includes(option.value);
+    } else return value.includes(option.value);
   };
 
   return (
@@ -61,10 +89,9 @@ const FilterAutoComplete = ({
         showCloseIcon={value?.length ?? 0}
         {...props}
       >
-        {computedValue?.[0]?.label ??
-          (field?.attributes?.[`label_${i18n?.language}`] ||
-            field?.attributes?.[`label_undefined`] ||
-            value[0])}
+        {computedValue?.[0]?.[`label_${i18n?.language}`] ??
+          computedValue?.[0]?.label ??
+          (field?.attributes?.[`label_${i18n?.language}`] || value[0])}
         {(value?.length ?? 0) > 1 && (
           <span style={{ color: "#6d757e" }}>{` +${value.length - 1}`}</span>
         )}
@@ -94,13 +121,14 @@ const FilterAutoComplete = ({
               key={option.value}
               className={styles.option}
             >
-              <Checkbox
-                id="filter_checkbox"
-                checked={computedValue
-                  .map((item) => item.value)
-                  .includes(option.value)}
-              />
-              <p className={styles.label}>{option.label}</p>
+              <Checkbox id="filter_checkbox" checked={isChecked(option)} />
+              {/* {computedValue.includes(option.value) ? (
+              ) : (
+                <Checkbox id="filter_checkbox" />
+              )} */}
+              <p className={styles.label}>
+                {option?.[`label_${i18n?.language}`] ?? option.label}
+              </p>
             </div>
           ))}
         </div>

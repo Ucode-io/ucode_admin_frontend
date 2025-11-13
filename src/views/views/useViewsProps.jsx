@@ -1,7 +1,7 @@
 import { viewsActions } from "@/store/views/view.slice";
 import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -28,6 +28,7 @@ import MaterialUIProvider from "@/providers/MaterialUIProvider";
 import { useGetLayout } from "@/services/layoutService/layout.service";
 import { DRAWER_LAYOUT_TYPES } from "@/utils/constants/drawerConstants";
 import { Section } from "./modules/Section";
+import { mainActions } from "@/store/main/main.slice";
 
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
@@ -71,9 +72,14 @@ export const useViewsProps = ({ isRelationView }) => {
 
   const [sortPopupAnchorEl, setSortPopupAnchorEl] = useState(null);
 
-  const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage"),
-  );
+  const { selectedViewType } = useSelector((state) => state.main);
+
+  const setSelectedViewType = (value) => {
+    dispatch(mainActions.setSelectedViewType(value));
+  };
+  // const [selectedViewType, setSelectedViewType] = useState(
+  //   localStorage?.getItem("detailPage"),
+  // );
 
   // For TIMELINE view
   const [noDates, setNoDates] = useState([]);
@@ -181,10 +187,28 @@ export const useViewsProps = ({ isRelationView }) => {
 
   const navigateCreatePage = () => {
     if (projectInfo?.new_layout) {
-      if (view?.attributes?.url_object) {
-        navigate(
-          `/main/${appId}/page/${view?.attributes?.url_object}?create=true`,
-        );
+      const isOldUrlVariant = typeof view?.attributes?.url_object === "string";
+
+      if (
+        view?.attributes?.url_object?.url ||
+        (isOldUrlVariant && view?.attributes?.url_object)
+      ) {
+        if (isOldUrlVariant) {
+          navigate(
+            `/${menuId}/page/${view?.attributes?.url_object}?create=true`,
+          );
+        } else {
+          const urlParams = view?.attributes?.url_object?.params;
+          const params = new URLSearchParams(
+            Object.fromEntries(
+              urlParams?.map((item) => [item.key, item.value]),
+            ),
+          ).toString();
+
+          navigate(
+            `/${menuId}/page/${view?.attributes?.url_object?.url}?${params}`,
+          );
+        }
       } else {
         dispatch(detailDrawerActions.openDrawer());
       }
@@ -403,6 +427,13 @@ export const useViewsProps = ({ isRelationView }) => {
         el?.type === FIELD_TYPES.FORMULA_FRONTEND,
     );
   }, [fieldsMap]);
+
+  // useEffect(() => {
+  //   if (localStorage.getItem("detailPage") === "undefined") {
+  //     setSelectedViewType("SidePeek");
+  //     localStorage.setItem("detailPage", "SidePeek");
+  //   }
+  // }, [localStorage.getItem("detailPage")]);
 
   return {
     viewsMap,

@@ -92,9 +92,9 @@ export const useTableProps = ({ tab }) => {
   const [selectedObjects, setSelectedObjects] = useState([]);
 
   const [combinedTableData, setCombinedTableData] = useState([]);
-  const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage"),
-  );
+  // const [selectedViewType, setSelectedViewType] = useState(
+  //   localStorage?.getItem("detailPage"),
+  // );
 
   // const menuId = menuid ?? searchParams.get("menuId");
   const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);
@@ -112,7 +112,7 @@ export const useTableProps = ({ tab }) => {
   });
 
   const handleChangeInput = useCallback(({ name, value, rowId }) => {
-    if (name && value && rowId) {
+    if (name && rowId) {
       let row = {};
       setRows((prev) => {
         return prev.map((item) => {
@@ -472,7 +472,7 @@ export const useTableProps = ({ tab }) => {
       updateQueryWithoutRerender("p", row?.guid);
     } else {
       updateQueryWithoutRerender("p", row?.guid);
-      if (view?.attributes?.url_object) {
+      if (view?.attributes?.navigate?.url) {
         navigateToDetailPage(row);
       } else if (projectInfo?.new_layout) {
         setSelectedRow(row);
@@ -596,12 +596,12 @@ export const useTableProps = ({ tab }) => {
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 
-  useEffect(() => {
-    if (localStorage.getItem("detailPage") === "undefined") {
-      setSelectedViewType("SidePeek");
-      localStorage.setItem("detailPage", "SidePeek");
-    }
-  }, [localStorage.getItem("detailPage")]);
+  // useEffect(() => {
+  //   if (localStorage.getItem("detailPage") === "undefined") {
+  //     setSelectedViewType("SidePeek");
+  //     localStorage.setItem("detailPage", "SidePeek");
+  //   }
+  // }, [localStorage.getItem("detailPage")]);
 
   const loader = tableLoader || deleteLoader;
 

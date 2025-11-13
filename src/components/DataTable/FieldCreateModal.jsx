@@ -765,7 +765,7 @@ export default function FieldCreateModal({
             <div className={style.form}>
               <Box className={style.header}>
                 <p className={style.headerTitle}>
-                  {formType === "CREATE" ? "Create field" : "Edit fields"}
+                  {formType === "CREATE" ? "Create field" : "Edit field"}
                 </p>
                 <button
                   className={style.closeButton}

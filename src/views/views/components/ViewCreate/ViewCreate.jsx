@@ -7,7 +7,7 @@ export const ViewCreate = ({
   handleSelectViewType,
 }) => {
   const { computedViewTypes, viewIcons } = useViewCreateProps();
-
+  console.log("computedViewTypes", computedViewTypes);
   return (
     <Box className={cls.paper}>
       <Box>

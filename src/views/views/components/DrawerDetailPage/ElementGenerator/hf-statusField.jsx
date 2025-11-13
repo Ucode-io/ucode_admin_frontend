@@ -3,6 +3,7 @@ import React from "react";
 import {Controller} from "react-hook-form";
 import styles from "./style.module.scss";
 import useDebounce from "@/hooks/useDebounce";
+import { useTranslation } from "react-i18next";
 
 function HFStatusField({
   field = {},
@@ -15,12 +16,15 @@ function HFStatusField({
   updateObject = () => {},
 }) {
   const inputUpdateObject = useDebounce(() => updateObject(), 500);
+
+  const { i18n } = useTranslation();
+
   return (
-    <Box sx={{width: "100%"}}>
+    <Box sx={{ width: "100%" }}>
       <Controller
         name={name}
         control={control}
-        render={({field: {onChange, value}, fieldState: {error}}) => {
+        render={({ field: { onChange, value } }) => {
           return (
             <Select
               placeholder={placeholder}
@@ -51,13 +55,19 @@ function HFStatusField({
                 const isArray = Array.isArray(selected);
                 const selectedOption =
                   field?.attributes?.todo?.options?.find(
-                    (el) => el.label === (isArray ? selected[0] : selected)
+                    (el) =>
+                      (el?.value || el?.label) ===
+                      (isArray ? selected[0] : selected),
                   ) ||
                   field?.attributes?.progress?.options?.find(
-                    (el) => el.label === (isArray ? selected[0] : selected)
+                    (el) =>
+                      (el?.value || el?.label) ===
+                      (isArray ? selected[0] : selected),
                   ) ||
                   field?.attributes?.complete?.options?.find(
-                    (el) => el.label === (isArray ? selected[0] : selected)
+                    (el) =>
+                      (el?.value || el?.label) ===
+                      (isArray ? selected[0] : selected),
                   );
 
                 return (
@@ -74,11 +84,14 @@ function HFStatusField({
                       padding: "4px 8px",
                       borderRadius: "4px",
                       fontSize: "11px",
-                    }}>
-                    {selected}
+                    }}
+                  >
+                    {selectedOption?.[`label_${i18n?.language}`] ||
+                      selectedOption?.label}
                   </Box>
                 );
-              }}>
+              }}
+            >
               <ListSubheader className={styles.selectGroup}>
                 To do
               </ListSubheader>
@@ -90,9 +103,10 @@ function HFStatusField({
                     color: el?.color ? el?.color : "#000",
                   }}
                   className={styles.optionField}
-                  key={el?.label}
-                  value={el?.label}>
-                  {el?.label}
+                  key={el?.value || el?.label}
+                  value={el?.value || el?.label}
+                >
+                  {el?.[`label_${i18n?.language}`] || el?.label}
                 </MenuItem>
               ))}
 
@@ -107,9 +121,10 @@ function HFStatusField({
                     color: el?.color ? el?.color : "#000",
                   }}
                   className={styles.optionField}
-                  key={el?.label}
-                  value={el?.label}>
-                  {el?.label}
+                  key={el?.value || el?.label}
+                  value={el?.value || el?.label}
+                >
+                  {el?.[`label_${i18n?.language}`] || el?.label}
                 </MenuItem>
               ))}
 
@@ -124,9 +139,10 @@ function HFStatusField({
                     color: el?.color ? el?.color : "#000",
                   }}
                   className={styles.optionField}
-                  key={el?.label}
-                  value={el?.label}>
-                  {el?.label}
+                  key={el?.value || el?.label}
+                  value={el?.value || el?.label}
+                >
+                  {el?.[`label_${i18n?.language}`] || el?.label}
                 </MenuItem>
               ))}
             </Select>

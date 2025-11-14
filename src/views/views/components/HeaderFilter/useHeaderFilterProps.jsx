@@ -77,33 +77,30 @@ export const useHeaderFilterProps = () => {
   };
 
   const handleViewClick = (view, idx) => {
+    const isSection = view?.type === VIEW_TYPES_MAP.SECTION;
+
     if (isRelationView) {
       updateQueryWithoutRerender("dv", view?.id);
+      dispatch(detailDrawerActions.setDrawerTabIndex(idx));
+
+      if (isSection) {
+        dispatch(groupFieldActions.trimViewsDataUntil(view));
+        dispatch(groupFieldActions.trimViewsUntil(view));
+
+        return;
+      } else {
+        dispatch(
+          groupFieldActions.addViewPath({
+            ...view,
+          }),
+        );
+      }
     } else {
       updateQueryWithoutRerender("v", view?.id);
+      dispatch(detailDrawerActions.setMainTabIndex(idx));
     }
     setSelectedView(view);
     dispatch(viewsActions.setSelectedView({ view, idx }));
-
-    const isSection = view?.type === VIEW_TYPES_MAP.SECTION;
-
-    if (isSection) {
-      dispatch(detailDrawerActions.setDrawerTabIndex(idx));
-      dispatch(groupFieldActions.trimViewsDataUntil(view));
-      dispatch(groupFieldActions.trimViewsUntil(view));
-      return;
-    }
-
-    if (isRelationView && !isSection) {
-      dispatch(detailDrawerActions.setDrawerTabIndex(idx));
-      dispatch(
-        groupFieldActions.addViewPath({
-          ...view,
-        }),
-      );
-    } else {
-      dispatch(detailDrawerActions.setMainTabIndex(idx));
-    }
   };
 
   const handleClick = (e) => {

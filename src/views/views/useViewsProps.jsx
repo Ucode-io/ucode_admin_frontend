@@ -1,7 +1,7 @@
 import { viewsActions } from "@/store/views/view.slice";
 import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -29,10 +29,17 @@ import { useGetLayout } from "@/services/layoutService/layout.service";
 import { DRAWER_LAYOUT_TYPES } from "@/utils/constants/drawerConstants";
 import { Section } from "./modules/Section";
 import { mainActions } from "@/store/main/main.slice";
+import { useQuery } from "react-query";
+import { queryGenerator } from "@/utils/queryGenerator";
+import useFilters from "@/hooks/useFilters";
+import { TabPanel, Tabs } from "react-tabs";
+import { ViewTabs } from "./components/ViewTabs";
 
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
-  const selectedTabIndex = useSelector((state) => state.drawer.mainTabIndex);
+  const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);
+  const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
+  const selectedTabIndex = isRelationView ? drawerTabIndex : mainTabIndex;
 
   const roleName = useSelector((state) => state.auth?.roleInfo?.name);
   const projectId = useSelector((state) => state.auth.projectId);
@@ -49,7 +56,7 @@ export const useViewsProps = ({ isRelationView }) => {
 
   const { i18n } = useTranslation();
 
-  const { menuId, appId, id } = useParams();
+  const { menuId, id } = useParams();
   const { state, pathname } = useLocation();
   const navigate = useNavigate();
 
@@ -95,11 +102,14 @@ export const useViewsProps = ({ isRelationView }) => {
   const [sortedDatas, setSortedDatas] = useState([]);
 
   const query = new URLSearchParams(window.location.search);
-  const viewId =
-    (isRelationView ? query.get("dv") : query.get("v")) ?? selectedView?.id;
+  const viewId = isRelationView
+    ? query.get("dv")
+    : (query.get("v") ?? selectedView?.id);
 
   const tableSlug = selectedView?.table_slug;
   const viewType = selectedView?.type;
+
+  const { filters } = useFilters(tableSlug, viewId);
 
   const paginationCount = useMemo(() => {
     const getObject = paginationCounts.find(
@@ -118,22 +128,52 @@ export const useViewsProps = ({ isRelationView }) => {
   const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const viewsMap = {
-    [VIEW_TYPES_MAP.TABLE]: (
+    [VIEW_TYPES_MAP.TABLE]: (props) => (
       <MaterialUIProvider>
-        <Table />
+        <Table {...props} />
       </MaterialUIProvider>
     ),
-    [VIEW_TYPES_MAP.TREE]: <></>,
-    [VIEW_TYPES_MAP.GRID]: <></>,
-    [VIEW_TYPES_MAP.BOARD]: <></>,
-    [VIEW_TYPES_MAP.TIMELINE]: <></>,
-    [VIEW_TYPES_MAP.CALENDAR]: <></>,
-    [VIEW_TYPES_MAP.WEBSITE]: <></>,
-    [VIEW_TYPES_MAP.SECTION]: (
+    [VIEW_TYPES_MAP.TREE]: () => <></>,
+    [VIEW_TYPES_MAP.GRID]: () => <></>,
+    [VIEW_TYPES_MAP.BOARD]: () => <></>,
+    [VIEW_TYPES_MAP.TIMELINE]: () => <></>,
+    [VIEW_TYPES_MAP.CALENDAR]: () => <></>,
+    [VIEW_TYPES_MAP.WEBSITE]: () => <></>,
+    [VIEW_TYPES_MAP.SECTION]: (props) => (
       <MaterialUIProvider>
-        <Section />
+        <Section {...props} />
       </MaterialUIProvider>
     ),
+  };
+
+  const viewsWithoutTabs = [
+    VIEW_TYPES_MAP.BOARD,
+    VIEW_TYPES_MAP.TIMELINE,
+    VIEW_TYPES_MAP.CALENDAR,
+    VIEW_TYPES_MAP.WEBSITE,
+  ];
+
+  const getView = (viewType) => {
+    if (!viewsMap[viewType]) return <></>;
+
+    if (viewsWithoutTabs.includes(viewType) || !tabs?.length) {
+      return viewsMap[viewType]();
+    } else {
+      return (
+        <ViewTabs view={view} tabs={tabs} element={viewsMap[viewType]} />
+        // <Tabs
+        //   direction={"ltr"}
+        //   defaultIndex={0}
+        //   style={{
+        //     height: "100%",
+        //   }}
+        // >
+        //   {tabs?.map((tab) => (
+        //     <TabPanel key={tab?.value}>{viewsMap[viewType]({ tab })}</TabPanel>
+        //   ))}
+        // </Tabs>
+      );
+    }
   };
 
   const viewForm = useForm({
@@ -317,9 +357,12 @@ export const useViewsProps = ({ isRelationView }) => {
     refetch: refetchTableInfo,
   } = useGetTableInfo(
     {
-      keepPreviousData: true,
+      keepPreviousData: !isRelationView,
       enabled: isRelationView
-        ? Boolean(lastPath?.relation_table_slug || lastPath?.table_slug)
+        ? Boolean(
+            (lastPath?.relation_table_slug || lastPath?.table_slug) &&
+              selectedV?.id,
+          )
         : Boolean(tableSlug && viewType !== VIEW_TYPES_MAP.SECTION),
       select: ({ data }) => {
         return {
@@ -363,8 +406,16 @@ export const useViewsProps = ({ isRelationView }) => {
     },
   );
 
-  const tableName = tableInfo?.label;
+  const tableName =
+    tableInfo?.attributes?.[`label_${i18n.language}`] || tableInfo?.label;
+
   const view = selectedView;
+
+  const groupFieldId = view?.group_fields?.[0];
+  const groupField = fieldsMap[groupFieldId];
+  const { data: tabs } = useQuery(
+    queryGenerator(groupField, filters, i18n.language),
+  );
 
   const updateViewMutation = useUpdateViewMutation(tableSlug, {
     onSuccess: () => {
@@ -491,5 +542,7 @@ export const useViewsProps = ({ isRelationView }) => {
     selectedViewType,
     setSelectedViewType,
     selectedView,
+    tabs,
+    getView,
   };
 };

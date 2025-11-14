@@ -19,7 +19,6 @@ export const Views = ({
   rootForm,
 }) => {
   const {
-    viewsMap,
     viewId,
     tableName,
     tableSlug,
@@ -73,6 +72,8 @@ export const Views = ({
     selectedViewType,
     setSelectedViewType,
     selectedView,
+    tabs,
+    getView,
   } = useViewsProps({ isRelationView });
 
   return (
@@ -125,6 +126,7 @@ export const Views = ({
           onSectionSubmit,
           updateLayout,
           handleMouseDown,
+          tabs,
         }}
       >
         <FilterProvider
@@ -153,7 +155,7 @@ export const Views = ({
               settingsForm={settingsForm}
             />
 
-            {viewsMap[viewType]}
+            {getView(viewType)}
 
             {!isRelationView && (
               <DrawerDetailPage

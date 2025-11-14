@@ -74,6 +74,10 @@ export const Views = ({
     selectedView,
     tabs,
     getView,
+    setCenterDate,
+    fieldsForm,
+    fields,
+    isLoadingTable,
   } = useViewsProps({ isRelationView });
 
   return (
@@ -127,6 +131,10 @@ export const Views = ({
           updateLayout,
           handleMouseDown,
           tabs,
+          setCenterDate,
+          setNoDates,
+          noDates,
+          isLoadingTable,
         }}
       >
         <FilterProvider
@@ -144,6 +152,8 @@ export const Views = ({
               fieldsMap,
               fieldsMapRel,
               relationFields,
+              fieldsForm,
+              fields,
             }}
           >
             <Header tableName={tableName} />

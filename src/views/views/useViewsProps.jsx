@@ -16,14 +16,13 @@ import { listToMap, listToMapWithoutRel } from "@/utils/listToMap";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import { openDB, saveOrUpdateSearchText } from "@/utils/indexedDb";
 import { updateObject } from "@/services/objectService/object.service";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { addDays } from "date-fns";
 import { useProjectGetByIdQuery } from "@/services/projectService";
 import useTabRouter from "@/hooks/useTabRouter";
 import { generateGUID } from "@/utils/generateID";
 import { useTableByIdQuery } from "@/services/tableService/table.service";
 import { useMenuGetByIdQuery } from "@/services/menuService";
-import { Table } from "./modules/Table";
 import MaterialUIProvider from "@/providers/MaterialUIProvider";
 import { useGetLayout } from "@/services/layoutService/layout.service";
 import { DRAWER_LAYOUT_TYPES } from "@/utils/constants/drawerConstants";
@@ -32,8 +31,10 @@ import { mainActions } from "@/store/main/main.slice";
 import { useQuery } from "react-query";
 import { queryGenerator } from "@/utils/queryGenerator";
 import useFilters from "@/hooks/useFilters";
-import { TabPanel, Tabs } from "react-tabs";
 import { ViewTabs } from "./components/ViewTabs";
+
+import { Table } from "./modules/Table";
+import { Timeline } from "./modules/Timeline";
 
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
@@ -136,7 +137,7 @@ export const useViewsProps = ({ isRelationView }) => {
     [VIEW_TYPES_MAP.TREE]: () => <></>,
     [VIEW_TYPES_MAP.GRID]: () => <></>,
     [VIEW_TYPES_MAP.BOARD]: () => <></>,
-    [VIEW_TYPES_MAP.TIMELINE]: () => <></>,
+    [VIEW_TYPES_MAP.TIMELINE]: () => <Timeline />,
     [VIEW_TYPES_MAP.CALENDAR]: () => <></>,
     [VIEW_TYPES_MAP.WEBSITE]: () => <></>,
     [VIEW_TYPES_MAP.SECTION]: (props) => (
@@ -196,6 +197,18 @@ export const useViewsProps = ({ isRelationView }) => {
       icon: "",
     },
     mode: "all",
+  });
+
+  const fieldsForm = useForm({
+    defaultValues: {
+      multi: [],
+    },
+    shouldUnregister: true,
+  });
+
+  const { fields } = useFieldArray({
+    control: fieldsForm.control,
+    name: "multi",
   });
 
   // For TIMELINE view
@@ -427,7 +440,7 @@ export const useViewsProps = ({ isRelationView }) => {
     updateViewMutation.mutate(data);
   };
 
-  useTableByIdQuery({
+  const { isLoading: isLoadingTable } = useTableByIdQuery({
     id: menuItem?.table_id,
     queryParams: {
       enabled: !!menuItem?.table_id,
@@ -544,5 +557,9 @@ export const useViewsProps = ({ isRelationView }) => {
     selectedView,
     tabs,
     getView,
+    setCenterDate,
+    fieldsForm,
+    fields,
+    isLoadingTable,
   };
 };

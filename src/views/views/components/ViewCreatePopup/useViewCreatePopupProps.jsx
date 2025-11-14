@@ -39,7 +39,7 @@ export const useViewCreatePopupProps = ({
   const lastPath = viewsPath?.[viewsPath?.length - 1];
 
   const groupByTableSlug = useSelector(
-    (state) => state?.groupField?.groupByFieldSlug
+    (state) => state?.groupField?.groupByFieldSlug,
   );
 
   const { i18n } = useTranslation();
@@ -69,7 +69,7 @@ export const useViewCreatePopupProps = ({
 
   const isWithTimeView = (type) =>
     [VIEW_TYPES_MAP.TIMELINE, VIEW_TYPES_MAP.CALENDAR].includes(
-      type || selectedViewTab
+      type || selectedViewTab,
     );
 
   function getTableRelations(relationFields, tableSlug) {
@@ -158,7 +158,7 @@ export const useViewCreatePopupProps = ({
 
   const tableRelations = getTableRelations(
     relationFields,
-    viewsList?.[0]?.table_slug
+    viewsList?.[0]?.table_slug,
   );
 
   const createView = (type) => {
@@ -206,13 +206,16 @@ export const useViewCreatePopupProps = ({
           .then(() => {
             dispatch(groupFieldActions.clearGroupBySlug());
             dispatch(showAlert("Successful created", "success"));
-            if (relationView && viewsList?.length > 1) {
-              return queryClient.refetchQueries([
-                "GET_TABLE_VIEWS_LIST_RELATION",
-              ]);
-            } else if (relationView && viewsList?.length <= 1) {
-              return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
-            } else return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
+            refetchViews();
+            // if (relationView && viewsList?.length > 1) {
+            //   return queryClient.refetchQueries([
+            //     "GET_TABLE_VIEWS_LIST_RELATION",
+            //   ]);
+            // } else if (relationView && viewsList?.length <= 1) {
+            //   return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+            // } else {
+            //   refetchViews();
+            // }
           })
           .finally(() => {
             if (!Boolean(tableRelations)) {
@@ -247,7 +250,10 @@ export const useViewCreatePopupProps = ({
             ]);
           } else if (relationView && viewsList?.length <= 1) {
             return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
-          } else return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
+          } else {
+            // queryClient.refetchQueries(["GET_VIEWS_LIST"])
+            refetchViews();
+          }
         })
         .finally(() => {
           if (!Boolean(tableRelations)) {
@@ -310,7 +316,7 @@ export const useViewCreatePopupProps = ({
     },
     {
       enabled: Boolean(table_slug && !relationView),
-      cacheTime: 10,
+      // cacheTime: 10,
       select: (res) => {
         const fields = res?.data?.fields ?? [];
 

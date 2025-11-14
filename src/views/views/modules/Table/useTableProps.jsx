@@ -56,7 +56,15 @@ export const useTableProps = ({ tab }) => {
     projectInfo,
   } = useViewContext();
 
-  const { fieldsMap } = useFieldsContext();
+  const { fieldsMap, fieldsForm, fields } = useFieldsContext();
+
+  const {
+    reset,
+    setValue: setFormValue,
+    control,
+    watch,
+    getValues,
+  } = fieldsForm;
 
   const { orderBy, setSortedDatas, sortedDatas } = useFilterContext();
 
@@ -126,24 +134,6 @@ export const useTableProps = ({ tab }) => {
       updateObject({ data: row, rowId });
     }
   }, []);
-
-  const {
-    control,
-    reset,
-    setValue: setFormValue,
-    getValues,
-    watch,
-  } = useForm({
-    defaultValues: {
-      multi: [],
-    },
-    shouldUnregister: true,
-  });
-
-  const { fields } = useFieldArray({
-    control,
-    name: "multi",
-  });
 
   // const mainForm = useForm({
   //   defaultValues: {

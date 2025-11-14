@@ -1,0 +1,540 @@
+import {addDays, format} from "date-fns";
+import React, {useEffect, useMemo, useRef, useState} from "react";
+import Moveable from "react-moveable";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import CellElementGenerator from "@/components/ElementGenerators/CellElementGenerator";
+import constructorObjectService from "@/services/constructorObjectService";
+import styles from "./styles.module.scss";
+import {useQueryClient} from "react-query";
+import useFilters from "@/hooks/useFilters";
+import clsx from "clsx";
+import {useTimelineBlockContext} from "./providers/TimelineBlockProvider";
+import {useDispatch, useSelector} from "react-redux";
+import {groupFieldActions} from "@/store/groupField/groupField.slice";
+import {updateQueryWithoutRerender} from "@/utils/useSafeQueryUpdater";
+import {mergeStringAndState} from "@/utils/jsonPath";
+import {detailDrawerActions} from "@/store/detailDrawer/detailDrawer.slice";
+import useTabRouter from "@/hooks/useTabRouter";
+import "./styles/moveable.scss";
+
+const getTranslateXFromMatrix = (element) => {
+  const transform = window.getComputedStyle(element).transform;
+  if (transform === "none") return 0;
+
+  const match = transform.match(/matrix.*\(([^,]+),[^,]+,[^,]+,[^,]+,([^,]+),/);
+  return match ? parseFloat(match[2]) : 0;
+};
+
+export default function TimeLineDayDataBlockItem({
+  relationView = false,
+  data,
+  levelIndex,
+  setFocusedDays,
+  datesList,
+  groupbyFields,
+  view,
+  zoomPosition,
+  calendar_from_slug,
+  calendar_to_slug,
+  groupByList,
+  selectedType,
+  dateFilters,
+  menuItem,
+  setSelectedRow,
+  layoutType,
+  selectedView,
+  projectInfo,
+  setSelectedView = () => {},
+  visibleFields,
+}) {
+  const ref = useRef();
+  const dispatch = useDispatch();
+  const { tableSlug: tableSlugFromProps, appId, menuId: menuid } = useParams();
+  const tableSlug = relationView
+    ? view?.relation_table_slug
+    : (tableSlugFromProps ?? view?.table_slug);
+  const { filters } = useFilters(tableSlug, view.id);
+  const [target, setTarget] = useState();
+  const [isFocus, setIsFocus] = useState(false);
+  const queryClient = useQueryClient();
+  const innerStartDate = useRef(null);
+  const [searchParams] = useSearchParams();
+  const viewId = searchParams.get("v") ?? view?.id;
+  const menuId = menuid ?? searchParams.get("menuId");
+  const new_router = localStorage.getItem("new_router") === "true";
+  const initialTableInf = useSelector((state) => state.drawer.tableInfo);
+
+  const currentWidth = selectedType === "month" ? 20 : 60;
+
+  const handleOpen = () => {
+
+    setSelectedRow(data);
+
+    if (Boolean(view?.relation_table_slug)) {
+      dispatch(
+        groupFieldActions.addView({
+          id: view?.id,
+          label: view?.table_label || initialTableInf?.label,
+          table_slug: view?.table_slug,
+          relation_table_slug: view.relation_table_slug ?? null,
+          is_relation_view: view?.is_relation_view,
+          detailId: data?.guid,
+        })
+      );
+      setSelectedView(view);
+      dispatch(detailDrawerActions.setDrawerTabIndex(0));
+      updateQueryWithoutRerender("p", data?.guid);
+    } else {
+      if (Boolean(selectedView?.is_relation_view)) {
+        setSelectedRow(data);
+        dispatch(detailDrawerActions.openDrawer());
+        updateQueryWithoutRerender("p", data?.guid);
+      } else {
+        if (new_router) {
+          updateQueryWithoutRerender("p", data?.guid);
+          if (view?.attributes?.url_object) {
+            navigateToDetailPage(data);
+          } else if (projectInfo?.new_layout) {
+            setSelectedRow(data);
+            dispatch(detailDrawerActions.openDrawer());
+          } else {
+            if (layoutType === "PopupLayout") {
+              setSelectedRow(data);
+              dispatch(detailDrawerActions.openDrawer());
+            } else {
+              navigateToDetailPage(data);
+            }
+          }
+        } else {
+          if (view?.attributes?.url_object) {
+            navigateToDetailPage(data);
+          } else if (projectInfo?.new_layout) {
+            setSelectedRow(data);
+            dispatch(detailDrawerActions.openDrawer());
+          } else {
+            if (layoutType === "PopupLayout") {
+              setSelectedRow(data);
+              dispatch(detailDrawerActions.openDrawer());
+            } else {
+              navigateToDetailPage(data);
+            }
+          }
+        }
+      }
+    }
+  };
+
+  const replaceUrlVariables = (urlTemplate, data) => {
+    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
+      return data[variable] || "";
+    });
+  };
+
+  const { navigateToForm } = useTabRouter();
+  const navigate = useNavigate();
+
+  const navigateToDetailPage = (row) => {
+    if (
+      view?.attributes?.navigate?.params?.length ||
+      view?.attributes?.navigate?.url
+    ) {
+      const params = view?.attributes?.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row
+            )}`
+        )
+        .join("&");
+
+      const urlTemplate = view?.attributes?.navigate?.url;
+
+      const matches = replaceUrlVariables(urlTemplate, row);
+
+      navigate(`${matches}${params ? "?" + params : ""}`);
+    } else {
+      if (new_router)
+        navigate(`/${menuId}/detail?p=${row?.guid}`, {
+          state: {
+            viewId,
+            tableSlug,
+          },
+        });
+      else navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+    }
+  };
+
+  const level = useMemo(() => {
+    return levelIndex;
+  }, [levelIndex]);
+
+  const [frame] = useState({
+    translate: [0, 0],
+  });
+
+  const startDate = useMemo(() => {
+    return datesList && calendar_from_slug
+      ? datesList?.findIndex((date) => {
+          const currentDate = date ? new Date(date) : null;
+          const selectedDate = data?.[calendar_from_slug]
+            ? new Date(data?.[calendar_from_slug])
+            : null;
+          const isValidCurrentDate =
+            currentDate instanceof Date && !isNaN(currentDate);
+          const isValidSelectedDate =
+            selectedDate instanceof Date && !isNaN(selectedDate);
+
+          if (isValidCurrentDate && isValidSelectedDate) {
+            return (
+              format(currentDate, "dd.MM.yyyy") ===
+              format(selectedDate, "dd.MM.yyyy")
+            );
+          }
+
+          return false;
+        })
+      : null;
+  }, [datesList, calendar_from_slug, data]);
+
+  const differenceInDays = useMemo(() => {
+    const days = Math.ceil(
+      (new Date(data?.[calendar_to_slug]) -
+        new Date(data?.[calendar_from_slug])) /
+        (1000 * 60 * 60 * 24)
+    );
+    return days;
+  }, [data, calendar_from_slug, calendar_to_slug]);
+
+  useEffect(() => {
+    if (!target && ref.current) {
+      setTarget(ref.current);
+    }
+  }, [
+    ref,
+    view,
+    data,
+    calendar_from_slug,
+    calendar_to_slug,
+    groupbyFields,
+    visibleFields,
+    groupByList,
+    levelIndex,
+    datesList,
+    zoomPosition,
+    target,
+  ]);
+
+  const targetRef = useRef(null);
+
+  const onDragEndToUpdate1 = (position, width) => {
+    if (!position) return null;
+
+    let newDatePosition = [
+      datesList[innerStartDate.current || startDate],
+      addDays(
+        datesList[innerStartDate.current || startDate],
+        width / currentWidth
+      ),
+    ];
+
+    const computedData = {
+      ...data,
+      [calendar_from_slug]: newDatePosition[0],
+      [calendar_to_slug]: newDatePosition[1],
+    };
+
+    constructorObjectService
+      .update(tableSlug, {
+        data: computedData,
+      })
+      .then(() => {
+        // dispatch(showAlert("Успешно обновлено", "success"));
+        // queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
+        queryClient.setQueryData(
+          [
+            "GET_OBJECTS_LIST_WITH_RELATIONS",
+            { tableSlug, filters, dateFilters, view },
+          ],
+          (oldData) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              data: oldData.data.map((item) =>
+                item.guid === computedData.guid ? computedData : item
+              ),
+            };
+          }
+        );
+      });
+  };
+
+  const onResizeEndToUpdate1 = (position, width) => {
+    const x = getTranslateXFromMatrix(targetRef.current);
+    if (!position) return null;
+    let newDatePosition = [
+      datesList[x / (zoomPosition * (selectedType === "month" ? 20 : 30))],
+      addDays(
+        datesList[x / (zoomPosition * (selectedType === "month" ? 20 : 30))],
+        width / (zoomPosition * (selectedType === "month" ? 20 : 30))
+      ),
+    ];
+    const computedData = {
+      ...data,
+      [calendar_from_slug]: newDatePosition[0],
+      [calendar_to_slug]: newDatePosition[1],
+    };
+
+    constructorObjectService.update(tableSlug, {
+      data: computedData,
+    });
+    // .then((res) => {
+    //   dispatch(showAlert("Успешно обновлено", "success"));
+    // });
+  };
+
+  const onDragEnd = ({ lastEvent }) => {
+    if (lastEvent) {
+      frame.translate = lastEvent.beforeTranslate;
+      onDragEndToUpdate1(lastEvent, lastEvent.width);
+      setFocusedDays([]);
+    }
+  };
+
+  const onResizeEnd = ({ lastEvent }) => {
+    if (lastEvent) {
+      // frame.translate = lastEvent.drag.beforeTranslate;
+      onResizeEndToUpdate1(lastEvent, lastEvent.width);
+      setFocusedDays([]);
+    }
+  };
+
+  const { setHoveredRowId } = useTimelineBlockContext();
+
+  const handleMouseEnter1 = () => {
+    setHoveredRowId(data?.guid);
+    if (selectedType === "month") {
+      setFocusedDays([
+        datesList[innerStartDate.current || startDate],
+        addDays(
+          datesList[innerStartDate.current || startDate],
+          targetRef.current.offsetWidth / currentWidth - 1
+        ),
+      ]);
+    } else {
+      setFocusedDays([
+        datesList[innerStartDate.current || startDate],
+        addDays(
+          datesList[innerStartDate.current || startDate],
+          targetRef.current.offsetWidth / currentWidth - 1
+        ),
+      ]);
+    }
+  };
+
+  const initialRef = useRef({
+    width: 0,
+    transformX: 0,
+  });
+
+  const onDrag1 = ({ target, width, beforeTranslate, transform }) => {
+    if (beforeTranslate[1] < 0) return null;
+    const [x] = beforeTranslate;
+    target.style.transform = `${transform?.split(" ")[0]} translateY(0) translate(${x}px, 0)`;
+
+    const style = window.getComputedStyle(target);
+
+    const matrix = new DOMMatrixReadOnly(style.transform);
+
+    initialRef.current = {
+      width: target.offsetWidth,
+      transformX: matrix.m41 || 0,
+    };
+
+    innerStartDate.current = Math.floor(
+      initialRef.current.transformX / currentWidth
+    );
+
+    setFocusedDays([
+      datesList[innerStartDate.current || startDate],
+      addDays(
+        datesList[innerStartDate.current || startDate],
+        width / currentWidth - 1
+      ),
+    ]);
+  };
+
+  const onResizeStart = ({ target }) => {
+    const style = window.getComputedStyle(target);
+    const matrix = new DOMMatrixReadOnly(style.transform);
+
+    initialRef.current = {
+      width: target.offsetWidth,
+      transformX: matrix.m41 || 0,
+    };
+  };
+
+  const onResize1 = ({ target, width, direction }) => {
+    const { width: initialWidth, transformX } = initialRef.current;
+
+    if (direction[0] === -1) {
+      const dx = initialWidth - width;
+      target.style.transform = `translateX(${transformX + dx}px)`;
+      innerStartDate.current = (transformX + dx) / 60;
+    }
+
+    target.style.width = `${width}px`;
+  };
+
+  const showItem = differenceInDays > 0 && startDate !== -1 && level !== -1;
+
+  return (
+    <>
+      <div
+        className={styles.dataBlock}
+        style={{
+          visibility: showItem ? "visible" : "hidden",
+          height: "100%",
+          transform: `translateX(${startDate * (zoomPosition * (selectedType === "month" ? 20 : 30))}px)`,
+          width: `${zoomPosition * (selectedType === "month" ? 20 : 30) * differenceInDays}px`,
+        }}
+        onClick={handleOpen}
+        ref={targetRef}
+        key={data?.id_order}
+      >
+        <div
+          className={clsx(styles.dataBlockInner, { [styles.focus]: isFocus })}
+          onClick={handleOpen}
+          onMouseEnter={handleMouseEnter1}
+          onMouseLeave={() => setHoveredRowId(null)}
+        >
+          {visibleFields?.map((fieldItem) => (
+            <CellElementGenerator
+              key={fieldItem?.slug}
+              isTimelineVariant
+              row={data}
+              field={fieldItem}
+              multiSelectClassName={styles.multiSelectBadge}
+            />
+          ))}
+          {/* {visible_field?.split("/")?.length > 1 ? (
+            visible_field
+              ?.split("/")
+              ?.map((fieldItem) => (
+                <CellElementGenerator
+                  isTimelineVariant
+                  row={data}
+                  field={computedColumnsFor?.find(
+                    (field) => field?.slug === fieldItem
+                  )}
+                  multiSelectClassName={styles.multiSelectBadge}
+                />
+              ))
+          ) : (
+            <CellElementGenerator
+              isTimelineVariant
+              row={data}
+              multiSelectClassName={styles.multiSelectBadge}
+              field={computedColumnsFor?.find(
+                (field) => field?.slug === visible_field?.split("/")?.[0]
+              )}
+            />
+          )} */}
+        </div>
+
+        <Moveable
+          className="moveable3"
+          target={targetRef}
+          draggable
+          resizable
+          edgeDraggable={false}
+          startDragRotate={0}
+          throttleDragRotate={0}
+          throttleDrag={zoomPosition * (selectedType === "month" ? 20 : 30)}
+          throttleResize={zoomPosition * (selectedType === "month" ? 20 : 30)}
+          keepRatio={false}
+          origin={false}
+          renderDirections={["w", "e"]}
+          onDragStart={() => setIsFocus(true)}
+          onDrag={onDrag1}
+          onDragEnd={(e) => {
+            setIsFocus(false);
+            onDragEnd(e);
+          }}
+          onResizeStart={(e) => {
+            setIsFocus(true);
+            onResizeStart(e);
+          }}
+          onResize={onResize1}
+          onResizeEnd={(e) => {
+            setIsFocus(false);
+            onResizeEnd(e);
+          }}
+        />
+      </div>
+
+      {/* <div
+        className={styles.dataBlock}
+        style={{
+          top:
+            view?.attributes?.group_by_columns?.length === 0 &&
+            `${level * 32}px`,
+          left: `${startDate * (zoomPosition * (selectedType === "month" ? 20 : 30))}px`,
+          width: `${zoomPosition * (selectedType === "month" ? 20 : 30) * differenceInDays}px`,
+          cursor: "pointer",
+          display: startDate === -1 || level === -1 ? "none" : "block",
+        }}
+        onClick={handleOpen}
+        ref={ref}
+        key={data?.id_order}
+        onMouseEnter={handleMouseEnter}
+      >
+        <div className={styles.dataBlockInner}>
+          {visible_field?.split("/")?.length > 1 ? (
+            visible_field
+              ?.split("/")
+              ?.map((fieldItem) => (
+                <CellElementGenerator
+                  isTimelineVariant
+                  row={data}
+                  field={computedColumnsFor?.find(
+                    (field) => field?.slug === fieldItem
+                  )}
+                  multiSelectClassName={styles.multiSelectBadge}
+                />
+              ))
+          ) : (
+            <CellElementGenerator
+              isTimelineVariant
+              row={data}
+              field={computedColumnsFor?.find(
+                (field) => field?.slug === visible_field?.split("/")?.[0]
+              )}
+            />
+          )}
+        </div>
+      </div>
+      {startDate === -1 || level === -1 ? (
+        ""
+      ) : (
+        <Moveable
+          target={target}
+          className="moveable3"
+          key={`${zoomPosition}${data?.guid}`}
+          draggable
+          resizable
+          throttleDrag={zoomPosition * (selectedType === "month" ? 20 : 30)}
+          throttleResize={zoomPosition * (selectedType === "month" ? 20 : 30)}
+          keepRatio={false}
+          origin={false}
+          renderDirections={["w", "e"]}
+          padding={{ left: 0, top: 0, right: 0, bottom: 0 }}
+          onDrag={onDrag}
+          onDragEnd={onDragEnd}
+          onResize={onResize}
+          onResizeEnd={onResizeEnd}
+        />
+      )} */}
+    </>
+  );
+}

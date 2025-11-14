@@ -1,8 +1,14 @@
 import ReloadRelations from "@/components/ReloadRelations";
 import GithubMicrofrontendForm from "@/views/Constructor/Microfrontend/GithubMicrofrontendForm";
-import {lazy, Suspense, useMemo, useState} from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import {useSelector} from "react-redux";
-import {Navigate, Route, Routes, useLocation} from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import Chat from "../components/Chat";
 import KeepAliveWrapper from "../components/KeepAliveWrapper";
 import ActivityFeedPage from "../components/LayoutSidebar/Components/ActivityFeedButton/components/Activity.jsx";
@@ -146,6 +152,15 @@ const NewRouter = () => {
       enabled: Boolean(!isAuth),
     },
   });
+
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if (pathname.includes("/login") && isAuth) {
+      navigate("/", { replace: false });
+    }
+  }, [isAuth]);
 
   const microfrontendUrl = data?.function?.url;
 

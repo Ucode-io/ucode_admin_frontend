@@ -35,6 +35,7 @@ import { ViewTabs } from "./components/ViewTabs";
 
 import { Table } from "./modules/Table";
 import { Timeline } from "./modules/Timeline";
+import { Board } from "./modules/Board";
 
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
@@ -136,7 +137,7 @@ export const useViewsProps = ({ isRelationView }) => {
     ),
     [VIEW_TYPES_MAP.TREE]: () => <></>,
     [VIEW_TYPES_MAP.GRID]: () => <></>,
-    [VIEW_TYPES_MAP.BOARD]: () => <></>,
+    [VIEW_TYPES_MAP.BOARD]: () => <Board />,
     [VIEW_TYPES_MAP.TIMELINE]: () => <Timeline />,
     [VIEW_TYPES_MAP.CALENDAR]: () => <></>,
     [VIEW_TYPES_MAP.WEBSITE]: () => <></>,

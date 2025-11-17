@@ -1,57 +1,35 @@
 import useFilters from "@/hooks/useFilters";
-import useTabRouter from "@/hooks/useTabRouter";
 // import constructorFieldService from "@/services/constructorFieldService";
 import constructorObjectService from "@/services/constructorObjectService";
 // import constructorRelationService from "@/services/constructorRelationService";
 // import layoutService from "@/services/layoutService";
-import {quickFiltersActions} from "@/store/filter/quick_filter";
-import {mergeStringAndState} from "@/utils/jsonPath";
+import { quickFiltersActions } from "@/store/filter/quick_filter";
 // import {listToMap} from "@/utils/listToMap";
-import {pageToOffset} from "@/utils/pageToOffset";
+import { pageToOffset } from "@/utils/pageToOffset";
 import { useCallback, useEffect, useMemo, useState } from "react";
 // import {useTranslation} from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
 // import useSearchParams from "@/hooks/useSearchParams";
 import menuService from "@/services/menuService";
-import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
-import { groupFieldActions } from "@/store/groupField/groupField.slice";
-import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
 import { useViewContext } from "@/providers/ViewProvider";
 import { useFieldsContext } from "../../providers/FieldsProvider";
 import { useFilterContext } from "../../providers/FilterProvider";
 import { useGetLang } from "@/hooks/useGetLang";
 
 export const useTableProps = ({ tab }) => {
-  const { navigateToForm } = useTabRouter();
-  const navigate = useNavigate();
-
-  const {
-    // id,
-    // menuId: menuid,
-    // tableSlug: tableSlugFromParams,
-    appId,
-  } = useParams();
-
   const {
     views,
     view,
     viewId,
     tableSlug,
-    menuItem,
     menuId,
     viewForm,
-    isRelationView,
     currentPage,
     setCurrentPage,
     searchText,
     checkedColumns,
-    layoutType,
-    setSelectedView,
-    selectedView,
-    setSelectedRow,
-    projectInfo,
+    navigateToEditPage,
   } = useViewContext();
 
   const { fieldsMap, fieldsForm, fields } = useFieldsContext();
@@ -66,7 +44,7 @@ export const useTableProps = ({ tab }) => {
 
   const { orderBy, setSortedDatas, sortedDatas } = useFilterContext();
 
-  const new_router = localStorage.getItem("new_router") === "true";
+  // const new_router = localStorage.getItem("new_router") === "true";
   // const viewId = searchParams.get("v") ?? viewProp?.id;
   // const urlSearchParams = new URLSearchParams(window.location.search);
   // const fieldSlug = urlSearchParams.get("field_slug");
@@ -95,21 +73,21 @@ export const useTableProps = ({ tab }) => {
   const [drawerState, setDrawerState] = useState(null);
 
   const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
-  const [selectedObjects, setSelectedObjects] = useState([]);
+  // const [selectedObjects, setSelectedObjects] = useState([]);
 
-  const [combinedTableData, setCombinedTableData] = useState([]);
+  // const [combinedTableData, setCombinedTableData] = useState([]);
   // const [selectedViewType, setSelectedViewType] = useState(
   //   localStorage?.getItem("detailPage"),
   // );
 
   // const menuId = menuid ?? searchParams.get("menuId");
-  const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);
-  const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
-  const initialTableInf = useSelector((state) => state.drawer.tableInfo);
+  // const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);
+  // const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
+  // const initialTableInf = useSelector((state) => state.drawer.tableInfo);
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo,
   );
-  const selectedTabIndex = isRelationView ? drawerTabIndex : mainTabIndex;
+  // const selectedTabIndex = isRelationView ? drawerTabIndex : mainTabIndex;
 
   const { mutate: updateObject } = useMutation(({ data, rowId }) => {
     return constructorObjectService.update(tableSlug, {
@@ -400,38 +378,6 @@ export const useTableProps = ({ tab }) => {
     },
   });
 
-  // const {
-  //   data: { layout } = {
-  //     layout: [],
-  //   },
-  // } = useQuery({
-  //   queryKey: [
-  //     "GET_LAYOUT",
-  //     {
-  //       tableSlug,
-  //     },
-  //   ],
-  //   enabled: Boolean(tableSlug && menuId),
-  //   queryFn: () => {
-  //     return layoutService.getLayout(tableSlug, menuId);
-  //   },
-  //   select: (data) => {
-  //     return {
-  //       layout: data ?? {},
-  //     };
-  //   },
-  //   onSuccess: (data) => {
-  //     if (data?.layout?.type === "PopupLayout") {
-  //       setLayoutType("PopupLayout");
-  //     } else {
-  //       setLayoutType("SimpleLayout");
-  //     }
-  //   },
-  //   onError: (error) => {
-  //     console.error("Error", error);
-  //   },
-  // });
-
   const deleteHandler = async (row) => {
     setDeleteLoader(true);
     try {
@@ -442,107 +388,77 @@ export const useTableProps = ({ tab }) => {
     }
   };
 
-  const navigateToEditPage = (row) => {
-    dispatch(
-      groupFieldActions.addView({
-        id: view?.id,
-        label: view?.table_label || initialTableInf?.label,
-        table_slug: view?.table_slug,
-        relation_table_slug: view.relation_table_slug ?? null,
-        is_relation_view: view?.is_relation_view,
-        detailId: row?.guid,
-      }),
-    );
-    if (Boolean(selectedView?.is_relation_view)) {
-      setSelectedView(view);
-      setSelectedRow(row);
-      dispatch(detailDrawerActions.openDrawer());
-      updateQueryWithoutRerender("p", row?.guid);
-    } else {
-      updateQueryWithoutRerender("p", row?.guid);
-      if (view?.attributes?.navigate?.url) {
-        navigateToDetailPage(row);
-      } else if (projectInfo?.new_layout) {
-        setSelectedRow(row);
-        dispatch(detailDrawerActions.openDrawer());
-      } else {
-        if (layoutType === "PopupLayout") {
-          setSelectedRow(row);
-          dispatch(detailDrawerActions.openDrawer());
-        } else {
-          navigateToDetailPage(row);
-        }
-      }
-      // if (new_router) {
-      //   updateQueryWithoutRerender("p", row?.guid);
-      //   if (view?.attributes?.url_object) {
-      //     navigateToDetailPage(row);
-      //   } else if (projectInfo?.new_layout) {
-      //     setSelectedRow(row);
-      //     dispatch(detailDrawerActions.openDrawer());
-      //   } else {
-      //     if (layoutType === "PopupLayout") {
-      //       setSelectedRow(row);
-      //       dispatch(detailDrawerActions.openDrawer());
-      //     } else {
-      //       navigateToDetailPage(row);
-      //     }
-      //   }
-      // } else {
-      //   if (view?.attributes?.url_object) {
-      //     navigateToDetailPage(row);
-      //   } else if (projectInfo?.new_layout) {
-      //     setSelectedRow(row);
-      //     dispatch(detailDrawerActions.openDrawer());
-      //   } else {
-      //     if (layoutType === "PopupLayout") {
-      //       setSelectedRow(row);
-      //       dispatch(detailDrawerActions.openDrawer());
-      //     } else {
-      //       navigateToDetailPage(row);
-      //     }
-      //   }
-      // }
-    }
-  };
+  // const navigateToEditPage = (row) => {
+  //   dispatch(
+  //     groupFieldActions.addView({
+  //       id: view?.id,
+  //       label: view?.table_label || initialTableInf?.label,
+  //       table_slug: view?.table_slug,
+  //       relation_table_slug: view.relation_table_slug ?? null,
+  //       is_relation_view: view?.is_relation_view,
+  //       detailId: row?.guid,
+  //     }),
+  //   );
+  //   if (Boolean(selectedView?.is_relation_view)) {
+  //     setSelectedView(view);
+  //     setSelectedRow(row);
+  //     dispatch(detailDrawerActions.openDrawer());
+  //     updateQueryWithoutRerender("p", row?.guid);
+  //   } else {
+  //     updateQueryWithoutRerender("p", row?.guid);
+  //     if (view?.attributes?.navigate?.url) {
+  //       navigateToDetailPage(row);
+  //     } else if (projectInfo?.new_layout) {
+  //       setSelectedRow(row);
+  //       dispatch(detailDrawerActions.openDrawer());
+  //     } else {
+  //       if (layoutType === "PopupLayout") {
+  //         setSelectedRow(row);
+  //         dispatch(detailDrawerActions.openDrawer());
+  //       } else {
+  //         navigateToDetailPage(row);
+  //       }
+  //     }
+  //   }
+  // };
 
-  const replaceUrlVariables = (urlTemplate, data) => {
-    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
-      return data[variable] || "";
-    });
-  };
+  // const replaceUrlVariables = (urlTemplate, data) => {
+  //   return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
+  //     return data[variable] || "";
+  //   });
+  // };
 
-  const navigateToDetailPage = (row) => {
-    if (
-      view?.attributes?.navigate?.params?.length ||
-      view?.attributes?.navigate?.url
-    ) {
-      const params = view?.attributes?.navigate?.params
-        ?.map(
-          (param) =>
-            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
-              param.value,
-              row,
-            )}`,
-        )
-        .join("&");
+  // const navigateToDetailPage = (row) => {
+  //   if (
+  //     view?.attributes?.navigate?.params?.length ||
+  //     view?.attributes?.navigate?.url
+  //   ) {
+  //     const params = view?.attributes?.navigate?.params
+  //       ?.map(
+  //         (param) =>
+  //           `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+  //             param.value,
+  //             row,
+  //           )}`,
+  //       )
+  //       .join("&");
 
-      const urlTemplate = view?.attributes?.navigate?.url;
+  //     const urlTemplate = view?.attributes?.navigate?.url;
 
-      const matches = replaceUrlVariables(urlTemplate, row);
+  //     const matches = replaceUrlVariables(urlTemplate, row);
 
-      navigate(`${matches}${params ? "?" + params : ""}`);
-    } else {
-      if (new_router)
-        navigate(`/${menuId}/detail?p=${row?.guid}`, {
-          state: {
-            viewId,
-            tableSlug,
-          },
-        });
-      else navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
-    }
-  };
+  //     navigate(`${matches}${params ? "?" + params : ""}`);
+  //   } else {
+  //     if (new_router)
+  //       navigate(`/${menuId}/detail?p=${row?.guid}`, {
+  //         state: {
+  //           viewId,
+  //           tableSlug,
+  //         },
+  //       });
+  //     else navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
+  //   }
+  // };
 
   const multipleDelete = async () => {
     setDeleteLoader(true);

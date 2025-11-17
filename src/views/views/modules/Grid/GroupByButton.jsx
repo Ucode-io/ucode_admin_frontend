@@ -13,8 +13,8 @@ import {useForm, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {useQueryClient} from "react-query";
 import {useParams} from "react-router-dom";
-import constructorViewService from "../../services/constructorViewService";
-import {columnIcons} from "../../utils/constants/columnIcons";
+import constructorViewService from "@/services/constructorViewService";
+import {columnIcons} from "@/utils/constants/columnIcons";
 
 export default function GroupByButton({
   selectedTabIndex,
@@ -102,7 +102,7 @@ export default function GroupByButton({
     );
   }, [computedColumns]);
 
-  const onCheckboxChange = async (val, id, column) => {
+  const onCheckboxChange = async (val, id) => {
     const type = form.getValues("type");
 
     if (type !== "CALENDAR" && type !== "GANTT") {

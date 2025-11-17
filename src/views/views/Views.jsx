@@ -79,6 +79,7 @@ export const Views = ({
     fields,
     isLoadingTable,
     selectedTabIndex,
+    navigateToEditPage,
   } = useViewsProps({ isRelationView });
 
   return (
@@ -137,6 +138,7 @@ export const Views = ({
           noDates,
           isLoadingTable,
           selectedTabIndex,
+          navigateToEditPage,
         }}
       >
         <FilterProvider

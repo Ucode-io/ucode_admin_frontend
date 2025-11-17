@@ -37,6 +37,8 @@ import { Table } from "./modules/Table";
 import { Timeline } from "./modules/Timeline";
 import { Board } from "./modules/Board";
 import { TableGroup } from "./modules/TableGroup";
+import { Grid, Tree } from "./modules/Grid";
+import { mergeStringAndState } from "@/utils/jsonPath";
 
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
@@ -49,6 +51,8 @@ export const useViewsProps = ({ isRelationView }) => {
 
   const viewsPath = useSelector((state) => state.groupField.viewsPath);
   const viewsList = useSelector((state) => state.groupField.viewsList);
+
+  const initialTableInfo = useSelector((state) => state.drawer.tableInfo);
 
   const lastPath = viewsPath?.[viewsPath.length - 1];
   const selectedV = viewsList?.[viewsList.length - 1];
@@ -144,8 +148,8 @@ export const useViewsProps = ({ isRelationView }) => {
         )}
       </MaterialUIProvider>
     ),
-    [VIEW_TYPES_MAP.TREE]: () => <></>,
-    [VIEW_TYPES_MAP.GRID]: () => <></>,
+    [VIEW_TYPES_MAP.TREE]: () => <Tree />,
+    [VIEW_TYPES_MAP.GRID]: () => <Grid />,
     [VIEW_TYPES_MAP.BOARD]: () => <Board />,
     [VIEW_TYPES_MAP.TIMELINE]: () => <Timeline />,
     [VIEW_TYPES_MAP.CALENDAR]: () => <></>,
@@ -500,6 +504,76 @@ export const useViewsProps = ({ isRelationView }) => {
     );
   }, [fieldsMap]);
 
+  const replaceUrlVariables = (urlTemplate, data) => {
+    return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
+      return data[variable] || "";
+    });
+  };
+
+  const navigateToDetailPage = (row) => {
+    if (
+      view?.attributes?.navigate?.params?.length ||
+      view?.attributes?.navigate?.url
+    ) {
+      const params = view?.attributes?.navigate?.params
+        ?.map(
+          (param) =>
+            `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
+              param.value,
+              row,
+            )}`,
+        )
+        .join("&");
+
+      const urlTemplate = view?.attributes?.navigate?.url;
+
+      const matches = replaceUrlVariables(urlTemplate, row);
+
+      navigate(`${matches}${params ? "?" + params : ""}`);
+    } else {
+      navigate(`/${menuId}/detail?p=${row?.guid}`, {
+        state: {
+          viewId,
+          tableSlug,
+        },
+      });
+    }
+  };
+
+  const navigateToEditPage = (row) => {
+    dispatch(
+      groupFieldActions.addView({
+        id: view?.id,
+        label: view?.table_label || initialTableInfo?.label,
+        table_slug: view?.table_slug,
+        relation_table_slug: view.relation_table_slug ?? null,
+        is_relation_view: view?.is_relation_view,
+        detailId: row?.guid,
+      }),
+    );
+    if (Boolean(selectedView?.is_relation_view)) {
+      setSelectedView(view);
+      setSelectedRow(row);
+      dispatch(detailDrawerActions.openDrawer());
+      updateQueryWithoutRerender("p", row?.guid);
+    } else {
+      updateQueryWithoutRerender("p", row?.guid);
+      if (view?.attributes?.navigate?.url) {
+        navigateToDetailPage(row);
+      } else if (projectInfo?.new_layout) {
+        setSelectedRow(row);
+        dispatch(detailDrawerActions.openDrawer());
+      } else {
+        if (layoutType === "PopupLayout") {
+          setSelectedRow(row);
+          dispatch(detailDrawerActions.openDrawer());
+        } else {
+          navigateToDetailPage(row);
+        }
+      }
+    }
+  };
+
   // useEffect(() => {
   //   if (localStorage.getItem("detailPage") === "undefined") {
   //     setSelectedViewType("SidePeek");
@@ -570,5 +644,6 @@ export const useViewsProps = ({ isRelationView }) => {
     fields,
     isLoadingTable,
     selectedTabIndex,
+    navigateToEditPage,
   };
 };

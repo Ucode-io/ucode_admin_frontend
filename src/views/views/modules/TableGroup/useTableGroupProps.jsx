@@ -13,11 +13,14 @@ import layoutService from "@/services/layoutService";
 import {mergeStringAndState} from "@/utils/jsonPath";
 import {pageToOffset} from "@/utils/pageToOffset";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
+import { groupFieldActions } from "@/store/groupField/groupField.slice";
+import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
 
 export const useTableGroupProps = () => {
-
   const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
-  const filterHeight = localStorage.getItem("filtersHeight")
+  const filterHeight = localStorage.getItem("filtersHeight");
+
+  const initialTableInfo = useSelector((state) => state.drawer.tableInfo);
 
   const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
@@ -27,7 +30,6 @@ export const useTableGroupProps = () => {
   const [limit, setLimit] = useState(20);
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
-
 
   const {
     view,
@@ -43,18 +45,14 @@ export const useTableGroupProps = () => {
     selectedView,
     selectedTabIndex,
     viewForm,
+    setSelectedView,
+    setSelectedRow,
+    projectInfo,
   } = useViewContext();
 
-  const {
-    setSortedDatas,
-    sortedDatas,
-  } = useFilterContext();
+  const { setSortedDatas, sortedDatas } = useFilterContext();
 
-  const {
-    fieldsMap,
-    fieldsForm,
-  } = useFieldsContext()
-
+  const { fieldsMap, fieldsForm } = useFieldsContext();
 
   const { filters, filterChangeHandler } = useFilters(tableSlug, view.id);
 
@@ -141,7 +139,9 @@ export const useTableGroupProps = () => {
   const columns = useMemo(() => {
     const result = [];
     for (const key in view.attributes.fixedColumns) {
-      if (Object.prototype.hasOwnProperty.call(view.attributes.fixedColumns, key)) {
+      if (
+        Object.prototype.hasOwnProperty.call(view.attributes.fixedColumns, key)
+      ) {
         if (view.attributes.fixedColumns[key])
           result.push({ id: key, value: view.attributes.fixedColumns[key] });
       }
@@ -264,10 +264,36 @@ export const useTableGroupProps = () => {
   };
 
   const navigateToEditPage = (row) => {
-    if (layoutType === "PopupLayout") {
+    dispatch(
+      groupFieldActions.addView({
+        id: view?.id,
+        label: view?.table_label || initialTableInfo?.label,
+        table_slug: view?.table_slug,
+        relation_table_slug: view.relation_table_slug ?? null,
+        is_relation_view: view?.is_relation_view,
+        detailId: row?.guid,
+      }),
+    );
+    if (Boolean(selectedView?.is_relation_view)) {
+      setSelectedView(view);
+      setSelectedRow(row);
       dispatch(detailDrawerActions.openDrawer());
+      updateQueryWithoutRerender("p", row?.guid);
     } else {
-      navigateToDetailPage(row);
+      updateQueryWithoutRerender("p", row?.guid);
+      if (view?.attributes?.navigate?.url) {
+        navigateToDetailPage(row);
+      } else if (projectInfo?.new_layout) {
+        setSelectedRow(row);
+        dispatch(detailDrawerActions.openDrawer());
+      } else {
+        if (layoutType === "PopupLayout") {
+          setSelectedRow(row);
+          dispatch(detailDrawerActions.openDrawer());
+        } else {
+          navigateToDetailPage(row);
+        }
+      }
     }
   };
 
@@ -383,5 +409,5 @@ export const useTableGroupProps = () => {
     selectedObjectsForDelete,
     isFilterOpen,
     filterHeight: Number(filterHeight),
-  }
-}
+  };
+};

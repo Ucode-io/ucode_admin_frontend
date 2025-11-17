@@ -1,0 +1,1 @@
+export { InfoBlockMonth } from "./InfoBlockMonth";

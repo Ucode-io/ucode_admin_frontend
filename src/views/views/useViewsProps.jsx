@@ -39,6 +39,7 @@ import { Board } from "./modules/Board";
 import { TableGroup } from "./modules/TableGroup";
 import { Grid, Tree } from "./modules/Grid";
 import { mergeStringAndState } from "@/utils/jsonPath";
+import { Calendar } from "./modules/Calendar";
 
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
@@ -152,7 +153,7 @@ export const useViewsProps = ({ isRelationView }) => {
     [VIEW_TYPES_MAP.GRID]: () => <Grid />,
     [VIEW_TYPES_MAP.BOARD]: () => <Board />,
     [VIEW_TYPES_MAP.TIMELINE]: () => <Timeline />,
-    [VIEW_TYPES_MAP.CALENDAR]: () => <></>,
+    [VIEW_TYPES_MAP.CALENDAR]: () => <Calendar />,
     [VIEW_TYPES_MAP.WEBSITE]: () => <></>,
     [VIEW_TYPES_MAP.SECTION]: (props) => (
       <MaterialUIProvider>

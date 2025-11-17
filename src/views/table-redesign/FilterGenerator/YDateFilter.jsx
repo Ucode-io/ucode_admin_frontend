@@ -77,7 +77,7 @@ function YDateFilter({ field, value, onChange = () => {}, name, withTime }) {
           <Box
             sx={{
               width: "205px",
-              height: "250px",
+              height: withTime ? "290px" : "250px",
               border: "1px solid #eee",
               borderRadius: "8px",
             }}

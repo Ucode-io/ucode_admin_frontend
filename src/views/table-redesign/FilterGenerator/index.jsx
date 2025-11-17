@@ -76,7 +76,7 @@ export const Filter = ({
         };
     });
   }, [field.attributes?.options, field.type]);
-  console.log(filters[name]);
+
   switch (field.type) {
     case "LOOKUP":
     case "LOOKUPS":

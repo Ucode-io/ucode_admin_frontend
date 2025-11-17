@@ -78,6 +78,7 @@ export const Views = ({
     fieldsForm,
     fields,
     isLoadingTable,
+    selectedTabIndex,
   } = useViewsProps({ isRelationView });
 
   return (
@@ -135,6 +136,7 @@ export const Views = ({
           setNoDates,
           noDates,
           isLoadingTable,
+          selectedTabIndex,
         }}
       >
         <FilterProvider

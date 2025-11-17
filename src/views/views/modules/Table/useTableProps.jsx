@@ -9,7 +9,6 @@ import {mergeStringAndState} from "@/utils/jsonPath";
 // import {listToMap} from "@/utils/listToMap";
 import {pageToOffset} from "@/utils/pageToOffset";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
 // import {useTranslation} from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
@@ -48,7 +47,6 @@ export const useTableProps = ({ tab }) => {
     setCurrentPage,
     searchText,
     checkedColumns,
-    setLayoutType,
     layoutType,
     setSelectedView,
     selectedView,

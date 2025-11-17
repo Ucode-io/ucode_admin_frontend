@@ -82,16 +82,18 @@ const CPagination = ({
         display: "flex",
         justifyContent: isGroupByTable ? "flex-end" : "space-between",
         alignItems: "center",
-        marginTop: "15px",
         paddingRight: "15px",
-      }}>
+        paddingTop: "10px",
+      }}
+    >
       <div
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           gap: "20px",
-        }}>
+        }}
+      >
         {!disablePagination && !isGroupByTable && (
           <div>
             {limit && (
@@ -103,7 +105,7 @@ const CPagination = ({
                   size="small"
                   value={paginiation ?? limit}
                   onChange={(e) => getLimitValue(e.target.value)}
-                  inputProps={{style: {borderRadius: 50}}}
+                  inputProps={{ style: { borderRadius: 50 } }}
                   endAdornment={null}
                   sx={null}
                 />
@@ -118,9 +120,10 @@ const CPagination = ({
             gap: "10px",
             color: "#6E7C87",
             alignItems: "center",
-          }}>
+          }}
+        >
           Count:
-          <strong style={{fontSize: "16px"}}> {props?.dataCount ?? 0}</strong>
+          <strong style={{ fontSize: "16px" }}> {props?.dataCount ?? 0}</strong>
         </div>
       </div>
       <div
@@ -129,7 +132,8 @@ const CPagination = ({
           alignItems: "center",
           gap: 10,
           marginLeft: "10px",
-        }}>
+        }}
+      >
         {selectedObjectsForDelete?.length > 0 && !disablePagination && (
           <CustomTableEvents
             control={control}
@@ -137,7 +141,6 @@ const CPagination = ({
             customEvents={custom_events}
           />
         )}
-
         {selectedObjectsForDelete?.length > 0 && !disablePagination ? (
           <RectangleIconButton color="error" onClick={multipleDelete}>
             <Button variant="outlined" color="error">
@@ -145,7 +148,6 @@ const CPagination = ({
             </Button>
           </RectangleIconButton>
         ) : null}
-
         <PermissionWrapperV2 tableSlug={tableSlug} type="write">
           {isTableView && (
             <Button
@@ -160,18 +162,18 @@ const CPagination = ({
                         selectedTab?.relation?.relation_table_slug,
                         "CREATE",
                         {},
-                        {id: id},
-                        menuId
+                        { id: id },
+                        menuId,
                       )
                     : navigateCreatePage();
                 }
-              }}>
-              <AddIcon style={{color: "#007AFF"}} />
+              }}
+            >
+              <AddIcon style={{ color: "#007AFF" }} />
               Add object
             </Button>
           )}
         </PermissionWrapperV2>
-
         {!disablePagination && !isGroupByTable && (
           <>
             <Pagination
@@ -182,7 +184,7 @@ const CPagination = ({
                   paginationActions.setTablePageCount({
                     tableSlug: tableSlug,
                     pageCount: val,
-                  })
+                  }),
                 );
               }}
               {...props}

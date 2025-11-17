@@ -36,6 +36,7 @@ import { ViewTabs } from "./components/ViewTabs";
 import { Table } from "./modules/Table";
 import { Timeline } from "./modules/Timeline";
 import { Board } from "./modules/Board";
+import { TableGroup } from "./modules/TableGroup";
 
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
@@ -86,6 +87,10 @@ export const useViewsProps = ({ isRelationView }) => {
   const setSelectedViewType = (value) => {
     dispatch(mainActions.setSelectedViewType(value));
   };
+
+  const view = selectedView;
+
+  const groupTable = view?.attributes?.group_by_columns;
   // const [selectedViewType, setSelectedViewType] = useState(
   //   localStorage?.getItem("detailPage"),
   // );
@@ -131,8 +136,12 @@ export const useViewsProps = ({ isRelationView }) => {
 
   const viewsMap = {
     [VIEW_TYPES_MAP.TABLE]: (props) => (
-      <MaterialUIProvider>
-        <Table {...props} />
+      <MaterialUIProvider style={{ height: "100%" }}>
+        {groupTable.length > 0 ? (
+          <TableGroup {...props} />
+        ) : (
+          <Table {...props} />
+        )}
       </MaterialUIProvider>
     ),
     [VIEW_TYPES_MAP.TREE]: () => <></>,
@@ -423,8 +432,6 @@ export const useViewsProps = ({ isRelationView }) => {
   const tableName =
     tableInfo?.attributes?.[`label_${i18n.language}`] || tableInfo?.label;
 
-  const view = selectedView;
-
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMap[groupFieldId];
   const { data: tabs } = useQuery(
@@ -562,5 +569,6 @@ export const useViewsProps = ({ isRelationView }) => {
     fieldsForm,
     fields,
     isLoadingTable,
+    selectedTabIndex,
   };
 };

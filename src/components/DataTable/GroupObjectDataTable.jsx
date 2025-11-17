@@ -15,30 +15,24 @@ const GroupObjectDataTable = ({
   loader = false,
   setDrawerState,
   removableHeight,
-  additionalRow,
   mainForm,
-  elementHeight,
   selectedView,
   isTableView = false,
   remove,
   multipleDelete,
-  openFieldSettings,
   sortedDatas,
   fields = [],
-  isRelationTable,
   disablePagination,
   currentPage = 1,
   onPaginationChange = () => {},
   pagesCount = 1,
   setSortedDatas,
   columns = [],
-  relatedTableSlug,
   watch,
   control,
   setFormValue,
   dataLength,
   onDeleteClick,
-  onEditClick,
   onRowClick = () => {},
   filterChangeHandler = () => {},
   filters,
@@ -55,7 +49,6 @@ const GroupObjectDataTable = ({
   setLimit,
   isChecked,
   formVisible,
-  summaries,
   relationAction,
   onChecked,
   defaultLimit,
@@ -114,7 +107,7 @@ const GroupObjectDataTable = ({
         const dx = e.clientX - x;
         const colID = col.getAttribute("id");
         const colWidth = w + dx;
-        dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth}));
+        dispatch(tableSizeAction.setTableSize({ pageName, colID, colWidth }));
         dispatch(
           tableSizeAction.setTableSettings({
             pageName,
@@ -122,7 +115,7 @@ const GroupObjectDataTable = ({
             colWidth,
             isStiky: "ineffective",
             colIdx: idx - 1,
-          })
+          }),
         );
         col.style.width = `${colWidth}px`;
       };
@@ -140,7 +133,9 @@ const GroupObjectDataTable = ({
   }, [data, isResizeble, pageName, dispatch]);
 
   const handleAutoSize = (colID, colIdx) => {
-    dispatch(tableSizeAction.setTableSize({pageName, colID, colWidth: "auto"}));
+    dispatch(
+      tableSizeAction.setTableSize({ pageName, colID, colWidth: "auto" }),
+    );
     const element = document.getElementById(colID);
     element.style.width = "auto";
     element.style.minWidth = "auto";
@@ -151,7 +146,7 @@ const GroupObjectDataTable = ({
         colWidth: element.offsetWidth,
         isStiky: "ineffective",
         colIdx,
-      })
+      }),
     );
     setColumnId("");
   };
@@ -164,7 +159,7 @@ const GroupObjectDataTable = ({
         colWidth: currentColumnWidth,
         isStiky: true,
         colIdx,
-      })
+      }),
     );
     setColumnId("");
   };
@@ -232,13 +227,15 @@ const GroupObjectDataTable = ({
         paginationExtraButton={paginationExtraButton}
         limit={limit}
         setLimit={setLimit}
-        defaultLimit={defaultLimit}>
+        defaultLimit={defaultLimit}
+      >
         <CTableHead>
           <CTableRow>
             {columns.map(
               (column, index) =>
                 column?.attributes?.field_permission?.view_permission && (
                   <GroupTableHeadForTableView
+                    key={column.id}
                     column={column}
                     index={index}
                     pageName={pageName}
@@ -263,14 +260,15 @@ const GroupObjectDataTable = ({
                     tableSlug={tableSlug}
                     disableFilters={disableFilters}
                   />
-                )
+                ),
             )}
           </CTableRow>
         </CTableHead>
         <CTableBody
           columnsCount={columns.length}
           dataLength={dataLength || data?.length}
-          title={title}>
+          title={title}
+        >
           {data?.map((element, index) => (
             <RecursiveTable
               element={element}

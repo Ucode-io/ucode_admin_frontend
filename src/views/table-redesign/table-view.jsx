@@ -495,7 +495,7 @@ const TableView = ({
     } else {
       if (new_router) {
         updateQueryWithoutRerender("p", row?.guid);
-        if (view?.attributes?.url_object) {
+        if (view?.attributes?.navigate?.url) {
           navigateToDetailPage(row);
         } else if (projectInfo?.new_layout) {
           setSelectedRow(row);

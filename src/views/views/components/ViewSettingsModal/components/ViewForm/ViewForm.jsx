@@ -19,14 +19,12 @@ export const ViewForm = ({
   typeNewView,
   closeForm,
   defaultViewTab,
-  fields,
   refetchViews,
   setIsChanged,
   columns,
   relationColumns,
   views,
   viewData,
-  setTab,
 }) => {
   const { tableSlug, appId } = useParams();
   const [btnLoader, setBtnLoader] = useState(false);
@@ -57,7 +55,7 @@ export const ViewForm = ({
   const newUi = JSON.parse(
     !storageItem || storageItem === "undefined" || storageItem === "false"
       ? "false"
-      : "true"
+      : "true",
   );
 
   const form = useForm();
@@ -141,7 +139,7 @@ export const ViewForm = ({
         numberFieldValue,
         navigate,
         group_by_columns,
-        nameMulti
+        nameMulti,
       ),
       filters: [],
     });
@@ -162,7 +160,7 @@ export const ViewForm = ({
         ...computeFinancialAcc(
           values.chartOfAccounts,
           values?.group_by_field_selected?.slug,
-          values
+          values,
         ),
 
         ...values?.attributes,
@@ -174,7 +172,7 @@ export const ViewForm = ({
       name:
         values?.attributes?.[`name_${i18n.language}`] ??
         Object.values(values?.attributes).find(
-          (item) => typeof item === "string"
+          (item) => typeof item === "string",
         ),
       app_id: appId,
       order: views?.length ?? 0,
@@ -204,9 +202,9 @@ export const ViewForm = ({
           dispatch(
             quickFiltersActions.setQuickFiltersCount(
               values?.attributes?.quick_filters?.filter(
-                (item) => item?.is_checked
-              )?.length
-            )
+                (item) => item?.is_checked,
+              )?.length,
+            ),
           );
         });
     }
@@ -244,7 +242,7 @@ export const ViewForm = ({
               <Tab className={cls.tab} selectedClassName={cls.active}>
                 Navigation
               </Tab>
-              {type === "FINANCE CALENDAR" && <Tab>Chart of accaunts</Tab>}
+              {type === "FINANCE CALENDAR" && <Tab>Chart of accounts</Tab>}
             </TabList>
             <TabPanel>
               <div className={cls.section}>
@@ -284,7 +282,8 @@ export const ViewForm = ({
 
       <div className={cls.formFooter}>
         {initialValues !== "NEW" &&
-          initialValues?.attributes?.view_permission?.delete && !newUi && (
+          initialValues?.attributes?.view_permission?.delete &&
+          !newUi && (
             <CancelButton
               loading={deleteBtnLoader}
               onClick={deleteView}

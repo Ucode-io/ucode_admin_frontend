@@ -1,0 +1,53 @@
+.tableCardHeader {
+  box-shadow: inset 0px -1px 0px #e5e9eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  // margin-bottom: 10px;
+  height: 40px !important;
+  width: 100%;
+  overflow-x: scroll;
+  padding: 0 16px;
+  background: #fff;
+}
+
+.reactTabsList {
+  display: flex;
+  overflow: hidden !important;
+  height: 40px;
+}
+
+.reactTabsTab {
+  margin-bottom: 2px;
+}
+
+.activeTab {
+  color: #2d6ce5 !important;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500 !important;
+  line-height: normal;
+  white-space: nowrap;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -2px;
+    width: 70%;
+    height: 4px;
+    border-radius: 2px 2px 0px 0px;
+    background: #2d6ce5;
+    transform: translateX(-50%);
+  }
+}
+
+.disableTab {
+  color: #a8a8a8 !important;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500 !important;
+  line-height: normal;
+  white-space: nowrap;
+  height: 25px !important;
+}

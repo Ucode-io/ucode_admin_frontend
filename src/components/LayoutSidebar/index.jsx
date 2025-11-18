@@ -478,7 +478,7 @@ const LayoutSidebar = ({
       >
         <Flex
           position="absolute"
-          zIndex={999}
+          zIndex={30}
           w={25}
           h={25}
           alignItems="center"

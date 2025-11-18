@@ -125,6 +125,7 @@ export const HeaderFilter = ({
               tableLan={tableLan}
               views={overflowedViews}
               setViewAnchorEl={setViewAnchorEl}
+              getViewName={getViewName}
             />
           )}
         </Flex>
@@ -255,15 +256,15 @@ export const HeaderFilter = ({
                 </Button>
               </PermissionWrapperV2>
             )}
-            <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
-              <ViewOptions
-                handleOpenPopup={handleOpenPopup}
-                isChanged={isChanged}
-                setIsChanged={setIsChanged}
-                settingsForm={settingsForm}
-              />
-            </PermissionWrapperV2>
           </>
+        )}
+        {viewType !== VIEW_TYPES_MAP.SECTION && (
+          <ViewOptions
+            handleOpenPopup={handleOpenPopup}
+            isChanged={isChanged}
+            setIsChanged={setIsChanged}
+            settingsForm={settingsForm}
+          />
         )}
       </Flex>
       {view?.attributes?.quick_filters?.length > 0 && <FiltersList />}

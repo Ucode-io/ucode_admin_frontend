@@ -39,18 +39,24 @@ export const FieldButton = ({
   setFormType,
   renderColumns,
 }) => {
-  const { menuItem, viewForm, tableSlug, view, refetchTableInfo } =
-    useViewContext();
+  const {
+    menuItem,
+    viewForm,
+    tableSlug,
+    view,
+    refetchTableInfo,
+    refetchViews,
+  } = useViewContext();
 
   const submitCallback = () => {
     refetchTableInfo();
+    // refetchViews();
   };
 
   const deleteCallback = () => {
     refetchTableInfo();
   };
 
-  const queryClient = useQueryClient();
   const languages = useSelector((state) => state.languages.list);
   const dispatch = useDispatch();
   const { control, watch, setValue, reset, handleSubmit, register } = useForm();
@@ -70,15 +76,16 @@ export const FieldButton = ({
   const handleCloseFieldDrawer = () => {
     setFieldCreateAnchor(null);
     if (isUpdatedField) {
-      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      queryClient.refetchQueries(["FIELDS"]);
-      queryClient.refetchQueries(["GET_OBJECTS_LIST"]);
+      refetchViews();
+      refetchTableInfo();
+      // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+      // queryClient.refetchQueries(["FIELDS"]);
+      // queryClient.refetchQueries(["GET_OBJECTS_LIST"]);
       setIsUpdatedField(false);
     }
   };
 
   const updateView = (column) => {
-    console.log("UPDATE FIELD");
     constructorViewService
       .update(tableSlug, {
         ...view,
@@ -87,16 +94,18 @@ export const FieldButton = ({
           : [column],
       })
       .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries(["FIELDS"]);
-        queryClient.refetchQueries(["GET_OBJECTS_LIST"]);
+        refetchViews();
+        refetchTableInfo();
+        // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        // queryClient.refetchQueries(["FIELDS"]);
+        // queryClient.refetchQueries(["GET_OBJECTS_LIST"]);
       });
   };
 
   const { mutate: createField } = useFieldCreateMutation({
     onSuccess: (res) => {
       reset({});
-      queryClient.refetchQueries(["GET_VIEWS_LIST"]);
+      // queryClient.refetchQueries(["GET_VIEWS_LIST"]);
       setFieldOptionAnchor(null);
       setFieldCreateAnchor(null);
       dispatch(showAlert("Successful created", "success"));
@@ -196,8 +205,7 @@ export const FieldButton = ({
       if (values?.type === "RELATION") {
         createRelation({ data: relationData, tableSlug });
       }
-    }
-    if (fieldData) {
+    } else if (fieldData) {
       if (values?.view_fields) {
         updateRelation({ data: values, tableSlug });
       } else {

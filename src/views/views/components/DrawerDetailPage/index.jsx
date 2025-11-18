@@ -1,21 +1,29 @@
 import cls from "./style.module.scss";
-import {Box, Drawer, DrawerContent} from "@chakra-ui/react";
-import React, {useEffect, useRef, useState} from "react";
-import {useForm} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useParams} from "react-router-dom";
+import { Box, Drawer, DrawerContent, DrawerOverlay } from "@chakra-ui/react";
+import React, { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 import constructorObjectService from "@/services/constructorObjectService";
 import layoutService from "@/services/layoutService";
-import menuService from "@/services/menuService";
-import {store} from "@/store";
-import {showAlert} from "@/store/alert/alert.thunk";
-import {detailDrawerActions} from "@/store/detailDrawer/detailDrawer.slice";
-import {groupFieldActions} from "@/store/groupField/groupField.slice";
-import {sortSections} from "@/utils/sectionsOrderNumber";
-import {updateQueryWithoutRerender} from "@/utils/useSafeQueryUpdater";
+import { store } from "@/store";
+import { showAlert } from "@/store/alert/alert.thunk";
+import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
+import { groupFieldActions } from "@/store/groupField/groupField.slice";
+import { sortSections } from "@/utils/sectionsOrderNumber";
+import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
 import DrawerObjectsPage from "./DrawerObjectsPage";
+import {
+  SIDEBAR_CLOSED_WIDTH,
+  SIDEBAR_OPENED_WIDTH,
+} from "@/utils/constants/main";
+import { DRAWER_VIEW_TYPES } from "@/utils/constants/drawerConstants";
+import { useViewContext } from "@/providers/ViewProvider";
+import clsx from "clsx";
+import { menuService } from "@/services/menuService/menu.service";
+import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 
 function DrawerDetailPage({
   view,
@@ -26,18 +34,18 @@ function DrawerDetailPage({
   fullScreen = false,
   projectInfo,
   defaultValue,
-  selectedViewType,
   setFullScreen = () => {},
-  setSelectedViewType = () => {},
   modal,
   tableSlug,
   menuId,
 }) {
-  const {i18n} = useTranslation();
+  const { selectedViewType, setSelectedViewType } = useViewContext();
+
+  const { i18n } = useTranslation();
 
   const dispatch = useDispatch();
 
-  const {state = {}} = useLocation();
+  const { state = {} } = useLocation();
 
   const menu = store.getState().menu;
 
@@ -45,8 +53,10 @@ function DrawerDetailPage({
 
   const queryClient = useQueryClient();
 
+  const size = selectedViewType === DRAWER_VIEW_TYPES.FullPage ? "full" : "xs";
+
   const viewsPath = useSelector((state) => state.groupField.viewsList);
-  
+
   const selectedV =
     viewsPath?.length > 1 ? viewsPath?.[viewsPath?.length - 1] : viewsPath?.[0];
 
@@ -67,12 +77,15 @@ function DrawerDetailPage({
   const itemId = query.get("p");
   const fieldSlug = query.get("field_slug");
 
-  const open = useSelector((state) => state?.drawer?.openDrawer) || !!viewId
+  const open = useSelector((state) => state?.drawer?.openDrawer);
+
+  const sidebarIsOpen = useSelector(
+    (state) => state.main.settingsSidebarIsOpen,
+  );
 
   const drawerRef = useRef(null);
   const startX = useRef(0);
   const startWidth = useRef(0);
-
 
   const [drawerWidth, setDrawerWidth] = useState(() => {
     const savedWidth = localStorage.getItem("drawerWidth");
@@ -91,12 +104,12 @@ function DrawerDetailPage({
     // } else if (action !== "close" && Boolean(!itemId)) {
     //   onSubmit(rootForm?.getValues());
     // } else {
+    updateQueryWithoutRerender("p", null);
+    updateQueryWithoutRerender("dv", null);
     dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
     dispatch(groupFieldActions.trimViewsDataUntil(viewsPath?.[0]));
     dispatch(detailDrawerActions.setDrawerTabIndex(0));
     dispatch(detailDrawerActions.closeDrawer());
-    updateQueryWithoutRerender("p", null);
-    updateQueryWithoutRerender("dv", null);
     // updateQueryWithoutRerender("v", view?.id);
     // }
   };
@@ -104,18 +117,13 @@ function DrawerDetailPage({
   const getData = async () => {
     setLoader(true);
 
-    const isSection = Boolean(itemId) &&
-      selectedView?.type === "SECTION" &&
-      Boolean(tableSlug)
-
     try {
-
       const filteredTabs = {
         tabs: layout?.tabs?.filter(
           (tab) =>
             tab?.relation?.permission?.view_permission === true ||
-            tab?.type === "section"
-        )
+            tab?.type === "section",
+        ),
       };
 
       const computedLayout = {
@@ -158,24 +166,31 @@ function DrawerDetailPage({
             relation.table_from?.slug === tableSlug
               ? relation.table_to?.slug
               : relation.table_from?.slug,
-        }))
+        })),
       );
-
-      if(isSection) {
-        const getFormData = menuService.getFieldsTableDataById(
-          menuId,
-          viewId,
-          tableSlug,
-          itemId
-        );
-        const {data} = await getFormData;
-        rootForm.reset(data?.response ?? {});
-      }
 
       setLoader(false);
     } catch (error) {
       setLoader(false);
       console.error(error);
+    }
+  };
+
+  const getItems = async () => {
+    const isSection =
+      Boolean(itemId) &&
+      selectedView?.type === VIEW_TYPES_MAP.SECTION &&
+      Boolean(tableSlug);
+
+    if (isSection) {
+      const getFormData = menuService.getFieldsTableDataById(
+        menuId,
+        viewId,
+        tableSlug,
+        itemId,
+      );
+      const { data } = await getFormData;
+      rootForm.reset(data?.response ?? {});
     }
   };
 
@@ -189,7 +204,7 @@ function DrawerDetailPage({
               layout_heading: rootForm.watch("attributes.layout_heading"),
             },
           }
-        : tab
+        : tab,
     );
 
     const currentUpdatedLayout = {
@@ -202,7 +217,7 @@ function DrawerDetailPage({
 
   function create(data) {
     constructorObjectService
-      .create(tableSlug, {data})
+      .create(tableSlug, { data })
       .then(() => {
         updateLayout();
         dispatch(detailDrawerActions.closeDrawer());
@@ -254,7 +269,7 @@ function DrawerDetailPage({
         //   table_slug: tableSlug,
         // });
       })
-      .catch((e) => console.log("ERROR: ", e))
+      .catch((e) => console.log("ERROR: ", e));
   };
 
   const onSubmit = (data) => {
@@ -302,11 +317,12 @@ function DrawerDetailPage({
 
   useEffect(() => {
     if (drawerRef.current) {
-      drawerRef.current.style.width = `${drawerWidth ?? 1050}px`;
+      drawerRef.current.style.width =
+        size === "full" ? "100%" : `${drawerWidth ?? 1050}px`;
       drawerRef.current.closest(".chakra-portal").style.position = "relative";
       drawerRef.current.closest(".chakra-portal").style.zIndex = 40;
     }
-  }, [drawerRef.current]);
+  }, [drawerRef.current, drawerWidth, size]);
 
   useEffect(() => {
     if (defaultValue) {
@@ -323,18 +339,34 @@ function DrawerDetailPage({
   }, [defaultValue]);
 
   useEffect(() => {
-    if(open) {
+    if (open) {
       getData();
     }
   }, [itemId, selectedView, open, layout]);
 
+  useEffect(() => {
+    if (open && viewId) {
+      getItems();
+    }
+  }, [itemId, viewId, tableSlug, open]);
+
   return (
-    <>
-    <Drawer isOpen={open} placement="right" onClose={handleClose}>
+    <Drawer isOpen={open} placement="right" onClose={handleClose} size={size}>
+      {selectedViewType === DRAWER_VIEW_TYPES.CenterPeek && <DrawerOverlay />}
       <DrawerContent
-        className={cls.drawerContent}
+        className={clsx(cls.drawerContent, {
+          [cls.centerPeek]:
+            selectedViewType === DRAWER_VIEW_TYPES.CenterPeek && open,
+        })}
         ref={drawerRef}
-        style={{width: `${drawerWidth}px`}}
+        style={{
+          width: size === "full" ? "100%" : `${drawerWidth}px`,
+          maxWidth: `calc(100vw - ${sidebarIsOpen ? SIDEBAR_OPENED_WIDTH : SIDEBAR_CLOSED_WIDTH}px)`,
+          boxShadow:
+            size === "full"
+              ? "none"
+              : "0px 0px 16px 1px rgba(15, 15, 15, 0.04), 0px 12px 16px rgba(15, 15, 15, 0.15), 0px 9px 24px rgba(15, 15, 15, 0.06)",
+        }}
       >
         <Box zIndex={9}>
           <DrawerObjectsPage
@@ -361,13 +393,11 @@ function DrawerDetailPage({
             setSelectedViewType={setSelectedViewType}
           />
         </Box>
-        <Box
-          onMouseDown={handleMouseDown}
-          className={cls.resizer}
-        />
+        {selectedViewType === DRAWER_VIEW_TYPES.SidePeek && (
+          <Box onMouseDown={handleMouseDown} className={cls.resizer} />
+        )}
       </DrawerContent>
     </Drawer>
-    </>
   );
 }
 

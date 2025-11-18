@@ -35,6 +35,7 @@ export const ViewCreatePopup = ({
     handleClose,
     handleClosePop,
     refetchViews,
+    viewAnchorEl,
   });
 
   return (

@@ -28,7 +28,7 @@ export const HFDatePickerField = ({
       defaultValue={defaultValue || undefined}
       render={({field: {onChange, value}}) => {
         return (
-          <Box position="relative" zIndex={9999}>
+          <Box position="relative" zIndex={100}>
             <DatePickerInput
               placeholder={placeholder}
               id="dateField"

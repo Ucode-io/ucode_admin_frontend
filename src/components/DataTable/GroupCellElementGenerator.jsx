@@ -231,7 +231,7 @@ const GroupCellElementGenerator = ({ field = {}, row, view, index }) => {
   // ) : (
   //   typeof value === 'object' ? JSON.stringify(value) :
   // )
-  console.log(field.type);
+
   switch (field.type) {
     case "LOOKUPS":
       return <Many2ManyValue field={field} value={value} />;
@@ -370,6 +370,24 @@ const GroupCellElementGenerator = ({ field = {}, row, view, index }) => {
       ) : (
         ""
       );
+    case "MULTI_FILE":
+      return value?.length > 0
+        ? value?.map((item, index) => (
+            <a
+              key={index}
+              href={item}
+              className=""
+              download
+              target="_blank"
+              onClick={(e) => e.stopPropagation()}
+              rel="noreferrer"
+            >
+              <DownloadIcon
+                style={{ width: "25px", height: "25px", fontSize: "30px" }}
+              />
+            </a>
+          ))
+        : "";
 
     default:
       if (typeof value === "object") return JSON.stringify(value);

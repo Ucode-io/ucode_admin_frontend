@@ -146,9 +146,10 @@ export default function GroupByButton({
               ? "rgb(0, 122, 255)"
               : "#A8A8A8",
         }}
-        onClick={handleClick}>
+        onClick={handleClick}
+      >
         {updateLoading ? (
-          <Box sx={{display: "flex", width: "22px", height: "22px"}}>
+          <Box sx={{ display: "flex", width: "22px", height: "22px" }}>
             <CircularProgress
               style={{
                 width: "22px",
@@ -190,7 +191,8 @@ export default function GroupByButton({
             onClick={(e) => {
               e.stopPropagation();
               disableAll();
-            }}>
+            }}
+          >
             <CloseRoundedIcon
               style={{
                 color:
@@ -238,36 +240,42 @@ export default function GroupByButton({
               zIndex: 0,
             },
           },
-        }}>
+        }}
+      >
         <div
           style={{
             maxHeight: 300,
             overflowY: "auto",
             padding: "10px 14px",
             minWidth: "200px",
-          }}>
+          }}
+        >
           {updatedColumns?.length ? (
             updatedColumns?.map((column) => (
               <div
+                key={column?.id}
                 style={{
                   padding: "6px 0",
                   // borderBottom: "1px solid #eee",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                }}>
+                }}
+              >
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
                     gap: "10px",
-                  }}>
+                  }}
+                >
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                    }}>
+                    }}
+                  >
                     {column?.type && columnIcons(column?.type)}
                   </div>
 
@@ -303,7 +311,7 @@ export default function GroupByButton({
               </div>
             ))
           ) : (
-            <Box style={{padding: "10px"}}>
+            <Box style={{ padding: "10px" }}>
               <Typography>No columns to set group!</Typography>
             </Box>
           )}

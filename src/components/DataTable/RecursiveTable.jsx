@@ -3,23 +3,18 @@ import GroupCellElementGenerator from "./GroupCellElementGenerator";
 import {useSelector} from "react-redux";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import {Box, Button} from "@mui/material";
-import {get} from "@ngard/tiny-get";
-import {getRelationFieldTableCellLabel} from "../../utils/getRelationFieldLabel";
+import { Box } from "@mui/material";
 import {useState} from "react";
 
 const RecursiveTable = ({
   element,
   index,
   columns,
-  width,
   control,
   onRowClick,
   calculateWidthFixedColumn,
   onDeleteClick,
   mainForm,
-  checkboxValue,
-  onCheckboxChange,
   currentPage,
   view,
   selectedObjectsForDelete,
@@ -38,7 +33,6 @@ const RecursiveTable = ({
   onChecked,
   relationFields,
   data,
-  style,
 }) => {
   const [childBlockVisible, setChildBlockVisible] = useState(false);
   const tableHeight = useSelector((state) => state.tableSize.tableHeight);
@@ -75,7 +69,7 @@ const RecursiveTable = ({
                   padding: "0 5px",
                   position: `${
                     tableSettings?.[pageName]?.find(
-                      (item) => item?.id === column?.id
+                      (item) => item?.id === column?.id,
                     )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                       ? "sticky"
                       : "relative"
@@ -85,7 +79,7 @@ const RecursiveTable = ({
                     : "0",
                   backgroundColor: `${
                     tableSettings?.[pageName]?.find(
-                      (item) => item?.id === column?.id
+                      (item) => item?.id === column?.id,
                     )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                       ? "#F6F6F6"
                       : "#fff"
@@ -94,7 +88,8 @@ const RecursiveTable = ({
                 }}
                 onClick={() => {
                   element?.guid ? onRowClick(element, index) : clickHandler();
-                }}>
+                }}
+              >
                 <Box display={"flex"} alignItems={"center"}>
                   {filteredColumns.find((item) => item.id === column.id) &&
                   element?.data?.length ? (
@@ -145,7 +140,6 @@ const RecursiveTable = ({
             onRowClick={onRowClick}
             isChecked={isChecked}
             calculateWidthFixedColumn={calculateWidthFixedColumn}
-            onCheckboxChange={onCheckboxChange}
             currentPage={currentPage}
             limit={limit}
             setFormValue={setFormValue}

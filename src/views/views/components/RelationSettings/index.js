@@ -1,0 +1,1 @@
+export { RelationSettings } from "./RelationSettings";

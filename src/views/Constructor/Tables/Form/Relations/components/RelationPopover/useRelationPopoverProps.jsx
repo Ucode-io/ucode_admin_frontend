@@ -93,9 +93,9 @@ export const useRelationPopoverProps = ({
             ...data,
             label: Object.values(data?.attributes).find((item) => item),
           },
-          tableSlug
+          tableSlug,
         )
-        .then((res) => {
+        .then(() => {
           updateRelations();
         })
         .finally(() => {
@@ -105,7 +105,7 @@ export const useRelationPopoverProps = ({
     } else {
       constructorRelationService
         .update(data, tableSlug)
-        .then((res) => {
+        .then(() => {
           updateRelations();
         })
         .finally(() => {

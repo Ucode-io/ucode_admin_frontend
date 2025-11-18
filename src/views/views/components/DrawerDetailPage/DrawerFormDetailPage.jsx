@@ -133,8 +133,12 @@ function DrawerFormDetailPage({
 
   const getFieldLanguageLabel = (el) => {
     if (el?.type === FIELD_TYPES.LOOKUP || el?.type === FIELD_TYPES.LOOKUPS) {
-      console.log(el)
-      return el?.attributes?.[`label_${i18n?.language}`] || el?.attributes?.label || el?.attributes?.label_en || "";
+      return (
+        el?.attributes?.[`label_${i18n?.language}`] ||
+        el?.attributes?.label ||
+        el?.attributes?.label_en ||
+        ""
+      );
     }
     if (el?.enable_multilanguage) {
       return el?.attributes?.show_label
@@ -158,7 +162,7 @@ function DrawerFormDetailPage({
       field?.enable_multilanguage || field?.enable_multi_language
         ? field?.enable_multilanguage || field?.enable_multi_language
         : (field?.attributes?.enable_multilanguage ||
-            field?.attributes?.enable_multi_language) === true
+            field?.attributes?.enable_multi_language) === true,
     );
   }, [selectedTab]);
 
@@ -206,7 +210,7 @@ function DrawerFormDetailPage({
     <MaterialUIProvider>
       <Box
         mt="10px"
-        sx={{ height: "calc(100vh - 94px)" }}
+        // sx={{ height: "calc(100vh - 94px)" }}
         pb={"10px"}
         overflow={"auto"}
         display="flex"
@@ -243,7 +247,7 @@ function DrawerFormDetailPage({
         <Box
           sx={{
             overflow: "auto",
-            height: "calc(100vh - 94px)",
+            height: "calc(100vh - 200px)",
           }}
         >
           {sections?.map((section, secIndex) => (

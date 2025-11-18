@@ -1,6 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-export const {actions: detailDrawerActions, reducer: detailDrawerReducer} =
+export const { actions: detailDrawerActions, reducer: detailDrawerReducer } =
   createSlice({
     name: "detailDrawer",
     initialState: {

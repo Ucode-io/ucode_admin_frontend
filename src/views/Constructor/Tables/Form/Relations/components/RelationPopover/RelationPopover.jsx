@@ -56,18 +56,22 @@ export const RelationPopover = ({
           overflowY: "visible",
           overflowX: "visible",
         },
-      }}>
+      }}
+    >
       <Box position="relative">
         <Box
           padding="12px 8px"
           minWidth="292px"
+          maxWidth="350px"
           maxHeight="500px"
-          overflow="auto">
+          overflow="auto"
+        >
           {selectedSettings ? (
             <AdvancedSettings
               onClose={innerClose}
               onBackClick={() => handleSelectSetting(null)}
-              title={selectedSettings}>
+              title={selectedSettings}
+            >
               {getSelectedSettings(selectedSettings)}
             </AdvancedSettings>
           ) : (

@@ -123,7 +123,7 @@ export const DynamicTable = ({
                       <Skeleton
                         height="32px"
                         width="316px"
-                        startColor="#d9d6d6"
+                        startColor="#F9FAFB"
                         endColor="#ffffff"
                       />
                     </th>

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import constructorObjectService from "@/services/constructorObjectService";
 import layoutService from "@/services/layoutService";
 import menuService from "@/services/menuService";
@@ -76,8 +76,7 @@ function DrawerDetailPage({
   const itemId = query.get("p");
   const fieldSlug = query.get("field_slug");
 
-  const open =
-    useSelector((state) => state?.drawer?.openDrawer) || (viewId && itemId);
+  const open = useSelector((state) => state?.drawer?.openDrawer);
 
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen,
@@ -104,12 +103,12 @@ function DrawerDetailPage({
     // } else if (action !== "close" && Boolean(!itemId)) {
     //   onSubmit(rootForm?.getValues());
     // } else {
+    updateQueryWithoutRerender("p", null);
+    updateQueryWithoutRerender("dv", null);
     dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
     dispatch(groupFieldActions.trimViewsDataUntil(viewsPath?.[0]));
     dispatch(detailDrawerActions.setDrawerTabIndex(0));
     dispatch(detailDrawerActions.closeDrawer());
-    updateQueryWithoutRerender("p", null);
-    updateQueryWithoutRerender("dv", null);
     // updateQueryWithoutRerender("v", view?.id);
     // }
   };

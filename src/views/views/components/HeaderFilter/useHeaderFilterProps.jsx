@@ -64,8 +64,8 @@ export const useHeaderFilterProps = () => {
   const getViewName = (view) => {
     return view?.is_relation_view
       ? view?.attributes?.[`name_${i18n?.language}`] ||
-          view?.table_label ||
-          view?.type
+          view?.type ||
+          view?.table_label
       : view?.attributes?.[`name_${i18n?.language}`] ||
           view?.name ||
           view?.type;

@@ -266,12 +266,11 @@ export const useViewCreatePopupProps = ({
     }
   };
 
-  const { data, refetch } = useQuery(
-    ["GET_VIEW_FIELDS_CREATE", i18n?.language, groupByTableSlug],
-    () =>
-      menuService.getFieldsListMenu(menuId, lastPath?.id, groupByTableSlug, {}),
+  const { data } = useQuery(
+    ["GET_VIEW_FIELDS_CREATE", i18n?.language, tableSlug],
+    () => menuService.getFieldsListMenu(menuId, lastPath?.id, tableSlug, {}),
     {
-      enabled: Boolean(groupByTableSlug && relationView),
+      enabled: Boolean(tableSlug && relationView),
       select: ({ data }) => ({
         fieldsMapRelRelation: listToMapWithoutRel(data?.fields ?? []),
       }),
@@ -430,7 +429,7 @@ export const useViewCreatePopupProps = ({
                     dispatch(groupFieldActions.addGroupBySlug(e));
                     setValue("table_slug", e);
                     if (relationView) {
-                      refetch();
+                      // refetch();
                     }
                   }}
                 />

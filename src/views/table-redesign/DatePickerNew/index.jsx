@@ -90,7 +90,9 @@ function HFDatePickerNew({
                   rhfField.onChange(val);
                   updateObject();
                   return;
-                } catch {}
+                } catch (e) {
+                  console.log(e);
+                }
               }}
               disabled={disabled}
             >

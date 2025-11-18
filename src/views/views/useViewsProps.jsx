@@ -56,8 +56,8 @@ export const useViewsProps = ({ isRelationView }) => {
 
   const initialTableInfo = useSelector((state) => state.drawer.tableInfo);
 
-  const lastPath = viewsPath?.[viewsPath.length - 1];
-  const selectedV = viewsList?.[viewsList.length - 1];
+  const lastPath = viewsPath?.[viewsPath?.length - 1];
+  const selectedV = viewsList?.[viewsList?.length - 1];
 
   const paginationCounts = useSelector(
     (state) => state?.pagination?.paginationCount,
@@ -143,7 +143,7 @@ export const useViewsProps = ({ isRelationView }) => {
   const viewsMap = {
     [VIEW_TYPES_MAP.TABLE]: (props) => (
       <MaterialUIProvider style={{ height: "100%" }}>
-        {groupTable.length > 0 ? (
+        {groupTable?.length > 0 ? (
           <TableGroup {...props} />
         ) : (
           <Table {...props} />

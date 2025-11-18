@@ -7,14 +7,14 @@ export const ViewCreate = ({
   handleSelectViewType,
 }) => {
   const { computedViewTypes, viewIcons } = useViewCreateProps();
-  console.log("computedViewTypes", computedViewTypes);
+
   return (
     <Box className={cls.paper}>
       <Box>
         <h3 className={cls.title}>New view</h3>
       </Box>
       <ul className={cls.list}>
-        {computedViewTypes.map((type, index) => (
+        {computedViewTypes.map((type) => (
           <li className={cls.item} key={type.value}>
             <button
               className={cls.button}

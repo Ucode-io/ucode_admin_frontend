@@ -151,7 +151,7 @@ export const useHeaderFilterProps = () => {
     );
 
     let visible = views.slice(0, maxVisible);
-    let overflowed = views.slice(maxVisible);
+    let overflowed = views.slice(maxVisible - 1);
 
     if (overflowed.length > 0) {
       const chosenView = views.find((v) => v.id === viewId);

@@ -40,6 +40,7 @@ import { TableGroup } from "./modules/TableGroup";
 import { Grid, Tree } from "./modules/Grid";
 import { mergeStringAndState } from "@/utils/jsonPath";
 import { Calendar } from "./modules/Calendar";
+import { Website } from "./modules/Website";
 
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
@@ -154,7 +155,7 @@ export const useViewsProps = ({ isRelationView }) => {
     [VIEW_TYPES_MAP.BOARD]: () => <Board />,
     [VIEW_TYPES_MAP.TIMELINE]: () => <Timeline />,
     [VIEW_TYPES_MAP.CALENDAR]: () => <Calendar />,
-    [VIEW_TYPES_MAP.WEBSITE]: () => <></>,
+    [VIEW_TYPES_MAP.WEBSITE]: () => <Website view={view} />,
     [VIEW_TYPES_MAP.SECTION]: (props) => (
       <MaterialUIProvider>
         <Section {...props} />

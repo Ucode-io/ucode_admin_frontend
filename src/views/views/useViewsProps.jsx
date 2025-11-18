@@ -41,6 +41,7 @@ import { Grid, Tree } from "./modules/Grid";
 import { mergeStringAndState } from "@/utils/jsonPath";
 import { Calendar } from "./modules/Calendar";
 import { Website } from "./modules/Website";
+import { projectInfoActions } from "@/store/projectInfo/projectInfo.slice";
 
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
@@ -50,6 +51,9 @@ export const useViewsProps = ({ isRelationView }) => {
 
   const roleName = useSelector((state) => state.auth?.roleInfo?.name);
   const projectId = useSelector((state) => state.auth.projectId);
+
+  const projectInfo = useSelector((state) => state.projectInfo.projectInfo);
+  const menuItem = useSelector((state) => state.projectInfo.menuItem);
 
   const viewsPath = useSelector((state) => state.groupField.viewsPath);
   const viewsList = useSelector((state) => state.groupField.viewsList);
@@ -83,7 +87,7 @@ export const useViewsProps = ({ isRelationView }) => {
   const [relationViews, setRelationViews] = useState([]);
   const [selectedView, setSelectedView] = useState(null);
 
-  const [menuItem, setMenuItem] = useState(null);
+  // const [menuItem, setMenuItem] = useState(null);
   const [authInfo, setAuthInfo] = useState(null);
 
   const [sortPopupAnchorEl, setSortPopupAnchorEl] = useState(null);
@@ -119,7 +123,11 @@ export const useViewsProps = ({ isRelationView }) => {
     ? query.get("dv")
     : (query.get("v") ?? selectedView?.id);
 
-  const tableSlug = selectedView?.table_slug;
+  const tableSlug =
+    isRelationView && selectedView?.type !== VIEW_TYPES_MAP.SECTION
+      ? selectedView?.relation_table_slug
+      : selectedView?.table_slug;
+
   const viewType = selectedView?.type;
 
   const { filters } = useFilters(tableSlug, viewId);
@@ -138,7 +146,19 @@ export const useViewsProps = ({ isRelationView }) => {
     (state) => state.permissions.permissions?.[tableSlug],
   );
 
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
+  // const projectInfo = useSelector(
+  //   (state) => state.auth?.projectInfo?.[projectId],
+  // );
+
+  useProjectGetByIdQuery({
+    projectId,
+    queryParams: {
+      enabled: !Boolean(projectId && projectInfo),
+      onSuccess(data) {
+        dispatch(projectInfoActions.setProjectInfo(data));
+      },
+    },
+  });
 
   const viewsMap = {
     [VIEW_TYPES_MAP.TABLE]: (props) => (
@@ -468,9 +488,9 @@ export const useViewsProps = ({ isRelationView }) => {
   useMenuGetByIdQuery({
     menuId: menuId,
     queryParams: {
-      enabled: Boolean(menuId && menuId !== "login"),
+      enabled: Boolean(menuId && menuId !== "login" && !menuItem?.id),
       onSuccess: (res) => {
-        setMenuItem(res);
+        dispatch(projectInfoActions.setMenuItem(res));
       },
     },
   });

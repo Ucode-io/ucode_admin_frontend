@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import constructorObjectService from "@/services/constructorObjectService";
 import layoutService from "@/services/layoutService";
-import menuService from "@/services/menuService";
 import { store } from "@/store";
 import { showAlert } from "@/store/alert/alert.thunk";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
@@ -23,6 +22,8 @@ import {
 import { DRAWER_VIEW_TYPES } from "@/utils/constants/drawerConstants";
 import { useViewContext } from "@/providers/ViewProvider";
 import clsx from "clsx";
+import { menuService } from "@/services/menuService/menu.service";
+import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 
 function DrawerDetailPage({
   view,
@@ -116,9 +117,6 @@ function DrawerDetailPage({
   const getData = async () => {
     setLoader(true);
 
-    const isSection =
-      Boolean(itemId) && selectedView?.type === "SECTION" && Boolean(tableSlug);
-
     try {
       const filteredTabs = {
         tabs: layout?.tabs?.filter(
@@ -171,21 +169,28 @@ function DrawerDetailPage({
         })),
       );
 
-      if (isSection) {
-        const getFormData = menuService.getFieldsTableDataById(
-          menuId,
-          viewId,
-          tableSlug,
-          itemId,
-        );
-        const { data } = await getFormData;
-        rootForm.reset(data?.response ?? {});
-      }
-
       setLoader(false);
     } catch (error) {
       setLoader(false);
       console.error(error);
+    }
+  };
+
+  const getItems = async () => {
+    const isSection =
+      Boolean(itemId) &&
+      selectedView?.type === VIEW_TYPES_MAP.SECTION &&
+      Boolean(tableSlug);
+
+    if (isSection) {
+      const getFormData = menuService.getFieldsTableDataById(
+        menuId,
+        viewId,
+        tableSlug,
+        itemId,
+      );
+      const { data } = await getFormData;
+      rootForm.reset(data?.response ?? {});
     }
   };
 
@@ -338,6 +343,12 @@ function DrawerDetailPage({
       getData();
     }
   }, [itemId, selectedView, open, layout]);
+
+  useEffect(() => {
+    if (open && viewId) {
+      getItems();
+    }
+  }, [itemId, viewId, tableSlug, open]);
 
   return (
     <Drawer isOpen={open} placement="right" onClose={handleClose} size={size}>

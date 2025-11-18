@@ -25,6 +25,7 @@ export const useViewCreatePopupProps = ({
   views,
   fieldsMapRel = {},
   fieldsMap = {},
+  viewAnchorEl,
   handleClose = () => {},
   handleClosePop = () => {},
   refetchViews = () => {},
@@ -314,7 +315,7 @@ export const useViewCreatePopupProps = ({
       });
     },
     {
-      enabled: Boolean(table_slug && !relationView),
+      enabled: Boolean(table_slug && !relationView && !viewAnchorEl),
       // cacheTime: 10,
       select: (res) => {
         const fields = res?.data?.fields ?? [];
@@ -332,7 +333,7 @@ export const useViewCreatePopupProps = ({
       });
     },
     {
-      enabled: Boolean(watch("table_slug")),
+      enabled: Boolean(watch("table_slug") && !!viewAnchorEl),
       cacheTime: 10,
       select: (res) => {
         const fields = res?.data?.fields ?? [];

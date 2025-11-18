@@ -243,6 +243,8 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler]);
 
+  const [enabled, setEnabled] = useState(false);
+
   const { data: optionsFromFunctions } = useQuery(
     ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue, page],
     () => {
@@ -266,7 +268,7 @@ const AutoCompleteElement = ({
       );
     },
     {
-      enabled: !!field?.attributes?.function_path,
+      enabled: Boolean(!!field?.attributes?.function_path && enabled),
       select: (res) => {
         const options = res?.data?.response ?? [];
         const slugOptions =
@@ -305,7 +307,9 @@ const AutoCompleteElement = ({
     ["GET_OBJECT_LIST", page, tableSlug, debouncedValue, autoFiltersValue],
     queryFn,
     {
-      enabled: !field?.attributes?.function_path && !isSettings,
+      enabled: Boolean(
+        !field?.attributes?.function_path && !isSettings && enabled,
+      ),
       select: (res) => {
         const count = res?.data?.count;
         const options = res?.data?.response ?? [];
@@ -552,6 +556,8 @@ const AutoCompleteElement = ({
 
   const dispatch = useDispatch();
 
+  const onMenuOpen = () => setEnabled(true);
+
   return (
     <Tooltip
       title={
@@ -591,6 +597,7 @@ const AutoCompleteElement = ({
         }}
       >
         <Select
+          onMenuOpen={onMenuOpen}
           placeholder="Empty"
           id={`relationField`}
           isDisabled={disabled}

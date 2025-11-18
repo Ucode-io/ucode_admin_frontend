@@ -9,7 +9,6 @@ import { FieldsProvider } from "./providers/FieldsProvider";
 import DrawerDetailPage from "./components/DrawerDetailPage";
 
 export const Views = ({
-  relationFields,
   isRelationView = false,
   handleCloseDrawer = () => {},
   onSectionSubmit = () => {},
@@ -155,7 +154,6 @@ export const Views = ({
             state={{
               fieldsMap,
               fieldsMapRel,
-              relationFields,
               fieldsForm,
               fields,
             }}

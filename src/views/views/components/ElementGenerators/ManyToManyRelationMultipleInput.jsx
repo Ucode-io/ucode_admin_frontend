@@ -383,7 +383,7 @@ const AutoCompleteElement = memo(
         </div>
 
         {relationFields?.map((element, index) => (
-          <Box sx={{ padding: "5px 0" }}>
+          <Box sx={{ padding: "5px 0" }} key={index}>
             <ManyToManySelect
               newForm={newForm}
               setValue={setValue}
@@ -414,5 +414,8 @@ const AutoCompleteElement = memo(
     );
   },
 );
+
+AutoCompleteElement.displayName = "AutoCompleteElement";
+ManyToManyRelationFormElement.displayName = "ManyToManyRelationFormElement";
 
 export default ManyToManyRelationFormElement;

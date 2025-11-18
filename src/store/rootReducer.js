@@ -28,6 +28,7 @@ import {detailDrawerReducer} from "./detailDrawer/detailDrawer.slice";
 import {tableReducer} from "./table/table.slice";
 import {settingsModalReducer} from "./settingsModal/settingsModal.slice";
 import {iconCategoryReducer} from "./IconCategory/iconCategory.slice";
+import { projectInfoReducer } from "./projectInfo/projectInfo.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -148,13 +149,13 @@ const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
   constructorTable: persistReducer(
     constructorTablePersistConfig,
-    constructorTableReducer
+    constructorTableReducer,
   ),
   application: persistReducer(applicationPersistConfig, applicationReducer),
   menu: persistReducer(menuPersistConfig, menuReducer),
   menuAccordion: persistReducer(
     menuAccordionPersistConfig,
-    menuAccordionReducer
+    menuAccordionReducer,
   ),
   quick_filter: persistReducer(quickFiltersCount, quickFiltersReducer),
   pagination: persistReducer(tablePagination, paginationReducer),
@@ -162,12 +163,12 @@ const rootReducer = combineReducers({
   company: persistReducer(companyPersistConfig, companyReducer),
   tableColumn: persistReducer(
     tableColumnTablePersistConfig,
-    tableColumnReducer
+    tableColumnReducer,
   ),
   filter: persistReducer(filtersPersistConfig, filterReducer),
   iconCategories: persistReducer(
     iconCategoriesPersistConfig,
-    iconCategoryReducer
+    iconCategoryReducer,
   ),
   tableSize: persistReducer(tableSizePersistConfig, tableSizeReducer),
   tabRouter: persistReducer(tabRouterPersistConfig, tabRouterReducer),
@@ -182,6 +183,7 @@ const rootReducer = combineReducers({
   permissions: persistReducer(permissions, permissionsReducer),
   settingsModal: persistReducer(settingsModal, settingsModalReducer),
   table: tableReducer,
+  projectInfo: projectInfoReducer,
 });
 
 export default rootReducer;

@@ -11,6 +11,7 @@ import { useUpdateTableMutation } from "@/services/tableService/table.service";
 import { useFieldsContext } from "../../providers/FieldsProvider";
 import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
+import { useRelationsListQuery } from "@/services/relationService";
 
 export const useHeaderFilterProps = () => {
   const dispatch = useDispatch();
@@ -45,7 +46,7 @@ export const useHeaderFilterProps = () => {
     sortedDatas,
   } = useFilterContext();
 
-  const { fieldsMap, fieldsMapRel, relationFields } = useFieldsContext();
+  const { fieldsMap, fieldsMapRel } = useFieldsContext();
 
   const viewsRef = useRef(null);
 
@@ -60,6 +61,25 @@ export const useHeaderFilterProps = () => {
   const [sortPopupAnchorEl, setSortPopupAnchorEl] = useState(null);
 
   const isSortPopupOpen = Boolean(!!sortPopupAnchorEl);
+
+  const viewsList = useSelector((state) => state.groupField.viewsList);
+
+  const { data: { relations } = { relations: [] } } = useRelationsListQuery({
+    params: {
+      table_slug: viewsList?.[viewsList?.length - 1]?.table_slug,
+      relation_table_slug:
+        viewsList?.[viewsList?.length - 1]?.relation_table_slug,
+      disable_table_to: true,
+    },
+    tableSlug:
+      viewsList?.[viewsList?.length - 1]?.relation_table_slug ||
+      viewsList?.[viewsList?.length - 1]?.table_slug,
+    queryParams: {
+      enabled: !!viewAnchorEl,
+    },
+  });
+
+  const relationFields = relations;
 
   const getViewName = (view) => {
     return view?.is_relation_view
@@ -86,6 +106,7 @@ export const useHeaderFilterProps = () => {
       if (isSection) {
         dispatch(groupFieldActions.trimViewsDataUntil(view));
         dispatch(groupFieldActions.trimViewsUntil(view));
+        setSelectedView(view);
 
         return;
       } else {

@@ -26,8 +26,6 @@ const FilterAutoComplete = ({
       .filter((el) => el);
   }, [value, options]);
 
-  console.log(computedValue);
-
   const openMenu = (event) => {
     setChosenField(field);
     setAnchorEl(event.currentTarget);

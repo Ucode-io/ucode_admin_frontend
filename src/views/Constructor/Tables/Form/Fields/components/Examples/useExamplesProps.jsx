@@ -2824,7 +2824,7 @@ export const useExamplesProps = ({ item }) => {
       ),
     },
 
-    "==": {
+    "=": {
       name: "равно (логическое)",
       icon: menuIcons.checkbox,
       content: (
@@ -2836,14 +2836,14 @@ export const useExamplesProps = ({ item }) => {
             fontSize="11px"
             padding="6px"
           >
-            5 <Box className={cls.punctuation}>&#61;&#61;</Box> 5 →{" "}
+            5 <Box className={cls.punctuation}>&#61;</Box> 5 →{" "}
             <Box className={cls.function}>true</Box>
           </Box>
         </Box>
       ),
     },
 
-    "!=": {
+    "<>": {
       name: "не равно",
       icon: menuIcons.checkbox,
       content: (
@@ -2855,7 +2855,7 @@ export const useExamplesProps = ({ item }) => {
             fontSize="11px"
             padding="6px"
           >
-            5 <Box className={cls.punctuation}>&#33;&#61;</Box> 3 →{" "}
+            5 <Box className={cls.punctuation}> {`<>`} </Box> 3 →{" "}
             <Box className={cls.function}>true</Box>
           </Box>
         </Box>

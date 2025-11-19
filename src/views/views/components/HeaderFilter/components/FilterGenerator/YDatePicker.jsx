@@ -15,7 +15,7 @@ const YDatePicker = ({
   withTime = false,
 }) => {
   const start = parseDateFromString(defaultValue?.$gte);
-  const end = parseDateFromString(defaultValue?.$lt);
+  const end = parseDateFromString(defaultValue?.$lte);
   const {i18n} = useTranslation();
 
   const [range, setRange] = useState([start, end]);
@@ -40,7 +40,7 @@ const YDatePicker = ({
       end.setHours(23, 59, 59);
     }
 
-    onChange({$gte: start, $lt: end});
+    onChange({ $gte: start, $lte: end });
     setRange(value);
   };
 

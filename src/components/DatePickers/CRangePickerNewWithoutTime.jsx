@@ -30,7 +30,7 @@ const CRangePickerNewWithoutTime = ({
     if (val?.[0] && val?.[1]) {
       onChange({
         $gte: from,
-        $lt: to,
+        $lte: to,
       });
     }
   };

@@ -46,7 +46,7 @@ export default function PivotTableView() {
   const [modalParams, setModalParams] = useState({ key: "", isOpen: false });
   const [dateRange, setDateRange] = useState({
     $gte: addMonths(new Date(), -1),
-    $lt: new Date(),
+    $lte: new Date(),
   });
   const [isCollapsing, setIsCollapsing] = useState(false);
   const [tableSlugData, setTableSlugData] = useState(false);
@@ -78,14 +78,14 @@ export default function PivotTableView() {
   const excludeEmptyItems = (
     arr,
     key = "table_field_settings",
-    recursiveFieldName
+    recursiveFieldName,
   ) => {
     if (!recursiveFieldName) {
       return arr
         .map((row) => ({
           ...row,
           table_field_settings: row.table_field_settings.filter(
-            (i) => i.label && i.checked
+            (i) => i.label && i.checked,
           ),
         }))
         .filter((row) => row.rowsRelationRow || row.table_field_settings.length)
@@ -123,7 +123,9 @@ export default function PivotTableView() {
         from_date: dateRange
           ? format(new Date(dateRange.$gte), "yyyy-MM-dd")
           : "",
-        to_date: dateRange ? format(new Date(dateRange.$lt), "yyyy-MM-dd") : "",
+        to_date: dateRange
+          ? format(new Date(dateRange.$lte), "yyyy-MM-dd")
+          : "",
         pivot_table_slug: values.template_name,
         id: modalParams.isOpen ? activeClickActionTabId : values.id,
         report_setting_id: form.watch("report_setting_id"),
@@ -142,7 +144,7 @@ export default function PivotTableView() {
             ? excludeEmptyItems(
                 values.rows_relation,
                 "objects",
-                "table_field_settings"
+                "table_field_settings",
               )?.map((i, idx) => ({
                 ...i,
                 order_number: findRowRelationOrder(values),
@@ -177,7 +179,9 @@ export default function PivotTableView() {
         from_date: dateRange
           ? format(new Date(dateRange.$gte), "yyyy-MM-dd")
           : "",
-        to_date: dateRange ? format(new Date(dateRange.$lt), "yyyy-MM-dd") : "",
+        to_date: dateRange
+          ? format(new Date(dateRange.$lte), "yyyy-MM-dd")
+          : "",
         clone_id: activeClickActionTabId,
         status: "SAVED",
       })
@@ -208,7 +212,7 @@ export default function PivotTableView() {
             $gte: res.from_date
               ? new Date(res.from_date)
               : addMonths(new Date(), -1),
-            $lt: res.to_date ? new Date(res.to_date) : new Date(),
+            $lte: res.to_date ? new Date(res.to_date) : new Date(),
           });
         setComputedFields({
           rows: res.rows ?? [],
@@ -218,11 +222,11 @@ export default function PivotTableView() {
           defaults:
             res.defaults?.reduce(
               (acc, cur) => [...acc, ...cur.table_field_settings],
-              []
+              [],
             ) ?? [],
         });
       },
-    }
+    },
   );
 
   const pivotTemplates = useQuery(
@@ -284,8 +288,8 @@ export default function PivotTableView() {
             match_tables: expandedRows[activeClickActionTabId]?.length
               ? makeExpandRowParam(
                   JSON.parse(
-                    JSON.stringify(expandedRows[activeClickActionTabId].at(-1))
-                  )
+                    JSON.stringify(expandedRows[activeClickActionTabId].at(-1)),
+                  ),
                 )
               : undefined,
             order_number:
@@ -294,13 +298,13 @@ export default function PivotTableView() {
               ? format(new Date(dateRange.$gte), "yyyy-MM-dd")
               : "",
             to_date: dateRange
-              ? format(new Date(dateRange.$lt), "yyyy-MM-dd")
+              ? format(new Date(dateRange.$lte), "yyyy-MM-dd")
               : "",
           },
         },
         {
           id: activeClickActionTabId || "default",
-        }
+        },
       ),
     {
       enabled: false,
@@ -324,7 +328,7 @@ export default function PivotTableView() {
         const curExpRow = expandedRows[activeClickActionTabId];
         const recalculateData = (arr, expandRow, order) => {
           const foundRow = arr.find(
-            (row) => expandRow && row.guid === expandRow.real_value
+            (row) => expandRow && row.guid === expandRow.real_value,
           );
           if (order === 1 && !foundRow?.children?.length) {
             return arr.map((i) =>
@@ -333,7 +337,7 @@ export default function PivotTableView() {
                     ...i,
                     children: res,
                   }
-                : i
+                : i,
             );
           }
           return arr?.map((i) =>
@@ -343,10 +347,10 @@ export default function PivotTableView() {
                   children: recalculateData(
                     foundRow?.children,
                     expandRow.child,
-                    order - 1
+                    order - 1,
                   ),
                 }
-              : i
+              : i,
           );
         };
         if (!isCollapsing)
@@ -360,7 +364,7 @@ export default function PivotTableView() {
                 curExpRow?.at(-1),
                 curExpRow?.at(-1)?.is_relaiton_row
                   ? curExpRow?.at(-1).relation_order_number
-                  : curExpRow?.at(-1).order_number
+                  : curExpRow?.at(-1).order_number,
               );
             } else {
               return res;
@@ -378,7 +382,7 @@ export default function PivotTableView() {
       onError: () => {
         setChildLoader(false);
       },
-    }
+    },
   );
 
   const getValueRecursively = (row, order) => {

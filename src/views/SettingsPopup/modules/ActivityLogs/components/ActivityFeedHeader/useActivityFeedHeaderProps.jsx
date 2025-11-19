@@ -25,8 +25,8 @@ export const useActivityFeedHeaderProps = ({
       from_date: dateFilters?.$gte
         ? format(dateFilters?.$gte, "yyyy-MM-dd")
         : undefined,
-      to_date: dateFilters?.$lt
-        ? format(dateFilters?.$lt, "yyyy-MM-dd")
+      to_date: dateFilters?.$lte
+        ? format(dateFilters?.$lte, "yyyy-MM-dd")
         : undefined,
     },
     {
@@ -34,7 +34,7 @@ export const useActivityFeedHeaderProps = ({
       onSuccess(data) {
         window.open("https://" + data.link, "_blank");
       },
-    }
+    },
   );
 
   const handleDownloadExcel = (e) => {

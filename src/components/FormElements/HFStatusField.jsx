@@ -21,7 +21,6 @@ function HFStatusField({
         name={name}
         control={control}
         render={({ field: { onChange, value }, fieldState: { error } }) => {
-          console.log({ value });
           return (
             <Select
               disabled={disabled}
@@ -47,13 +46,13 @@ function HFStatusField({
               renderValue={(selected) => {
                 const selectedOption =
                   field?.attributes?.todo?.options?.find((el) =>
-                    el?.value ? el?.value === selected : selected === el?.label
+                    el?.value ? el?.value === selected : selected === el?.label,
                   ) ||
                   field?.attributes?.progress?.options?.find((el) =>
-                    el?.value ? el?.value === selected : selected === el?.label
+                    el?.value ? el?.value === selected : selected === el?.label,
                   ) ||
                   field?.attributes?.complete?.options?.find((el) =>
-                    el?.value ? el?.value === selected : selected === el?.label
+                    el?.value ? el?.value === selected : selected === el?.label,
                   );
                 return (
                   <Box

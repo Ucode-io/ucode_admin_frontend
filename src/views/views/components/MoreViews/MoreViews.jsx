@@ -29,8 +29,9 @@ export const MoreViews = ({
   handleViewClick = () => {},
   setSelectedView = () => {},
   setViewAnchorEl = () => {},
+  getViewName = () => {},
 }) => {
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [searchText, setSearchText] = useState("");
   const query = new URLSearchParams(window.location.search);
   const viewId = query.get("v");
@@ -56,7 +57,7 @@ export const MoreViews = ({
 
   return (
     <>
-      <Box sx={{width: "20px"}}>
+      <Box sx={{ width: "20px" }}>
         <Menu open={open} anchorEl={anchorEl} onClose={handleClose}>
           <Box
             sx={{
@@ -67,7 +68,8 @@ export const MoreViews = ({
               alignItems: "flex-start",
               flexDirection: "column",
               padding: "5px",
-            }}>
+            }}
+          >
             <Input
               h={"30px"}
               placeholder="Search"
@@ -86,7 +88,8 @@ export const MoreViews = ({
                 borderBottom: "1px solid #eee",
                 maxHeight: "300px",
                 overflowY: "auto",
-              }}>
+              }}
+            >
               {filteredViews.length > 0 ? (
                 filteredViews.map((view, index) => (
                   <Flex
@@ -99,7 +102,8 @@ export const MoreViews = ({
                     borderRadius={"6px"}
                     _hover={{
                       background: "#edf2f6",
-                    }}>
+                    }}
+                  >
                     <Button
                       w={"100%"}
                       variant="ghost"
@@ -127,12 +131,9 @@ export const MoreViews = ({
                         e.stopPropagation();
                         handleViewClick(view, index);
                         handleMenuSelect(view);
-                      }}>
-                      {view?.is_relation_view
-                        ? view?.table_label || view.type
-                        : view?.attributes?.[`name_${i18n?.language}`] ||
-                          view?.name ||
-                          view.type}
+                      }}
+                    >
+                      {getViewName(view)}
                     </Button>
 
                     <ViewSettingsModal
@@ -166,8 +167,9 @@ export const MoreViews = ({
               }}
               color={"#475467"}
               w={"100%"}
-              textAlign={"justify"}>
-              <AddIcon style={{width: "20px", height: "20px"}} />
+              textAlign={"justify"}
+            >
+              <AddIcon style={{ width: "20px", height: "20px" }} />
               <Box fontSize={"14px"} fontWeight={"400"}>
                 New view
               </Box>
@@ -177,4 +179,4 @@ export const MoreViews = ({
       </Box>
     </>
   );
-}
+};

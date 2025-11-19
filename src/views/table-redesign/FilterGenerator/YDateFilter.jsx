@@ -38,8 +38,8 @@ function YDateFilter({ field, value, onChange = () => {}, name, withTime }) {
           }}
         >
           <span>
-            {isValidDate(value?.$gte) && isValidDate(value?.$lt) ? (
-              `${format(new Date(value?.$gte), "dd.MM.yyyy")} - ${format(new Date(value?.$lt), "dd.MM.yyyy")}`
+            {isValidDate(value?.$gte) && isValidDate(value?.$lte) ? (
+              `${format(new Date(value?.$gte), "dd.MM.yyyy")} - ${format(new Date(value?.$lte), "dd.MM.yyyy")}`
             ) : (
               <span style={{ color: "#909EAB" }}>
                 {"DD.MM.YYYY - DD.MM.YYYY"}
@@ -47,7 +47,7 @@ function YDateFilter({ field, value, onChange = () => {}, name, withTime }) {
             )}
           </span>
 
-          {Boolean(value?.$gte && value?.$lt) && (
+          {Boolean(value?.$gte && value?.$lte) && (
             <Box
               onClick={(e) => {
                 e.stopPropagation();
@@ -77,7 +77,7 @@ function YDateFilter({ field, value, onChange = () => {}, name, withTime }) {
           <Box
             sx={{
               width: "205px",
-              height: "250px",
+              height: withTime ? "290px" : "250px",
               border: "1px solid #eee",
               borderRadius: "8px",
             }}

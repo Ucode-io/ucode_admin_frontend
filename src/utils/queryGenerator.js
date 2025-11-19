@@ -12,7 +12,7 @@ export const queryGenerator = (groupField, filters = {}, lang) => {
 
   if (groupField?.type === "PICK_LIST" || groupField?.type === "MULTISELECT") {
     return {
-      queryKey: ["GET_GROUP_OPTIONS", groupField.id],
+      queryKey: ["GET_GROUP_OPTIONS", groupField.id, lang],
       queryFn: () =>
         groupField?.attributes?.options?.map((el) => ({
           label: el?.[`label_${lang}`] ?? el?.label ?? el.value,

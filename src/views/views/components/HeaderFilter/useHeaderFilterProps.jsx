@@ -11,6 +11,7 @@ import { useUpdateTableMutation } from "@/services/tableService/table.service";
 import { useFieldsContext } from "../../providers/FieldsProvider";
 import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
+import { useRelationsListQuery } from "@/services/relationService";
 
 export const useHeaderFilterProps = () => {
   const dispatch = useDispatch();
@@ -45,7 +46,7 @@ export const useHeaderFilterProps = () => {
     sortedDatas,
   } = useFilterContext();
 
-  const { fieldsMap, fieldsMapRel, relationFields } = useFieldsContext();
+  const { fieldsMap, fieldsMapRel } = useFieldsContext();
 
   const viewsRef = useRef(null);
 
@@ -61,11 +62,30 @@ export const useHeaderFilterProps = () => {
 
   const isSortPopupOpen = Boolean(!!sortPopupAnchorEl);
 
+  const viewsList = useSelector((state) => state.groupField.viewsList);
+
+  const { data: { relations } = { relations: [] } } = useRelationsListQuery({
+    params: {
+      table_slug: viewsList?.[viewsList?.length - 1]?.table_slug,
+      relation_table_slug:
+        viewsList?.[viewsList?.length - 1]?.relation_table_slug,
+      disable_table_to: true,
+    },
+    tableSlug:
+      viewsList?.[viewsList?.length - 1]?.relation_table_slug ||
+      viewsList?.[viewsList?.length - 1]?.table_slug,
+    queryParams: {
+      enabled: !!viewAnchorEl,
+    },
+  });
+
+  const relationFields = relations;
+
   const getViewName = (view) => {
     return view?.is_relation_view
       ? view?.attributes?.[`name_${i18n?.language}`] ||
-          view?.table_label ||
-          view?.type
+          view?.type ||
+          view?.table_label
       : view?.attributes?.[`name_${i18n?.language}`] ||
           view?.name ||
           view?.type;
@@ -77,33 +97,31 @@ export const useHeaderFilterProps = () => {
   };
 
   const handleViewClick = (view, idx) => {
+    const isSection = view?.type === VIEW_TYPES_MAP.SECTION;
+
     if (isRelationView) {
       updateQueryWithoutRerender("dv", view?.id);
+      dispatch(detailDrawerActions.setDrawerTabIndex(idx));
+
+      if (isSection) {
+        dispatch(groupFieldActions.trimViewsDataUntil(view));
+        dispatch(groupFieldActions.trimViewsUntil(view));
+        setSelectedView(view);
+
+        return;
+      } else {
+        dispatch(
+          groupFieldActions.addViewPath({
+            ...view,
+          }),
+        );
+      }
     } else {
       updateQueryWithoutRerender("v", view?.id);
+      dispatch(detailDrawerActions.setMainTabIndex(idx));
     }
     setSelectedView(view);
     dispatch(viewsActions.setSelectedView({ view, idx }));
-
-    const isSection = view?.type === VIEW_TYPES_MAP.SECTION;
-
-    if (isSection) {
-      dispatch(detailDrawerActions.setDrawerTabIndex(idx));
-      dispatch(groupFieldActions.trimViewsDataUntil(view));
-      dispatch(groupFieldActions.trimViewsUntil(view));
-      return;
-    }
-
-    if (isRelationView && !isSection) {
-      dispatch(detailDrawerActions.setDrawerTabIndex(idx));
-      dispatch(
-        groupFieldActions.addViewPath({
-          ...view,
-        }),
-      );
-    } else {
-      dispatch(detailDrawerActions.setMainTabIndex(idx));
-    }
   };
 
   const handleClick = (e) => {
@@ -154,7 +172,7 @@ export const useHeaderFilterProps = () => {
     );
 
     let visible = views.slice(0, maxVisible);
-    let overflowed = views.slice(maxVisible);
+    let overflowed = views.slice(maxVisible - 1);
 
     if (overflowed.length > 0) {
       const chosenView = views.find((v) => v.id === viewId);

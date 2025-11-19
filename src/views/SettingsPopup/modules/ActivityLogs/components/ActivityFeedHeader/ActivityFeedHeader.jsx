@@ -58,7 +58,7 @@ export const ActivityFeedHeader = ({
             {generateLangaugeText(
               activityLan,
               i18n?.language,
-              "Activity Logs"
+              "Activity Logs",
             ) || "Activity Logs"}
           </span>
           <Box display={"flex"} gap={2} alignItems={"center"}>
@@ -73,7 +73,7 @@ export const ActivityFeedHeader = ({
               {generateLangaugeText(
                 activityLan,
                 i18n?.language,
-                "Download Excel"
+                "Download Excel",
               ) || "Download Excel"}
             </a>
             <Box position="relative" minWidth="176px">
@@ -89,16 +89,16 @@ export const ActivityFeedHeader = ({
                 onChange={(value) => {
                   setDateFilters({
                     $gte: value[0],
-                    $lt: value[1],
+                    $lte: value[1],
                   });
                 }}
-                value={[dateFilters.$gte, dateFilters.$lt]}
+                value={[dateFilters.$gte, dateFilters.$lte]}
                 // isClearable={false}
                 clearable
                 placeholder="Date filter"
                 valueFormat="DD.MM.YYYY"
                 rightSection={
-                  dateFilters.$gte && dateFilters.$lt ? (
+                  dateFilters.$gte && dateFilters.$lte ? (
                     <CloseIcon
                       color="#909EAB"
                       width="9px"
@@ -114,7 +114,7 @@ export const ActivityFeedHeader = ({
                 }
                 leftSection={
                   !dateFilters.$gte &&
-                  !dateFilters.$lt && (
+                  !dateFilters.$lte && (
                     <InlineSVG
                       src={"/table-icons/date.svg"}
                       width={14}

@@ -8,32 +8,14 @@ import { forwardRef } from "react";
 
 export const FormulaEditor = forwardRef(
   ({ onChange = () => {}, value, fields }, ref) => {
-    const { runValidation, handleEditorMount, error, i18n } =
-      useFormulaFieldProps({
-        ref,
-        fields,
-        value,
-      });
+    const { runValidation, handleEditorMount, error } = useFormulaFieldProps({
+      ref,
+      fields,
+      value,
+    });
 
     return (
       <div className={cls.formulaEditor}>
-        {/* {fields?.map((item) => (
-          <style>
-            {`
-                .field-badge-slug--${item?.slug}::after {
-                  content: "${item?.attributes?.[`label_${i18n.language}`] || item?.label}" !important;
-                  position: absolute;
-                  width: calc(100%);
-                  background-color: rgb(84 72 49 / 15%) !important;
-                  border-radius: 6px;
-                  left: 0;
-                  padding-left: 16px;
-                  font-size: 10px;
-                  color: #32302c !important;
-                }
-            `}
-          </style>
-        ))} */}
         <Editor
           className="monaco-editor"
           height="96px"
@@ -97,5 +79,7 @@ export const FormulaEditor = forwardRef(
         )}
       </div>
     );
-  }
+  },
 );
+
+FormulaEditor.displayName = "FormulaEditor";

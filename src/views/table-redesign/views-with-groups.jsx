@@ -264,7 +264,7 @@ export const NewUiViewsWithGroups = ({
 
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
-    $lt: endOfMonth(new Date()),
+    $lte: endOfMonth(new Date()),
   });
 
   const {

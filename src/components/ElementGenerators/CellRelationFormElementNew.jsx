@@ -626,16 +626,16 @@ const AutoCompleteElement = ({
         )}
         menuShouldScrollIntoView
         styles={customStyles}
-        getOptionLabel={(option) =>
-          field?.attributes?.enable_multi_language
+        getOptionLabel={(option) => {
+          return field?.attributes?.enable_multi_language
             ? getRelationFieldTabsLabelLang(
                 field,
                 option,
                 i18n?.language,
                 languages,
               )
-            : `${getRelationFieldTabsLabel(field, option)}`
-        }
+            : `${getRelationFieldTabsLabel(field, option, i18n?.language)}`;
+        }}
         getOptionValue={(option) => option.value}
         isOptionSelected={(option, value) =>
           value.some((val) => val.guid === value)

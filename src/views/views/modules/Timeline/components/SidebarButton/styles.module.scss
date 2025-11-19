@@ -1,0 +1,24 @@
+.sidebarBtn {
+  border: none;
+  padding-right: 6px;
+  padding-left: 6px;
+  border-radius: 6px;
+  background-color: transparent;
+  color: rgba(55, 53, 47, 0.35);
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(55, 53, 47, 0.06);
+  }
+}
+
+.sidebarBtn.rotated {
+  transform: rotate(180deg);
+}
+
+.sidebarBtnInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}

@@ -67,41 +67,45 @@ const HFTextFieldPassword = ({
         ...passwordRules,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
-        <TextField
-          size="small"
-          value={value}
-          onChange={(e) => {
-            onChange(e.target.value);
-            customOnChange(e);
-          }}
-          name={name}
-          error={!!error}
-          // helperText={error?.message}
-          type="password"
-          fullWidth={fullWidth}
-          placeholder={placeholder}
-          InputProps={{
-            endAdornment: error && (
-              <Tooltip title={error?.message}>
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
+        console.log({ error });
+        return (
+          <TextField
+            size="small"
+            value={value}
+            onChange={(e) => {
+              onChange(e.target.value);
+              customOnChange(e);
+            }}
+            name={name}
+            error={!!error}
+            // helperText={error?.message}
+            type="password"
+            fullWidth={fullWidth}
+            placeholder={placeholder}
+            InputProps={{
+              endAdornment: error && (
                 <InputAdornment position="start">
                   <img src="/img/alert-circle.svg" height={"23px"} alt="" />
                 </InputAdornment>
-              </Tooltip>
-            ),
-            ...props?.InputProps,
-            readOnly: disabled,
-            inputProps: {
-              tabIndex,
-              style: {height: "44px"},
-            },
-            classes: {
-              input: classes.input,
-            },
-          }}
-          className="loginField"
-        />
-      )}
+                // <Tooltip title={error?.message}>
+
+                // </Tooltip>
+              ),
+              ...props?.InputProps,
+              readOnly: disabled,
+              inputProps: {
+                tabIndex,
+                style: { height: "44px" },
+              },
+              classes: {
+                input: classes.input,
+              },
+            }}
+            className="loginField"
+          />
+        );
+      }}
     />
   );
 };

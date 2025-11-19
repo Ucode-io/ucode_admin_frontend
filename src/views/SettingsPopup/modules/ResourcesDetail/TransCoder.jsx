@@ -21,6 +21,8 @@ import {
   CloseCircleTwoTone,
   ClockCircleTwoTone,
   RightCircleOutlined,
+  ArrowUpOutlined,
+  ArrowDownOutlined,
 } from "@ant-design/icons";
 import {Text} from "@chakra-ui/react";
 import {Tag} from "antd";
@@ -29,7 +31,6 @@ import HFSelect from "../../../../components/FormElements/HFSelect";
 import {resourceTypes} from "../../../../utils/resourceConstants";
 import {useWatch} from "react-hook-form";
 import YDateFilter from "../../../table-redesign/FilterGenerator/YDateFilter";
-import {ArrowUpOutlined, ArrowDownOutlined} from "@ant-design/icons";
 
 function TransCoder({
   control,
@@ -55,8 +56,8 @@ function TransCoder({
       order_by_created_at: 1,
       page: page,
       from_date: date?.$gte,
-      to_date: date?.$lt,
-      ...(orderBy && {order_by: orderBy}),
+      to_date: date?.$lte,
+      ...(orderBy && { order_by: orderBy }),
     };
     resourceService.getTranscode(params).then((res) => {
       setPipelines(res?.pipelines);

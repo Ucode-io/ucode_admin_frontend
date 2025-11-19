@@ -9,7 +9,6 @@ import { FieldsProvider } from "./providers/FieldsProvider";
 import DrawerDetailPage from "./components/DrawerDetailPage";
 
 export const Views = ({
-  relationFields,
   isRelationView = false,
   handleCloseDrawer = () => {},
   onSectionSubmit = () => {},
@@ -19,7 +18,6 @@ export const Views = ({
   rootForm,
 }) => {
   const {
-    viewsMap,
     viewId,
     tableName,
     tableSlug,
@@ -73,6 +71,14 @@ export const Views = ({
     selectedViewType,
     setSelectedViewType,
     selectedView,
+    tabs,
+    getView,
+    setCenterDate,
+    fieldsForm,
+    fields,
+    isLoadingTable,
+    selectedTabIndex,
+    navigateToEditPage,
   } = useViewsProps({ isRelationView });
 
   return (
@@ -125,6 +131,13 @@ export const Views = ({
           onSectionSubmit,
           updateLayout,
           handleMouseDown,
+          tabs,
+          setCenterDate,
+          setNoDates,
+          noDates,
+          isLoadingTable,
+          selectedTabIndex,
+          navigateToEditPage,
         }}
       >
         <FilterProvider
@@ -141,10 +154,12 @@ export const Views = ({
             state={{
               fieldsMap,
               fieldsMapRel,
-              relationFields,
+              fieldsForm,
+              fields,
             }}
           >
             <Header tableName={tableName} />
+
             <HeaderFilter
               noDates={noDates}
               setNoDates={setNoDates}
@@ -153,7 +168,7 @@ export const Views = ({
               settingsForm={settingsForm}
             />
 
-            {viewsMap[viewType]}
+            {getView(viewType)}
 
             {!isRelationView && (
               <DrawerDetailPage
@@ -164,100 +179,11 @@ export const Views = ({
                 selectedRow={selectedRow}
                 menuItem={menuItem}
                 layout={layout}
-                selectedViewType={selectedViewType}
-                setSelectedViewType={setSelectedViewType}
+                // selectedViewType={selectedViewType}
+                // setSelectedViewType={setSelectedViewType}
               />
             )}
           </FieldsProvider>
-          {/* TEMPORARY COMMENT */}
-          {/* {Boolean(open && projectInfo?.new_layout) &&
-          selectedViewType === "SidePeek" ? (
-            new_router ? (
-              <DrawerDetailPage
-                view={view}
-                projectInfo={projectInfo}
-                open={open}
-                setFormValue={setFormValue}
-                selectedRow={selectedRow}
-                menuItem={menuItem}
-                layout={layout}
-                fieldsMap={fieldsMap}
-                refetch={refetch}
-                layoutType={layoutType}
-                setLayoutType={setLayoutType}
-                selectedViewType={selectedViewType}
-                setSelectedViewType={setSelectedViewType}
-                navigateToEditPage={navigateToDetailPage}
-              />
-            ) : (
-              <OldDrawerDetailPage
-                view={view}
-                projectInfo={projectInfo}
-                open={open}
-                setFormValue={setFormValue}
-                selectedRow={selectedRow}
-                menuItem={menuItem}
-                layout={layout}
-                fieldsMap={fieldsMap}
-                refetch={refetch}
-                layoutType={layoutType}
-                setLayoutType={setLayoutType}
-                selectedViewType={selectedViewType}
-                setSelectedViewType={setSelectedViewType}
-                navigateToEditPage={navigateToDetailPage}
-              />
-            )
-          ) : selectedViewType === "CenterPeek" ? (
-            Boolean(new_router) ? (
-              <ModalDetailPage
-                view={view}
-                projectInfo={projectInfo}
-                open={open}
-                setFormValue={setFormValue}
-                selectedRow={selectedRow}
-                menuItem={menuItem}
-                layout={layout}
-                fieldsMap={fieldsMap}
-                refetch={refetch}
-                layoutType={layoutType}
-                setLayoutType={setLayoutType}
-                selectedViewType={selectedViewType}
-                setSelectedViewType={setSelectedViewType}
-                navigateToEditPage={navigateToDetailPage}
-                tableSlug={tableSlug}
-              />
-            ) : (
-              <OldModalDetailPage
-                open={open}
-                selectedRow={selectedRow}
-                menuItem={menuItem}
-                layout={layout}
-                fieldsMap={fieldsMap}
-                refetch={refetch}
-                setLayoutType={setLayoutType}
-                selectedViewType={selectedViewType}
-                setSelectedViewType={setSelectedViewType}
-                navigateToEditPage={navigateToDetailPage}
-              />
-            )
-          ) : null} */}
-
-          {/* {Boolean(open && !projectInfo?.new_layout) && (
-            <ModalDetailPage
-              open={open}
-              selectedRow={selectedRow}
-              menuItem={menuItem}
-              layout={layout}
-              fieldsMap={fieldsMap}
-              refetch={refetch}
-              setLayoutType={setLayoutType}
-              selectedViewType={selectedViewType}
-              setSelectedViewType={setSelectedViewType}
-              navigateToEditPage={navigateToDetailPage}
-              tableSlug={tableSlug}
-              modal
-            />
-          )} */}
         </FilterProvider>
       </ViewProvider>
     </ChakraProvider>

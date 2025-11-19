@@ -11,8 +11,8 @@ import {
   InputAdornment,
   Box,
 } from "@mui/material";
-import {useEffect, useState,useMemo} from "react";
-import {Controller, useForm, useWatch} from "react-hook-form";
+import { useState, useMemo } from "react";
+import { Controller, useForm } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import {makeStyles} from "@mui/styles";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -28,10 +28,11 @@ import {generateGUID} from "@/utils/generateID";
 import constructorFieldService from "@/services/constructorFieldService";
 import IconGenerator from "@/components/IconPicker/IconGenerator";
 import IconGeneratorIconjs from "@/components/IconPicker/IconGeneratorIconjs";
+import { useTranslation } from "react-i18next";
 
 const filter = createFilterOptions();
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   input: {
     "&::placeholder": {
       color: "#787774",
@@ -50,14 +51,11 @@ const HFMultipleAutocomplete = ({
   width = "100%",
   disabledHelperText,
   placeholder = "",
-  tabIndex,
   required = false,
   onChange = () => {},
   field,
   rules = {},
-  defaultValue = [],
   disabled,
-  setFormValue,
   newUi,
   updateObject = () => {},
 }) => {
@@ -77,8 +75,8 @@ const HFMultipleAutocomplete = ({
         ...rules,
       }}
       render={({
-        field: {onChange: onFormChange, value},
-        fieldState: {error},
+        field: { onChange: onFormChange, value },
+        fieldState: { error },
       }) => {
         return (
           <AutoCompleteElement
@@ -108,7 +106,8 @@ const HFMultipleAutocomplete = ({
             newUi={newUi}
           />
         );
-      }}></Controller>
+      }}
+    ></Controller>
   );
 };
 
@@ -131,8 +130,9 @@ const AutoCompleteElement = ({
   isNewTableView,
   updateObject = () => {},
 }) => {
+  const { i18n } = useTranslation();
   const [dialogState, setDialogState] = useState(null);
-  const {appId} = useParams();
+  const { appId } = useParams();
 
   const editPermission = field?.attributes?.field_permission?.edit_permission;
   const handleOpen = (inputValue) => {
@@ -142,6 +142,7 @@ const AutoCompleteElement = ({
   const handleClose = () => {
     setDialogState(null);
   };
+
   const [localOptions, setLocalOptions] = useState(options ?? []);
 
   const computedValue = useMemo(() => {
@@ -151,15 +152,29 @@ const AutoCompleteElement = ({
       if (Array.isArray(value)) {
         return (
           value?.map((el) =>
-            localOptions?.find((option) => option.value === el)
+            localOptions?.find((option) => {
+              if (option.slug) return option.slug === el;
+              if (option.value) return option.value === el;
+              return option.label === el;
+            }),
           ) ?? []
         );
       } else {
         return localOptions?.find((item) => {
-          return item?.value === value;
+          if (item?.slug) return item?.slug === value;
+          if (item?.value) return item?.value === value;
+          if (item?.label) return item?.label === value;
         });
       }
-    else return [localOptions?.find((option) => option.value === value[0])];
+    else {
+      return [
+        localOptions?.find((option) => {
+          if (option.slug) return option.slug === value[0];
+          if (option.value) return option.value === value[0];
+          if (option.label) return option.label === value[0];
+        }),
+      ];
+    }
   }, [value, localOptions, isMultiSelect]);
 
   const addNewOption = (newOption) => {
@@ -178,10 +193,15 @@ const AutoCompleteElement = ({
       return;
     }
     if (isMultiSelect) {
-      onFormChange(values?.map((el) => el.value));
+      onFormChange(values?.map((el) => el?.slug ?? el.value));
       updateObject();
     } else {
-      onFormChange([values[values?.length - 1]?.value] ?? []);
+      onFormChange(
+        [values[values?.length - 1]?.slug] ?? [
+            values[values?.length - 1]?.value,
+          ] ??
+          [],
+      );
       updateObject();
     }
   };
@@ -192,9 +212,10 @@ const AutoCompleteElement = ({
         width: "330px",
         paddingLeft: "4px",
         overflow: "hidden",
-        ...(value?.length > 2 ? {minHeight: "30px"} : {height: "34px"}),
-      }}>
-      <FormControl style={{width}}>
+        ...(value?.length > 2 ? { minHeight: "30px" } : { height: "34px" }),
+      }}
+    >
+      <FormControl style={{ width }}>
         <InputLabel size="small">{label}</InputLabel>
         <Autocomplete
           multiple
@@ -203,22 +224,28 @@ const AutoCompleteElement = ({
           options={localOptions}
           popupIcon={
             isBlackBg ? (
-              <ArrowDropDownIcon style={{color: "#fff"}} />
+              <ArrowDropDownIcon style={{ color: "#fff" }} />
             ) : (
               <ArrowDropDownIcon />
             )
           }
           disableCloseOnSelect
-          getOptionLabel={(option) => option?.label ?? option?.value}
-          isOptionEqualToValue={(option, value) =>
-            option?.value === value?.value
+          getOptionLabel={(option) =>
+            option?.[`label_${i18n.language}`] ?? option?.value
           }
+          isOptionEqualToValue={(option, value) => {
+            if (option?.slug || value?.slug) {
+              return option?.slug === value?.slug;
+            }
+            return option?.value === value?.value;
+          }}
           onChange={changeHandler}
           filterOptions={(options, params) => {
             const filtered = filter(options, params);
             if (params.inputValue !== "" && field?.attributes?.creatable) {
               filtered.push({
                 value: "NEW",
+                slug: "NEW",
                 inputValue: params.inputValue,
                 label: `Add "${params.inputValue}"`,
               });
@@ -248,22 +275,23 @@ const AutoCompleteElement = ({
                     cursor: disabled ? "not-allowed" : "text",
                     height:
                       isNewTableView && computedValue?.length > 0
-                        ? {height: 0}
+                        ? { height: 0 }
                         : "auto",
                   },
                   ...params.inputProps,
                 },
                 endAdornment: Boolean(
-                  appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" || disabled
+                  appId === "fadc103a-b411-4a1a-b47c-e794c33f85f6" || disabled,
                 ) && (
                   <Tooltip
                     title="This field is disabled for this role!"
                     style={{
                       position: "absolute",
                       right: 0,
-                    }}>
+                    }}
+                  >
                     <InputAdornment position="start">
-                      <Lock style={{fontSize: "20px", color: "#adb5bd"}} />
+                      <Lock style={{ fontSize: "20px", color: "#adb5bd" }} />
                     </InputAdornment>
                   </Tooltip>
                 ),
@@ -282,9 +310,10 @@ const AutoCompleteElement = ({
                   className={styles.multipleAutocompleteTags}
                   style={
                     hasColor
-                      ? {color: el?.color, background: `${el?.color}30`}
+                      ? { color: el?.color, background: `${el?.color}30` }
                       : {}
-                  }>
+                  }
+                >
                   {hasIcon &&
                     (el?.icon?.includes(":") ? (
                       <IconGeneratorIconjs icon={el?.icon} size={18} />
@@ -300,16 +329,16 @@ const AutoCompleteElement = ({
                       textOverflow: "ellipsis",
                       borderRadius: "6px",
                       fontSize: "13px",
-                      overflow: "hidden",
-                    }}>
-                    {el?.label ?? el?.value}
+                    }}
+                  >
+                    {el?.[`label_${i18n?.language}`] ?? el?.value}
                   </p>
                   {field?.attributes?.disabled === false && editPermission && (
                     <Close
                       fontSize="10"
-                      style={{cursor: "pointer"}}
+                      style={{ cursor: "pointer" }}
                       onClick={() => {
-                        getTagProps({index})?.onDelete();
+                        getTagProps({ index })?.onDelete();
                       }}
                     />
                   )}
@@ -356,12 +385,12 @@ const AddOptionBlock = ({field, dialogState, handleClose, addNewOption}) => {
     };
 
     constructorFieldService
-      .update({...data})
-      .then((res) => {
+      .update({ ...data })
+      .then(() => {
         handleClose(false);
         addNewOption(newOption);
       })
-      .catch((err) => {
+      .catch(() => {
         setLoader(false);
       });
   };

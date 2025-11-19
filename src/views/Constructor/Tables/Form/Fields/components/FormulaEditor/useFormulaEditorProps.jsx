@@ -14,9 +14,7 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
   const parserRef = useRef(null);
   const badgesRef = useRef([]);
   const badgeDecosRef = useRef([]);
-  const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
-  const [decorations, setDecorations] = useState([]);
 
   const { i18n } = useTranslation();
 
@@ -74,12 +72,10 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
           startColumn: 1,
           endLineNumber: 1,
           endColumn: Math.max(2, code.length + 1),
-        }))
+        })),
       );
     }
   }
-
-  const fieldsSlugs = useMemo(() => fields.map((f) => f.slug), [fields]);
 
   const functionSuggestions = useMemo(
     () =>
@@ -89,7 +85,7 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
         insertText: f.snippet.replaceAll("[", "").replaceAll("]", ""),
         detail: f.hint,
       })),
-    []
+    [],
   );
 
   const fieldSuggestions = useMemo(
@@ -100,12 +96,12 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
         insertText: field.slug,
         detail: field.type,
       })),
-    [fields]
+    [fields],
   );
 
   const functionsList = useMemo(() => {
     return [...SUPPORTED_FORMULAS, ...CUSTOM_FUNCTIONS].map((f) =>
-      f.toUpperCase()
+      f.toUpperCase(),
     );
   }, []);
 
@@ -151,7 +147,7 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
             (f) =>
               (
                 f.attributes?.[`label_${i18n.language}`] || f.label
-              )?.toLowerCase() === word?.toLowerCase()
+              )?.toLowerCase() === word?.toLowerCase(),
           );
 
           if (field) {
@@ -181,7 +177,7 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
 
     badgeDecosRef.current = editor.deltaDecorations(
       badgeDecosRef.current,
-      decos
+      decos,
     );
   }
 
@@ -205,15 +201,18 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
               `\\b(${fields
                 .map((f) =>
                   (
-                    f.attributes?.[`label_${i18n.language}`] || f?.label
-                  ).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+                    f.attributes?.[`label_${i18n.language}`] ||
+                    f?.label ||
+                    ""
+                  ).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
                 )
-                .join("|")})\\b`
+                .join("|")})\\b`,
             ),
             "field",
           ],
           [/\b(true|false)\b/, "boolean"],
           [/\d+(?:\.\d+)?/, "number"],
+          // eslint-disable-next-line no-useless-escape,
           [/\".*?\"/, "string"],
           [/[,()]/, "delimiter"],
         ],
@@ -281,9 +280,6 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
   useEffect(() => {
     if (editorRef.current && monacoRef.current) {
       editorRef.current.onKeyDown((e) => {
-        const model = editorRef.current.getModel();
-        const position = editorRef.current.getPosition();
-
         // LeftArrow
         if (e.keyCode === monacoRef.current.KeyCode.LeftArrow) {
           const position = editorRef.current.getPosition();
@@ -365,12 +361,12 @@ export const useFormulaFieldProps = ({ ref: editorRef, fields, value }) => {
                     badge.range.line,
                     badge.range.start + 1,
                     badge.range.line,
-                    badge.range.end
+                    badge.range.end,
                   ),
                   text: "",
                 },
               ],
-              () => null
+              () => null,
             );
           }
         }

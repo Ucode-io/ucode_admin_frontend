@@ -1,21 +1,17 @@
 import {useMemo, useState} from "react";
 import BooleanFilter from "./BooleanFilter";
-import DateFilter from "./DateFilter";
 import DefaultFilter from "./DefaultFilter";
 import FilterAutoComplete from "./FilterAutocomplete";
 import RelationFilter from "./RelationFilter";
 import TableOrderingButton from "@/components/TableOrderingButton";
 import YDateFilter from "./YDateFilter";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
+import { useTranslation } from "react-i18next";
 
-const FilterGenerator = ({
-  name,
-  filters = {},
-  onChange = () => {},
-}) => {
+const FilterGenerator = ({ name, filters = {}, onChange = () => {} }) => {
   const orderingType = useMemo(
     () => filters.order?.[name],
-    [filters.order, name]
+    [filters.order, name],
   );
 
   const onOrderingChange = (value) => {
@@ -27,7 +23,7 @@ const FilterGenerator = ({
   };
 
   return (
-    <div style={{display: "flex", alignItems: "center"}}>
+    <div style={{ display: "flex", alignItems: "center" }}>
       <TableOrderingButton value={orderingType} onChange={onOrderingChange} />
     </div>
   );
@@ -43,18 +39,19 @@ export const Filter = ({
   tableSlug,
 }) => {
   const [debouncedValue, setDebouncedValue] = useState("");
+  const { i18n } = useTranslation();
 
   const computedOptions = useMemo(() => {
     if (field.type === FIELD_TYPES.STATUS) {
-      const {todo, complete, progress} = field.attributes;
+      const { todo, complete, progress } = field.attributes;
       const options = [
-        ...todo?.options,
-        ...complete?.options,
-        ...progress?.options,
+        ...(todo.options ?? []),
+        ...(complete.options ?? []),
+        ...(progress.options ?? []),
       ];
       return options?.map((item) => ({
-        label: item.label,
-        value: item.label,
+        label: item?.[`label_${i18n.language}`] || item.label,
+        value: item.value || item.label,
       }));
     }
     if (!field.attributes?.options) return [];
@@ -66,11 +63,13 @@ export const Filter = ({
         };
       if (field.type === "MULTISELECT")
         return {
-          value: option.value,
-          label: option.label ?? option.value,
+          value: option.slug || option.value,
+          label:
+            option?.[`label_${i18n.language}`] || option.label || option.value,
+          ...option,
         };
     });
-  }, [field.attributes?.options, field.type]);
+  }, [field.attributes, field.type, i18n.language]);
 
   switch (field.type) {
     case "LOOKUP":
@@ -95,7 +94,7 @@ export const Filter = ({
           options={computedOptions}
           value={filters[name] ?? []}
           onChange={(val) => onChange(val?.length ? val : undefined, name)}
-          label={field.label}
+          label={field?.[`label_${i18n?.language}`] ?? field?.label}
           field={field}
         />
       );

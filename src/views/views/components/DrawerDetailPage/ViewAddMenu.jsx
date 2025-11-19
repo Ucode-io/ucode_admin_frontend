@@ -23,7 +23,7 @@ function ViewAddMenu({
   const relationFields = Object.values(fieldsMap)?.filter(
     (el) => el?.type === "LOOKUP"
   );
-  console.log("relationFieldrelationField", relationField);
+
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
   const handleClickModal = (field) => {
@@ -44,7 +44,8 @@ function ViewAddMenu({
         ml={3}
         display={"flex"}
         alignItems={"center"}
-        justifyContent={"center"}>
+        justifyContent={"center"}
+      >
         <AddIcon />
       </Button>
 
@@ -56,9 +57,11 @@ function ViewAddMenu({
             display: "flex",
             flexDirection: "column",
             gap: "4px",
-          }}>
+          }}
+        >
           {relationFields?.map((item) => (
             <Box
+              key={item?.guid}
               onClick={() => handleClickModal(item)}
               sx={{
                 display: "flex",
@@ -69,7 +72,8 @@ function ViewAddMenu({
                 "&:hover": {
                   background: "#f1f1f1",
                 },
-              }}>
+              }}
+            >
               <AttachFileIcon />
               <Text>{item?.attributes?.[`label_${i18n?.language}`]}</Text>
             </Box>

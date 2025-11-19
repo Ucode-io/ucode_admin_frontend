@@ -10,20 +10,14 @@ import { useGetLang } from "@/hooks/useGetLang";
 
 export const useFiltersListProps = () => {
 
-  const {
-    view,
-    tableSlug,
-    visibleColumns,
-    refetchViews,
-  } = useViewContext();
+  const { view, viewId, tableSlug, visibleColumns, refetchViews } =
+    useViewContext();
 
-  const {
-    fieldsMap
-  } = useFieldsContext();
+  const { fieldsMap } = useFieldsContext();
 
-  const {new_list} = useSelector((state) => state.filter);
+  const { new_list } = useSelector((state) => state.filter);
   const [queryParameters] = useSearchParams();
-  const {filters} = useFilters(tableSlug, view?.id);
+  const { filters } = useFilters(tableSlug, viewId);
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
   const filtersRef = useRef(null);

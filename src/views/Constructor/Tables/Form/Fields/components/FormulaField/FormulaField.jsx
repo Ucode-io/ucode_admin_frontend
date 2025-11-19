@@ -1,19 +1,13 @@
 import clsx from "clsx";
 import cls from "./styles.module.scss";
-import SearchIcon from "@mui/icons-material/Search";
 import { useFormulaFieldProps } from "./useFormulaFieldProps";
 import { Box } from "@mui/material";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import DropdownSelect from "@/components/NewFormElements/DropdownSelect";
 import FormulaFilters from "../../Attributes/FormulaFilters";
 import HFTextField from "@/components/FormElements/HFTextField";
-import { generateLangaugeText } from "@/utils/generateLanguageText";
-import { math } from "@/utils/constants/fieldTypes";
-import { getColumnIconPath } from "../../../../../../table-redesign/icons";
-import { SearchInput } from "../../../components/SearchInput";
 import { FormulaEditor } from "../FormulaEditor";
 import { Examples } from "../Examples";
-import { menuIcons } from "./formulaFieldIcons";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
@@ -41,7 +35,6 @@ export const FormulaField = ({
     menuList,
     editorRef,
     onItemMouseEnter,
-    onItemMouseLeave,
     exampleType,
     i18n,
     fieldsList,
@@ -94,6 +87,7 @@ export const FormulaField = ({
               <div className="">
                 {relation?.map((summary, index) => (
                   <FormulaFilters
+                    key={index}
                     summary={summary}
                     selectedTableSlug={selectedTableSlug}
                     index={index}
@@ -266,7 +260,7 @@ export const FormulaField = ({
               borderRight="1px solid rgba(84, 72, 49, 0.15)"
             >
               {menuList?.map((menuItem) => (
-                <Box>
+                <Box key={menuItem?.name}>
                   {menuItem?.list?.filter((item) => {
                     const label =
                       item?.attributes?.[`label_${i18n.language}`] ||
@@ -315,7 +309,7 @@ export const FormulaField = ({
                               if (editorSearchText) {
                                 value = editorValue?.replace(
                                   editorSearchText,
-                                  ""
+                                  "",
                                 );
                               }
                               if (menuItem.key === "formula") {
@@ -331,7 +325,7 @@ export const FormulaField = ({
                                   value +
                                     (item?.attributes?.[
                                       `label_${i18n.language}`
-                                    ] || item.label)
+                                    ] || item.label),
                                 );
                               }
                               setEditorSearchText("");

@@ -14,7 +14,7 @@ export const ViewCreate = ({
         <h3 className={cls.title}>New view</h3>
       </Box>
       <ul className={cls.list}>
-        {computedViewTypes.map((type, index) => (
+        {computedViewTypes.map((type) => (
           <li className={cls.item} key={type.value}>
             <button
               className={cls.button}

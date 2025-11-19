@@ -11,7 +11,7 @@ const ActivityFeedPage = () => {
   const [activityLan, setActivityLan] = useState(null);
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
-    $lt: endOfMonth(new Date()),
+    $lte: endOfMonth(new Date()),
   });
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { getColumnIconPath } from "../../../../../../table-redesign/icons";
+import { getColumnIconPath } from "@/utils/constants/tableIcons";
 
 export const menuIcons = {
   hash: (
@@ -12,9 +12,9 @@ export const menuIcons = {
       <path
         d="M2.66675 5.33333H13.3334M2.66675 10.6667H13.3334M5.33341 2V14M10.6667 2V14"
         stroke="currentColor"
-        stroke-width="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   ),
@@ -29,9 +29,9 @@ export const menuIcons = {
       <path
         d="M17.5 4.16667L8.33333 4.16667M17.5 15.8333L8.33333 15.8333M17.5 10L8.33333 10M5 4.16667C5 4.85702 4.44036 5.41667 3.75 5.41667C3.05964 5.41667 2.5 4.85702 2.5 4.16667C2.5 3.47631 3.05964 2.91667 3.75 2.91667C4.44036 2.91667 5 3.47631 5 4.16667ZM5 15.8333C5 16.5237 4.44036 17.0833 3.75 17.0833C3.05964 17.0833 2.5 16.5237 2.5 15.8333C2.5 15.143 3.05964 14.5833 3.75 14.5833C4.44036 14.5833 5 15.143 5 15.8333ZM5 10C5 10.6904 4.44036 11.25 3.75 11.25C3.05964 11.25 2.5 10.6904 2.5 10C2.5 9.30964 3.05964 8.75 3.75 8.75C4.44036 8.75 5 9.30964 5 10Z"
         stroke="currentColor"
-        stroke-width="1.6"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   ),
@@ -46,9 +46,9 @@ export const menuIcons = {
       <path
         d="M6.25 10L8.75 12.5L13.75 7.5M6.5 17.5H13.5C14.9001 17.5 15.6002 17.5 16.135 17.2275C16.6054 16.9878 16.9878 16.6054 17.2275 16.135C17.5 15.6002 17.5 14.9001 17.5 13.5V6.5C17.5 5.09987 17.5 4.3998 17.2275 3.86502C16.9878 3.39462 16.6054 3.01217 16.135 2.77248C15.6002 2.5 14.9001 2.5 13.5 2.5H6.5C5.09987 2.5 4.3998 2.5 3.86502 2.77248C3.39462 3.01217 3.01217 3.39462 2.77248 3.86502C2.5 4.3998 2.5 5.09987 2.5 6.5V13.5C2.5 14.9001 2.5 15.6002 2.77248 16.135C3.01217 16.6054 3.39462 16.9878 3.86502 17.2275C4.3998 17.5 5.09987 17.5 6.5 17.5Z"
         stroke="currentColor"
-        stroke-width="1.6"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   ),
@@ -67,28 +67,28 @@ export const menuIcons = {
         height="16.4"
         rx="3.2"
         stroke="currentColor"
-        stroke-width="1.6"
+        strokeWidth="1.6"
       />
       <path
         d="M14 6L6 14"
         stroke="currentColor"
-        stroke-width="1.4"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M6.99999 4.66666V9.33333M4.66666 7H9.33332"
         stroke="currentColor"
-        stroke-width="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M10.6667 13H15.3333"
         stroke="currentColor"
-        stroke-width="1.4"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   ),
@@ -103,9 +103,9 @@ export const menuIcons = {
       <path
         d="M17.5 8.33333H2.5M13.3333 1.66667V5M6.66667 1.66667V5M6.5 18.3333H13.5C14.9001 18.3333 15.6002 18.3333 16.135 18.0609C16.6054 17.8212 16.9878 17.4387 17.2275 16.9683C17.5 16.4335 17.5 15.7335 17.5 14.3333V7.33333C17.5 5.9332 17.5 5.23314 17.2275 4.69836C16.9878 4.22795 16.6054 3.8455 16.135 3.60582C15.6002 3.33333 14.9001 3.33333 13.5 3.33333H6.5C5.09987 3.33333 4.3998 3.33333 3.86502 3.60582C3.39462 3.8455 3.01217 4.22795 2.77248 4.69836C2.5 5.23314 2.5 5.9332 2.5 7.33333V14.3333C2.5 15.7335 2.5 16.4335 2.77248 16.9683C3.01217 17.4387 3.39462 17.8212 3.86502 18.0609C4.3998 18.3333 5.09987 18.3333 6.5 18.3333Z"
         stroke="currentColor"
-        stroke-width="1.6"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   ),
@@ -119,9 +119,9 @@ export const menuIcons = {
     >
       <path
         stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
         d="M4 12h16M4 8h16M4 16h8"
       />
     </svg>
@@ -739,13 +739,13 @@ export const BUILT_IN_OPERATORS = [
     icon: menuIcons.hash,
   },
   {
-    label: "==",
-    key: "==",
+    label: "=",
+    key: "=",
     icon: menuIcons.checkbox,
   },
   {
-    label: "!=",
-    key: "!=",
+    label: "<>",
+    key: "<>",
     icon: menuIcons.checkbox,
   },
   {

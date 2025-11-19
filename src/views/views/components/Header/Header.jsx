@@ -21,20 +21,18 @@ export const Header = ({ tableName, data }) => {
 
   return (
     <div className={cls.header}>
-      <IconButton
-        aria-label="back"
-        icon={<ArrowBackIcon fontSize={20} color="#344054" />}
-        variant="ghost"
-        colorScheme="gray"
-        onClick={() => {
-          if (isRelationView) {
+      {isRelationView && (
+        <IconButton
+          aria-label="back"
+          icon={<ArrowBackIcon fontSize={20} color="#344054" />}
+          variant="ghost"
+          colorScheme="gray"
+          onClick={() => {
             handleCloseDrawer();
-          } else {
-            navigate(-1);
-          }
-        }}
-        size="sm"
-      />
+          }}
+          size="sm"
+        />
+      )}
 
       {isRelationView && (
         <MaterialUIProvider>

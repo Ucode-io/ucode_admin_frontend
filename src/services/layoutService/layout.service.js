@@ -19,14 +19,13 @@ export const useGetLayout = (queryParams = {}, { tableSlug, menuId }) => {
     ],
     enabled: Boolean(tableSlug && menuId),
     queryFn: () => {
-      console.log({tableSlug, menuId})
       return layoutService.getLayout(tableSlug, menuId);
     },
     onError: (error) => {
       console.error("Error", error);
     },
-    ...queryParams
-  })
+    ...queryParams,
+  });
 }
 
 export default layoutService;

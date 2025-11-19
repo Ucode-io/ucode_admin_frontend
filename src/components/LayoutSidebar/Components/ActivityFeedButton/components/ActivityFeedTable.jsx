@@ -45,7 +45,7 @@ const ActivityFeedTable = ({
     setDrawerIsOpen(false);
   };
 
-  const {data: histories, isLoading: versionHistoryLoader} =
+  const { data: histories, isLoading: versionHistoryLoader } =
     useVersionHistoryListQuery({
       envId: company.environmentId,
       params: {
@@ -56,8 +56,8 @@ const ActivityFeedTable = ({
         from_date: dateFilters?.$gte
           ? format(dateFilters?.$gte, "yyyy-MM-dd")
           : undefined,
-        to_date: dateFilters?.$lt
-          ? format(dateFilters?.$lt, "yyyy-MM-dd")
+        to_date: dateFilters?.$lte
+          ? format(dateFilters?.$lte, "yyyy-MM-dd")
           : undefined,
       },
       queryParams: {

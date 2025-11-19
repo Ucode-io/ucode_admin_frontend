@@ -26,7 +26,7 @@ const CRangePickerNew = ({
       to.setHours(to.getHours() - 5);
       onChange({
         $gte: from,
-        $lt: to,
+        $lte: to,
       });
     }
   };

@@ -1,13 +1,13 @@
 import requestV3 from "@/utils/requestV3";
 import { useQuery } from "react-query";
 
-const menuService = {
+export const menuService = {
   getList: (params) => {
     return requestV3.get(`/menus`, {
       params,
     });
   },
-  getByID: ({menuId, params}) =>
+  getByID: ({ menuId, params }) =>
     requestV3.get(`/menus/${menuId}`, {
       params,
     }),
@@ -29,9 +29,9 @@ const menuService = {
         "project-id": data.project_id,
       },
     }),
-  delete: ({id, projectId}) =>
+  delete: ({ id, projectId }) =>
     requestV3.delete(`/menus/${id}`, {
-      params: {"project-id": projectId},
+      params: { "project-id": projectId },
     }),
 
   getFieldsListMenu: (menuId, viewId, tableSlug, data) =>
@@ -41,12 +41,12 @@ const menuService = {
   getFieldsTableData: (menuId, viewId, tableSlug, data) =>
     requestV3.post(
       `/menus/${menuId}/views/${viewId}/tables/${tableSlug}/items/list`,
-      data
+      data,
     ),
 
   getFieldsTableDataById: (menuId, viewId, tableSlug, itemId) =>
     requestV3.get(
-      `/menus/${menuId}/views/${viewId}/tables/${tableSlug}/items/${itemId}`
+      `/menus/${menuId}/views/${viewId}/tables/${tableSlug}/items/${itemId}`,
     ),
 };
 

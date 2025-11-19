@@ -1,12 +1,12 @@
 import AddIcon from "@mui/icons-material/Add";
 import LaunchIcon from "@mui/icons-material/Launch";
-import { Box, Popover, Typography } from "@mui/material";
+import { Box, Popover } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { get } from "@ngard/tiny-get";
 import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import Select, { components } from "react-select";
 import useDebounce from "@/hooks/useDebounce";
@@ -196,29 +196,61 @@ const AutoCompleteElement = ({
       width: "100%",
       display: "flex",
       alignItems: "center",
+      boxShadow: "none",
       border: "0px solid #fff",
       outline: "none",
       minHeight: newUi ? "25px" : undefined,
       height: newUi ? "25px" : undefined,
     }),
-    input: (provided) => ({
-      ...provided,
-      width: "100%",
-      border: "none",
-    }),
+    input: (provided) => {
+      return {
+        ...provided,
+        // position: "absolute",
+        // left: "0",
+        // height: "100%",
+        width: "100%",
+        border: "none",
+        // backgroundColor: "rgba(242, 241, 238, 0.6)",
+      };
+    },
     placeholder: (provided) => ({
       ...provided,
       display: "flex",
     }),
-    option: (provided, state) => ({
+    option: (provided) => ({
       ...provided,
-      background: state.isSelected ? "#007AFF" : provided.background,
-      color: state.isSelected ? "#fff" : provided.color,
+      background: "#fff",
+      color: provided.color === "hsl(0, 0%, 100%)" ? "#222" : provided.color,
       cursor: "pointer",
+      height: "28px",
+      fontSize: "12px",
+      lineHeigh: "20px",
+      fontWeight: "400",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      padding: "0",
+      paddingLeft: "8px",
+      paddingRight: "8px",
+      borderRadius: "6px",
+      "&:hover": {
+        backgroundColor: "rgba(242, 241, 238, 0.6)",
+      },
     }),
     menu: (provided) => ({
       ...provided,
+      width: "calc(100% + 10px)",
+      left: "-5px",
+      top: "-3px",
       zIndex: 9999,
+      borderRadius: "6px",
+      borderTopRightRadius: "0px",
+      borderTopLeftRadius: "0px",
+      // boxShadow: "rgba(55, 53, 47, 0.16) 0px -1px inset",
+      padding: "4px",
+      height: "auto",
+      boxShadow:
+        "rgba(0, 0, 0, 0.1) 0px 14px 28px -6px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px, rgba(84, 72, 49, 0.08) 0px 0px 0px 1px",
     }),
     menuPortal: (base) => ({
       ...base,
@@ -250,46 +282,49 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, filtersHandler, value]);
 
-  const { data: optionsFromLocale, refetch } = useQuery(
+  const queryClient = useQueryClient();
+
+  const queryFn = (pageProp) => {
+    if (!field?.table_slug) return null;
+    const requestData = {
+      ...autoFiltersValue,
+      additional_request: {
+        additional_field: "guid",
+      },
+      view_fields: field?.view_fields?.map((f) => f.slug),
+      search: debouncedValue.trim(),
+      limit: 10,
+      offset: pageToOffset(pageProp || page, 10),
+      with_relations: false,
+    };
+
+    if (value) {
+      const additionalValues = [value];
+      requestData.additional_request.additional_values =
+        additionalValues?.flat();
+    }
+
+    return constructorObjectService.getListV2(
+      field?.table_slug,
+      {
+        data: requestData,
+      },
+      {
+        language_setting: i18n?.language,
+      },
+    );
+  };
+
+  const { refetch } = useQuery(
     [
       "GET_OBJECT_LIST",
+      page,
       debouncedValue,
       autoFiltersValue,
       value,
-      page,
       field?.table_slug,
     ],
-    () => {
-      if (!field?.table_slug) return null;
-
-      const requestData = {
-        ...autoFiltersValue,
-        additional_request: {
-          additional_field: "guid",
-        },
-        view_fields: field?.view_fields?.map((f) => f.slug),
-        search: debouncedValue.trim(),
-        limit: 10,
-        offset: pageToOffset(page, 10),
-        with_relations: false,
-      };
-
-      if (value) {
-        const additionalValues = [value];
-        requestData.additional_request.additional_values =
-          additionalValues?.flat();
-      }
-
-      return constructorObjectService.getListV2(
-        field?.table_slug,
-        {
-          data: requestData,
-        },
-        {
-          language_setting: i18n?.language,
-        },
-      );
-    },
+    queryFn,
     {
       // enabled:
       //   (!field?.attributes?.function_path && Boolean(page > 1)) ||
@@ -324,7 +359,6 @@ const AutoCompleteElement = ({
     ).map(JSON.parse);
 
     if (field?.table_slug === "client_type") {
-      console.log({ uniqueObjects, allOptions });
       return uniqueObjects?.filter(
         (item) => item?.table_slug === view?.table_slug,
       );
@@ -376,7 +410,22 @@ const AutoCompleteElement = ({
   };
 
   function loadMoreItems() {
-    if (count >= optionsFromLocale?.count) return;
+    if (
+      count <= computedOptions?.length ||
+      Object.keys(autoFiltersValue)?.length
+    )
+      return;
+    queryClient.prefetchQuery(
+      [
+        "GET_OBJECT_LIST",
+        page + 1,
+        debouncedValue,
+        autoFiltersValue,
+        value,
+        field?.table_slug,
+      ],
+      () => queryFn(page + 1),
+    );
     setPage((prevPage) => prevPage + 1);
   }
 
@@ -522,7 +571,9 @@ const AutoCompleteElement = ({
             onClose={handlePopoverClose}
             disableRestoreFocus
           >
-            <Typography sx={{ p: 1 }}>Create new object</Typography>
+            <p className={styles.noOptionText}>
+              Select an option or create one
+            </p>
           </Popover>
         </span>
       )}
@@ -536,6 +587,7 @@ const AutoCompleteElement = ({
       )}
 
       <Select
+        className={styles.select}
         id="relation-lookup"
         inputValue={inputValue}
         onInputChange={(newInputValue, { action }) => {
@@ -556,6 +608,7 @@ const AutoCompleteElement = ({
         components={{
           SingleValue: CustomSingleValue,
           DropdownIndicator: null,
+          ClearIndicator: null,
         }}
         onChange={(newValue) => {
           changeHandler(newValue);
@@ -563,26 +616,26 @@ const AutoCompleteElement = ({
         noOptionsMessage={() => (
           <span
             onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
-            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
+            className={styles.noOptionText}
           >
-            Create new
+            + Create one
           </span>
         )}
         menuShouldScrollIntoView
         styles={customStyles}
-        getOptionLabel={(option) =>
-          field?.attributes?.enable_multi_language
+        getOptionLabel={(option) => {
+          return field?.attributes?.enable_multi_language
             ? getRelationFieldTabsLabelLang(
                 field,
                 option,
                 i18n?.language,
                 languages,
               )
-            : `${getRelationFieldTabsLabel(field, option)}`
-        }
+            : `${getRelationFieldTabsLabel(field, option, i18n?.language)}`;
+        }}
         getOptionValue={(option) => option.value}
         isOptionSelected={(option, value) =>
-          value.some((val) => val.guid === value)
+          value.some((val) => val.guid === option.guid)
         }
         blurInputOnSelect
       />

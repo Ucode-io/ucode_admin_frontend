@@ -18,7 +18,7 @@ const relationService = {
 
 export const useRelationsListQuery = ({
   params = {},
-  headers,
+  headers = {},
   queryParams,
   tableSlug,
 } = {}) => {
@@ -27,7 +27,7 @@ export const useRelationsListQuery = ({
     () => {
       return relationService.getList(params, headers, tableSlug);
     },
-    queryParams
+    queryParams,
   );
 };
 

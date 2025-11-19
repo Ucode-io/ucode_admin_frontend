@@ -11,7 +11,7 @@ const DateForm = ({ date, onChange = () => { }, views }) => {
   const handleDateChange = (newValue) => {
     const firstDayOfMonth = startOfMonth(newValue);
     const lastDayOfMonth = endOfMonth(newValue);
-    setMonth({ $gte: firstDayOfMonth, $lt: lastDayOfMonth });
+    setMonth({ $gte: firstDayOfMonth, $lte: lastDayOfMonth });
     setValue(newValue)
     onChange(month)
   };

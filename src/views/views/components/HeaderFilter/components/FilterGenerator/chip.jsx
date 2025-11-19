@@ -5,10 +5,7 @@ import InlineSVG from "react-inlinesvg";
 import { getColumnIconPath } from "@/views/table-redesign/icons";
 
 export const Chip = forwardRef(
-  (
-    { field, value, onClearButtonClick, showCloseIcon, children, ...props },
-    ref
-  ) => (
+  ({ field, onClearButtonClick, showCloseIcon, children, ...props }, ref) => (
     <Flex
       ref={ref}
       alignItems="center"
@@ -51,5 +48,7 @@ export const Chip = forwardRef(
         />
       )}
     </Flex>
-  )
+  ),
 );
+
+Chip.displayName = "Chip";

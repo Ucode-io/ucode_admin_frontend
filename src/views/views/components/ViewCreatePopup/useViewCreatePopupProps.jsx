@@ -25,6 +25,7 @@ export const useViewCreatePopupProps = ({
   views,
   fieldsMapRel = {},
   fieldsMap = {},
+  viewAnchorEl,
   handleClose = () => {},
   handleClosePop = () => {},
   refetchViews = () => {},
@@ -39,7 +40,7 @@ export const useViewCreatePopupProps = ({
   const lastPath = viewsPath?.[viewsPath?.length - 1];
 
   const groupByTableSlug = useSelector(
-    (state) => state?.groupField?.groupByFieldSlug
+    (state) => state?.groupField?.groupByFieldSlug,
   );
 
   const { i18n } = useTranslation();
@@ -69,7 +70,7 @@ export const useViewCreatePopupProps = ({
 
   const isWithTimeView = (type) =>
     [VIEW_TYPES_MAP.TIMELINE, VIEW_TYPES_MAP.CALENDAR].includes(
-      type || selectedViewTab
+      type || selectedViewTab,
     );
 
   function getTableRelations(relationFields, tableSlug) {
@@ -158,7 +159,7 @@ export const useViewCreatePopupProps = ({
 
   const tableRelations = getTableRelations(
     relationFields,
-    viewsList?.[0]?.table_slug
+    viewsList?.[0]?.table_slug,
   );
 
   const createView = (type) => {
@@ -206,13 +207,16 @@ export const useViewCreatePopupProps = ({
           .then(() => {
             dispatch(groupFieldActions.clearGroupBySlug());
             dispatch(showAlert("Successful created", "success"));
-            if (relationView && viewsList?.length > 1) {
-              return queryClient.refetchQueries([
-                "GET_TABLE_VIEWS_LIST_RELATION",
-              ]);
-            } else if (relationView && viewsList?.length <= 1) {
-              return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
-            } else return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
+            refetchViews();
+            // if (relationView && viewsList?.length > 1) {
+            //   return queryClient.refetchQueries([
+            //     "GET_TABLE_VIEWS_LIST_RELATION",
+            //   ]);
+            // } else if (relationView && viewsList?.length <= 1) {
+            //   return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
+            // } else {
+            //   refetchViews();
+            // }
           })
           .finally(() => {
             if (!Boolean(tableRelations)) {
@@ -247,7 +251,10 @@ export const useViewCreatePopupProps = ({
             ]);
           } else if (relationView && viewsList?.length <= 1) {
             return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
-          } else return queryClient.refetchQueries(["GET_VIEWS_LIST"]);
+          } else {
+            // queryClient.refetchQueries(["GET_VIEWS_LIST"])
+            refetchViews();
+          }
         })
         .finally(() => {
           if (!Boolean(tableRelations)) {
@@ -260,12 +267,11 @@ export const useViewCreatePopupProps = ({
     }
   };
 
-  const { data, refetch } = useQuery(
-    ["GET_VIEW_FIELDS_CREATE", i18n?.language, groupByTableSlug],
-    () =>
-      menuService.getFieldsListMenu(menuId, lastPath?.id, groupByTableSlug, {}),
+  const { data } = useQuery(
+    ["GET_VIEW_FIELDS_CREATE", i18n?.language, tableSlug],
+    () => menuService.getFieldsListMenu(menuId, lastPath?.id, tableSlug, {}),
     {
-      enabled: Boolean(groupByTableSlug && relationView),
+      enabled: Boolean(tableSlug && relationView),
       select: ({ data }) => ({
         fieldsMapRelRelation: listToMapWithoutRel(data?.fields ?? []),
       }),
@@ -309,8 +315,8 @@ export const useViewCreatePopupProps = ({
       });
     },
     {
-      enabled: Boolean(table_slug && !relationView),
-      cacheTime: 10,
+      enabled: Boolean(table_slug && !relationView && !viewAnchorEl),
+      // cacheTime: 10,
       select: (res) => {
         const fields = res?.data?.fields ?? [];
 
@@ -327,7 +333,7 @@ export const useViewCreatePopupProps = ({
       });
     },
     {
-      enabled: Boolean(watch("table_slug")),
+      enabled: Boolean(watch("table_slug") && !!viewAnchorEl),
       cacheTime: 10,
       select: (res) => {
         const fields = res?.data?.fields ?? [];
@@ -424,7 +430,7 @@ export const useViewCreatePopupProps = ({
                     dispatch(groupFieldActions.addGroupBySlug(e));
                     setValue("table_slug", e);
                     if (relationView) {
-                      refetch();
+                      // refetch();
                     }
                   }}
                 />

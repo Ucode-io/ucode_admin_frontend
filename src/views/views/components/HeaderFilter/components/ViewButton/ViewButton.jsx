@@ -5,6 +5,7 @@ import {
 } from "@chakra-ui/react";
 import { viewIcons } from "@/utils/constants/viewTypes";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { useTranslation } from "react-i18next";
 
 export const ViewButton = ({
   handleViewClick,
@@ -16,6 +17,11 @@ export const ViewButton = ({
   overflowedViews,
   index,
 }) => {
+  const { t } = useTranslation();
+
+  const isLastAndMoreViewButton =
+    overflowedViews?.length > 0 && index === visibleViews?.length - 1;
+
   return (
     <Button
       p={"0 6px"}
@@ -25,12 +31,16 @@ export const ViewButton = ({
       colorScheme="grey"
       mx={"4px"}
       leftIcon={
-        <SVG
-          src={`/img/${viewIcons[view?.type]}`}
-          color={viewId === view?.id ? "#175CD3" : "#475467"}
-          width={18}
-          height={18}
-        />
+        isLastAndMoreViewButton ? (
+          <></>
+        ) : (
+          <SVG
+            src={`/img/${viewIcons[view?.type]}`}
+            color={viewId === view?.id ? "#175CD3" : "#475467"}
+            width={18}
+            height={18}
+          />
+        )
       }
       fontSize={13}
       h={"30px"}
@@ -55,9 +65,9 @@ export const ViewButton = ({
         } else handleViewClick(view, index);
       }}
     >
-      {getViewName(view)}
+      {isLastAndMoreViewButton ? t("more") : getViewName(view)}
 
-      {overflowedViews?.length > 0 && index === visibleViews?.length - 1 && (
+      {isLastAndMoreViewButton && (
         <Box
           onClick={handleClick}
           sx={{

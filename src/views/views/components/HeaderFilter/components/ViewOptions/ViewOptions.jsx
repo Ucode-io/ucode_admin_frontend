@@ -41,6 +41,7 @@ import { FixColumns } from "../FixColumns";
 import { ExcelImport } from "../ExcelImport";
 import { ExcelExport } from "../ExcelExport";
 import { DeleteView } from "../DeleteView";
+import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -140,214 +141,224 @@ export const ViewOptions = ({
                   <span className={cls.optionsTitle}>{t("view_options")}</span>
                   <CloseButton onClick={handleClosePopover} />
                 </Box>
-                <Flex mt="10px" columnGap="4px" mb="4px">
-                  <InputGroup>
-                    <Input
-                      h="32px"
-                      placeholder={t("view_name")}
-                      defaultValue={viewName}
-                      onChange={onViewNameChange}
-                      borderRadius="8px"
-                      fontSize="12px"
-                      lineHeight="18px"
-                    />
-                    <InputLeftElement h="32px">
-                      <SVG
-                        src={`/img/${viewIcons?.[view?.type]}`}
-                        width={16}
-                        height={16}
-                        color="#101828"
+                <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+                  <Flex mt="10px" columnGap="4px" mb="4px">
+                    <InputGroup>
+                      <Input
+                        h="32px"
+                        placeholder={t("view_name")}
+                        defaultValue={viewName}
+                        onChange={onViewNameChange}
+                        borderRadius="8px"
+                        fontSize="12px"
+                        lineHeight="18px"
                       />
-                    </InputLeftElement>
-                    {updateView.isLoading && (
-                      <InputRightElement>
-                        <Spinner color="#475467" />
-                      </InputRightElement>
-                    )}
-                  </InputGroup>
-                </Flex>
-                <OptionItem
-                  icon={view?.type}
-                  title={
-                    generateLangaugeText(tableLan, i18n?.language, "General") ||
-                    "General"
-                  }
-                  rightContent={viewName}
-                  onClick={handleOpenPopup}
-                />
-
-                {localStorage.getItem("newLayout") === "false" && (
-                  <LayoutComponent
-                    isChanged={isChanged}
-                    setIsChanged={setIsChanged}
-                  />
-                )}
-
-                <ViewSettingsModal
-                  refetchViews={refetchViews}
-                  selectedTabIndex={selectedTabIndex}
-                  tableLan={tableLan}
-                  selectedView={view}
-                  isChanged={isChanged}
-                  setIsChanged={setIsChanged}
-                />
-              </Box>
-              <Box py="4px" borderBottom="1px solid #D0D5DD">
-                <OptionItem
-                  title={
-                    generateLangaugeText(tableLan, i18n?.language, "Columns") ||
-                    "Columns"
-                  }
-                  icon={<EyeIcon />}
-                  onClick={() => setOpenedMenu("columns-visibility")}
-                  rightContent={
-                    <Flex ml="auto" alignItems="center" columnGap="8px">
-                      {Boolean(
-                        isTimelineView
-                          ? visibleColumnsCountForTimeline
-                          : visibleColumnsCount
-                      ) &&
-                        (isTimelineView
-                          ? visibleColumnsCountForTimeline
-                          : visibleColumnsCount) > 0 && (
-                          <>
-                            {isTimelineView
-                              ? visibleColumnsCountForTimeline
-                              : visibleColumnsCount}{" "}
-                          </>
-                        )}
-                    </Flex>
-                  }
-                />
-                {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
-                  view?.type !== "BOARD" && (
-                    <OptionItem
-                      onClick={() => setOpenedMenu("group")}
-                      title={
-                        generateLangaugeText(
-                          tableLan,
-                          i18n?.language,
-                          "Group"
-                        ) || "Group"
-                      }
-                      icon={<FileDropdownIcon />}
-                      rightContent={
-                        <>
-                          {Boolean(groupByColumnsCount) && (
-                            <div className={cls.viewOptionSubtitle}>
-                              {groupByColumnsCount}{" "}
-                              {generateLangaugeText(
-                                tableLan,
-                                i18n?.language,
-                                "Group"
-                              ) || "Group"}
-                            </div>
-                          )}
-                        </>
-                      }
-                    />
-                  )}
-                {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) &&
-                  !isTimelineView && (
-                    <OptionItem
-                      onClick={() => setOpenedMenu("tab-group")}
-                      title={
-                        generateLangaugeText(
-                          tableLan,
-                          i18n?.language,
-                          isBoardView ? "Group" : "Tab Group"
-                        ) || "Tab Group"
-                      }
-                      icon={<LayoutIcon />}
-                      rightContent={
-                        <>
-                          {Boolean(tabGroupColumnsCount) && (
-                            <div className={cls.viewOptionSubtitle}>
-                              {tabGroupColumnsCount}{" "}
-                              {generateLangaugeText(
-                                tableLan,
-                                i18n?.language,
-                                "Group"
-                              ) || "Group"}
-                            </div>
-                          )}
-                        </>
-                      }
-                    />
-                  )}
-                {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
-                  view?.type === "BOARD" && (
-                    <OptionItem
-                      onClick={() => setOpenedMenu("sub-group")}
-                      title={
-                        generateLangaugeText(
-                          tableLan,
-                          i18n?.language,
-                          "Sub group"
-                        ) || "Sub group"
-                      }
-                      icon={<HorizontalSplitOutlinedIcon color="inherit" />}
-                      rightContent={
-                        <>
-                          {Boolean(tabGroupColumnsCount) && (
-                            <div className={cls.viewOptionSubtitle}>
-                              {fieldsMap?.[view?.attributes?.sub_group_by_id]
-                                ?.label || "None"}
-                            </div>
-                          )}
-                        </>
-                      }
-                    />
-                  )}
-                {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) &&
-                  !isTimelineView &&
-                  !isBoardView && (
-                    <OptionItem
-                      onClick={() => setOpenedMenu("fix-column")}
-                      icon={<PinIcon />}
-                      title={
-                        generateLangaugeText(
-                          tableLan,
-                          i18n?.language,
-                          "Fix columns"
-                        ) || "Fix columns"
-                      }
-                      rightContent={
-                        <>
-                          {Boolean(fixedColumnsCount) && (
-                            <div className={cls.viewOptionSubtitle}>
-                              {fixedColumnsCount}{" "}
-                              {generateLangaugeText(
-                                tableLan,
-                                i18n?.language,
-                                "Fixed"
-                              ) || "Fixed"}
-                            </div>
-                          )}
-                        </>
-                      }
-                    />
-                  )}
-                {(isTimelineView || isCalendarView) && (
+                      <InputLeftElement h="32px">
+                        <SVG
+                          src={`/img/${viewIcons?.[view?.type]}`}
+                          width={16}
+                          height={16}
+                          color="#101828"
+                        />
+                      </InputLeftElement>
+                      {updateView.isLoading && (
+                        <InputRightElement>
+                          <Spinner color="#475467" />
+                        </InputRightElement>
+                      )}
+                    </InputGroup>
+                  </Flex>
                   <OptionItem
-                    onClick={() =>
-                      setOpenedMenu(
-                        isTimelineView
-                          ? "timeline-settings"
-                          : "calendar-settings"
-                      )
-                    }
+                    icon={view?.type}
                     title={
                       generateLangaugeText(
                         tableLan,
                         i18n?.language,
-                        "Settings"
-                      ) || "Settings"
+                        "General",
+                      ) || "General"
                     }
-                    icon={<SettingsIcon />}
+                    rightContent={viewName}
+                    onClick={handleOpenPopup}
                   />
-                )}
+
+                  {localStorage.getItem("newLayout") === "false" && (
+                    <LayoutComponent
+                      isChanged={isChanged}
+                      setIsChanged={setIsChanged}
+                    />
+                  )}
+
+                  <ViewSettingsModal
+                    refetchViews={refetchViews}
+                    selectedTabIndex={selectedTabIndex}
+                    tableLan={tableLan}
+                    selectedView={view}
+                    isChanged={isChanged}
+                    setIsChanged={setIsChanged}
+                  />
+                </PermissionWrapperV2>
               </Box>
+              <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+                <Box py="4px" borderBottom="1px solid #D0D5DD">
+                  <OptionItem
+                    title={
+                      generateLangaugeText(
+                        tableLan,
+                        i18n?.language,
+                        "Columns",
+                      ) || "Columns"
+                    }
+                    icon={<EyeIcon />}
+                    onClick={() => setOpenedMenu("columns-visibility")}
+                    rightContent={
+                      <Flex ml="auto" alignItems="center" columnGap="8px">
+                        {Boolean(
+                          isTimelineView
+                            ? visibleColumnsCountForTimeline
+                            : visibleColumnsCount,
+                        ) &&
+                          (isTimelineView
+                            ? visibleColumnsCountForTimeline
+                            : visibleColumnsCount) > 0 && (
+                            <>
+                              {isTimelineView
+                                ? visibleColumnsCountForTimeline
+                                : visibleColumnsCount}{" "}
+                            </>
+                          )}
+                      </Flex>
+                    }
+                  />
+                  {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
+                    view?.type !== "BOARD" && (
+                      <OptionItem
+                        onClick={() => setOpenedMenu("group")}
+                        title={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Group",
+                          ) || "Group"
+                        }
+                        icon={<FileDropdownIcon />}
+                        rightContent={
+                          <>
+                            {Boolean(groupByColumnsCount) && (
+                              <div className={cls.viewOptionSubtitle}>
+                                {groupByColumnsCount}{" "}
+                                {generateLangaugeText(
+                                  tableLan,
+                                  i18n?.language,
+                                  "Group",
+                                ) || "Group"}
+                              </div>
+                            )}
+                          </>
+                        }
+                      />
+                    )}
+                  {(roleInfo === "DEFAULT ADMIN" || permissions?.tab_group) &&
+                    !isTimelineView && (
+                      <OptionItem
+                        onClick={() => setOpenedMenu("tab-group")}
+                        title={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            isBoardView ? "Group" : "Tab Group",
+                          ) || "Tab Group"
+                        }
+                        icon={<LayoutIcon />}
+                        rightContent={
+                          <>
+                            {Boolean(tabGroupColumnsCount) && (
+                              <div className={cls.viewOptionSubtitle}>
+                                {tabGroupColumnsCount}{" "}
+                                {generateLangaugeText(
+                                  tableLan,
+                                  i18n?.language,
+                                  "Group",
+                                ) || "Group"}
+                              </div>
+                            )}
+                          </>
+                        }
+                      />
+                    )}
+                  {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
+                    view?.type === "BOARD" && (
+                      <OptionItem
+                        onClick={() => setOpenedMenu("sub-group")}
+                        title={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Sub group",
+                          ) || "Sub group"
+                        }
+                        icon={<HorizontalSplitOutlinedIcon color="inherit" />}
+                        rightContent={
+                          <>
+                            {Boolean(tabGroupColumnsCount) && (
+                              <div className={cls.viewOptionSubtitle}>
+                                {fieldsMap?.[view?.attributes?.sub_group_by_id]
+                                  ?.label || "None"}
+                              </div>
+                            )}
+                          </>
+                        }
+                      />
+                    )}
+                  {(roleInfo === "DEFAULT ADMIN" || permissions?.fix_column) &&
+                    !isTimelineView &&
+                    !isBoardView && (
+                      <OptionItem
+                        onClick={() => setOpenedMenu("fix-column")}
+                        icon={<PinIcon />}
+                        title={
+                          generateLangaugeText(
+                            tableLan,
+                            i18n?.language,
+                            "Fix columns",
+                          ) || "Fix columns"
+                        }
+                        rightContent={
+                          <>
+                            {Boolean(fixedColumnsCount) && (
+                              <div className={cls.viewOptionSubtitle}>
+                                {fixedColumnsCount}{" "}
+                                {generateLangaugeText(
+                                  tableLan,
+                                  i18n?.language,
+                                  "Fixed",
+                                ) || "Fixed"}
+                              </div>
+                            )}
+                          </>
+                        }
+                      />
+                    )}
+                  {(isTimelineView || isCalendarView) && (
+                    <OptionItem
+                      onClick={() =>
+                        setOpenedMenu(
+                          isTimelineView
+                            ? "timeline-settings"
+                            : "calendar-settings",
+                        )
+                      }
+                      title={
+                        generateLangaugeText(
+                          tableLan,
+                          i18n?.language,
+                          "Settings",
+                        ) || "Settings"
+                      }
+                      icon={<SettingsIcon />}
+                    />
+                  )}
+                </Box>
+              </PermissionWrapperV2>
               <Box py="4px" borderBottom="1px solid #D0D5DD">
                 <OptionItem
                   onClick={(e) => {
@@ -374,14 +385,16 @@ export const ViewOptions = ({
                   tableSlug={tableSlug}
                 />
               </Box>
-              <Box pt="4px">
-                <DeleteView
-                  tableSlug={tableSlug}
-                  view={view}
-                  refetchViews={refetchViews}
-                  tableLan={tableLan}
-                />
-              </Box>
+              <PermissionWrapperV2 tableSlug={tableSlug} type="settings">
+                <Box pt="4px">
+                  <DeleteView
+                    tableSlug={tableSlug}
+                    view={view}
+                    refetchViews={refetchViews}
+                    tableLan={tableLan}
+                  />
+                </Box>
+              </PermissionWrapperV2>
             </>
           )}
 

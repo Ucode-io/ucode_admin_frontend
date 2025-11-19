@@ -45,14 +45,13 @@ function DrawerObjectsPage({
   setSelectedViewType = () => {},
   open,
 }) {
-
-  const {view, menuId} = useViewContext();
-  const {state} = useLocation();
+  const { view, menuId } = useViewContext();
+  const { state } = useLocation();
   const dispatch = useDispatch();
   // const [searchParams] = useSearchParams();
   // const {menuId: menuIdParam} = useParams();
   // const menuId = menuIdParam || searchParams.get("menuId");
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const isNewRouter = localStorage.getItem("new_router") === "true";
@@ -61,46 +60,45 @@ function DrawerObjectsPage({
   const viewsList = useSelector((state) => state.groupField.viewsList);
 
   const selectedTabIndex = useSelector(
-    (state) => state?.drawer?.drawerTabIndex
+    (state) => state?.drawer?.drawerTabIndex,
   );
 
   const selectedV = viewsList?.[viewsList.length - 1];
   const lastPath = viewsPath?.[viewsPath.length - 1];
   const isRelationView = Boolean(selectedV?.relation_table_slug);
 
-  const {data: menuViews, refetch: refetchMenuViews} = useGetViewsList(
-    menuId,
-    {
-      enabled: !isRelationView && Boolean(menuId),
-      select: (res) =>
-        sortViews(
-          res?.views?.filter(
-            (item) => item?.type === "SECTION" || item?.is_relation_view,
-          ) ?? [],
-        ),
-      onSuccess: (data) => {
-        if (selectedTabIndex >= data.length) {
-          dispatch(detailDrawerActions.setDrawerTabIndex(0));
-        }
-        const urlParams = new URLSearchParams(window.location.search);
-        if (!data?.find((item) => item?.id === urlParams.get("dv"))) {
-          setSelectedView(data?.[0]);
-          // updateQueryWithoutRerender("v", data?.[0]?.id);
-          updateQueryWithoutRerender("dv", data?.[0]?.id);
-        }
-        if (state?.toDocsTab) {
-          dispatch(detailDrawerActions.setDrawerTabIndex(data?.length));
-        }
-        setTimeout(() => {
-          setLoading(false);
-        }, 500);
-      },
-    }
-  );
+  // const { data: menuViews, refetch: refetchMenuViews } = useGetViewsList(
+  //   menuId,
+  //   {
+  //     enabled: !isRelationView && Boolean(menuId),
+  //     select: (res) =>
+  //       sortViews(
+  //         res?.views?.filter(
+  //           (item) => item?.type === "SECTION" || item?.is_relation_view,
+  //         ) ?? [],
+  //       ),
+  //     onSuccess: (data) => {
+  //       if (selectedTabIndex >= data.length) {
+  //         dispatch(detailDrawerActions.setDrawerTabIndex(0));
+  //       }
+  //       const urlParams = new URLSearchParams(window.location.search);
+  //       if (!data?.find((item) => item?.id === urlParams.get("dv"))) {
+  //         setSelectedView(data?.[0]);
+  //         // updateQueryWithoutRerender("v", data?.[0]?.id);
+  //         updateQueryWithoutRerender("dv", data?.[0]?.id);
+  //       }
+  //       if (state?.toDocsTab) {
+  //         dispatch(detailDrawerActions.setDrawerTabIndex(data?.length));
+  //       }
+  //       setTimeout(() => {
+  //         setLoading(false);
+  //       }, 500);
+  //     },
+  //   },
+  // );
 
-  const {data: relationViews, refetch: refetchRelationViews} = useGetViewsList(
-    menuId,
-    {
+  const { data: relationViews, refetch: refetchRelationViews } =
+    useGetViewsList(menuId, {
       enabled: Boolean(viewsList?.[viewsList?.length - 1]?.relation_table_slug),
 
       select: (res) =>
@@ -122,8 +120,7 @@ function DrawerObjectsPage({
           setLoading(false);
         }, 500);
       },
-    }
-  )
+    });
 
   // const { data: relationViews, refetch: refetchRelationViews } = useQuery(
   //   ["GET_TABLE_VIEWS_LIST_RELATION", selectedV?.relation_table_slug],
@@ -153,9 +150,9 @@ function DrawerObjectsPage({
   //   },
   // );
 
-  const views = useMemo(() => {
-    return !isRelationView ? menuViews : relationViews;
-  }, [menuViews, relationViews, isRelationView, viewsList?.length]);
+  // const views = useMemo(() => {
+  //   return !isRelationView ? menuViews : relationViews;
+  // }, [menuViews, relationViews, isRelationView, viewsList?.length]);
 
   // const {
   //   data: {
@@ -203,24 +200,24 @@ function DrawerObjectsPage({
   //   },
   // );
 
-  const { data: { relations } = { relations: [] } } = useQuery(
-    ["GET_VIEWS_AND_FIELDS", viewsList?.length],
-    () =>
-      constructorRelationService.getList(
-        {
-          table_slug: viewsList?.[viewsList?.length - 1]?.table_slug,
-          relation_table_slug:
-            viewsList?.[viewsList?.length - 1]?.relation_table_slug,
-          disable_table_to: true,
-        },
-        {},
-        viewsList?.[viewsList?.length - 1]?.relation_table_slug ||
-          viewsList?.[viewsList?.length - 1]?.table_slug,
-      ),
-    {
-      enabled: Boolean(viewsList?.[0]?.table_slug),
-    },
-  );
+  // const { data: { relations } = { relations: [] } } = useQuery(
+  //   ["GET_VIEWS_AND_FIELDS", viewsList?.length],
+  //   () =>
+  //     constructorRelationService.getList(
+  //       {
+  //         table_slug: viewsList?.[viewsList?.length - 1]?.table_slug,
+  //         relation_table_slug:
+  //           viewsList?.[viewsList?.length - 1]?.relation_table_slug,
+  //         disable_table_to: true,
+  //       },
+  //       {},
+  //       viewsList?.[viewsList?.length - 1]?.relation_table_slug ||
+  //         viewsList?.[viewsList?.length - 1]?.table_slug,
+  //     ),
+  //   {
+  //     enabled: Boolean(viewsList?.[0]?.table_slug),
+  //   },
+  // );
 
   // useEffect(() => {
   //   if (open) {
@@ -232,77 +229,101 @@ function DrawerObjectsPage({
   // }, [open]);
 
   return (
-    <Tabs direction="ltr" selectedIndex={selectedTabIndex}>
-      <div>
-        {views?.map((view) => (
-          <TabPanel key={view.id}>
-            <Suspense
-              fallback={
-                <div className={cls.fallback} >
-                  <CircularProgress />
-                </div>
-              }
-            >
-              <Views 
-                isRelationView 
-                relationFields={relations} 
-                handleCloseDrawer={handleClose}
-                rootForm={rootForm}
-                layoutData={layoutData}
-                onSectionSubmit={onSubmit}
-                updateLayout={updateLayout}
-                handleMouseDown={handleMouseDown}
-              />
-            </Suspense>
-            {/* {loading ? (
-              <Flex alignItems={"center"} justifyContent={"center"} h={"100vh"}>
-                <Spinner
-                  style={{ width: "50px", height: "50px", color: "#007aff" }}
-                  size={"lg"}
-                />
-              </Flex>
-            ) : (
-              <NewUiViewsWithGroups
-                setLoading={setLoading}
-                relationFields={relations}
-                selectedViewType={selectedViewType}
-                setSelectedViewType={setSelectedViewType}
-                tableInfo={tableInfo}
-                onSubmit={onSubmit}
-                rootForm={rootForm}
-                relationView={true}
-                views={views}
-                view={view}
-                selectedTabIndex={selectedTabIndex}
-                fieldsMap={fieldsMap}
-                menuItem={menuItem}
-                visibleRelationColumns={visibleRelationColumns}
-                visibleColumns={visibleColumns}
-                fieldsMapRel={fieldsMapRel}
-                setSelectedView={setSelectedView}
-                selectedView={selectedView}
-                projectInfo={projectInfo}
-                handleMouseDown={handleMouseDown}
-                layout={layout}
-                selectedTab={layout?.tabs?.[0]}
-                data={data}
-                selectedRow={selectedRow}
-                handleClose={handleClose}
-                modal={true}
-                dateInfo={dateInfo}
-                updateLayout={updateLayout}
-                setFullScreen={setFullScreen}
-                fullScreen={fullScreen}
-                refetchViews={
-                  !isRelationView ? refetchMenuViews : refetchRelationViews
-                }
-                refetchRelationViews={refetchRelationViews}
-              />
-            )} */}
-          </TabPanel>
-        ))}
-      </div>
-    </Tabs>
+    <>
+      <Suspense
+        fallback={
+          <div className={cls.fallback}>
+            <CircularProgress />
+          </div>
+        }
+      >
+        <Views
+          isRelationView
+          handleCloseDrawer={handleClose}
+          rootForm={rootForm}
+          layoutData={layoutData}
+          onSectionSubmit={onSubmit}
+          updateLayout={updateLayout}
+          handleMouseDown={handleMouseDown}
+        />
+      </Suspense>
+    </>
+
+    // <Tabs
+    //   direction="ltr"
+    //   selectedIndex={selectedTabIndex}
+    //   onSelect={handleSelect}
+    // >
+    //   <div>
+    //     {views?.map((view) => (
+    //       <TabPanel key={view.id}>
+    //         <Suspense
+    //           fallback={
+    //             <div className={cls.fallback}>
+    //               <CircularProgress />
+    //             </div>
+    //           }
+    //         >
+    //           <Views
+    //             isRelationView
+    //             relationFields={relations}
+    //             handleCloseDrawer={handleClose}
+    //             rootForm={rootForm}
+    //             layoutData={layoutData}
+    //             onSectionSubmit={onSubmit}
+    //             updateLayout={updateLayout}
+    //             handleMouseDown={handleMouseDown}
+    //           />
+    //         </Suspense>
+    //         {/* {loading ? (
+    //           <Flex alignItems={"center"} justifyContent={"center"} h={"100vh"}>
+    //             <Spinner
+    //               style={{ width: "50px", height: "50px", color: "#007aff" }}
+    //               size={"lg"}
+    //             />
+    //           </Flex>
+    //         ) : (
+    //           <NewUiViewsWithGroups
+    //             setLoading={setLoading}
+    //             relationFields={relations}
+    //             selectedViewType={selectedViewType}
+    //             setSelectedViewType={setSelectedViewType}
+    //             tableInfo={tableInfo}
+    //             onSubmit={onSubmit}
+    //             rootForm={rootForm}
+    //             relationView={true}
+    //             views={views}
+    //             view={view}
+    //             selectedTabIndex={selectedTabIndex}
+    //             fieldsMap={fieldsMap}
+    //             menuItem={menuItem}
+    //             visibleRelationColumns={visibleRelationColumns}
+    //             visibleColumns={visibleColumns}
+    //             fieldsMapRel={fieldsMapRel}
+    //             setSelectedView={setSelectedView}
+    //             selectedView={selectedView}
+    //             projectInfo={projectInfo}
+    //             handleMouseDown={handleMouseDown}
+    //             layout={layout}
+    //             selectedTab={layout?.tabs?.[0]}
+    //             data={data}
+    //             selectedRow={selectedRow}
+    //             handleClose={handleClose}
+    //             modal={true}
+    //             dateInfo={dateInfo}
+    //             updateLayout={updateLayout}
+    //             setFullScreen={setFullScreen}
+    //             fullScreen={fullScreen}
+    //             refetchViews={
+    //               !isRelationView ? refetchMenuViews : refetchRelationViews
+    //             }
+    //             refetchRelationViews={refetchRelationViews}
+    //           />
+    //         )} */}
+    //       </TabPanel>
+    //     ))}
+    //   </div>
+    // </Tabs>
   );
 }
 

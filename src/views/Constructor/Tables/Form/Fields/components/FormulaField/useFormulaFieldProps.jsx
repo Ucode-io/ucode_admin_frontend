@@ -1,19 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 import { useFieldsListQuery } from "@/services/constructorFieldService";
-import { useGetLang } from "@/hooks/useGetLang";
 import { useTranslation } from "react-i18next";
-import { FIELD_TYPES } from "../../../../../../../utils/constants/fieldTypes";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import {
   BUILT_IN_OPERATORS,
-  getFieldIcon,
   getFunctionsByFieldType,
-  menuIcons,
 } from "./formulaFieldIcons";
 
 export const useFormulaFieldProps = ({
   mainForm,
-  menuItem,
   tableSlug,
   control,
   watch,
@@ -21,7 +17,6 @@ export const useFormulaFieldProps = ({
   fieldType,
 }) => {
   const { i18n } = useTranslation();
-  const tableLan = useGetLang("Table");
 
   const [editorValue, setEditorValue] = useState("");
   const [editorSearchText, setEditorSearchText] = useState("");
@@ -42,7 +37,7 @@ export const useFormulaFieldProps = ({
         (item) =>
           item?.type !== FIELD_TYPES.UUID &&
           !item?.type?.includes("FRONTEND") &&
-          item?.label
+          item?.label,
       ) ?? [];
 
   const lastField = fieldsList?.find((item) => {
@@ -97,7 +92,7 @@ export const useFormulaFieldProps = ({
 
   const onItemMouseEnter = (type) => setExampleType(type);
   const onItemMouseLeave = () => setExampleType(null);
-
+  console.log({ BUILT_IN_OPERATORS });
   const getIsLastCharOperator = (value) => {
     let splittedValOperator = "";
 
@@ -140,7 +135,7 @@ export const useFormulaFieldProps = ({
 
       if (splittedValOperator) {
         setEditorSearchText(
-          splittedValOperator[splittedValOperator.length - 1]
+          splittedValOperator[splittedValOperator.length - 1],
         );
         return;
       }
@@ -209,16 +204,19 @@ export const useFormulaFieldProps = ({
     });
   }, [tableRelations]);
 
-  const { isLoading: fieldLoading } = useFieldsListQuery({
+  useFieldsListQuery({
     params: {},
-    tableSlug: fieldType === FIELD_TYPES.FORMULA ? selectedTableSlug?.split("#")[0] : tableSlug,
+    tableSlug:
+      fieldType === FIELD_TYPES.FORMULA
+        ? selectedTableSlug?.split("#")[0]
+        : tableSlug,
     queryParams: {
       enabled: Boolean(tableSlug),
       onSuccess: (res) => {
         setFields(
           res?.fields?.map((item) => {
             return { value: item.slug, label: item.label };
-          })
+          }),
         );
       },
     },
@@ -283,7 +281,9 @@ export const useFormulaFieldProps = ({
         ) {
           e.preventDefault();
           setEditorValue(
-            splittedVal.slice(0, splittedVal.length - 1).join(" ") + " " + label
+            splittedVal.slice(0, splittedVal.length - 1).join(" ") +
+              " " +
+              label,
           );
         } else if (
           splittedDotVal.length > 1 &&
@@ -295,7 +295,7 @@ export const useFormulaFieldProps = ({
           setEditorValue(
             splittedDotVal.slice(0, splittedDotVal.length - 1).join(".") +
               "." +
-              label
+              label,
           );
         } else if (label?.includes("()")) {
           e.preventDefault();

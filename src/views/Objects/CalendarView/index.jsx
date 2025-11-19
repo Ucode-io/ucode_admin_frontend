@@ -222,7 +222,7 @@ const CalendarView = ({
           [view.calendar_from_slug || view?.attributes?.calendar_from_slug]: {
             $gte:
               FromDateType(date, currentUpdatedDate, firstUpdatedDate) ?? "",
-            $lt: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
+            $lte: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
           },
           view_type: "CALENDAR",
           ...dataFilters,
@@ -251,9 +251,9 @@ const CalendarView = ({
                     row[
                       view.calendar_from_slug ??
                         view?.attributes?.calendar_from_slug
-                    ]
+                    ],
                   ),
-                  "dd.MM.yyyy"
+                  "dd.MM.yyyy",
                 )
               : null,
             elementFromTime: row[
@@ -263,7 +263,7 @@ const CalendarView = ({
                   row[
                     view.calendar_from_slug ??
                       view?.attributes?.calendar_from_slug
-                  ]
+                  ],
                 )
               : null,
             elementToTime: row[
@@ -272,7 +272,7 @@ const CalendarView = ({
               ? new Date(
                   row[
                     view.calendar_to_slug ?? view?.attributes?.calendar_to_slug
-                  ]
+                  ],
                 )
               : null,
           },
@@ -286,7 +286,7 @@ const CalendarView = ({
         if (Object.keys(fieldsMap)?.length) return;
         setFieldsMap(res.fieldsMap);
       },
-    }
+    },
   );
 
   const { data: workingDays } = useQuery(
@@ -304,7 +304,7 @@ const CalendarView = ({
           [view.disable_dates.day_slug]: {
             $gte:
               FromDateType(date, currentUpdatedDate, firstUpdatedDate) ?? "",
-            $lt: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
+            $lte: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
           },
         },
       });
@@ -341,7 +341,7 @@ const CalendarView = ({
 
         return result;
       },
-    }
+    },
   );
 
   const {

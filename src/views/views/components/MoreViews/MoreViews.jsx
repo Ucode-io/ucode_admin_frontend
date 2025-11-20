@@ -4,7 +4,7 @@ import React, {useState, useMemo} from "react";
 import {useTranslation} from "react-i18next";
 import {default as SVG} from "react-inlinesvg";
 import AddIcon from "@mui/icons-material/Add";
-import { ViewSettingsModal } from "../ViewSettingsModal";
+// import { ViewSettingsModal } from "../ViewSettingsModal";
 
 const viewIcons = {
   TABLE: "layout-alt-01.svg",
@@ -21,10 +21,10 @@ export const MoreViews = ({
   anchorEl = null,
   open = false,
   views = [],
-  tableLan = {},
-  selectedView = {},
-  selectedTabIndex = 0,
-  refetchViews = () => {},
+  // tableLan = {},
+  // selectedView = {},
+  // selectedTabIndex = 0,
+  // refetchViews = () => {},
   handleClose = () => {},
   handleViewClick = () => {},
   setSelectedView = () => {},
@@ -136,13 +136,13 @@ export const MoreViews = ({
                       {getViewName(view)}
                     </Button>
 
-                    <ViewSettingsModal
+                    {/* <ViewSettingsModal
                       viewSetting={true}
                       refetchViews={refetchViews}
                       selectedTabIndex={selectedTabIndex}
                       tableLan={tableLan}
                       selectedView={selectedView}
-                    />
+                    /> */}
                   </Flex>
                 ))
               ) : (

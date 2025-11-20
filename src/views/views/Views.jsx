@@ -179,8 +179,6 @@ export const Views = ({
                 selectedRow={selectedRow}
                 menuItem={menuItem}
                 layout={layout}
-                // selectedViewType={selectedViewType}
-                // setSelectedViewType={setSelectedViewType}
               />
             )}
           </FieldsProvider>

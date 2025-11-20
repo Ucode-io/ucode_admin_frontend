@@ -19,8 +19,6 @@ export const useHeaderFilterProps = () => {
   const { i18n } = useTranslation();
   const tableLan = useGetLang("Table");
 
-  const selectedTabIndex = useSelector((state) => state.drawer.mainTabIndex);
-
   const {
     view,
     views,
@@ -45,6 +43,11 @@ export const useHeaderFilterProps = () => {
     setSortedDatas,
     sortedDatas,
   } = useFilterContext();
+
+  const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);
+  const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
+
+  const selectedTabIndex = isRelationView ? drawerTabIndex : mainTabIndex;
 
   const { fieldsMap, fieldsMapRel } = useFieldsContext();
 
@@ -121,7 +124,7 @@ export const useHeaderFilterProps = () => {
       dispatch(detailDrawerActions.setMainTabIndex(idx));
     }
     setSelectedView(view);
-    dispatch(viewsActions.setSelectedView({ view, idx }));
+    // dispatch(viewsActions.setSelectedView(view));
   };
 
   const handleClick = (e) => {

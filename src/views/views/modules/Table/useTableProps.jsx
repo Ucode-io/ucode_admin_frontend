@@ -30,6 +30,7 @@ export const useTableProps = ({ tab }) => {
     searchText,
     checkedColumns,
     navigateToEditPage,
+    isRelationView,
   } = useViewContext();
 
   const { fieldsMap, fieldsForm, fields } = useFieldsContext();
@@ -50,6 +51,9 @@ export const useTableProps = ({ tab }) => {
   // const fieldSlug = urlSearchParams.get("field_slug");
 
   const tableLan = useGetLang("Table");
+
+  const viewsList = useSelector((state) => state.groupField.viewsList);
+  const selectedV = viewsList?.[viewsList?.length - 1];
 
   // const view = viewFromStore?.find((view) => view?.id === viewId);
 
@@ -343,6 +347,9 @@ export const useTableProps = ({ tab }) => {
           order: computedSortColumns,
           view_fields: checkedColumns,
           search: tableSearch,
+          [`${selectedV?.table_slug}_id`]: isRelationView
+            ? selectedV?.detailId
+            : undefined,
           limit: pagination ?? limit,
           ...filters,
           [tab?.slug]: tab

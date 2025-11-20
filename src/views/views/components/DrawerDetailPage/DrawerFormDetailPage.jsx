@@ -3,19 +3,19 @@ import {Box, Button} from "@mui/material";
 import {isEqual} from "lodash";
 import React, {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
-import {Container, Draggable} from "react-smooth-dnd";
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { Container, Draggable } from "react-smooth-dnd";
 import MaterialUIProvider from "@/providers/MaterialUIProvider";
 import layoutService from "@/services/layoutService";
-import {store} from "@/store";
-import {applyDrag} from "@/utils/applyDrag";
-import {FIELD_TYPES} from "@/utils/constants/fieldTypes";
+import { store } from "@/store";
+import { applyDrag } from "@/utils/applyDrag";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import DrawerFieldGenerator from "./ElementGenerator/DrawerFieldGenerator";
 import HeadingOptions from "./HeadingOptions";
 import "./style.scss";
 import constructorObjectService from "@/services/constructorObjectService";
-import {useQueryClient} from "react-query";
+import { useQueryClient } from "react-query";
 import { getColumnIcon } from "@/utils/constants/tableIcons";
 import FormCustomActionButton from "@/views/Objects/components/CustomActionsButton/FormCustomActionButtons";
 
@@ -35,14 +35,14 @@ function DrawerFormDetailPage({
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { i18n } = useTranslation();
-  const { tableSlug: tableSlugParam, } = useParams();
+  const { tableSlug: tableSlugParam } = useParams();
   const tableSlug = tableSlugParam || view?.table_slug;
   const [dragAction, setDragAction] = useState(false);
   const [activeLang, setActiveLang] = useState();
   const auth = store.getState().auth;
   const defaultAdmin = auth?.roleInfo?.name === "DEFAULT ADMIN";
   const languages = useSelector((state) => state.languages.list)?.map(
-    (el) => el.slug
+    (el) => el.slug,
   );
 
   const query = new URLSearchParams(window.location.search);
@@ -56,7 +56,7 @@ function DrawerFormDetailPage({
   };
 
   const [sections, setSections] = useState(
-    data?.tabs?.[selectedTabIndex]?.sections || []
+    data?.tabs?.[selectedTabIndex]?.sections || [],
   );
 
   useEffect(() => {
@@ -69,7 +69,7 @@ function DrawerFormDetailPage({
     const newSections = [...sections];
     newSections[secIndex].fields = applyDrag(
       newSections[secIndex].fields,
-      dropResult
+      dropResult,
     );
 
     setSections(newSections);
@@ -86,7 +86,7 @@ function DrawerFormDetailPage({
               ...tab?.attributes,
             },
           }
-        : tab
+        : tab,
     );
 
     const currentUpdatedLayout = {
@@ -101,17 +101,17 @@ function DrawerFormDetailPage({
     if (selectedRow?.IS_NO_DATE || selectedRow?.IS_NEW) {
       rootForm.setValue(
         selectedRow?.FROM_DATE_SLUG,
-        selectedRow?.[selectedRow?.FROM_DATE_SLUG]
+        selectedRow?.[selectedRow?.FROM_DATE_SLUG],
       );
       rootForm.setValue(
         selectedRow?.TO_DATE_SLUG,
-        selectedRow?.[selectedRow?.TO_DATE_SLUG]
+        selectedRow?.[selectedRow?.TO_DATE_SLUG],
       );
     }
 
     rootForm.setValue(
       "attributes.layout_heading",
-      selectedTab?.attributes?.layout_heading
+      selectedTab?.attributes?.layout_heading,
     );
   }, [selectedRow]);
 
@@ -122,12 +122,12 @@ function DrawerFormDetailPage({
       ...section,
       fields: section?.fields?.filter(
         (el) =>
-          el?.slug !== rootForm.watch("attributes.layout_heading") && el?.id
+          el?.slug !== rootForm.watch("attributes.layout_heading") && el?.id,
       ),
     }));
 
     setSections((prevSections) =>
-      isEqual(prevSections, updatedSections) ? prevSections : updatedSections
+      isEqual(prevSections, updatedSections) ? prevSections : updatedSections,
     );
   }, [data, rootForm.watch("attributes.layout_heading")]);
 

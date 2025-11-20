@@ -8,6 +8,7 @@ export const { actions: detailDrawerActions, reducer: detailDrawerReducer } =
       mainTabIndex: 0,
       drawerTabIndex: 0,
       tableInfo: null,
+      selectedView: {},
     },
     reducers: {
       setMainTabIndex: (state, action) => {
@@ -18,6 +19,9 @@ export const { actions: detailDrawerActions, reducer: detailDrawerReducer } =
       },
       setDrawerTabIndex: (state, action) => {
         state.drawerTabIndex = action.payload;
+      },
+      setSelectedView: (state, action) => {
+        state.selectedView = action.payload;
       },
       openDrawer: (state) => {
         state.openDrawer = true;

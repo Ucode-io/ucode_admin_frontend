@@ -45,6 +45,17 @@ import { projectInfoActions } from "@/store/projectInfo/projectInfo.slice";
 
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
+
+  const { selectedView: selectedViewMain } = useSelector(
+    (state) => state.views,
+  );
+
+  const { selectedView: selectedViewDrawer } = useSelector(
+    (state) => state.drawer,
+  );
+
+  const selectedView = isRelationView ? selectedViewDrawer : selectedViewMain;
+
   const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);
   const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
   const selectedTabIndex = isRelationView ? drawerTabIndex : mainTabIndex;
@@ -67,6 +78,11 @@ export const useViewsProps = ({ isRelationView }) => {
     (state) => state?.pagination?.paginationCount,
   );
 
+  const setSelectedView = (view) => {
+    if (isRelationView) dispatch(detailDrawerActions.setSelectedView(view));
+    else dispatch(viewsActions.setSelectedView(view));
+  };
+
   const { i18n } = useTranslation();
 
   const { menuId, id } = useParams();
@@ -85,7 +101,7 @@ export const useViewsProps = ({ isRelationView }) => {
   });
 
   const [relationViews, setRelationViews] = useState([]);
-  const [selectedView, setSelectedView] = useState(null);
+  // const [selectedView, setSelectedView] = useState(null);
 
   // const [menuItem, setMenuItem] = useState(null);
   const [authInfo, setAuthInfo] = useState(null);
@@ -123,10 +139,11 @@ export const useViewsProps = ({ isRelationView }) => {
     ? query.get("dv")
     : (query.get("v") ?? selectedView?.id);
 
-  const tableSlug =
-    isRelationView && selectedView?.type !== VIEW_TYPES_MAP.SECTION
-      ? selectedView?.relation_table_slug
-      : selectedView?.table_slug;
+  const tableSlug = isRelationView
+    ? selectedV?.relation_table_slug ||
+      selectedView?.relation_table_slug ||
+      selectedView?.table_slug
+    : selectedView?.table_slug;
 
   const viewType = selectedView?.type;
 
@@ -320,47 +337,56 @@ export const useViewsProps = ({ isRelationView }) => {
     );
   };
 
-  const { refetch: refetchViewsList, isRefetching } = useGetViewsList(menuId, {
-    enabled: Boolean(menuId),
-    select: (res) => {
-      const relationViews =
-        res?.views?.filter(
-          (item) => item?.type === "SECTION" || item?.is_relation_view,
-        ) ?? [];
+  const menuIdForViewsList =
+    viewsList?.[viewsList?.length - 1]?.relation_table_slug && isRelationView
+      ? selectedV?.relation_table_slug
+      : menuId;
 
-      const views =
-        res?.views?.filter(
-          (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view),
-        ) ?? [];
+  const { refetch: refetchViewsList, isRefetching } = useGetViewsList(
+    menuIdForViewsList,
+    {
+      enabled: Boolean(menuIdForViewsList),
+      select: (res) => {
+        const relationViews =
+          res?.views?.filter(
+            (item) => item?.type === "SECTION" || item?.is_relation_view,
+          ) ?? [];
 
-      return { views, relationViews };
-    },
-    onSuccess: ({ views, relationViews }) => {
-      if (
-        (!selectedView ||
-          selectedView?.id !== views?.[selectedTabIndex]?.id ||
-          isRefetching) &&
-        !isRelationView
-      ) {
-        setSelectedView(views?.[selectedTabIndex]);
-      }
+        const views =
+          res?.views?.filter(
+            (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view),
+          ) ?? [];
 
-      if (isRelationView) {
-        setSelectedView(relationViews?.[selectedTabIndex]);
-        setRelationViews(relationViews);
-        updateQueryWithoutRerender("dv", relationViews?.[selectedTabIndex]?.id);
-        // if (state?.toDocsTab) setSelectedTabIndex(data?.length);
-      } else {
-        dispatch(viewsActions.setViews(views));
-
-        if (!pathname.includes("/login")) {
-          updateQueryWithoutRerender("v", views?.[selectedTabIndex]?.id);
+        return { views, relationViews };
+      },
+      onSuccess: ({ views, relationViews }) => {
+        if (
+          (!selectedView ||
+            selectedView?.id !== views?.[selectedTabIndex]?.id ||
+            isRefetching) &&
+          !isRelationView
+        ) {
+          setSelectedView(views?.[selectedTabIndex]);
         }
-        if (state?.toDocsTab)
-          dispatch(detailDrawerActions.setDrawerTabIndex(views?.length));
-      }
+
+        if (isRelationView) {
+          dispatch(detailDrawerActions.setDrawerTabIndex(0));
+          setSelectedView(relationViews?.[0]);
+          setRelationViews(relationViews);
+          updateQueryWithoutRerender("dv", relationViews?.[0]?.id);
+          // if (state?.toDocsTab) setSelectedTabIndex(data?.length);
+        } else {
+          dispatch(viewsActions.setViews(views));
+
+          if (!pathname.includes("/login")) {
+            updateQueryWithoutRerender("v", views?.[selectedTabIndex]?.id);
+          }
+          if (state?.toDocsTab)
+            dispatch(detailDrawerActions.setDrawerTabIndex(views?.length));
+        }
+      },
     },
-  });
+  );
 
   const {
     data: { layout } = {
@@ -383,8 +409,12 @@ export const useViewsProps = ({ isRelationView }) => {
       enabled: Boolean(isRelationView && tableSlug && menuId),
     },
     {
-      menuId,
+      menuId: menuId,
       tableSlug,
+      params: {
+        "table-slug": tableSlug,
+        language_setting: i18n?.language,
+      },
     },
   );
 
@@ -426,6 +456,7 @@ export const useViewsProps = ({ isRelationView }) => {
             })) ?? [],
           customEvents: data?.custom_events,
           orderBy: data?.table_info?.order_by || false,
+          relationViewsList: data?.views,
         };
       },
       onSuccess: (data) => {

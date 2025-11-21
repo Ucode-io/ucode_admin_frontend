@@ -8,14 +8,7 @@ import MultiselectCellColoredElement from "@/components/ElementGenerators/Multis
 import { useTranslation } from "react-i18next";
 import { InfoBlockMonth } from "../InfoBlockMonth";
 
-export const DataMonthCard = ({
-  date,
-  view,
-  fieldsMap,
-  data,
-  viewFields,
-  navigateToEditPage,
-}) => {
+export const DataMonthCard = ({ data, viewFields, navigateToEditPage }) => {
   const [info, setInfo] = useState(data);
   const [anchorEl, setAnchorEl] = useState(null);
   const ref = useRef();

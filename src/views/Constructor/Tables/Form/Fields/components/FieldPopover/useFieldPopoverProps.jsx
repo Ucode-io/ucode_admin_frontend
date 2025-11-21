@@ -23,6 +23,7 @@ import { Field } from "../Field";
 import { FormulaField } from "../FormulaField";
 import { Box } from "@mui/material";
 import { IncrementField } from "../IncrementField";
+import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 
 export const useFieldPopoverProps = ({
   mainForm,
@@ -49,7 +50,7 @@ export const useFieldPopoverProps = ({
 
   const { id, appId, tableSlug: tableSlugParams } = useParams();
 
-  const { view } = useViewContext();
+  const { view, refetchViews } = useViewContext();
 
   const menuItemStore = useSelector((state) => state.menu.menuItem);
 
@@ -138,7 +139,7 @@ export const useFieldPopoverProps = ({
       relationColumns: [],
     },
     isLoading,
-    refetch: refetchViews,
+    // refetch: refetchViews,
   } = useQuery(
     ["GET_VIEWS_AND_FIELDS", { tableSlug }],
     () => {
@@ -208,6 +209,10 @@ export const useFieldPopoverProps = ({
       updateFieldInform(field);
       onClose();
     }
+    setTimeout(() => {
+      queryClient.refetchQueries(QUERY_KEYS.TABLE_DATA_KEY);
+      queryClient.refetchQueries(QUERY_KEYS.VIEWS_DATA_KEY);
+    }, 200);
   };
 
   const onSubmit = (values) => {

@@ -36,7 +36,7 @@ const RelationFilter = ({ field = {}, filters, name, onChange }) => {
         },
       });
     },
-    enabled: Boolean(chosenField),
+    enabled: Boolean(chosenField?.table_slug),
     select: (res) => {
       return {
         data:

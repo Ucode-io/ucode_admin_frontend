@@ -16,6 +16,7 @@ import { useViewContext } from "@/providers/ViewProvider";
 import { useFieldsContext } from "../../providers/FieldsProvider";
 import { useFilterContext } from "../../providers/FilterProvider";
 import { useGetLang } from "@/hooks/useGetLang";
+import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 
 export const useTableProps = ({ tab }) => {
   const {
@@ -326,7 +327,7 @@ export const useTableProps = ({ tab }) => {
     isLoading: tableLoader,
   } = useQuery({
     queryKey: [
-      "GET_OBJECTS_LIST",
+      QUERY_KEYS.TABLE_DATA_KEY,
       {
         tableSlug,
         searchText,

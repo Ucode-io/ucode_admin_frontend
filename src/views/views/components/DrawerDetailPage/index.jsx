@@ -36,8 +36,8 @@ function DrawerDetailPage({
   layout,
   menuItem,
   dateInfo = {},
-  defaultValue,
   menuId,
+  refetchMainDataList,
 }) {
   const dispatch = useDispatch();
 
@@ -73,6 +73,7 @@ function DrawerDetailPage({
   // const fieldSlug = query.get("field_slug");
 
   const open = useSelector((state) => state?.drawer?.openDrawer);
+  const defaultValue = useSelector((state) => state.drawer.defaultValue);
 
   const sidebarIsOpen = useSelector(
     (state) => state.main.settingsSidebarIsOpen,
@@ -99,12 +100,14 @@ function DrawerDetailPage({
     // } else if (action !== "close" && Boolean(!itemId)) {
     //   onSubmit(rootForm?.getValues());
     // } else {
+    rootForm.reset({});
     updateQueryWithoutRerender("p", null);
     updateQueryWithoutRerender("dv", null);
     dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
     dispatch(groupFieldActions.trimViewsDataUntil(viewsPath?.[0]));
     dispatch(detailDrawerActions.setDrawerTabIndex(0));
     dispatch(detailDrawerActions.closeDrawer());
+    dispatch(detailDrawerActions.setSelectedView({}));
     // updateQueryWithoutRerender("v", view?.id);
     // }
   };
@@ -215,13 +218,17 @@ function DrawerDetailPage({
       .create(tableSlug, { data })
       .then(() => {
         updateLayout();
+
         dispatch(detailDrawerActions.closeDrawer());
-        handleClose();
         dispatch(showAlert("Successfully updated!", "success"));
+
+        refetchMainDataList();
+
+        handleClose();
       })
       .catch((e) => console.log("ERROR: ", e))
       .finally(() => {
-        rootForm.refetch();
+        rootForm.reset({});
       });
   }
 

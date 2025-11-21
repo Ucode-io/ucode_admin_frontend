@@ -2,9 +2,9 @@ import {get} from "@ngard/tiny-get";
 import {useEffect, useMemo, useState} from "react";
 import {Controller, useWatch} from "react-hook-form";
 import {useTranslation} from "react-i18next";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import request from "@/utils/request";
 import constructorObjectService from "@/services/constructorObjectService";
 import { pageToOffset } from "@/utils/pageToOffset";
@@ -25,16 +25,13 @@ const RelationField = ({
   formTableSlug,
   defaultValue,
   disabled,
-  key,
   activeLang,
-  checkRequiredField,
   errors,
   isLayout = false,
   isMulti,
   isRequired,
   placeholder = "",
   updateObject = () => {},
-  ...props
 }) => {
   const tableSlug = useMemo(() => {
     if (field?.relation_type === "Recursive") return formTableSlug;
@@ -88,20 +85,15 @@ const AutoCompleteElement = ({
   value,
   tableSlug,
   setValue,
-  error,
   disabled,
-  disabledHelperText,
   control,
   name,
-  multipleInsertField,
   setFormValue = () => {},
   errors,
   required = false,
   activeLang,
   isMulti,
-  placeholder = "",
   updateObject = () => {},
-  watch = () => {},
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
@@ -120,13 +112,9 @@ const AutoCompleteElement = ({
   const { state } = useLocation();
   const languages = useSelector((state) => state.languages.list);
   const isSettings = window.location.pathname?.includes("settings/constructor");
-  const [searchParams] = useSearchParams();
-  const menuId = searchParams.get("menuId");
-
-  const queryClient = useQueryClient();
 
   const customStyles = {
-    control: (provided, state) => ({
+    control: (provided) => ({
       ...provided,
       height: "32px",
       minHeight: "32px",
@@ -563,7 +551,7 @@ const AutoCompleteElement = ({
       title={
         localValue?.length
           ? localValue?.map((option) => {
-              const value = computedViewFields?.map((el, index) => {
+              const value = computedViewFields?.map((el) => {
                 if (field?.attributes?.enable_multi_language) {
                   return getRelationFieldTabsLabel(
                     field,
@@ -599,6 +587,7 @@ const AutoCompleteElement = ({
         <Select
           onMenuOpen={onMenuOpen}
           placeholder="Empty"
+          defaultMenuIsOpen={false}
           id={`relationField`}
           isDisabled={disabled}
           options={computedOptions ?? []}
@@ -618,7 +607,7 @@ const AutoCompleteElement = ({
           }}
           onMenuScrollToBottom={loadMoreItems}
           // inputChangeHandler={(e) => inputChangeHandler(e)}
-          onInputChange={(e, newValue) => {
+          onInputChange={(e) => {
             setInputValue(e ?? null);
             inputChangeHandler(e);
           }}
@@ -640,7 +629,7 @@ const AutoCompleteElement = ({
               return (
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <span>
-                    {computedViewFields?.map((el, index) => {
+                    {computedViewFields?.map((el) => {
                       if (field?.attributes?.enable_multi_language) {
                         return getRelationFieldTabsLabel(
                           field,

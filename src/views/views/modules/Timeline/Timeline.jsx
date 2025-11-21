@@ -14,6 +14,7 @@ import {mergeStringAndState} from "@/utils/jsonPath";
 import useTabRouter from "@/hooks/useTabRouter";
 import { useViewContext } from "@/providers/ViewProvider";
 import { useFieldsContext } from "../../providers/FieldsProvider";
+import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 
 export const Timeline = () => {
 
@@ -138,7 +139,7 @@ export const Timeline = () => {
     refetch: refetchData,
   } = useQuery(
     [
-      "GET_OBJECTS_LIST_WITH_RELATIONS",
+      QUERY_KEYS.TIMELINE_DATA_KEY,
       { tableSlug, filters, dateFilters, view, months, selectedType },
     ],
     () => {
@@ -170,7 +171,7 @@ export const Timeline = () => {
           data,
         };
       },
-    }
+    },
   );
 
   useEffect(() => {

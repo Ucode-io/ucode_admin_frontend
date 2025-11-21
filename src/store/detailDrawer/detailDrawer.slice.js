@@ -9,6 +9,7 @@ export const { actions: detailDrawerActions, reducer: detailDrawerReducer } =
       drawerTabIndex: 0,
       tableInfo: null,
       selectedView: {},
+      defaultValue: null,
     },
     reducers: {
       setMainTabIndex: (state, action) => {
@@ -28,6 +29,10 @@ export const { actions: detailDrawerActions, reducer: detailDrawerReducer } =
       },
       closeDrawer: (state) => {
         state.openDrawer = false;
+        state.defaultValue = null;
+      },
+      setDefaultValue: (state, action) => {
+        state.defaultValue = action.payload;
       },
     },
   });

@@ -54,7 +54,8 @@ function HFDatePickerNew({
           gap: "8px",
           fontSize: "12px",
           height: "30px",
-        }}>
+        }}
+      >
         <InputMask
           mask={withTime ? "99.99.9999 99:99" : "99.99.9999"}
           value={inputValue}
@@ -82,13 +83,14 @@ function HFDatePickerNew({
             try {
               const parsed = parse(raw, formatString, new Date());
               const val = parsed.toISOString();
-              onChange(val)
+              onChange(val);
               return;
-            } catch(err) {
-              console.log(err)
+            } catch (err) {
+              console.log(err);
             }
           }}
-          disabled={disabled}>
+          disabled={disabled}
+        >
           {(inputProps) => (
             <TextField
               {...inputProps}
@@ -109,17 +111,12 @@ function HFDatePickerNew({
             />
           )}
         </InputMask>
-
-        {Boolean(disabled) && (
-          <Box sx={{marginRight: "20px"}}>
-            <Lock />
-          </Box>
-        )}
         <Box
-          sx={{marginRight: "24px", cursor: "pointer"}}
+          sx={{ marginRight: "24px", cursor: "pointer" }}
           onClick={(e) => {
             !disabled && setAnchorEl(e.currentTarget);
-          }}>
+          }}
+        >
           <img src="/table-icons/date-time.svg" alt="" />
         </Box>
       </Box>
@@ -131,14 +128,16 @@ function HFDatePickerNew({
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
-        }}>
+        }}
+      >
         <Box
           sx={{
             minWidth: "210px",
             minHeight: "250px",
             border: "1px solid #eee",
             borderRadius: "8px",
-          }}>
+          }}
+        >
           <Tabs className={styles.tabs}>
             <TabList className={styles.tablist}>
               <Tab className={styles.tab}>Day</Tab>
@@ -155,22 +154,13 @@ function HFDatePickerNew({
               />
             </TabPanel>
             <TabPanel>
-              <HFMonthPicker
-                onChange={onChange}
-                value={value}
-              />
+              <HFMonthPicker onChange={onChange} value={value} />
             </TabPanel>
             <TabPanel>
-              <HFQuarterPicker
-                onChange={onChange}
-                value={value}
-              />
+              <HFQuarterPicker onChange={onChange} value={value} />
             </TabPanel>
             <TabPanel>
-              <HFYearPicker
-                onChange={onChange}
-                value={value}
-              />
+              <HFYearPicker onChange={onChange} value={value} />
             </TabPanel>
           </Tabs>
         </Box>

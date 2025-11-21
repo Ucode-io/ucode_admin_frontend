@@ -112,7 +112,7 @@ const ViewsWithGroups = ({
 
   const [dateFilters, setDateFilters] = useState({
     $gte: startOfMonth(new Date()),
-    $lt: endOfMonth(new Date()),
+    $lte: endOfMonth(new Date()),
   });
 
   const [anchorEl, setAnchorEl] = useState(null);

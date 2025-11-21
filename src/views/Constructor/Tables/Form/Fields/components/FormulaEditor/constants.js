@@ -126,22 +126,31 @@ export function countArgsInside(code, startIdx){
 }
 
 
-function isArray(v) { return Array.isArray(v); }
-function isDate(v) { return v instanceof Date && !isNaN(v.valueOf()); }
+function isDate(v) {
+  return v instanceof Date && !isNaN(v.valueOf());
+}
 function toDate(v) {
   if (isDate(v)) return v;
-  if (typeof v === 'number') return new Date(v);
-  if (typeof v === 'string') {
+  if (typeof v === "number") return new Date(v);
+  if (typeof v === "string") {
     const d = new Date(v);
     if (!isNaN(d.valueOf())) return d;
   }
   return null;
 }
 
-function clampInt(n) { return Number.isFinite(n) ? Math.trunc(n) : NaN; }
+function clampInt(n) {
+  return Number.isFinite(n) ? Math.trunc(n) : NaN;
+}
 
 const UNITS = {
-  years: 'years', quarters: 'quarters', months: 'months', weeks: 'weeks', days: 'days', hours: 'hours', minutes: 'minutes'
+  years: "years",
+  quarters: "quarters",
+  months: "months",
+  weeks: "weeks",
+  days: "days",
+  hours: "hours",
+  minutes: "minutes",
 };
 
 function addDate(base, amount, unit) {
@@ -149,14 +158,29 @@ function addDate(base, amount, unit) {
   const n = clampInt(amount);
   if (!Number.isFinite(n)) return null;
   switch (unit) {
-    case 'years': d.setFullYear(d.getFullYear() + n); break;
-    case 'quarters': d.setMonth(d.getMonth() + n * 3); break;
-    case 'months': d.setMonth(d.getMonth() + n); break;
-    case 'weeks': d.setDate(d.getDate() + n * 7); break;
-    case 'days': d.setDate(d.getDate() + n); break;
-    case 'hours': d.setHours(d.getHours() + n); break;
-    case 'minutes': d.setMinutes(d.getMinutes() + n); break;
-    default: return null;
+    case "years":
+      d.setFullYear(d.getFullYear() + n);
+      break;
+    case "quarters":
+      d.setMonth(d.getMonth() + n * 3);
+      break;
+    case "months":
+      d.setMonth(d.getMonth() + n);
+      break;
+    case "weeks":
+      d.setDate(d.getDate() + n * 7);
+      break;
+    case "days":
+      d.setDate(d.getDate() + n);
+      break;
+    case "hours":
+      d.setHours(d.getHours() + n);
+      break;
+    case "minutes":
+      d.setMinutes(d.getMinutes() + n);
+      break;
+    default:
+      return null;
   }
   return d;
 }
@@ -164,33 +188,51 @@ function addDate(base, amount, unit) {
 function diffDates(a, b, unit) {
   const ms = a.valueOf() - b.valueOf();
   switch (unit) {
-    case 'minutes': return Math.trunc(ms / (60 * 1000));
-    case 'hours': return Math.trunc(ms / (60 * 60 * 1000));
-    case 'days': return Math.trunc(ms / (24 * 60 * 60 * 1000));
-    case 'weeks': return Math.trunc(ms / (7 * 24 * 60 * 60 * 1000));
-    case 'months': return (a.getFullYear() - b.getFullYear()) * 12 + (a.getMonth() - b.getMonth());
-    case 'quarters': return Math.trunc(((a.getFullYear() - b.getFullYear()) * 12 + (a.getMonth() - b.getMonth())) / 3);
-    case 'years': return a.getFullYear() - b.getFullYear();
-    default: return NaN;
+    case "minutes":
+      return Math.trunc(ms / (60 * 1000));
+    case "hours":
+      return Math.trunc(ms / (60 * 60 * 1000));
+    case "days":
+      return Math.trunc(ms / (24 * 60 * 60 * 1000));
+    case "weeks":
+      return Math.trunc(ms / (7 * 24 * 60 * 60 * 1000));
+    case "months":
+      return (
+        (a.getFullYear() - b.getFullYear()) * 12 + (a.getMonth() - b.getMonth())
+      );
+    case "quarters":
+      return Math.trunc(
+        ((a.getFullYear() - b.getFullYear()) * 12 +
+          (a.getMonth() - b.getMonth())) /
+          3,
+      );
+    case "years":
+      return a.getFullYear() - b.getFullYear();
+    default:
+      return NaN;
   }
 }
 
 function weekNumber(date) {
   // ISO week (Monday-first)
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+  );
   const dayNum = d.getUTCDay() || 7; // 1..7
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
   return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
 }
 
-function pad2(n){ return String(n).padStart(2,'0'); }
-function formatWithPattern(date, pattern = 'YYYY-MM-DD HH:mm', tz) {
+function pad2(n) {
+  return String(n).padStart(2, "0");
+}
+function formatWithPattern(date, pattern = "YYYY-MM-DD HH:mm", tz) {
   // Простая замена токенов; для TZ используем Intl только для имени зоны (без сдвига)
   const d = date;
   const map = {
     YYYY: String(d.getFullYear()),
-    MM: pad2(d.getMonth()+1),
+    MM: pad2(d.getMonth() + 1),
     DD: pad2(d.getDate()),
     HH: pad2(d.getHours()),
     mm: pad2(d.getMinutes()),
@@ -202,246 +244,256 @@ function formatWithPattern(date, pattern = 'YYYY-MM-DD HH:mm', tz) {
 }
 
 // Диапазон дат представляем структурой
-function makeRange(start, end){ return { __type: 'DATE_RANGE', start, end }; }
-function isRange(v){ return v && typeof v === 'object' && v.__type === 'DATE_RANGE'; }
+function makeRange(start, end) {
+  return { __type: "DATE_RANGE", start, end };
+}
+function isRange(v) {
+  return v && typeof v === "object" && v.__type === "DATE_RANGE";
+}
 
 export function installCustomFunctions(parser) {
   // 1. IFS
-  parser.setFunction('IFS', function (params) {
-    if (!params || params.length < 1) return { error: '#N/A' };
+  parser.setFunction("IFS", function (params) {
+    if (!params || params.length < 1) return { error: "#N/A" };
     // пары (cond, value) ... и финальный defaultValue опционально
     for (let i = 0; i + 1 < params.length; i += 2) {
       const cond = params[i];
-      const val = params[i+1];
-      if (typeof cond === 'boolean' && cond) return val;
+      const val = params[i + 1];
+      if (typeof cond === "boolean" && cond) return val;
     }
     // defaultValue если есть нечётное кол-во
-    if (params.length % 2 === 1) return params[params.length-1];
+    if (params.length % 2 === 1) return params[params.length - 1];
     return false;
   });
 
   // 2. EMPTY
-  parser.setFunction('EMPTY', function (params) {
+  parser.setFunction("EMPTY", function (params) {
     const v = params[0];
     if (v === null || v === undefined) return true;
-    if (typeof v === 'string' && v.trim() === '') return true;
-    if (typeof v === 'number' && (Number.isNaN(v) || v === 0)) return true;
+    if (typeof v === "string" && v.trim() === "") return true;
+    if (typeof v === "number" && (Number.isNaN(v) || v === 0)) return true;
     if (Array.isArray(v) && v.length === 0) return true;
-    if (typeof v === 'object' && !Array.isArray(v)) return Object.keys(v).length === 0;
+    if (typeof v === "object" && !Array.isArray(v))
+      return Object.keys(v).length === 0;
     return false;
   });
 
   // 3. LENGTH
-  parser.setFunction('LENGTH', function (params) {
+  parser.setFunction("LENGTH", function (params) {
     const v = params[0];
     if (Array.isArray(v)) return v.length;
-    return String(v ?? '').length;
+    return String(v ?? "").length;
   });
 
   // 4. FORMAT
-  parser.setFunction('FORMAT', function (params) {
+  parser.setFunction("FORMAT", function (params) {
     const v = params[0];
-    if (isDate(v)) return formatWithPattern(v, 'MMMM DD, YYYY HH:mm');
+    if (isDate(v)) return formatWithPattern(v, "MMMM DD, YYYY HH:mm");
     return String(v);
   });
 
   // 5. EQUAL (EQ в parser уже есть, но делаем алиас)
-  parser.setFunction('EQUAL', function (params) {
+  parser.setFunction("EQUAL", function (params) {
     return params[0] === params[1];
   });
 
   // 6. UNEQUAL
-  parser.setFunction('UNEQUAL', function (params) {
+  parser.setFunction("UNEQUAL", function (params) {
     return params[0] !== params[1];
   });
 
   // 7. LET (ВАЖНО: expression должен быть строкой формулы)
-  parser.setFunction('LET', function (params, info) {
+  parser.setFunction("LET", function (params) {
     const [name, value, expr] = params;
-    if (typeof name !== 'string' || typeof expr !== 'string') return { error: '#VALUE!' };
-    const prev = info && info.variables ? { ...info.variables } : {};
+    if (typeof name !== "string" || typeof expr !== "string")
+      return { error: "#VALUE!" };
+
     const child = new Parser();
     // перенесём функции и переменные
-    child.on('callFunction', (fn, p) => parser.callFunction(fn, p));
-    child.on('callVariable', (v) => parser.callVariable(v));
+    child.on("callFunction", (fn, p) => parser.callFunction(fn, p));
+    child.on("callVariable", (v) => parser.callVariable(v));
     child.setVariable(name, value);
     const res = child.parse(expr);
     return res.error ? { error: res.error } : res.result;
   });
 
   // 8. LETS (expr как строка)
-  parser.setFunction('LETS', function (params) {
-    if (params.length < 3) return { error: '#N/A' };
+  parser.setFunction("LETS", function (params) {
+    if (params.length < 3) return { error: "#N/A" };
     const expr = params[params.length - 1];
-    if (typeof expr !== 'string') return { error: '#VALUE!' };
+    if (typeof expr !== "string") return { error: "#VALUE!" };
     const child = new Parser();
-    child.on('callFunction', (fn, p) => parser.callFunction(fn, p));
-    child.on('callVariable', (v) => parser.callVariable(v));
+    child.on("callFunction", (fn, p) => parser.callFunction(fn, p));
+    child.on("callVariable", (v) => parser.callVariable(v));
     for (let i = 0; i + 1 < params.length - 1; i += 2) {
       const n = params[i];
-      const v = params[i+1];
-      if (typeof n === 'string') child.setVariable(n, v);
+      const v = params[i + 1];
+      if (typeof n === "string") child.setVariable(n, v);
     }
     const res = child.parse(expr);
     return res.error ? { error: res.error } : res.result;
   });
 
   // 9. WEEK (ISO week number)
-  parser.setFunction('WEEK', function (params) {
+  parser.setFunction("WEEK", function (params) {
     const d = toDate(params[0]);
-    if (!d) return { error: '#VALUE!' };
+    if (!d) return { error: "#VALUE!" };
     return weekNumber(d);
   });
 
   // 10. DATEADD
-  parser.setFunction('DATEADD', function (params) {
+  parser.setFunction("DATEADD", function (params) {
     const d = toDate(params[0]);
     const n = Number(params[1]);
-    const unit = String(params[2] || '').toLowerCase();
-    if (!d || !(unit in UNITS)) return { error: '#VALUE!' };
+    const unit = String(params[2] || "").toLowerCase();
+    if (!d || !(unit in UNITS)) return { error: "#VALUE!" };
     const out = addDate(d, n, unit);
-    return out ?? { error: '#VALUE!' };
+    return out ?? { error: "#VALUE!" };
   });
 
   // 11. DATESUBTRACT
-  parser.setFunction('DATESUBTRACT', function (params) {
+  parser.setFunction("DATESUBTRACT", function (params) {
     const d = toDate(params[0]);
     const n = Number(params[1]);
-    const unit = String(params[2] || '').toLowerCase();
-    if (!d || !(unit in UNITS)) return { error: '#VALUE!' };
+    const unit = String(params[2] || "").toLowerCase();
+    if (!d || !(unit in UNITS)) return { error: "#VALUE!" };
     const out = addDate(d, -n, unit);
-    return out ?? { error: '#VALUE!' };
+    return out ?? { error: "#VALUE!" };
   });
 
   // 12. DATEBETWEEN
-  parser.setFunction('DATEBETWEEN', function (params) {
+  parser.setFunction("DATEBETWEEN", function (params) {
     const a = toDate(params[0]);
     const b = toDate(params[1]);
-    const unit = String(params[2] || '').toLowerCase();
-    if (!a || !b || !(unit in UNITS)) return { error: '#VALUE!' };
+    const unit = String(params[2] || "").toLowerCase();
+    if (!a || !b || !(unit in UNITS)) return { error: "#VALUE!" };
     return diffDates(a, b, unit);
   });
 
   // 13. DATERANGE
-  parser.setFunction('DATERANGE', function (params) {
+  parser.setFunction("DATERANGE", function (params) {
     const a = toDate(params[0]);
     const b = toDate(params[1]);
-    if (!a || !b) return { error: '#VALUE!' };
+    if (!a || !b) return { error: "#VALUE!" };
     return makeRange(a, b);
   });
 
   // 14. DATESTART
-  parser.setFunction('DATESTART', function (params) {
+  parser.setFunction("DATESTART", function (params) {
     const r = params[0];
-    if (!isRange(r)) return { error: '#VALUE!' };
+    if (!isRange(r)) return { error: "#VALUE!" };
     return r.start;
   });
 
   // 15. DATEEND
-  parser.setFunction('DATEEND', function (params) {
+  parser.setFunction("DATEEND", function (params) {
     const r = params[0];
-    if (!isRange(r)) return { error: '#VALUE!' };
+    if (!isRange(r)) return { error: "#VALUE!" };
     return r.end;
   });
 
   // 16. TIMESTAMP
-  parser.setFunction('TIMESTAMP', function () { return Date.now(); });
+  parser.setFunction("TIMESTAMP", function () {
+    return Date.now();
+  });
 
   // 17. FROMTIMESTAMP (без секунд и миллисекунд)
-  parser.setFunction('FROMTIMESTAMP', function (params) {
+  parser.setFunction("FROMTIMESTAMP", function (params) {
     const ms = Number(params[0]);
-    if (!Number.isFinite(ms)) return { error: '#VALUE!' };
+    if (!Number.isFinite(ms)) return { error: "#VALUE!" };
     const d = new Date(ms);
     d.setSeconds(0, 0);
     return d;
   });
 
   // 18. FORMATDATE(date, pattern, timezone?)
-  parser.setFunction('FORMATDATE', function (params) {
+  parser.setFunction("FORMATDATE", function (params) {
     const d = toDate(params[0]);
-    const pattern = params[1] ? String(params[1]) : 'YYYY-MM-DD HH:mm';
+    const pattern = params[1] ? String(params[1]) : "YYYY-MM-DD HH:mm";
     const tz = params[2] ? String(params[2]) : undefined;
-    if (!d) return { error: '#VALUE!' };
+    if (!d) return { error: "#VALUE!" };
     return formatWithPattern(d, pattern, tz);
   });
 
   // 19. PARSEDATE
-  parser.setFunction('PARSEDATE', function (params) {
-    const s = String(params[0] ?? '');
+  parser.setFunction("PARSEDATE", function (params) {
+    const s = String(params[0] ?? "");
     const d = new Date(s);
-    if (isNaN(d.valueOf())) return { error: '#VALUE!' };
+    if (isNaN(d.valueOf())) return { error: "#VALUE!" };
     return d;
   });
 
   // 20. AT(list, index) — 0-based
-  parser.setFunction('AT', function (params) {
+  parser.setFunction("AT", function (params) {
     const list = params[0];
     const idx = clampInt(params[1]);
-    if (!Array.isArray(list) || !Number.isFinite(idx)) return { error: '#VALUE!' };
+    if (!Array.isArray(list) || !Number.isFinite(idx))
+      return { error: "#VALUE!" };
     return list[idx];
   });
 
   // 21. FIRST
-  parser.setFunction('FIRST', function (params) {
+  parser.setFunction("FIRST", function (params) {
     const list = params[0];
-    if (!Array.isArray(list)) return { error: '#VALUE!' };
+    if (!Array.isArray(list)) return { error: "#VALUE!" };
     return list[0];
   });
 
   // 22. LAST
-  parser.setFunction('LAST', function (params) {
+  parser.setFunction("LAST", function (params) {
     const list = params[0];
-    if (!Array.isArray(list)) return { error: '#VALUE!' };
+    if (!Array.isArray(list)) return { error: "#VALUE!" };
     return list[list.length - 1];
   });
 
   // Мини-исполнитель выражения по элементу массива
   function evalWithCurrent(expr, current, baseParser) {
-    if (typeof expr !== 'string') return { error: '#VALUE!' };
+    if (typeof expr !== "string") return { error: "#VALUE!" };
     const p = new Parser();
-    p.on('callFunction', (fn, ps) => baseParser.callFunction(fn, ps));
-    p.on('callVariable', (v) => baseParser.callVariable(v));
-    p.setVariable('current', current);
+    p.on("callFunction", (fn, ps) => baseParser.callFunction(fn, ps));
+    p.on("callVariable", (v) => baseParser.callVariable(v));
+    p.setVariable("current", current);
     const res = p.parse(expr);
     return res;
   }
 
   // 23. SORT(list, expressionAsString?) — expression возвращает ключ сравнения
-  parser.setFunction('SORT', function (params) {
+  parser.setFunction("SORT", function (params) {
     const list = params[0];
     const expr = params[1];
-    if (!Array.isArray(list)) return { error: '#VALUE!' };
+    if (!Array.isArray(list)) return { error: "#VALUE!" };
     const copy = [...list];
     if (expr == null) return copy.sort();
     const keyed = copy.map((item, i) => {
       const r = evalWithCurrent(expr, item, parser);
       return { item, key: r.error ? undefined : r.result, i };
     });
-    keyed.sort((a,b) => (a.key > b.key) - (a.key < b.key) || a.i - b.i);
-    return keyed.map(k => k.item);
+    keyed.sort((a, b) => (a.key > b.key) - (a.key < b.key) || a.i - b.i);
+    return keyed.map((k) => k.item);
   });
 
   // 24. SLICE
-  parser.setFunction('SLICE', function (params) {
+  parser.setFunction("SLICE", function (params) {
     const list = params[0];
     const start = clampInt(params[1]);
     const end = params.length > 2 ? clampInt(params[2]) : undefined;
-    if (!Array.isArray(list) || !Number.isFinite(start)) return { error: '#VALUE!' };
+    if (!Array.isArray(list) || !Number.isFinite(start))
+      return { error: "#VALUE!" };
     return list.slice(start, Number.isFinite(end) ? end : undefined);
   });
 
   // 25. REVERSE
-  parser.setFunction('REVERSE', function (params) {
+  parser.setFunction("REVERSE", function (params) {
     const list = params[0];
-    if (!Array.isArray(list)) return { error: '#VALUE!' };
+    if (!Array.isArray(list)) return { error: "#VALUE!" };
     return [...list].reverse();
   });
 
   // 26. FINDINDEX(list, predicateAsString)
-  parser.setFunction('FINDINDEX', function (params) {
+  parser.setFunction("FINDINDEX", function (params) {
     const list = params[0];
     const pred = params[1];
-    if (!Array.isArray(list)) return { error: '#VALUE!' };
+    if (!Array.isArray(list)) return { error: "#VALUE!" };
     for (let i = 0; i < list.length; i++) {
       const r = evalWithCurrent(pred, list[i], parser);
       if (!r.error && !!r.result) return i;
@@ -450,10 +502,10 @@ export function installCustomFunctions(parser) {
   });
 
   // 27. FILTER(list, predicateAsString)
-  parser.setFunction('FILTER', function (params) {
+  parser.setFunction("FILTER", function (params) {
     const list = params[0];
     const pred = params[1];
-    if (!Array.isArray(list)) return { error: '#VALUE!' };
+    if (!Array.isArray(list)) return { error: "#VALUE!" };
     const out = [];
     for (let i = 0; i < list.length; i++) {
       const r = evalWithCurrent(pred, list[i], parser);
@@ -463,10 +515,10 @@ export function installCustomFunctions(parser) {
   });
 
   // 28. TONUMBER
-  parser.setFunction('TONUMBER', function (params) {
+  parser.setFunction("TONUMBER", function (params) {
     const s = params[0];
-    const num = typeof s === 'number' ? s : Number(String(s).trim());
-    if (!Number.isFinite(num)) return { error: '#VALUE!' };
+    const num = typeof s === "number" ? s : Number(String(s).trim());
+    if (!Number.isFinite(num)) return { error: "#VALUE!" };
     return num;
   });
 }

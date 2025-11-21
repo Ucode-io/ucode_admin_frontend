@@ -61,7 +61,7 @@ const YQuarterPicker = ({onChange, withTime = false, value}) => {
       end.setHours(eTime.hours, eTime.minutes, 59);
     }
 
-    onChange({$gte: realStart, $lt: end});
+    onChange({ $gte: realStart, $lte: end });
   };
 
   const handleTimeChange = useDebounce(() => {
@@ -79,19 +79,19 @@ const YQuarterPicker = ({onChange, withTime = false, value}) => {
   }, [startTime, endTime]);
 
   useEffect(() => {
-    if (value?.$gte && value?.$lt) {
+    if (value?.$gte && value?.$lte) {
       const start = new Date(value.$gte);
-      const end = new Date(value.$lt);
+      const end = new Date(value.$lte);
 
       const startQ = `Q${Math.floor(start.getMonth() / 3) + 1}`;
       const endQ = `Q${Math.floor(end.getMonth() / 3) + 1}`;
 
       setRange([
-        {year: start.getFullYear(), quarter: startQ},
-        {year: end.getFullYear(), quarter: endQ},
+        { year: start.getFullYear(), quarter: startQ },
+        { year: end.getFullYear(), quarter: endQ },
       ]);
     } else {
-      setRange([{year: currentYear, quarter: currentQuarter}]);
+      setRange([{ year: currentYear, quarter: currentQuarter }]);
     }
   }, []);
 

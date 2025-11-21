@@ -22,7 +22,7 @@ export const useApiKeysDetail = () => {
 
   const [date, setDate] = useState({
     $gte: startOfMonth(new Date()),
-    $lt: endOfMonth(new Date()),
+    $lte: endOfMonth(new Date()),
   });
 
   const [selectedTab, setSelectedTab] = useState(0);

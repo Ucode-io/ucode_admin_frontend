@@ -147,7 +147,7 @@ export const Calendar = () => {
           [view.calendar_from_slug || view?.attributes?.calendar_from_slug]: {
             $gte:
               FromDateType(date, currentUpdatedDate, firstUpdatedDate) ?? "",
-            $lt: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
+            $lte: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
           },
           view_type: "CALENDAR",
           ...dataFilters,
@@ -229,7 +229,7 @@ export const Calendar = () => {
           [view.disable_dates.day_slug]: {
             $gte:
               FromDateType(date, currentUpdatedDate, firstUpdatedDate) ?? "",
-            $lt: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
+            $lte: ToDateType(date, tomorrow, lastUpdatedDate) ?? "",
           },
         },
       });

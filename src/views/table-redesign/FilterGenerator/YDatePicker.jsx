@@ -15,12 +15,12 @@ const YDatePicker = ({
   withTime = false,
 }) => {
   const start = parseDateFromString(defaultValue?.$gte);
-  const end = parseDateFromString(defaultValue?.$lt);
-  const {i18n} = useTranslation();
+  const end = parseDateFromString(defaultValue?.$lte);
+  const { i18n } = useTranslation();
 
   const [range, setRange] = useState([start, end]);
   const [startTime, setStartTime] = useState(
-    start ? format(start, "HH:mm") : ""
+    start ? format(start, "HH:mm") : "",
   );
   const [endTime, setEndTime] = useState(end ? format(end, "HH:mm") : "");
 
@@ -30,21 +30,27 @@ const YDatePicker = ({
       return setRange(value);
     }
 
-    if (withTime) {
+    if (withTime && startTime && endTime) {
       const startParsed = parseTimeFromString(startTime, 23, 59);
       const endParsed = parseTimeFromString(endTime, 0, 0);
       start.setHours(startParsed.hours, startParsed.minutes, 0);
       end.setHours(endParsed.hours, endParsed.minutes, 0);
     } else {
-      start.setHours(0, 0, 0);
+      start.setHours(5, 0, 0);
       end.setHours(23, 59, 59);
     }
 
     // const localISOStringStart = start.toLocaleString("sv-SE").replace(" ", "T");
     // const localISOStringEnd = end.toLocaleString("sv-SE").replace(" ", "T");
 
-    // onChange({ $gte: localISOStringStart, $lt: localISOStringEnd });
-    onChange({ $gte: start, $lt: end });
+    // onChange({ $gte: localISOStringStart, $lte: localISOStringEnd });
+
+    if (withTime && startTime && endTime) {
+      onChange({ $gte: start, $lte: end });
+    } else {
+      onChange({ $gte: start, $lte: end });
+    }
+
     setRange(value);
   };
 

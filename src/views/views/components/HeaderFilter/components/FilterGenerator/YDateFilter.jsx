@@ -35,18 +35,19 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
             borderRadius: "12px",
             cursor: "pointer",
             fontSize: "12px",
-          }}>
+          }}
+        >
           <span>
-            {isValidDate(value?.$gte) && isValidDate(value?.$lt) ? (
-              `${format(new Date(value?.$gte), "dd.MM.yyyy")} - ${format(new Date(value?.$lt), "dd.MM.yyyy")}`
+            {isValidDate(value?.$gte) && isValidDate(value?.$lte) ? (
+              `${format(new Date(value?.$gte), "dd.MM.yyyy")} - ${format(new Date(value?.$lte), "dd.MM.yyyy")}`
             ) : (
-              <span style={{color: "#909EAB"}}>
+              <span style={{ color: "#909EAB" }}>
                 {"DD.MM.YYYY - DD.MM.YYYY"}
               </span>
             )}
           </span>
 
-          {Boolean(value?.$gte && value?.$lt) && (
+          {Boolean(value?.$gte && value?.$lte) && (
             <Box
               onClick={(e) => {
                 e.stopPropagation();
@@ -57,8 +58,9 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-              }}>
-              <CloseIcon style={{height: "16px", width: "16px"}} />
+              }}
+            >
+              <CloseIcon style={{ height: "16px", width: "16px" }} />
             </Box>
           )}
         </Box>
@@ -70,14 +72,16 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "left",
-          }}>
+          }}
+        >
           <Box
             sx={{
               width: "205px",
               height: "250px",
               border: "1px solid #eee",
               borderRadius: "8px",
-            }}>
+            }}
+          >
             <Tabs className={styles.tabs}>
               <TabList className={styles.tablist}>
                 <Tab className={styles.tab}>Day</Tab>
@@ -85,7 +89,7 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                 <Tab className={styles.tab}>Quarter</Tab>
                 <Tab className={styles.tab}>Yearly</Tab>
               </TabList>
-              <TabPanel sx={{height: "200px", width: "100%"}}>
+              <TabPanel sx={{ height: "200px", width: "100%" }}>
                 <YDatePicker
                   field={field}
                   placeholder={field?.label}
@@ -97,7 +101,7 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                   withTime={true}
                 />
               </TabPanel>
-              <TabPanel sx={{height: "100px", width: "100%"}}>
+              <TabPanel sx={{ height: "100px", width: "100%" }}>
                 <YMonthPicker
                   field={field}
                   placeholder={field?.label}
@@ -106,7 +110,7 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                   withTime={true}
                 />
               </TabPanel>
-              <TabPanel sx={{height: "100px", width: "100%"}}>
+              <TabPanel sx={{ height: "100px", width: "100%" }}>
                 <YQuarterPicker
                   field={field}
                   placeholder={field?.label}
@@ -115,7 +119,7 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                   withTime={true}
                 />
               </TabPanel>
-              <TabPanel sx={{height: "100px", width: "100%"}}>
+              <TabPanel sx={{ height: "100px", width: "100%" }}>
                 <YYearPicker
                   field={field}
                   placeholder={field?.label}

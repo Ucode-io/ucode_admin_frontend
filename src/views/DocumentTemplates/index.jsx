@@ -103,8 +103,6 @@ const DocumentTemplates = () => {
     const url = `https://${selectedTemplate?.file_url}`;
     const data = form?.getValues();
 
-    console.log("GGGG =>", url);
-
     converToPDF({
       data: {
         data,

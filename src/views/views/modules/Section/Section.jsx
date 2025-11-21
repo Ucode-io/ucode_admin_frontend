@@ -23,29 +23,31 @@ export const Section = () => {
     handleMouseDown,
   } = useSectionProps()
 
-  return <Box px={10}>
-  <form onSubmit={rootForm.handleSubmit(onSectionSubmit)}>
-    <Suspense
-      fallback={
-        <div className={cls.fallback} >
-          <CircularProgress />
-        </div>
-      }
-    >
-      <DrawerFormDetailPage
-        view={view}
-        rootForm={rootForm}
-        layout={layout}
-        selectedTab={layout?.tabs?.[0]}
-        selectedTabIndex={selectedTabIndex}
-        data={layoutData}
-        selectedRow={selectedRow}
-        fieldsMap={fieldsMap}
-        projectInfo={projectInfo}
-        updateLayout={updateLayout}
-        handleMouseDown={handleMouseDown}
-      />
-    </Suspense>
-  </form>
-</Box>
+  return (
+    <Box px={10}>
+      <form onSubmit={rootForm.handleSubmit(onSectionSubmit)}>
+        <Suspense
+          fallback={
+            <div className={cls.fallback}>
+              <CircularProgress />
+            </div>
+          }
+        >
+          <DrawerFormDetailPage
+            view={view}
+            rootForm={rootForm}
+            layout={layout}
+            selectedTab={layout?.tabs?.[0]}
+            selectedTabIndex={selectedTabIndex}
+            data={layoutData}
+            selectedRow={selectedRow}
+            fieldsMap={fieldsMap}
+            projectInfo={projectInfo}
+            updateLayout={updateLayout}
+            handleMouseDown={handleMouseDown}
+          />
+        </Suspense>
+      </form>
+    </Box>
+  );
 }

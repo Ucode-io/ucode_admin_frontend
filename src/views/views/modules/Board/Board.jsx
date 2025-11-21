@@ -16,7 +16,7 @@ export const Board = () => {
     groups,
     groupField,
     getGroupFieldLabel,
-    navigateToCreatePage,
+    handleCreateItem,
     groupsCounts,
     isFilterOpen,
     subGroupById,
@@ -45,9 +45,7 @@ export const Board = () => {
     setSelectedRow,
   } = useBoardProps();
 
-  const {
-    tableSlug: tableSlugFromParams,
-  } = useParams();
+  const { tableSlug: tableSlugFromParams } = useParams();
   const tableSlug =
     view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
 
@@ -57,21 +55,6 @@ export const Board = () => {
         <BoardSkeleton />
       ) : (
         <div className={styles.wrapper}>
-          {/* {(view?.quick_filters?.length > 0 ||
-            (new_list[tableSlug] &&
-              new_list[tableSlug].some((i) => i.checked))) && (
-            <div className={styles.filtersVisiblitiy}>
-              <Box className={styles.block}>
-                <p>{t("filters")}</p>
-                <FastFilter
-                  tableSlug={tableSlug}
-                  view={view}
-                  fieldsMap={fieldsMap}
-                  isVertical
-                />
-              </Box>
-            </div>
-          )} */}
           <div className={styles.boardHeader} ref={fixedElement}>
             <Container
               lockAxis="x"
@@ -113,7 +96,7 @@ export const Board = () => {
                     }
                     group={group}
                     groupField={groupField}
-                    navigateToCreatePage={navigateToCreatePage}
+                    handleCreateItem={handleCreateItem}
                     counts={groupsCounts}
                     computedColumnsFor={computedColumnsFor}
                     groupSlug={groupField?.slug}

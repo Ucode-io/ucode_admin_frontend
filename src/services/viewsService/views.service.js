@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "react-query";
 import requestV2 from "@/utils/requestV2";
 import requestV3 from "@/utils/requestV3";
+import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 
 const constructorViewService = {
   getList: (tableSlug, params) =>
@@ -20,11 +21,11 @@ const constructorViewService = {
 
 export const useGetViewsList = (menuId, queryParams = {}) => {
   return useQuery(
-    ["GET_VIEWS_LIST", menuId],
+    [QUERY_KEYS.VIEWS_DATA_KEY, menuId],
     () => {
       return constructorViewService.getViewListMenuId(menuId);
     },
-    queryParams
+    queryParams,
   );
 };
 

@@ -1,13 +1,12 @@
 import {Flex, Text} from "@chakra-ui/react";
-import {Box, Button, Menu, MenuItem, TextField} from "@mui/material";
-import React, {memo, useEffect, useMemo, useRef, useState} from "react";
-import {Controller, useWatch} from "react-hook-form";
+import { Box, Button, Menu, MenuItem } from "@mui/material";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Controller } from "react-hook-form";
 import {useTranslation} from "react-i18next";
 import {Check} from "@mui/icons-material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {FIELD_TYPES} from "@/utils/constants/fieldTypes";
-import {useSelector} from "react-redux";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import useDebounce from "@/hooks/useDebounce";
 
 const HeadingOptions = ({
@@ -224,11 +223,9 @@ const HeadingOptions = ({
 
 const AutoResizeTextarea = ({
   control,
-  selectedField,
   selectedFieldSlug,
   fieldValue,
   watch,
-  setValue,
   updateObject = () => {},
   ...props
 }) => {
@@ -256,7 +253,7 @@ const AutoResizeTextarea = ({
       control={control}
       name={name ?? ""}
       defaultValue={fieldValue}
-      render={({ field: { onChange, value }, fieldState: { error } }) => {
+      render={({ field: { onChange } }) => {
         return (
           <textarea
             ref={textareaRef}

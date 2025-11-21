@@ -4,12 +4,10 @@ import { Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useCalendarTemplateProps } from "./useCalendarTemplateProps";
 import { dateValidFormat } from "@/utils/dateValidFormat";
-import MaterialUIProvider from "@/providers/MaterialUIProvider";
 import { DataMonthCard } from "../DataMonthCard";
 import { format } from "date-fns";
 
-export const CalendarTemplate = ({ relationView }) => {
-
+export const CalendarTemplate = () => {
   const {
     weeks,
     daysOfWeek,
@@ -85,7 +83,7 @@ export const CalendarTemplate = ({ relationView }) => {
                     {(!index && getFirstMondayFromWeeks(weeks, date)
                       ? format(
                           getFirstMondayFromWeeks(weeks, date),
-                          "dd.MM.yyyy"
+                          "dd.MM.yyyy",
                         ) === format(date, "dd.MM.yyyy")
                       : "") && (
                       <div
@@ -116,12 +114,12 @@ export const CalendarTemplate = ({ relationView }) => {
                             }
                           : {
                               day: "numeric",
-                            }
+                            },
                       )}
                     </div>
 
                     <Box className={cls.card}>
-                      {data?.map((el, idx) =>
+                      {data?.map((el) =>
                         dateValidFormat(date, "dd.MM.yyyy") ===
                           el?.calendar.date ||
                         dateValidFormat(date, "dd.MM.yyyy") ===
@@ -133,9 +131,9 @@ export const CalendarTemplate = ({ relationView }) => {
                             fieldsMap={fieldsMap}
                             data={el}
                             viewFields={viewFields}
-                            navigateToEditPage={handleOpen}
+                            navigateToEditPage={navigateToEditPage}
                           />
-                        ) : null
+                        ) : null,
                       )}
                     </Box>
                   </Box>

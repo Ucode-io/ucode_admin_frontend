@@ -39,7 +39,6 @@ import ApiKeysForm from "../views/ApiKeys/ApiKeysForm.jsx";
 import ApiKeyPage from "../views/ApiKeys/index.jsx";
 import Invite from "../views/Auth/Invite";
 import LoginDesign from "../views/Auth/LoginDesign";
-import Registration from "../views/Auth/Registration";
 import CompanyPage from "../views/Company";
 import CompanyForm from "../views/Company/CompanyFormPage";
 import TablesPage from "../views/Constructor/AllTables";
@@ -60,7 +59,6 @@ import EnvironmentForm from "../views/Environments/EnvironmentFormPage";
 import Connections from "../views/Matrix/Connections";
 import Microfrontend from "../views/Microfrontend";
 import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
-import ObjectsPage from "../views/Objects";
 import ObjectsFormPage from "../views/Objects/ObjectsFormPage";
 import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
 import PivotTableView from "../views/Objects/PivotTableView";
@@ -78,17 +76,17 @@ import ClientUserPage from "../views/Users/UserPage";
 import UsersList from "../views/Users/UsersList";
 import WebPage from "../views/WebPage";
 import RegisterFormPageDesign from "../views/Auth/components/RegisterFormPageDesign";
-import {ClientTypes} from "@/views/client-types";
+import { ClientTypes } from "@/views/client-types";
 import LanguageControl from "../components/LayoutSidebar/Components/LanguageControl";
 import LayoutSettings from "../views/Objects/LayoutSettings";
 import ChartDb from "../views/ChartDb";
 import NewObjectsFormPage from "../views/Objects/NewObjectsFormPage";
-import NewObjectsPage from "../views/Objects/NewObjectsPage";
+// import NewObjectsPage from "../views/Objects/NewObjectsPage";
 import DocView from "../views/Objects/DocView";
 import { Views } from "@/views/views";
 
 const AuthLayoutDesign = lazy(
-  () => import("../layouts/AuthLayout/AuthLayoutDesign")
+  () => import("../layouts/AuthLayout/AuthLayoutDesign"),
 );
 const AuthMatrix = lazy(() => import("../views/AuthMatrix"));
 const ClientPlatform = lazy(() => import("../views/AuthMatrix/ClientPlatform"));
@@ -98,10 +96,10 @@ const RolesForm = lazy(() => import("../views/AuthMatrix/Crossed/Roles/Form"));
 const Profile = lazy(() => import("../views/AuthMatrix/Crossed/Profile/index"));
 
 const IntegrationsForm = lazy(
-  () => import("../views/AuthMatrix/Crossed/Integrations/Form")
+  () => import("../views/AuthMatrix/Crossed/Integrations/Form"),
 );
 const SessionsPage = lazy(
-  () => import("../views/AuthMatrix/Crossed/Integrations/Sessions")
+  () => import("../views/AuthMatrix/Crossed/Integrations/Sessions"),
 );
 const UsersForm = lazy(() => import("../views/Users/Form"));
 const UsersPage = lazy(() => import("../views/Users/index"));
@@ -146,7 +144,7 @@ const NewRouter = () => {
       ? "fbs-integrations.mybazar.uz"
       : window.location.hostname;
 
-  const {data, isLoading} = useLoginMicrofrontendQuery({
+  const { data, isLoading } = useLoginMicrofrontendQuery({
     params: {
       subdomain,
       enabled: Boolean(!isAuth),
@@ -396,11 +394,11 @@ const NewRouter = () => {
             </Route>
           </Route>
 
-          <Route path="opt/:menuId" element={<Views />} />
-          <Route
+          <Route path=":menuId" element={<Views />} />
+          {/* <Route
             path=":menuId"
             element={<ReloadWrapper component={NewObjectsPage} />}
-          />
+          /> */}
           <Route path=":menuId/templates" element={<DocumentTemplates />} />
 
           <Route path=":menuId/object/:tableSlug/docs" element={<DocView />} />

@@ -17,6 +17,8 @@ export const Header = ({ tableName, data }) => {
     isRelationView,
     handleCloseDrawer,
     handleSpaceDashboardClick,
+    viewsList,
+    handleBreadCrumb,
   } = useHeaderProps({ data });
 
   return (
@@ -57,11 +59,50 @@ export const Header = ({ tableName, data }) => {
         ml="8px"
         size="sm"
       />
-      <ChevronRightIcon fontSize={20} color="#344054" />
-      <div className={cls.tableName}>
-        <div className={cls.tableNameChar}>{tableName?.[0]}</div>
-        {tableName}
-      </div>
+      {viewsList?.length && isRelationView ? (
+        viewsList?.map((item, index) => (
+          <>
+            <Flex
+              py="4px"
+              px="8px"
+              bg="#EAECF0"
+              borderRadius={6}
+              color="#344054"
+              cursor={"pointer"}
+              fontWeight={500}
+              alignItems="center"
+              columnGap="8px"
+              onClick={() => {
+                handleBreadCrumb(item, index);
+              }}
+            >
+              <Flex
+                w="16px"
+                h="16px"
+                bg="#EE46BC"
+                borderRadius={4}
+                columnGap={8}
+                color="#fff"
+                fontWeight={500}
+                fontSize={11}
+                justifyContent="center"
+                alignItems="center"
+              >
+                {item?.label?.[0]}
+              </Flex>
+              {item?.label}
+            </Flex>
+            {index !== viewsList?.length - 1 && (
+              <ChevronRightIcon fontSize={20} color="#344054" />
+            )}
+          </>
+        ))
+      ) : (
+        <div className={cls.tableName}>
+          <div className={cls.tableNameChar}>{tableName?.[0]}</div>
+          {tableName}
+        </div>
+      )}
 
       {!isRelationView && (
         <Flex position="absolute" right="16px" gap="8px">

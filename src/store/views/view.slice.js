@@ -3,11 +3,8 @@ import {createSlice} from "@reduxjs/toolkit";
 const initialState = {
   viewTab: [],
   views: [],
-  selectedView: {
-    index: null,
-    view: {}
-  },
-}
+  selectedView: {},
+};
 
 export const {actions: viewsActions, reducer: viewsReducer} = createSlice({
   name: "views",

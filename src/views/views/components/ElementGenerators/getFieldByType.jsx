@@ -36,7 +36,6 @@ import { HFVideoUpload } from "@/views/table-redesign/hf-video-upload-optimizati
 import HFDatePickerNew from "@/views/table-redesign/DatePickerOptimization";
 
 export const getFieldByType = ({
-  isDisabled,
   control,
   updateObject,
   isBlackBg,
@@ -52,6 +51,8 @@ export const getFieldByType = ({
   isWrapField,
   handleChange,
 }) => {
+  const isDisabled = field?.attributes?.disabled;
+
   const fieldsMap = {
     SINGLE_LINE: (
       <HFTextField
@@ -100,7 +101,7 @@ export const getFieldByType = ({
         name={computedSlug}
         updateObject={updateObject}
         newUi={newUi}
-        disabled={isDisabled}
+        disabled={field?.attributes?.disabled}
         index={index}
         handleChange={handleChange}
       />

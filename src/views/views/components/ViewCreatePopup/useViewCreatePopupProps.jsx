@@ -135,7 +135,7 @@ export const useViewCreatePopupProps = ({
       filters: [],
       number_field: "",
       menu_id: menuID,
-      order: views.length + 1,
+      order: views?.length + 1,
     };
   }, [menuId, selectedViewTab, tableSlug, views]);
 

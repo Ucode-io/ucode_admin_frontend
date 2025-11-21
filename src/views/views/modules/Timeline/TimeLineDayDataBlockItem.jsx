@@ -16,6 +16,7 @@ import {mergeStringAndState} from "@/utils/jsonPath";
 import {detailDrawerActions} from "@/store/detailDrawer/detailDrawer.slice";
 import useTabRouter from "@/hooks/useTabRouter";
 import "./styles/moveable.scss";
+import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 
 const getTranslateXFromMatrix = (element) => {
   const transform = window.getComputedStyle(element).transform;
@@ -67,7 +68,6 @@ export default function TimeLineDayDataBlockItem({
   const currentWidth = selectedType === "month" ? 20 : 60;
 
   const handleOpen = () => {
-
     setSelectedRow(data);
 
     if (Boolean(view?.relation_table_slug)) {
@@ -79,7 +79,7 @@ export default function TimeLineDayDataBlockItem({
           relation_table_slug: view.relation_table_slug ?? null,
           is_relation_view: view?.is_relation_view,
           detailId: data?.guid,
-        })
+        }),
       );
       setSelectedView(view);
       dispatch(detailDrawerActions.setDrawerTabIndex(0));
@@ -143,8 +143,8 @@ export default function TimeLineDayDataBlockItem({
           (param) =>
             `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
               param.value,
-              row
-            )}`
+              row,
+            )}`,
         )
         .join("&");
 
@@ -201,7 +201,7 @@ export default function TimeLineDayDataBlockItem({
     const days = Math.ceil(
       (new Date(data?.[calendar_to_slug]) -
         new Date(data?.[calendar_from_slug])) /
-        (1000 * 60 * 60 * 24)
+        (1000 * 60 * 60 * 24),
     );
     return days;
   }, [data, calendar_from_slug, calendar_to_slug]);
@@ -234,7 +234,7 @@ export default function TimeLineDayDataBlockItem({
       datesList[innerStartDate.current || startDate],
       addDays(
         datesList[innerStartDate.current || startDate],
-        width / currentWidth
+        width / currentWidth,
       ),
     ];
 
@@ -249,11 +249,9 @@ export default function TimeLineDayDataBlockItem({
         data: computedData,
       })
       .then(() => {
-        // dispatch(showAlert("Успешно обновлено", "success"));
-        // queryClient.refetchQueries(["GET_OBJECTS_LIST_WITH_RELATIONS"]);
         queryClient.setQueryData(
           [
-            "GET_OBJECTS_LIST_WITH_RELATIONS",
+            QUERY_KEYS.TIMELINE_DATA_KEY,
             { tableSlug, filters, dateFilters, view },
           ],
           (oldData) => {
@@ -261,10 +259,10 @@ export default function TimeLineDayDataBlockItem({
             return {
               ...oldData,
               data: oldData.data.map((item) =>
-                item.guid === computedData.guid ? computedData : item
+                item.guid === computedData.guid ? computedData : item,
               ),
             };
-          }
+          },
         );
       });
   };
@@ -276,7 +274,7 @@ export default function TimeLineDayDataBlockItem({
       datesList[x / (zoomPosition * (selectedType === "month" ? 20 : 30))],
       addDays(
         datesList[x / (zoomPosition * (selectedType === "month" ? 20 : 30))],
-        width / (zoomPosition * (selectedType === "month" ? 20 : 30))
+        width / (zoomPosition * (selectedType === "month" ? 20 : 30)),
       ),
     ];
     const computedData = {
@@ -318,7 +316,7 @@ export default function TimeLineDayDataBlockItem({
         datesList[innerStartDate.current || startDate],
         addDays(
           datesList[innerStartDate.current || startDate],
-          targetRef.current.offsetWidth / currentWidth - 1
+          targetRef.current.offsetWidth / currentWidth - 1,
         ),
       ]);
     } else {
@@ -326,7 +324,7 @@ export default function TimeLineDayDataBlockItem({
         datesList[innerStartDate.current || startDate],
         addDays(
           datesList[innerStartDate.current || startDate],
-          targetRef.current.offsetWidth / currentWidth - 1
+          targetRef.current.offsetWidth / currentWidth - 1,
         ),
       ]);
     }
@@ -352,14 +350,14 @@ export default function TimeLineDayDataBlockItem({
     };
 
     innerStartDate.current = Math.floor(
-      initialRef.current.transformX / currentWidth
+      initialRef.current.transformX / currentWidth,
     );
 
     setFocusedDays([
       datesList[innerStartDate.current || startDate],
       addDays(
         datesList[innerStartDate.current || startDate],
-        width / currentWidth - 1
+        width / currentWidth - 1,
       ),
     ]);
   };

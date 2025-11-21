@@ -8,24 +8,21 @@ const layoutService = {
   remove: (tableSlug, id) => requestV2.delete(`/collections/${tableSlug}/layout/${id}`),
 };
 
-export const useGetLayout = (queryParams = {}, { tableSlug, menuId }) => {
+export const useGetLayout = (
+  queryParams = {},
+  { tableSlug, menuId, params },
+) => {
   return useQuery({
-    queryKey: [
-      "GET_LAYOUT",
-      {
-        tableSlug,
-        menuId,
-      },
-    ],
+    queryKey: ["GET_LAYOUT", tableSlug, menuId, params],
     enabled: Boolean(tableSlug && menuId),
     queryFn: () => {
-      return layoutService.getLayout(tableSlug, menuId);
+      return layoutService.getLayout(tableSlug, menuId, params);
     },
     onError: (error) => {
       console.error("Error", error);
     },
     ...queryParams,
   });
-}
+};
 
 export default layoutService;

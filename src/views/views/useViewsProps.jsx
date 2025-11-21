@@ -28,7 +28,7 @@ import { useGetLayout } from "@/services/layoutService/layout.service";
 import { DRAWER_LAYOUT_TYPES } from "@/utils/constants/drawerConstants";
 import { Section } from "./modules/Section";
 import { mainActions } from "@/store/main/main.slice";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { queryGenerator } from "@/utils/queryGenerator";
 import useFilters from "@/hooks/useFilters";
 import { ViewTabs } from "./components/ViewTabs";
@@ -42,9 +42,21 @@ import { mergeStringAndState } from "@/utils/jsonPath";
 import { Calendar } from "./modules/Calendar";
 import { Website } from "./modules/Website";
 import { projectInfoActions } from "@/store/projectInfo/projectInfo.slice";
+import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
+
+  const { selectedView: selectedViewMain } = useSelector(
+    (state) => state.views,
+  );
+
+  const { selectedView: selectedViewDrawer } = useSelector(
+    (state) => state.drawer,
+  );
+
+  const selectedView = isRelationView ? selectedViewDrawer : selectedViewMain;
+
   const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);
   const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
   const selectedTabIndex = isRelationView ? drawerTabIndex : mainTabIndex;
@@ -67,6 +79,11 @@ export const useViewsProps = ({ isRelationView }) => {
     (state) => state?.pagination?.paginationCount,
   );
 
+  const setSelectedView = (view) => {
+    if (isRelationView) dispatch(detailDrawerActions.setSelectedView(view));
+    else dispatch(viewsActions.setSelectedView(view));
+  };
+
   const { i18n } = useTranslation();
 
   const { menuId, id } = useParams();
@@ -85,12 +102,10 @@ export const useViewsProps = ({ isRelationView }) => {
   });
 
   const [relationViews, setRelationViews] = useState([]);
-  const [selectedView, setSelectedView] = useState(null);
+  // const [selectedView, setSelectedView] = useState(null);
 
   // const [menuItem, setMenuItem] = useState(null);
   const [authInfo, setAuthInfo] = useState(null);
-
-  const [sortPopupAnchorEl, setSortPopupAnchorEl] = useState(null);
 
   const { selectedViewType } = useSelector((state) => state.main);
 
@@ -101,9 +116,6 @@ export const useViewsProps = ({ isRelationView }) => {
   const view = selectedView;
 
   const groupTable = view?.attributes?.group_by_columns;
-  // const [selectedViewType, setSelectedViewType] = useState(
-  //   localStorage?.getItem("detailPage"),
-  // );
 
   // For TIMELINE view
   const [noDates, setNoDates] = useState([]);
@@ -123,10 +135,11 @@ export const useViewsProps = ({ isRelationView }) => {
     ? query.get("dv")
     : (query.get("v") ?? selectedView?.id);
 
-  const tableSlug =
-    isRelationView && selectedView?.type !== VIEW_TYPES_MAP.SECTION
-      ? selectedView?.relation_table_slug
-      : selectedView?.table_slug;
+  const tableSlug = isRelationView
+    ? selectedV?.relation_table_slug ||
+      selectedView?.relation_table_slug ||
+      selectedView?.table_slug
+    : selectedView?.table_slug;
 
   const viewType = selectedView?.type;
 
@@ -146,9 +159,23 @@ export const useViewsProps = ({ isRelationView }) => {
     (state) => state.permissions.permissions?.[tableSlug],
   );
 
-  // const projectInfo = useSelector(
-  //   (state) => state.auth?.projectInfo?.[projectId],
-  // );
+  const queryClient = useQueryClient();
+
+  const refetchMainDataList = () => {
+    switch (selectedViewMain?.type) {
+      case VIEW_TYPES_MAP.TABLE:
+        queryClient.invalidateQueries([QUERY_KEYS.TABLE_DATA_KEY]);
+        break;
+      case VIEW_TYPES_MAP.TIMELINE:
+        queryClient.invalidateQueries([QUERY_KEYS.TIMELINE_DATA_KEY]);
+        break;
+      case VIEW_TYPES_MAP.CALENDAR:
+        queryClient.invalidateQueries([QUERY_KEYS.CALENDAR_DATA_KEY]);
+        break;
+      default:
+        break;
+    }
+  };
 
   useProjectGetByIdQuery({
     projectId,
@@ -270,11 +297,11 @@ export const useViewsProps = ({ isRelationView }) => {
     saveSearchTextToDB(tableSlug, value);
   };
 
-  const handleSortClick = (e) => {
-    setSortPopupAnchorEl(e.currentTarget);
-  };
+  const navigateCreatePage = (defaultValue) => {
+    if (defaultValue) {
+      dispatch(detailDrawerActions.setDefaultValue(defaultValue));
+    }
 
-  const navigateCreatePage = () => {
     if (projectInfo?.new_layout) {
       const isOldUrlVariant = typeof view?.attributes?.url_object === "string";
 
@@ -320,47 +347,59 @@ export const useViewsProps = ({ isRelationView }) => {
     );
   };
 
-  const { refetch: refetchViewsList, isRefetching } = useGetViewsList(menuId, {
-    enabled: Boolean(menuId),
-    select: (res) => {
-      const relationViews =
-        res?.views?.filter(
-          (item) => item?.type === "SECTION" || item?.is_relation_view,
-        ) ?? [];
+  const menuIdForViewsList =
+    viewsList?.[viewsList?.length - 1]?.relation_table_slug && isRelationView
+      ? selectedV?.relation_table_slug
+      : menuId;
 
-      const views =
-        res?.views?.filter(
-          (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view),
-        ) ?? [];
+  const { refetch: refetchViewsList, isRefetching } = useGetViewsList(
+    menuIdForViewsList,
+    {
+      enabled: Boolean(menuIdForViewsList),
+      select: (res) => {
+        const relationViews =
+          res?.views?.filter(
+            (item) => item?.type === "SECTION" || item?.is_relation_view,
+          ) ?? [];
 
-      return { views, relationViews };
-    },
-    onSuccess: ({ views, relationViews }) => {
-      if (
-        (!selectedView ||
-          selectedView?.id !== views?.[selectedTabIndex]?.id ||
-          isRefetching) &&
-        !isRelationView
-      ) {
-        setSelectedView(views?.[selectedTabIndex]);
-      }
+        const views =
+          res?.views?.filter(
+            (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view),
+          ) ?? [];
 
-      if (isRelationView) {
-        setSelectedView(relationViews?.[selectedTabIndex]);
-        setRelationViews(relationViews);
-        updateQueryWithoutRerender("dv", relationViews?.[selectedTabIndex]?.id);
-        // if (state?.toDocsTab) setSelectedTabIndex(data?.length);
-      } else {
-        dispatch(viewsActions.setViews(views));
-
-        if (!pathname.includes("/login")) {
-          updateQueryWithoutRerender("v", views?.[selectedTabIndex]?.id);
+        return { views, relationViews };
+      },
+      onSuccess: ({ views, relationViews }) => {
+        if (
+          (!selectedView ||
+            selectedView?.id !== views?.[selectedTabIndex]?.id ||
+            isRefetching) &&
+          !isRelationView &&
+          selectedTabIndex != null
+        ) {
+          setSelectedView(views?.[selectedTabIndex]);
         }
-        if (state?.toDocsTab)
-          dispatch(detailDrawerActions.setDrawerTabIndex(views?.length));
-      }
+
+        if (isRelationView) {
+          dispatch(detailDrawerActions.setDrawerTabIndex(0));
+          setSelectedView(relationViews?.[0]);
+          setRelationViews(relationViews);
+          updateQueryWithoutRerender("dv", relationViews?.[0]?.id);
+          // if (state?.toDocsTab) setSelectedTabIndex(data?.length);
+        } else {
+          dispatch(viewsActions.setViews(views));
+
+          if (!pathname.includes("/login")) {
+            if (selectedTabIndex != null) {
+              updateQueryWithoutRerender("v", views?.[selectedTabIndex]?.id);
+            }
+          }
+          if (state?.toDocsTab)
+            dispatch(detailDrawerActions.setDrawerTabIndex(views?.length));
+        }
+      },
     },
-  });
+  );
 
   const {
     data: { layout } = {
@@ -383,8 +422,12 @@ export const useViewsProps = ({ isRelationView }) => {
       enabled: Boolean(isRelationView && tableSlug && menuId),
     },
     {
-      menuId,
+      menuId: menuId,
       tableSlug,
+      params: {
+        "table-slug": tableSlug,
+        language_setting: i18n?.language,
+      },
     },
   );
 
@@ -426,6 +469,7 @@ export const useViewsProps = ({ isRelationView }) => {
             })) ?? [],
           customEvents: data?.custom_events,
           orderBy: data?.table_info?.order_by || false,
+          relationViewsList: data?.views,
         };
       },
       onSuccess: (data) => {
@@ -596,13 +640,6 @@ export const useViewsProps = ({ isRelationView }) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (localStorage.getItem("detailPage") === "undefined") {
-  //     setSelectedViewType("SidePeek");
-  //     localStorage.setItem("detailPage", "SidePeek");
-  //   }
-  // }, [localStorage.getItem("detailPage")]);
-
   return {
     viewsMap,
     viewId,
@@ -623,7 +660,6 @@ export const useViewsProps = ({ isRelationView }) => {
     handleSearchOnChange,
     orderBy,
     setOrderBy,
-    handleSortClick,
     setSortedDatas,
     tableInfo,
     projectId,
@@ -667,5 +703,6 @@ export const useViewsProps = ({ isRelationView }) => {
     isLoadingTable,
     selectedTabIndex,
     navigateToEditPage,
+    refetchMainDataList,
   };
 };

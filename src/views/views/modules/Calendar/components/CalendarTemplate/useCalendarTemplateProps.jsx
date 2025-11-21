@@ -29,10 +29,10 @@ export const useCalendarTemplateProps = () => {
     setFocusedDate,
     tableSlug,
     layoutType,
-    setSelectedView,
   } = useCalendarViewContext();
 
-  const {navigateToDetailPage} = useViewContext();
+  const { navigateToDetailPage, navigateToEditPage, setSelectedView } =
+    useViewContext();
 
   const projectId = useSelector((state) => state.company?.projectId);
   const new_router = localStorage.getItem("new_router") === "true";
@@ -78,12 +78,16 @@ export const useCalendarTemplateProps = () => {
       new Date(
         centerDate.getFullYear(),
         centerDate.getMonth() - monthsBefore,
-        1
-      )
+        1,
+      ),
     );
 
     const end = endOfMonthAligned(
-      new Date(centerDate.getFullYear(), centerDate.getMonth() + monthsAfter, 1)
+      new Date(
+        centerDate.getFullYear(),
+        centerDate.getMonth() + monthsAfter,
+        1,
+      ),
     );
 
     const days = [];
@@ -140,12 +144,6 @@ export const useCalendarTemplateProps = () => {
       value: computedDate,
     });
     setOpen(true);
-  };
-
-  const navigateToEditPage = (el) => {
-    setOpen(true);
-    setSelectedRow(el);
-    setDefaultValue({});
   };
 
   const viewFields = useMemo(() => {

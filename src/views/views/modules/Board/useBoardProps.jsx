@@ -25,12 +25,10 @@ export const useBoardProps = () => {
     layoutType,
     selectedView,
     setSelectedRow,
+    navigateCreatePage,
   } = useViewContext();
 
-  const {
-    fieldsMap,
-    fieldsMapRel
-  } = useFieldsContext()
+  const { fieldsMap, fieldsMapRel } = useFieldsContext();
 
   const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
 
@@ -78,7 +76,7 @@ export const useBoardProps = () => {
     return boardData?.length > 0
       ? groups.reduce(
           (max, group) => (group.count < max.count ? group : max),
-          groups[0]
+          groups[0],
         )
       : {};
   }, [groups, boardData]);
@@ -89,7 +87,7 @@ export const useBoardProps = () => {
     .filter(
       (item) =>
         item?.value?.length <
-        groups?.find((groupItem) => item?.name === groupItem?.name)?.count
+        groups?.find((groupItem) => item?.name === groupItem?.name)?.count,
     );
 
   const lastSubGroup = subGroups[subGroups.length - 1];
@@ -111,14 +109,14 @@ export const useBoardProps = () => {
     ];
   };
 
-  const navigateToCreatePage = ({ group }) => {
+  const handleCreateItem = ({ group }) => {
     if (isStatusType) {
-      setDefaultValue({
+      navigateCreatePage({
         field: selectedGroupField?.slug,
         value: group?.name,
       });
     } else {
-      setDefaultValue({
+      navigateCreatePage({
         field: group.slug,
         value: group.name,
       });
@@ -206,7 +204,7 @@ export const useBoardProps = () => {
         setLoadingData(false);
       },
     },
-    tableSlug
+    tableSlug,
   );
 
   const mutateBoardData = (offsetProp) => {
@@ -273,7 +271,7 @@ export const useBoardProps = () => {
         setSubgroupsQueue([data?.data?.subgroups[0]] ?? []);
       },
     },
-    tableSlug
+    tableSlug,
   );
 
   const isLoading = boardStructureMutation.isLoading;
@@ -288,7 +286,7 @@ export const useBoardProps = () => {
         setGroupsCounts(result);
       },
     },
-    tableSlug
+    tableSlug,
   );
 
   useEffect(() => {
@@ -297,7 +295,7 @@ export const useBoardProps = () => {
 
       if (boardData[currentSubgroup?.name]) {
         const dataLength = Object.values(
-          boardData[currentSubgroup?.name]
+          boardData[currentSubgroup?.name],
         ).flat().length;
 
         if (dataLength >= currentSubgroup.count) {
@@ -373,7 +371,7 @@ export const useBoardProps = () => {
     if (elSubGroups.length) {
       elSubGroups?.forEach((item) => {
         const subGroup = subGroups.find(
-          (subGroupItem) => subGroupItem?.name === item?.dataset?.subGroup
+          (subGroupItem) => subGroupItem?.name === item?.dataset?.subGroup,
         );
 
         const isElementInViewport = isInViewport(item);
@@ -396,7 +394,7 @@ export const useBoardProps = () => {
 
   const handleSetOffsetOnScrollGroup = throttle(() => {
     const lastCard = boardRef.current?.querySelector(
-      `[data-guid = "${lastGroupItem?.current?.guid}"]`
+      `[data-guid = "${lastGroupItem?.current?.guid}"]`,
     );
 
     const isLastElementInViewport = isInViewportOrScrolledToTop(lastCard);
@@ -490,7 +488,7 @@ export const useBoardProps = () => {
     groups,
     groupField,
     getGroupFieldLabel,
-    navigateToCreatePage,
+    handleCreateItem,
     groupsCounts,
     isFilterOpen,
     subGroupById,
@@ -517,7 +515,7 @@ export const useBoardProps = () => {
     layoutType,
     selectedView,
     setSelectedRow,
-  }
+  };
 };
 
 const getMergedDataSubgroup = ({newData, prev}) => {

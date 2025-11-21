@@ -25,6 +25,7 @@ import { FromDateType, ToDateType } from "@/utils/getDateType";
 import { CalendarViewProvider } from "./Providers";
 import { CalendarMonthRange } from "./components/CalendarMonthRange";
 import { useViewContext } from "@/providers/ViewProvider";
+import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 
 const formatDate = [
   {
@@ -42,7 +43,6 @@ const formatDate = [
 ];
 
 export const Calendar = () => {
-
   const {
     tableSlug,
     menuItem,
@@ -50,17 +50,17 @@ export const Calendar = () => {
     layoutType,
     setLayoutType,
     isRelationView,
+    selectedView,
+    setSelectedView,
   } = useViewContext();
 
-  const [selectedView, setSelectedView] = useState(null);
+  // const [selectedView, setSelectedView] = useState(null);
   const [dateFilters] = useState([
     startOfWeek(new Date(), { weekStartsOn: 1 }),
     endOfWeek(new Date(), { weekStartsOn: 1 }),
   ]);
   const [fieldsMap, setFieldsMap] = useState({});
-  const [date] = useState(
-    view?.attributes?.period ?? "MONTH"
-  );
+  const [date] = useState(view?.attributes?.period ?? "MONTH");
 
   const [focusedDate, setFocusedDate] = useState(new Date());
 
@@ -137,7 +137,7 @@ export const Calendar = () => {
 
   const { data: { data } = { data: [] } } = useQuery(
     [
-      "GET_OBJECTS_LIST_WITH_RELATIONS",
+      QUERY_KEYS.CALENDAR_DATA_KEY,
       { tableSlug, dataFilters, currentUpdatedDate, firstUpdatedDate, date },
     ],
     () => {
@@ -270,7 +270,7 @@ export const Calendar = () => {
   );
 
   const tabResponses = useQueries(
-    queryGenerator(groupFields ?? [], filters ?? {})
+    queryGenerator(groupFields ?? [], filters ?? {}),
   );
 
   const tabs = tabResponses?.map((response) => response?.data);

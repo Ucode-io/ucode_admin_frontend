@@ -36,7 +36,6 @@ export const Views = ({
     handleSearchOnChange,
     orderBy,
     setOrderBy,
-    handleSortClick,
     setSortedDatas,
     tableInfo,
     projectId,
@@ -79,6 +78,7 @@ export const Views = ({
     isLoadingTable,
     selectedTabIndex,
     navigateToEditPage,
+    refetchMainDataList,
   } = useViewsProps({ isRelationView });
 
   return (
@@ -138,13 +138,14 @@ export const Views = ({
           isLoadingTable,
           selectedTabIndex,
           navigateToEditPage,
+          refetchMainDataList,
+          navigateCreatePage,
         }}
       >
         <FilterProvider
           state={{
             handleSearchOnChange,
             orderBy,
-            handleSortClick,
             setOrderBy,
             setSortedDatas,
             sortedDatas,
@@ -179,8 +180,7 @@ export const Views = ({
                 selectedRow={selectedRow}
                 menuItem={menuItem}
                 layout={layout}
-                // selectedViewType={selectedViewType}
-                // setSelectedViewType={setSelectedViewType}
+                refetchMainDataList={refetchMainDataList}
               />
             )}
           </FieldsProvider>

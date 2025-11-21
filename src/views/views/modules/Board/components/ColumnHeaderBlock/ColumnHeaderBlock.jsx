@@ -6,7 +6,7 @@ import {FIELD_TYPES} from "@/utils/constants/fieldTypes";
 
 export const ColumnHeaderBlock = ({
   group,
-  navigateToCreatePage,
+  handleCreateItem,
   counts,
   field,
   computedColumnsFor,
@@ -19,13 +19,13 @@ export const ColumnHeaderBlock = ({
   const color =
     item?.type === FIELD_TYPES.STATUS
       ? item?.attributes?.todo?.options?.find(
-          (item) => item?.label === group?.name
+          (item) => item?.label === group?.name,
         )?.color ||
         item?.attributes?.complete?.options?.find(
-          (item) => item?.label === group?.name
+          (item) => item?.label === group?.name,
         )?.color ||
         item?.attributes?.progress?.options?.find(
-          (item) => item?.label === group?.name
+          (item) => item?.label === group?.name,
         )?.color
       : item?.attributes?.options?.find((item) => item?.label === group?.name)
           ?.color;
@@ -33,7 +33,8 @@ export const ColumnHeaderBlock = ({
   return (
     <div
       ref={fixedElement}
-      className={`${cls.columnHeaderBlock} column-header`}>
+      className={`${cls.columnHeaderBlock} column-header`}
+    >
       <div className={cls.leftSide}>
         <div className={cls.title}>
           <span
@@ -41,10 +42,11 @@ export const ColumnHeaderBlock = ({
               background: color ? color + 33 : "rgb(139, 150, 160)",
               color: color ? color : "#fff",
             }}
-            className={cls.tabBlockStatus}>
+            className={cls.tabBlockStatus}
+          >
             <span
               className={cls.dot}
-              style={{background: color ? color : "rgb(78, 84, 90)"}}
+              style={{ background: color ? color : "rgb(78, 84, 90)" }}
             />
             <span className={cls.label}>{field}</span>
           </span>
@@ -59,8 +61,9 @@ export const ColumnHeaderBlock = ({
           color="inherit"
           onClick={(e) => {
             e.stopPropagation();
-            navigateToCreatePage({group});
-          }}>
+            handleCreateItem({ group });
+          }}
+        >
           <Add />
         </IconButton>
       </div>

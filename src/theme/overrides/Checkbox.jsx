@@ -56,6 +56,49 @@ export default function Checkbox(theme) {
             </svg>
           </span>
         ),
+        uncheckedIcon: (
+          <span
+            style={{
+              width: 20,
+              height: 20,
+              border: "1px solid #D0D5DD",
+              borderRadius: "6px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "transparent",
+              transition: "all 0.2s ease",
+              flexShrink: 0,
+            }}
+          />
+        ),
+        indeterminateIcon: (
+          <span
+            style={{
+              width: 20,
+              height: 20,
+              border: "1px solid #004EEB",
+              borderRadius: "6px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "transparent",
+              transition: "all 0.2s ease",
+              flexShrink: 0,
+            }}
+          >
+            {/* Иконка поперечной линии */}
+            <svg
+              width="12"
+              height="2"
+              viewBox="0 0 12 2"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect width="12" height="2" rx="1" fill="#004EEB" />
+            </svg>
+          </span>
+        ),
       },
 
       styleOverrides: {

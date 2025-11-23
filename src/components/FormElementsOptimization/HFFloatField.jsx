@@ -9,28 +9,27 @@ const HFFloatField = ({
   disabled,
   decimalScale = 50,
   row,
-  field,
   handleChange = () => {},
   ...props
 }) => {
   const style = isTransparent
-    ? {background: "transparent", border: "none"}
+    ? { background: "transparent", border: "none" }
     : disabled
-      ? {background: "#c0c0c039"}
+      ? { background: "#c0c0c039" }
       : {
-        background: isBlackBg ? "#2A2D34" : "",
-        color: isBlackBg ? "#fff" : "",
-      };
+          background: isBlackBg ? "#2A2D34" : "",
+          color: isBlackBg ? "#fff" : "",
+        };
 
-  const value = row?.[field?.slug]
+  const value = row?.value;
 
   const onChange = (value) => {
     handleChange({
       value,
       rowId: row?.guid,
-      name: field?.slug
-    })
-  }
+      name: row?.slug,
+    });
+  };
 
   return (
     <NumericFormat
@@ -55,7 +54,7 @@ const HFFloatField = ({
             onChange(
               !isNaN(valueWithoutSpaces)
                 ? parseFloat(valueWithoutSpaces)
-                : valueWithoutSpaces
+                : valueWithoutSpaces,
             );
         }
       }}
@@ -63,7 +62,7 @@ const HFFloatField = ({
         styles.numberField
       }`}
       readOnly={disabled}
-      style={{...style, padding: "4px"}}
+      style={{ ...style, padding: "4px" }}
       {...props}
     />
   );

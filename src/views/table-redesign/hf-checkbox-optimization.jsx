@@ -9,17 +9,16 @@ const HFCheckbox = ({
   isShowLabel = true,
   id = "",
   row,
-  field,
   handleChange,
   ...props
 }) => {
-  const value = row?.[field?.slug];
+  const value = row?.value;
 
   const onChange = (value) => {
     handleChange({
       value,
       rowId: row?.guid,
-      name: field?.slug,
+      name: row?.slug,
     });
   };
 

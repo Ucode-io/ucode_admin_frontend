@@ -9,7 +9,7 @@ import YYearPicker from "./YYearPicker";
 import {format} from "date-fns";
 import YQuarterPicker from "./YQuarterPicker";
 
-function YDateFilter({field, value, onChange = () => {}, name}) {
+function YDateFilter({ field, value, onChange = () => {}, name, withTime }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -77,7 +77,7 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
           <Box
             sx={{
               width: "205px",
-              height: "250px",
+              height: withTime ? "290px" : "250px",
               border: "1px solid #eee",
               borderRadius: "8px",
             }}
@@ -95,10 +95,9 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                   placeholder={field?.label}
                   value={value}
                   onChange={(val) => {
-                    console.log("vallll", val);
                     onChange(val, name);
                   }}
-                  withTime={true}
+                  withTime={withTime}
                 />
               </TabPanel>
               <TabPanel sx={{ height: "100px", width: "100%" }}>
@@ -107,7 +106,7 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                   placeholder={field?.label}
                   value={value}
                   onChange={(val) => onChange(val, name)}
-                  withTime={true}
+                  withTime={withTime}
                 />
               </TabPanel>
               <TabPanel sx={{ height: "100px", width: "100%" }}>
@@ -116,7 +115,7 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                   placeholder={field?.label}
                   value={value}
                   onChange={(val) => onChange(val, name)}
-                  withTime={true}
+                  withTime={withTime}
                 />
               </TabPanel>
               <TabPanel sx={{ height: "100px", width: "100%" }}>
@@ -125,7 +124,7 @@ function YDateFilter({field, value, onChange = () => {}, name}) {
                   placeholder={field?.label}
                   value={value}
                   onChange={(val) => onChange(val, name)}
-                  withTime={true}
+                  withTime={withTime}
                 />
               </TabPanel>
             </Tabs>

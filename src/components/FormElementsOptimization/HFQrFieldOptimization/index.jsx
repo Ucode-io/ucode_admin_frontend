@@ -5,21 +5,17 @@ import EditIcon from "@mui/icons-material/Edit";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
 
 function HFQrFieldComponent({
-  field,
   required,
   isTableView,
   newColumn,
   disabled = false,
   row,
 }) {
-
-  const defaultValue = row?.[field?.slug]
+  const defaultValue = row?.value;
 
   const [openMenu, setMenu] = useState(false);
   const qrRef = useRef(null);
-  const [switchInput, setSwitchInput] = useState(
-    isTableView ? true : newColumn ? false : true
-  );
+
   const open = Boolean(openMenu);
   const handClick = (event) => {
     setMenu(event.currentTarget);
@@ -36,21 +32,20 @@ function HFQrFieldComponent({
 
   return (
     <>
-      <Box sx={{display: "flex"}}>
+      <Box sx={{ display: "flex" }}>
         <Box>
-        <HFQrForTableView
-          disabled={disabled}
-          defaultValue={defaultValue}
-          field={field}
-          required={required}
-          isTableView={isTableView}
-          isDetailPage={isDetailPage}
-          handClick={handClick}
-          qrRef={qrRef}
-          openModal={openModal}
-          handModalClose={handModalClose}
-          value={row?.[field?.slug]}
-        />
+          <HFQrForTableView
+            disabled={disabled}
+            defaultValue={defaultValue}
+            required={required}
+            isTableView={isTableView}
+            isDetailPage={isDetailPage}
+            handClick={handClick}
+            qrRef={qrRef}
+            openModal={openModal}
+            handModalClose={handModalClose}
+            value={row?.value}
+          />
         </Box>
       </Box>
       <Menu anchorEl={openMenu} open={open} onClose={handleClose}>
@@ -60,7 +55,8 @@ function HFQrFieldComponent({
             width: "150px",
             minHeight: "20px",
             padding: "10px 0 0px 20px",
-          }}>
+          }}
+        >
           <Box
             sx={{
               color: "#007aff",
@@ -71,8 +67,9 @@ function HFQrFieldComponent({
             onClick={() => {
               handleOpen();
               handleClose();
-            }}>
-            <FullscreenIcon style={{marginRight: "10px"}} />
+            }}
+          >
+            <FullscreenIcon style={{ marginRight: "10px" }} />
             Full Scrren
           </Box>
           {!isTableView && (
@@ -84,10 +81,10 @@ function HFQrFieldComponent({
                 alignItems: "center",
               }}
               onClick={() => {
-                setSwitchInput((item) => !item);
                 handleClose();
-              }}>
-              <EditIcon style={{marginRight: "10px"}} />
+              }}
+            >
+              <EditIcon style={{ marginRight: "10px" }} />
               Change Qr
             </Box>
           )}

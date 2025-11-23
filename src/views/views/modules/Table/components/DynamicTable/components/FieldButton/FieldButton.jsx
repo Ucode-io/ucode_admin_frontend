@@ -16,7 +16,6 @@ import { transliterate } from "@/utils/textTranslater";
 import { Box } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { useViewContext } from "@/providers/ViewProvider";

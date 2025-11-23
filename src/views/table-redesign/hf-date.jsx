@@ -152,8 +152,8 @@ export const HFTimePicker = ({
   );
 };
 
-export const HFTimePickerNew = ({ disabled, handleChange, field, row }) => {
-  const value = row?.[field?.slug];
+export const HFTimePickerNew = ({ disabled, handleChange, row }) => {
+  const value = row?.value;
   return (
     <TimeInput
       id="timeField"
@@ -162,7 +162,7 @@ export const HFTimePickerNew = ({ disabled, handleChange, field, row }) => {
       onChange={(value) => {
         handleChange({
           value,
-          name: field?.slug,
+          name: row?.slug,
           rowId: row?.guid,
         });
       }}

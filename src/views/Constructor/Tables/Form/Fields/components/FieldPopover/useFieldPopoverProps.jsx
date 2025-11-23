@@ -50,7 +50,7 @@ export const useFieldPopoverProps = ({
 
   const { id, appId, tableSlug: tableSlugParams } = useParams();
 
-  const { view, refetchViews } = useViewContext();
+  const { view, refetchTableInfo } = useViewContext();
 
   const menuItemStore = useSelector((state) => state.menu.menuItem);
 
@@ -210,9 +210,10 @@ export const useFieldPopoverProps = ({
       onClose();
     }
     setTimeout(() => {
-      queryClient.refetchQueries(QUERY_KEYS.TABLE_DATA_KEY);
-      queryClient.refetchQueries(QUERY_KEYS.VIEWS_DATA_KEY);
-    }, 200);
+      if (refetchTableInfo) {
+        refetchTableInfo({ stale: true });
+      }
+    }, 2000);
   };
 
   const onSubmit = (values) => {

@@ -7,7 +7,6 @@ const HFMultiFile = ({
   tabIndex,
   disabledHelperText = false,
   disabled = false,
-  field,
   isTableView = false,
   drawerDetail = false,
   updateObject = () => {},
@@ -16,37 +15,34 @@ const HFMultiFile = ({
   row,
   ...props
 }) => {
-
-  const [error] = useState({})
+  const [error] = useState({});
 
   const onChange = (value) => {
-    console.log({value})
     handleChange({
       value,
       rowId: row?.guid,
-      name: field?.slug
-    })
-  }
+      name: row?.slug,
+    });
+  };
 
   return (
     <>
-    <MultiFileUpload
-      name={name}
-      drawerDetail={drawerDetail}
-      value={row?.[field?.slug]}
-      tabIndex={tabIndex}
-      onChange={onChange}
-      updateObject={updateObject}
-      disabled={disabled}
-      field={field}
-      isTableView={isTableView}
-      newUi={newUi}
-      {...props}
-    />
-    {!disabledHelperText && error?.message && (
-      <FormHelperText error>{error?.message}</FormHelperText>
-    )}
-  </>
+      <MultiFileUpload
+        name={name}
+        drawerDetail={drawerDetail}
+        value={row?.value}
+        tabIndex={tabIndex}
+        onChange={onChange}
+        updateObject={updateObject}
+        disabled={disabled}
+        isTableView={isTableView}
+        newUi={newUi}
+        {...props}
+      />
+      {!disabledHelperText && error?.message && (
+        <FormHelperText error>{error?.message}</FormHelperText>
+      )}
+    </>
   );
 };
 

@@ -48,21 +48,20 @@ const HFMultipleAutocomplete = ({
   disabledHelperText,
   placeholder,
   required = false,
-  field,
   disabled,
   newUi,
   row,
   handleChange,
 }) => {
   const classes = useStyles();
-  const options = field.attributes?.options ?? [];
-  const hasColor = field.attributes?.has_color;
-  const hasIcon = field.attributes?.has_icon;
-  const isMultiSelect = field.attributes?.is_multiselect;
+  const options = row.attributes?.options ?? [];
+  const hasColor = row.attributes?.has_color;
+  const hasIcon = row.attributes?.has_icon;
+  const isMultiSelect = row.attributes?.is_multiselect;
 
   return (
     <AutoCompleteElement
-      value={row?.[field?.slug]}
+      value={row?.value}
       classes={classes}
       isBlackBg={isBlackBg}
       options={options}
@@ -76,7 +75,7 @@ const HFMultipleAutocomplete = ({
       hasIcon={hasIcon}
       onFormChange={(el) => {
         handleChange({
-          name: field?.slug,
+          name: row?.slug,
           value: el,
           rowId: row?.guid,
         });
@@ -85,7 +84,7 @@ const HFMultipleAutocomplete = ({
       // error={error}
       isMultiSelect={isMultiSelect}
       disabled={disabled}
-      field={field}
+      field={row}
       className="hf-select"
       isNewTableView={isNewTableView}
       newUi={newUi}

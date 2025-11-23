@@ -6,7 +6,6 @@ const HFSwitch = ({
   tabIndex,
   isBlackBg,
   labelProps,
-  field,
   isShowLabel = true,
   newColumn,
   drawerDetail = false,
@@ -20,11 +19,11 @@ const HFSwitch = ({
     handleChange({
       value,
       rowId: row?.guid,
-      name: field?.slug,
+      name: row?.slug,
     });
   };
 
-  const value = row?.[field?.slug];
+  const value = row?.[row?.slug];
 
   return (
     <div
@@ -32,10 +31,11 @@ const HFSwitch = ({
         background: isBlackBg ? "#2A2D34" : "",
         color: isBlackBg ? "#fff" : "",
         paddingLeft: drawerDetail ? "10px" : "4px",
-      }}>
+      }}
+    >
       <ChakraProvider>
         <Switch
-          id={`switch_${newColumn ? "new" : field?.slug}`}
+          id={`switch_${newColumn ? "new" : row?.slug}`}
           {...props}
           autoFocus={tabIndex === 1}
           tabIndex={tabIndex}

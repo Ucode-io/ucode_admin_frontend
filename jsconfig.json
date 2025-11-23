@@ -11,7 +11,8 @@
       "@/store/*": ["src/store/*"],
       "@/theme/*": ["src/theme/*"],
       "@/mock/*": ["src/mock/*"],
-      "@/assets/*": ["src/assets/*"]
+      "@/assets/*": ["src/assets/*"],
+      "@/workers/*": ["src/workers/*"]
     }
   }
 }

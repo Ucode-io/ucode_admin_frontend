@@ -5,7 +5,6 @@ import styles from "./style.module.scss";
 import {generateLink} from "../../utils/generateYandexLink";
 
 function HFModalMap({
-  field,
   defaultValue,
   isTransparent = false,
   drawerDetail = false,
@@ -16,8 +15,8 @@ function HFModalMap({
   ...props
 }) {
   const [open, setOpen] = useState(false);
-  
-  const value = row?.[field?.slug]
+
+  const value = row?.value;
 
   const handleOpen = () => {
     setOpen(true);
@@ -31,7 +30,8 @@ function HFModalMap({
     <Box
       sx={{
         padding: drawerDetail ? "0 4.6px" : "0",
-      }}>
+      }}
+    >
       <TextField
         disabled={disabled}
         className="mapField"
@@ -75,7 +75,6 @@ function HFModalMap({
           <HFMapField
             handleChange={handleChange}
             row={row}
-            field={field}
             width={"500px"}
             height={"400px"}
           />
@@ -86,8 +85,9 @@ function HFModalMap({
             </Button>
             <Button
               onClick={handleClose}
-              sx={{marginLeft: "10px"}}
-              variant="outlined">
+              sx={{ marginLeft: "10px" }}
+              variant="outlined"
+            >
               Confirm
             </Button>
           </Box>

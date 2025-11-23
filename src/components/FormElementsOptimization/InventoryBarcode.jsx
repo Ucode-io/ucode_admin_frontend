@@ -12,7 +12,6 @@ const InventoryBarCode = ({
   name = "",
   fullWidth = false,
   disabled = false,
-  field,
   handleChange = () => {},
   row,
   ...props
@@ -20,13 +19,13 @@ const InventoryBarCode = ({
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
 
-  const value = row?.[field?.slug]
+  const value = row?.value;
 
-  const {id} = useParams();
+  const { id } = useParams();
   const [elmValue, setElmValue] = useState("");
   const time = useRef();
 
-  const barcode = row?.[field?.slug]
+  const barcode = row?.value;
 
   const sendRequestOpenFaas = () => {
     const params = {
@@ -35,13 +34,13 @@ const InventoryBarCode = ({
     constructorFunctionService
       .invoke(
         {
-          function_id: field?.attributes?.function,
+          function_id: row?.attributes?.function,
           object_ids: [id, elmValue],
           attributes: {
             barcode: elmValue.length > 0 ? elmValue : barcode,
           },
         },
-        params
+        params,
       )
       .then(() => {
         dispatch(showAlert("Успешно!", "success"));
@@ -71,9 +70,9 @@ const InventoryBarCode = ({
 
   useEffect(() => {
     if (
-      elmValue.length >= field.attributes?.length &&
-      !field.attributes?.pressEnter &&
-      field.attributes?.automatic
+      elmValue.length >= row?.attributes?.length &&
+      !row?.attributes?.pressEnter &&
+      row?.attributes?.automatic
     ) {
       sendRequestOpenFaas();
     }
@@ -81,7 +80,7 @@ const InventoryBarCode = ({
 
   const keyPress = (e) => {
     if (e.keyCode == 13) {
-      if (field.attributes?.pressEnter) {
+      if (row?.attributes?.pressEnter) {
         sendRequestOpenFaas();
       }
     }
@@ -89,70 +88,65 @@ const InventoryBarCode = ({
 
   const onChange = (e) => {
     setElmValue(e.target.value);
-  }
+  };
 
   const onBlur = (e) => {
     const currentTime = new Date().getTime();
-    if (
-      currentTime - time.current > 50 &&
-      !field.attributes?.automatic
-    ) {
-      handleChange(
-        {
-          value: e.target.value.substring(value.length, e.target.value.length),
-          name: field?.slug,
-          rowId: row?.guid
-        }
-      );
+    if (currentTime - time.current > 50 && !row?.attributes?.automatic) {
+      handleChange({
+        value: e.target.value.substring(value.length, e.target.value.length),
+        name: row?.slug,
+        rowId: row?.guid,
+      });
     } else {
       onChange({
         value: e.target.value,
-        name: field?.slug,
-        rowId: row?.guid
+        name: row?.slug,
+        rowId: row?.guid,
       });
     }
     time.current = currentTime;
-  }
+  };
 
   return (
     <>
-    <TextField
-      id="barcode"
-      size="small"
-      value={elmValue}
-      onChange={onChange}
-      onBlur={onBlur}
-      onKeyDown={(e) => keyPress(e)}
-      name={name}
-      sx={{padding: 0}}
-      fullWidth={fullWidth}
-      InputProps={{
-        readOnly: disabled,
-        style: disabled
-          ? {
-              background: "#c0c0c039",
-              paddingRight: "0px",
-            }
-          : {
-              background: "inherit",
-              color: "#000",
-              height: "25px",
-              padding: 0,
-            },
+      <TextField
+        id="barcode"
+        size="small"
+        value={elmValue}
+        onChange={onChange}
+        onBlur={onBlur}
+        onKeyDown={(e) => keyPress(e)}
+        name={name}
+        sx={{ padding: 0 }}
+        fullWidth={fullWidth}
+        InputProps={{
+          readOnly: disabled,
+          style: disabled
+            ? {
+                background: "#c0c0c039",
+                paddingRight: "0px",
+              }
+            : {
+                background: "inherit",
+                color: "#000",
+                height: "25px",
+                padding: 0,
+              },
 
-        endAdornment: disabled && (
-          <Tooltip title="This field is disabled for this role!">
-            <InputAdornment position="start">
-              <Lock style={{fontSize: "20px"}} />
-            </InputAdornment>
-          </Tooltip>
-        ),
-      }}
-      className="custom_textfield"
-      // helperText={!disabledHelperText && error?.message}
-      {...props}
-    />
-  </>
+          endAdornment: disabled && (
+            <Tooltip title="This field is disabled for this role!">
+              <InputAdornment position="start">
+                <Lock style={{ fontSize: "20px" }} />
+              </InputAdornment>
+            </Tooltip>
+          ),
+        }}
+        className="custom_textfield"
+        // helperText={!disabledHelperText && error?.message}
+        {...props}
+      />
+    </>
   );
 };
 

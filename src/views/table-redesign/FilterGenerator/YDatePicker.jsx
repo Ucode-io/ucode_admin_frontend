@@ -30,7 +30,7 @@ const YDatePicker = ({
       return setRange(value);
     }
 
-    if (withTime) {
+    if (withTime && startTime && endTime) {
       const startParsed = parseTimeFromString(startTime, 23, 59);
       const endParsed = parseTimeFromString(endTime, 0, 0);
       start.setHours(startParsed.hours, startParsed.minutes, 0);
@@ -44,7 +44,13 @@ const YDatePicker = ({
     // const localISOStringEnd = end.toLocaleString("sv-SE").replace(" ", "T");
 
     // onChange({ $gte: localISOStringStart, $lte: localISOStringEnd });
-    onChange({ $gte: start, $lte: end });
+
+    if (withTime && startTime && endTime) {
+      onChange({ $gte: start, $lte: end });
+    } else {
+      onChange({ $gte: start, $lte: end });
+    }
+
     setRange(value);
   };
 

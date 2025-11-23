@@ -3,7 +3,6 @@ import NewFileUpload from "../Upload/NewFileUpload.jsx";
 import { useState } from "react";
 
 const HFFileUpload = ({
-  field,
   tabIndex,
   disabled,
   drawerDetail = false,
@@ -12,24 +11,23 @@ const HFFileUpload = ({
   row,
   ...props
 }) => {
-
-  const [error] = useState({})
+  const [error] = useState({});
 
   const onChange = (value) => {
     handleChange({
       value,
-      name: field?.slug,
-      rowId: row?.guid
-    })
-  }
+      name: row?.slug,
+      rowId: row?.guid,
+    });
+  };
 
   return (
     <>
       <NewFileUpload
-        value={row?.[field?.slug]}
+        value={row?.value}
         drawerDetail={drawerDetail}
         tabIndex={tabIndex}
-        field={field}
+        field={row}
         onChange={(val) => {
           onChange(val);
         }}

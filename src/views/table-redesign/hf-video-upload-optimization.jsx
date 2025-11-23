@@ -38,25 +38,23 @@ export const HFVideoUpload = ({
   disabledHelperText = false,
   disabled,
   row,
-  field,
   handleChange,
   ...props
 }) => {
-
-  const [error] = useState({})
+  const [error] = useState({});
 
   const onChange = (value) => {
     handleChange({
       value,
-      name: field?.slug,
-      rowId: row?.guid
-    })
-  }
+      name: row?.slug,
+      rowId: row?.guid,
+    });
+  };
 
   return (
     <>
       <VideoUpload
-        value={row?.[field?.slug]}
+        value={row?.value}
         onChange={(val) => {
           onChange(val);
         }}
@@ -71,8 +69,14 @@ export const HFVideoUpload = ({
   );
 };
 
-const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
-  const {download} = useDownloader();
+const VideoUpload = ({
+  value,
+  onChange,
+  className = "",
+  disabled,
+  tabIndex,
+}) => {
+  const { download } = useDownloader();
   const inputRef = useRef(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -81,7 +85,7 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
   const [openFullImg, setOpenFullImg] = useState(false);
   const handleOpenVideo = () => setOpenFullImg(true);
   const handleCloseVideo = () => setOpenFullImg(false);
-  const [degree, setDegree] = useState(0);
+  const [degree] = useState(0);
   const [imgScale, setImgScale] = useState(1);
 
   const open = Boolean(anchorEl);
@@ -153,15 +157,16 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
 
   return (
     <>
-      <div className={className} style={{textAlign: "left"}}>
+      <div className={className} style={{ textAlign: "left" }}>
         {value && (
           <div
             onClick={() => handleOpenVideo()}
-            style={{display: "flex", alignItems: "center", columnGap: 5}}>
+            style={{ display: "flex", alignItems: "center", columnGap: 5 }}
+          >
             <div className="video-block">
               <video ref={videoRef} src={value} />
             </div>
-            <div style={{fontSize: 10, color: "#747474", fontWeight: 500}}>
+            <div style={{ fontSize: 10, color: "#747474", fontWeight: 500 }}>
               {fileName}
             </div>
           </div>
@@ -176,12 +181,13 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               minWidth: 40,
               width: 40,
               height: 27,
-            }}>
+            }}
+          >
             {!loading && (
               <img
                 src="/img/file-docs.svg"
                 alt="Upload"
-                style={{width: 24, height: 24}}
+                style={{ width: 24, height: 24 }}
               />
             )}
             {loading && <CircularProgress size={20} />}
@@ -197,7 +203,8 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
-        }}>
+        }}
+      >
         <Box
           sx={{
             display: "flex",
@@ -205,7 +212,8 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
             gap: "10px",
             padding: "10px",
             backgroundColor: "#212B36",
-          }}>
+          }}
+        >
           <Button
             sx={{
               display: "flex",
@@ -221,7 +229,8 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               } catch (err) {
                 videoRef.current.play();
               }
-            }}>
+            }}
+          >
             <OpenInFullIcon />
             Show Full Video
           </Button>
@@ -234,8 +243,9 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               justifyContent: "flex-start",
               color: "#fff",
             }}
-            onClick={closeButtonHandler}>
-            <DeleteIcon style={{width: "17px", height: "17px"}} />
+            onClick={closeButtonHandler}
+          >
+            <DeleteIcon style={{ width: "17px", height: "17px" }} />
             Remove Video
           </Button>
 
@@ -252,7 +262,8 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               e.stopPropagation();
               handleClose();
               inputRef.current.click();
-            }}>
+            }}
+          >
             <ChangeCircleIcon />
             Change Video
           </Button>
@@ -281,7 +292,8 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               outline: "none",
               boxShadow: "none",
             },
-          }}>
+          }}
+        >
           <Box
             onClick={handleCloseVideo}
             sx={{
@@ -292,12 +304,13 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               justifyContent: "center",
               flexDirection: "column",
             }}
-            aria-describedby={id}>
+            aria-describedby={id}
+          >
             {value?.includes("m3u8") ? (
               <VideoPlayer
                 videoRef={videoRef}
                 controls
-                style={{transform: `scale(${imgScale})`}}
+                style={{ transform: `scale(${imgScale})` }}
                 src={value}
               />
             ) : (
@@ -305,14 +318,16 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
                 onClick={(e) => e.stopPropagation()}
                 controls
                 className="uploadedImage"
-                style={{transform: `scale(${imgScale})`}}
-                src={value}></video>
+                style={{ transform: `scale(${imgScale})` }}
+                src={value}
+              ></video>
             )}
             <Typography
               sx={{
                 fontSize: "10px",
                 color: "#747474",
-              }}>
+              }}
+            >
               {value?.split?.("_")?.[1] ?? ""}
             </Typography>
           </Box>
@@ -323,8 +338,9 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               right: "-300px",
               top: "-50px",
               color: "white",
-            }}>
-            <ClearIcon style={{width: "30px", height: "30px"}} />
+            }}
+          >
+            <ClearIcon style={{ width: "30px", height: "30px" }} />
           </Button>
           <Button
             onClick={() => {
@@ -335,8 +351,9 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               right: "-60px",
               bottom: "-30px",
               color: "#eee",
-            }}>
-            <ZoomInIcon style={{width: "30px", height: "30px"}} />
+            }}
+          >
+            <ZoomInIcon style={{ width: "30px", height: "30px" }} />
           </Button>
           <Button
             onClick={() => {
@@ -347,8 +364,9 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               right: "-120px",
               bottom: "-30px",
               color: "#eee",
-            }}>
-            <ZoomOutIcon style={{width: "30px", height: "30px"}} />
+            }}
+          >
+            <ZoomOutIcon style={{ width: "30px", height: "30px" }} />
           </Button>
           <Button
             onClick={() => {
@@ -359,8 +377,9 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               right: "-200px",
               bottom: "-30px",
               color: "#eee",
-            }}>
-            <Download style={{width: "30px", height: "30px"}} />
+            }}
+          >
+            <Download style={{ width: "30px", height: "30px" }} />
           </Button>{" "}
           <Button
             onClick={handleClick}
@@ -369,10 +388,11 @@ const VideoUpload = ({value, onChange, className = "", disabled, tabIndex}) => {
               right: "-300px",
               bottom: "-30px",
               color: "#eee",
-            }}>
+            }}
+          >
             <MoreHorizIcon
               htmlColor="#fff"
-              style={{width: "30px", height: "30px"}}
+              style={{ width: "30px", height: "30px" }}
             />
           </Button>
         </Box>

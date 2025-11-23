@@ -16,7 +16,6 @@ const style = {
 };
 
 function PolygonFieldTable({
-  field,
   computedSlug,
   isNewTableView = false,
   row,
@@ -32,7 +31,7 @@ function PolygonFieldTable({
   const updatePolygon = () => {
     handleChange({
       value: polygonValue,
-      name: field?.slug,
+      name: row?.slug,
       rowId: row?.guid,
     });
     handleClose();
@@ -78,12 +77,12 @@ function PolygonFieldTable({
               disabled={disabled}
               width={"740px"}
               height={"400px"}
-              field={field}
+              field={row}
               name={computedSlug}
               isNewTableView={isNewTableView}
               setValue={setPolygonValue}
               polygonValue={polygonValue || []}
-              value={row?.[field?.slug]}
+              value={row?.value}
             />
           </Box>
 

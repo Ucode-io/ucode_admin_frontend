@@ -28,7 +28,6 @@ const style = {
 
 function MultiImageUpload({
   value = [],
-  field,
   tabIndex,
   onChange = () => {},
   isTableView,
@@ -39,7 +38,7 @@ function MultiImageUpload({
 }) {
   const [uploadImg, setUploadImg] = useState(false);
   const [fullScreen, setFullScreen] = useState("");
-  const {i18n, t} = useTranslation();
+  const { t } = useTranslation();
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [imageList, setImageList] = useState([]);
@@ -306,7 +305,6 @@ function MultiImageUpload({
                   <img src={item} alt="photo" />
 
                   <button
-                    variant="outlined"
                     onClick={(e) => {
                       e.stopPropagation();
                       removeImage(item);

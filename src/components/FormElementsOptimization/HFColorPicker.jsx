@@ -1,25 +1,18 @@
 import ColorPicker from "../ColorPicker";
 import { useState } from "react";
 
-const HFColorPicker = ({
-  disabled = false,
-  field,
-  row,
-  handleChange,
-  ...props
-}) => {
-
-  const [value, setValue] = useState(row?.[field?.slug]);
+const HFColorPicker = ({ disabled = false, row, handleChange, ...props }) => {
+  const [value, setValue] = useState(row?.value);
   const [error] = useState({});
 
   const onChange = (value) => {
-    setValue(value)
+    setValue(value);
     handleChange({
       value,
-      name: field?.slug,
-      rowId: row?.guid
-    })
-  }
+      name: row?.slug,
+      rowId: row?.guid,
+    });
+  };
 
   return (
     <ColorPicker

@@ -61,7 +61,7 @@ export const AddNewData = memo(
         //   : (id ?? view?.id),
         ...values,
       };
-      console.log({ data });
+
       setIsLoading(true);
       constructorObjectService
         .create(tableSlug, {

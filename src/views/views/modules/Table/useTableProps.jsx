@@ -1,16 +1,10 @@
 import useFilters from "@/hooks/useFilters";
-// import constructorFieldService from "@/services/constructorFieldService";
 import constructorObjectService from "@/services/constructorObjectService";
-// import constructorRelationService from "@/services/constructorRelationService";
-// import layoutService from "@/services/layoutService";
 import { quickFiltersActions } from "@/store/filter/quick_filter";
-// import {listToMap} from "@/utils/listToMap";
 import { pageToOffset } from "@/utils/pageToOffset";
-import { useCallback, useEffect, useMemo, useState } from "react";
-// import {useTranslation} from "react-i18next";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-// import useSearchParams from "@/hooks/useSearchParams";
 import menuService from "@/services/menuService";
 import { useViewContext } from "@/providers/ViewProvider";
 import { useFieldsContext } from "../../providers/FieldsProvider";
@@ -18,9 +12,36 @@ import { useFilterContext } from "../../providers/FilterProvider";
 import { useGetLang } from "@/hooks/useGetLang";
 import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 
+function combine(columns, rows) {
+  return rows.map((row) => {
+    return columns.map((col) => ({
+      value: row[col.slug] ?? null,
+      slug: col.slug,
+      guid: row.guid,
+      id: col.id,
+      type: col.type,
+      enable_multilanguage: col.enable_multilanguage,
+      table_slug: col.table_slug,
+      relation_type: col.relation_type,
+      tabIndex: col.tabIndex,
+      attributes: {
+        ...col.attributes,
+        required: col.required,
+      },
+    }));
+  });
+}
+
+function rowToObject(rowArray) {
+  const obj = {};
+  for (const cell of rowArray) {
+    obj[cell.slug] = cell.value;
+  }
+  return obj;
+}
+
 export const useTableProps = ({ tab }) => {
   const {
-    views,
     view,
     viewId,
     tableSlug,
@@ -46,23 +67,11 @@ export const useTableProps = ({ tab }) => {
 
   const { orderBy, setSortedDatas, sortedDatas } = useFilterContext();
 
-  // const new_router = localStorage.getItem("new_router") === "true";
-  // const viewId = searchParams.get("v") ?? viewProp?.id;
-  // const urlSearchParams = new URLSearchParams(window.location.search);
-  // const fieldSlug = urlSearchParams.get("field_slug");
-
   const tableLan = useGetLang("Table");
 
   const viewsList = useSelector((state) => state.groupField.viewsList);
   const selectedV = viewsList?.[viewsList?.length - 1];
 
-  // const view = viewFromStore?.find((view) => view?.id === viewId);
-
-  // const tableSlug =
-  //   fieldSlug ||
-  //   view?.relation_table_slug ||
-  //   tableSlugFromParams ||
-  //   view?.table_slug;
   const sortValues = useSelector((state) => state.pagination.sortValues);
 
   const { filters } = useFilters(tableSlug, view?.id);
@@ -74,147 +83,57 @@ export const useTableProps = ({ tab }) => {
 
   const [rows, setRows] = useState([]);
 
-  const [deleteLoader, setDeleteLoader] = useState(false);
   const [drawerState, setDrawerState] = useState(null);
 
   const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
-  // const [selectedObjects, setSelectedObjects] = useState([]);
 
-  // const [combinedTableData, setCombinedTableData] = useState([]);
-  // const [selectedViewType, setSelectedViewType] = useState(
-  //   localStorage?.getItem("detailPage"),
-  // );
-
-  // const menuId = menuid ?? searchParams.get("menuId");
-  // const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);
-  // const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
-  // const initialTableInf = useSelector((state) => state.drawer.tableInfo);
   const paginationInfo = useSelector(
     (state) => state?.pagination?.paginationInfo,
   );
-  // const selectedTabIndex = isRelationView ? drawerTabIndex : mainTabIndex;
 
   const { mutate: updateObject } = useMutation(({ data, rowId }) => {
-    return constructorObjectService.update(tableSlug, {
-      data: { ...data, guid: rowId },
-    });
+    return constructorObjectService
+      .update(tableSlug, {
+        data: { ...data, guid: rowId },
+      })
+      .then(() => refetch());
   });
+  // const selectedTabIndex = isRelationView ? drawerTabIndex : mainTabIndex;
 
-  const handleChangeInput = useCallback(({ name, value, rowId }) => {
-    if (name && rowId) {
-      let row = {};
-      setRows((prev) => {
-        return prev.map((item) => {
-          if (item.guid === rowId) {
-            row = { ...item, [name]: value };
-            return row;
-          }
-          return item;
-        });
-      });
-      updateObject({ data: row, rowId });
-    }
-  }, []);
+  const rowsMapRef = useRef(new Map());
+  const cellMapRef = useRef(new Map());
 
-  // const mainForm = useForm({
-  //   defaultValues: {
-  //     show_in_menu: true,
-  //     fields: [],
-  //     app_id: menuId,
-  //     summary_section: {
-  //       id: generateGUID(),
-  //       label: "Summary",
-  //       fields: [],
-  //       icon: "",
-  //       order: 1,
-  //       column: "SINGLE",
-  //       is_summary_section: true,
-  //     },
-  //     label: "",
-  //     description: "",
-  //     slug: "",
-  //     icon: "",
-  //   },
-  //   mode: "all",
-  // });
+  const rowsMap = rowsMapRef.current;
+  const cellMap = cellMapRef.current;
 
-  // const { update } = useFieldArray({
-  //   control: viewForm.control,
-  //   name: "fields",
-  //   keyName: "key",
-  // });
+  const handleChangeInput = ({ name, value, rowId }) => {
+    const key = rowId + ":" + name;
+
+    const cell = cellMap.get(key);
+    if (!cell) return;
+
+    cell.value = value;
+
+    const updatedRow = [...rowsMap.get(rowId)];
+    rowsMap.set(rowId, updatedRow);
+
+    setRows((prev) => {
+      const newRows = prev.map((row) =>
+        row[0].guid === rowId ? updatedRow : row,
+      );
+      return newRows;
+    });
+
+    const data = rowToObject(updatedRow);
+
+    updateObject({ data, rowId });
+  };
 
   const pagination = useMemo(() => {
     const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
 
     return getObject?.pageLimit ?? limit;
   }, [paginationInfo, tableSlug]);
-
-  // const getRelationFields = async () => {
-  //   return new Promise(async (resolve) => {
-  //     const getFieldsData = constructorFieldService.getList({
-  //       table_id: id ?? menuItem?.table_id ?? initialTableInf?.id,
-  //     });
-
-  //     const getRelations = constructorRelationService.getList(
-  //       {
-  //         table_slug: tableSlug,
-  //         relation_table_slug: tableSlug,
-  //       },
-  //       {},
-  //       tableSlug
-  //     );
-  //     const [{ relations = [] }, { fields = [] }] = await Promise.all([
-  //       getRelations,
-  //       getFieldsData,
-  //     ]);
-  //     viewForm.setValue("fields", fields);
-  //     const relationsWithRelatedTableSlug = relations?.map((relation) => ({
-  //       ...relation,
-  //       relatedTableSlug:
-  //         relation.table_to?.slug === tableSlug ? "table_from" : "table_to",
-  //     }));
-
-  //     const layoutRelations = [];
-  //     const tableRelations = [];
-
-  //     relationsWithRelatedTableSlug?.forEach((relation) => {
-  //       if (
-  //         (relation.type === "Many2One" &&
-  //           relation.table_from?.slug === tableSlug) ||
-  //         (relation.type === "One2Many" &&
-  //           relation.table_to?.slug === tableSlug) ||
-  //         relation.type === "Recursive" ||
-  //         (relation.type === "Many2Many" && relation.view_type === "INPUT") ||
-  //         (relation.type === "Many2Dynamic" &&
-  //           relation.table_from?.slug === tableSlug)
-  //       ) {
-  //         layoutRelations.push(relation);
-  //       } else {
-  //         tableRelations.push(relation);
-  //       }
-  //     });
-
-  //     const layoutRelationsFields = layoutRelations.map((relation) => ({
-  //       ...relation,
-  //       id: `${relation[relation.relatedTableSlug]?.slug}#${relation.id}`,
-  //       attributes: {
-  //         fields: relation.view_fields ?? [],
-  //       },
-  //       label:
-  //         (relation?.label ?? relation[relation.relatedTableSlug]?.label)
-  //           ? relation[relation.relatedTableSlug]?.label
-  //           : relation?.title,
-  //     }));
-
-  //     viewForm.setValue("relations", relations);
-  //     viewForm.setValue("relationsMap", listToMap(relations));
-  //     viewForm.setValue("layoutRelations", layoutRelationsFields);
-  //     viewForm.setValue("tableRelations", tableRelations);
-  //     resolve();
-  //     queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-  //   });
-  // };
 
   function customSortArray(a, b) {
     const commonItems = a?.filter((item) => b.includes(item));
@@ -223,6 +142,17 @@ export const useTableProps = ({ tab }) => {
     const sortedArray = commonItems?.concat(remainingItems);
     return sortedArray;
   }
+
+  const onRowClick = (row) => {
+    const rowId = row[0]?.guid;
+
+    if (navigateToEditPage) {
+      navigateToEditPage({
+        ...rowToObject(row),
+        guid: rowId,
+      });
+    }
+  };
 
   const columns = useMemo(() => {
     const result = [];
@@ -251,7 +181,7 @@ export const useTableProps = ({ tab }) => {
     )
       ?.map((el) => fieldsMap[el])
       ?.filter((el) => el);
-  }, [view, fieldsMap, views, viewId]);
+  }, [fieldsMap, view?.attributes.fixedColumns, view?.columns]);
 
   const computedSortColumns = useMemo(() => {
     const resultObject = {};
@@ -362,7 +292,7 @@ export const useTableProps = ({ tab }) => {
         },
       });
     },
-    enabled: Boolean(tableSlug && menuId && viewId),
+    enabled: Boolean(tableSlug && menuId && viewId && columns?.length > 0),
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
@@ -373,115 +303,45 @@ export const useTableProps = ({ tab }) => {
       };
     },
     onSuccess: (data) => {
-      setRows(data?.tableData);
-      // const checkdublicate =
-      //   combinedTableData?.filter((item) => {
-      //     return data?.tableData?.find((el) => el.guid === item.guid);
-      //   }) ?? [];
-      // const result =
-      //   data?.tableData?.filter((item) => {
-      //     return !checkdublicate?.find((el) => el.guid === item.guid);
-      //   }) ?? [];
-      // setCombinedTableData((prev) => [...prev, ...result]);
+      let combinedTableData = combine(columns, data?.tableData);
+
+      rowsMap.clear();
+      cellMap.clear();
+
+      combinedTableData.forEach((row) => {
+        const rowId = row[0]?.guid;
+
+        rowsMap.set(rowId, row);
+
+        row.forEach((cell) => {
+          cellMap.set(rowId + ":" + cell.slug, cell);
+        });
+      });
+
+      setRows(combinedTableData);
     },
   });
 
-  const deleteHandler = async (row) => {
-    setDeleteLoader(true);
+  const deleteHandler = async (rowId) => {
+    // setDeleteLoader(true);
     try {
-      await constructorObjectService.delete(tableSlug, row.guid);
-      refetch();
-    } finally {
-      setDeleteLoader(false);
+      await constructorObjectService.delete(tableSlug, rowId);
+      setRows((prev) => prev.filter((row) => row[0].guid !== rowId));
+    } catch (error) {
+      console.error(error);
     }
   };
-
-  // const navigateToEditPage = (row) => {
-  //   dispatch(
-  //     groupFieldActions.addView({
-  //       id: view?.id,
-  //       label: view?.table_label || initialTableInf?.label,
-  //       table_slug: view?.table_slug,
-  //       relation_table_slug: view.relation_table_slug ?? null,
-  //       is_relation_view: view?.is_relation_view,
-  //       detailId: row?.guid,
-  //     }),
-  //   );
-  //   if (Boolean(selectedView?.is_relation_view)) {
-  //     setSelectedView(view);
-  //     setSelectedRow(row);
-  //     dispatch(detailDrawerActions.openDrawer());
-  //     updateQueryWithoutRerender("p", row?.guid);
-  //   } else {
-  //     updateQueryWithoutRerender("p", row?.guid);
-  //     if (view?.attributes?.navigate?.url) {
-  //       navigateToDetailPage(row);
-  //     } else if (projectInfo?.new_layout) {
-  //       setSelectedRow(row);
-  //       dispatch(detailDrawerActions.openDrawer());
-  //     } else {
-  //       if (layoutType === "PopupLayout") {
-  //         setSelectedRow(row);
-  //         dispatch(detailDrawerActions.openDrawer());
-  //       } else {
-  //         navigateToDetailPage(row);
-  //       }
-  //     }
-  //   }
-  // };
-
-  // const replaceUrlVariables = (urlTemplate, data) => {
-  //   return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
-  //     return data[variable] || "";
-  //   });
-  // };
-
-  // const navigateToDetailPage = (row) => {
-  //   if (
-  //     view?.attributes?.navigate?.params?.length ||
-  //     view?.attributes?.navigate?.url
-  //   ) {
-  //     const params = view?.attributes?.navigate?.params
-  //       ?.map(
-  //         (param) =>
-  //           `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
-  //             param.value,
-  //             row,
-  //           )}`,
-  //       )
-  //       .join("&");
-
-  //     const urlTemplate = view?.attributes?.navigate?.url;
-
-  //     const matches = replaceUrlVariables(urlTemplate, row);
-
-  //     navigate(`${matches}${params ? "?" + params : ""}`);
-  //   } else {
-  //     if (new_router)
-  //       navigate(`/${menuId}/detail?p=${row?.guid}`, {
-  //         state: {
-  //           viewId,
-  //           tableSlug,
-  //         },
-  //       });
-  //     else navigateToForm(tableSlug, "EDIT", row, {}, menuItem?.id ?? appId);
-  //   }
-  // };
 
   const multipleDelete = async () => {
-    setDeleteLoader(true);
     try {
       await constructorObjectService.deleteMultiple(tableSlug, {
-        ids: selectedObjectsForDelete.map((i) => i.guid),
+        ids: selectedObjectsForDelete,
       });
+      setSelectedObjectsForDelete([]);
       refetch();
-    } finally {
-      setDeleteLoader(false);
+    } catch (error) {
+      console.error(error);
     }
-  };
-
-  const openFieldSettings = () => {
-    setDrawerState("CREATE");
   };
 
   useEffect(() => {
@@ -508,14 +368,30 @@ export const useTableProps = ({ tab }) => {
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 
-  // useEffect(() => {
-  //   if (localStorage.getItem("detailPage") === "undefined") {
-  //     setSelectedViewType("SidePeek");
-  //     localStorage.setItem("detailPage", "SidePeek");
-  //   }
-  // }, [localStorage.getItem("detailPage")]);
+  const loader = tableLoader;
 
-  const loader = tableLoader || deleteLoader;
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (!tableData || tableData.length === 0 || isFirstRender.current) return;
+
+    isFirstRender.current = false;
+
+    const newCombined = combine(columns, tableData);
+
+    rowsMap.clear();
+    cellMap.clear();
+
+    newCombined.forEach((row) => {
+      const rowId = row?.[0]?.guid;
+      rowsMap.set(rowId, row);
+      row.forEach((cell) => {
+        cellMap.set(rowId + ":" + cell.slug, cell);
+      });
+    });
+
+    setRows(newCombined);
+  }, [columns]);
 
   return {
     tableLan,
@@ -546,5 +422,6 @@ export const useTableProps = ({ tab }) => {
     currentPage,
     rows,
     handleChange: handleChangeInput,
+    onRowClick,
   };
 };

@@ -7,12 +7,10 @@ import HFMonthPicker from "./HFMonthPicker";
 import HFQuarterPicker from "./HFQuarterPicker";
 import HFYearPicker from "./HFYearPicker";
 import styles from "./style.module.scss";
-import {Lock} from "@mui/icons-material";
 import InputMask from "react-input-mask";
 
 function HFDatePickerNew({
   withTime = false,
-  field,
   disabled = false,
   placeholder = "DD.MM.YYYY",
   handleChange = () => {},
@@ -25,7 +23,7 @@ function HFDatePickerNew({
 
   const [inputValue, setInputValue] = useState("");
 
-  const value = row?.[field?.slug];
+  const value = row?.value;
 
   useEffect(() => {
     if (value && !isNaN(Date.parse(value))) {
@@ -38,10 +36,10 @@ function HFDatePickerNew({
   const onChange = (value) => {
     handleChange({
       value,
-      name: field?.slug,
-      rowId: row?.guid
-    })
-  }
+      name: row?.slug,
+      rowId: row?.guid,
+    });
+  };
 
   return (
     <Box>

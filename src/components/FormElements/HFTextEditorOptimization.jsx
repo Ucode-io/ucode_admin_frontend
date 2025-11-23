@@ -14,7 +14,6 @@ const HFTextEditor = ({
   isNewTableView = false,
   isTransparent = false,
   tabIndex,
-  field,
   label,
   drawerDetail = false,
   disabled = false,
@@ -22,11 +21,12 @@ const HFTextEditor = ({
   radius = "12px",
   setInnerValue = () => {},
   innerValue,
+  row,
 }) => {
   const quillRef = useRef(null);
   const dispatch = useDispatch();
 
-  const value = innerValue
+  const value = innerValue;
 
   useEffect(() => {
     const Font = Quill.import("formats/font");
@@ -114,25 +114,17 @@ const HFTextEditor = ({
       "br",
       "img",
     ],
-    ALLOWED_ATTR: [
-      "href",
-      "style",
-      "target",
-      "src",
-      "width",
-      "height",
-      "alt",
-    ],
+    ALLOWED_ATTR: ["href", "style", "target", "src", "width", "height", "alt"],
   });
 
   const onChange = (value) => {
-    setInnerValue(value)
-  }
+    setInnerValue(value);
+  };
 
   return (
     <FRowMultiLine
       label={label}
-      required={field?.required}
+      required={row?.attributes?.required}
       extraClassName={isNewTableView ? "tableView" : ""}
     >
       <Suspense fallback={<RingLoaderWithWrapper />}>

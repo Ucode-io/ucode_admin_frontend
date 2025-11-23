@@ -25,7 +25,7 @@ const HFFormulaField = ({
 }) => {
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
 
-  const [innerValue, setInnerValue] = useState(row?.[field?.slug])
+  const [innerValue, setInnerValue] = useState(row?.value);
 
   const formula = field?.attributes?.formula ?? "";
 
@@ -49,7 +49,7 @@ const HFFormulaField = ({
     const {error, result} = parser.parse(computedFormula);
 
     let newValue = error ?? result;
-    const prevValue = row?.[field?.slug];
+    const prevValue = row?.value;
     if (`${newValue}` !== `${prevValue}`) setInnerValue(name, newValue);
   };
 

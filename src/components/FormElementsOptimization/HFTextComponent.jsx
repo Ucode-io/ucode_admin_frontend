@@ -1,22 +1,13 @@
 import {Box} from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
-function HFTextComponent({field = {}, isTableView = false}) {
+function HFTextComponent({ row = {} }) {
+  const { i18n } = useTranslation();
   return (
-    <>
-      {isTableView ? (
-        <Box sx={{width: "100%", height: "100%", padding: "0 0 0 15px"}}>
-          {field?.label}
-        </Box>
-      ) : (
-        <Box sx={{width: "100%", height: "100%"}}>
-          <Box sx={{width: "100%", height: "29px"}}></Box>
-          <Box sx={{width: "100%", fontWeight: "700", fontSize: "16px"}}>
-            {field?.label}
-          </Box>
-        </Box>
-      )}
-    </>
+    <Box sx={{ width: "100%", height: "100%", padding: "0 0 0 15px" }}>
+      {row?.attributes?.[`label_${i18n?.language}`] ?? row?.label}
+    </Box>
   );
 }
 

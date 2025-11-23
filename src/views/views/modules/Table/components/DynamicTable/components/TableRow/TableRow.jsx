@@ -33,7 +33,6 @@ export const TableRow = ({
   watch,
   setFormValue,
   // tableSlug,
-  remove,
   limit = 10,
   relationAction,
   onChecked,
@@ -115,7 +114,7 @@ export const TableRow = ({
               </div>
             </CTableCell>
 
-            {columns.map(
+            {row.map(
               (field) =>
                 field?.attributes?.field_permission?.view_permission && (
                   <CTableCell
@@ -175,7 +174,7 @@ export const TableRow = ({
                         field={field}
                         getValues={getValues}
                         mainForm={viewForm}
-                        row={row}
+                        row={field}
                         index={rowIndex}
                         control={control}
                         setFormValue={setFormValue}
@@ -256,11 +255,13 @@ export const TableRow = ({
                     <RectangleIconButton
                       color="error"
                       style={{ minWidth: 25, minHeight: 25, height: 25 }}
-                      onClick={() =>
-                        row.guid
-                          ? onDeleteClick(row, rowIndex)
-                          : remove(rowIndex)
-                      }
+                      onClick={() => {
+                        const rowId = row[0]?.guid;
+
+                        if (!rowId) return;
+
+                        onDeleteClick(rowId);
+                      }}
                     >
                       <Delete color="error" />
                     </RectangleIconButton>

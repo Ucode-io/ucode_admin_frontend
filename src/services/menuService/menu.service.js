@@ -1,3 +1,4 @@
+import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 import requestV3 from "@/utils/requestV3";
 import { useQuery } from "react-query";
 
@@ -56,7 +57,7 @@ export const useGetTableInfo = (
   data = {},
 ) => {
   return useQuery(
-    ["GET_VIEWS_AND_FIELDS", params.tableSlug],
+    [QUERY_KEYS.TABLE_FIELDS_LIST, params.tableSlug],
     () => {
       return menuService.getFieldsListMenu(
         params.menuId,
@@ -91,4 +92,3 @@ export const useGetTableDataById = (
     },
   );
 };
-

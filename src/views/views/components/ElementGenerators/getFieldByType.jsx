@@ -22,7 +22,6 @@ import HFTextField from "@/components/FormElementsOptimization/HFTextField";
 import HFTextFieldWithMask from "@/components/FormElementsOptimization/HFTextFieldWithMask";
 import InventoryBarCode from "@/components/FormElementsOptimization/InventoryBarcode";
 import NewCHFFormulaField from "@/components/FormElementsOptimization/NewCHFormulaField";
-import CellElementGenerator from "./CellElementGenerator";
 import MultiLineCellFormElement from "./MultiLineCellFormElement";
 import PolygonFieldTable from "./PolygonFieldTableOptimization";
 import {
@@ -34,24 +33,89 @@ import {
 import HFSwitch from "@/views/table-redesign/hf-switch-optimization";
 import { HFVideoUpload } from "@/views/table-redesign/hf-video-upload-optimization";
 import HFDatePickerNew from "@/views/table-redesign/DatePickerOptimization";
+import { useState } from "react";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
+import { numberWithSpaces } from "@/utils/formatNumbers";
 
 export const getFieldByType = ({
   control,
   updateObject,
-  isBlackBg,
   computedSlug,
   field,
   defaultValue,
   row,
   newUi,
-  index,
   newColumn,
   isTableView = false,
   fields,
   isWrapField,
   handleChange,
 }) => {
-  const isDisabled = field?.attributes?.disabled;
+  const isDisabled = row?.attributes?.disabled;
+
+  const [errors, setErrors] = useState({});
+
+  const required = row.attributes?.required;
+
+  const rules = {
+    pattern:
+      row?.type === FIELD_TYPES.EMAIL
+        ? {
+            value: /\S+@\S+\.\S+/,
+            message: "Incorrect email format",
+          }
+        : {
+            value: new RegExp(row?.attributes?.validation),
+            message: row?.attributes?.validation_message,
+          },
+  };
+
+  const handleBlur = (e) => {
+    const value = e.target.value;
+
+    if (required && !value?.trim()) {
+      setErrors((prev) => ({
+        ...prev,
+        [row?.slug]: {
+          message: "This field is required",
+        },
+      }));
+      return;
+    }
+
+    if (value === row?.value) {
+      const newErrors = { ...errors };
+      delete newErrors[row?.slug];
+      setErrors(newErrors);
+      return;
+    }
+
+    if (rules?.pattern?.value) {
+      const regex = rules.pattern.value;
+
+      if (!regex.test(value)) {
+        setErrors((prev) => ({
+          ...prev,
+          [row?.slug]: {
+            message: rules.pattern.message,
+          },
+        }));
+        return;
+      }
+    }
+
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors[row?.slug];
+      return newErrors;
+    });
+
+    handleChange({
+      value: typeof value === "number" ? numberWithSpaces(value) : value,
+      name: row?.slug,
+      rowId: row?.guid,
+    });
+  };
 
   const fieldsMap = {
     SINGLE_LINE: (
@@ -59,70 +123,59 @@ export const getFieldByType = ({
         disabled={isDisabled}
         isFormEdit
         isNewTableView={true}
-        isBlackBg={isBlackBg}
         name={computedSlug}
         fullWidth
-        field={field}
         inputHeight={20}
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
+        required={required}
+        placeholder={row.attributes?.placeholder}
         row={row}
         handleChange={handleChange}
-        rules={{
-          pattern: {
-            value: new RegExp(field?.attributes?.validation),
-            message: field?.attributes?.validation_message,
-          },
-        }}
+        rules={rules}
+        handleBlur={handleBlur}
+        error={errors[row?.slug]}
       />
     ),
     LINK: (
       <HFLinkField
         disabled={isDisabled}
         isNewTableView={true}
-        isBlackBg={isBlackBg}
         name={computedSlug}
         fullWidth
-        field={field}
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
+        required={required}
+        placeholder={row.attributes?.placeholder}
         row={row}
         handleChange={handleChange}
+        handleBlur={handleBlur}
+        error={errors[row?.slug]}
       />
     ),
-    TEXT: <HFTextComponent isTableView={true} field={field} />,
-    BUTTON: <HFButtonField field={field} row={row} isTableView={true} />,
+    TEXT: <HFTextComponent row={row} />,
+    BUTTON: <HFButtonField row={row} isTableView={true} />,
     STATUS: (
       <HFStatusField
-        field={field}
         row={row}
-        isTableView={true}
-        control={control}
-        name={computedSlug}
-        updateObject={updateObject}
         newUi={newUi}
-        disabled={field?.attributes?.disabled}
-        index={index}
+        disabled={row?.attributes?.disabled}
         handleChange={handleChange}
       />
     ),
     PASSWORD: (
       <HFPassword
         isNewTableView={true}
-        isBlackBg={isBlackBg}
         name={computedSlug}
-        field={field}
         isTransparent={true}
         newUi={newUi}
         row={row}
-        handleChange={handleChange}
+        handleBlur={handleBlur}
+        required={required}
+        error={errors[row?.slug]}
+        rules={rules}
       />
     ),
     SCAN_BARCODE: (
       <InventoryBarCode
         name={computedSlug}
         fullWidth
-        field={field}
         disabled={isDisabled}
         row={row}
       />
@@ -131,22 +184,20 @@ export const getFieldByType = ({
       <HFTextFieldWithMask
         disabled={isDisabled}
         isFormEdit
-        isBlackBg={isBlackBg}
         name={computedSlug}
         fullWidth
         isTransparent={true}
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
+        required={required}
+        placeholder={row.attributes?.placeholder}
         mask={"(99) 999-99-99"}
-        field={field}
         row={row}
-        handleChange={handleChange}
+        error={errors[row?.slug]}
+        handleBlur={handleBlur}
       />
     ),
     PHOTO: (
       <HFPhotoUpload
         disabled={isDisabled}
-        field={field}
         isNewTableView={true}
         name={computedSlug}
         handleChange={handleChange}
@@ -156,7 +207,6 @@ export const getFieldByType = ({
     MULTI_IMAGE: (
       <HFMultiImage
         disabled={isDisabled}
-        field={field}
         isTableView={true}
         updateObject={updateObject}
         name={computedSlug}
@@ -168,7 +218,6 @@ export const getFieldByType = ({
     MULTI_FILE: (
       <HFMultiFile
         disabled={isDisabled}
-        field={field}
         isTableView={true}
         updateObject={updateObject}
         name={computedSlug}
@@ -192,7 +241,6 @@ export const getFieldByType = ({
         fieldsList={fields}
         disabled={!isDisabled}
         isTransparent={true}
-        field={field}
         newUi={newUi}
         row={row}
       />
@@ -205,7 +253,6 @@ export const getFieldByType = ({
         newUi={newUi}
         row={row}
         handleChange={handleChange}
-        field={field}
       />
     ),
     MULTISELECT: (
@@ -214,10 +261,8 @@ export const getFieldByType = ({
         isFormEdit
         isNewTableView={true}
         width="100%"
-        required={field.required}
-        field={field}
-        placeholder={field.attributes?.placeholder}
-        isBlackBg={isBlackBg}
+        required={required}
+        placeholder={row.attributes?.placeholder}
         newUi={newUi}
         handleChange={handleChange}
         row={row}
@@ -225,8 +270,7 @@ export const getFieldByType = ({
     ),
     DATE: newUi ? (
       <HFDatePickerNew
-        field={field}
-        placeholder={field.attributes?.placeholder}
+        placeholder={row.attributes?.placeholder}
         disabled={isDisabled}
         handleChange={handleChange}
         row={row}
@@ -241,9 +285,8 @@ export const getFieldByType = ({
         width={"100%"}
         mask={"99.99.9999"}
         isFormEdit
-        isBlackBg={isBlackBg}
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
+        required={required}
+        placeholder={row.attributes?.placeholder}
         defaultValue={defaultValue}
         disabled={isDisabled}
         isTransparent={true}
@@ -251,8 +294,7 @@ export const getFieldByType = ({
     ),
     DATE_TIME: newUi ? (
       <HFDatePickerNew
-        field={field}
-        placeholder={field.attributes?.placeholder}
+        placeholder={row.attributes?.placeholder}
         disabled={isDisabled}
         handleChange={handleChange}
         row={row}
@@ -264,20 +306,18 @@ export const getFieldByType = ({
         isFormEdit
         updateObject={updateObject}
         isNewTableView={true}
-        isBlackBg={isBlackBg}
         showCopyBtn={false}
         control={control}
         name={computedSlug}
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
+        required={required}
+        placeholder={row.attributes?.placeholder}
         defaultValue={defaultValue}
         isTransparent={true}
       />
     ),
     DATE_TIME_WITHOUT_TIME_ZONE: newUi ? (
       <HFDatePickerNew
-        field={field}
-        placeholder={field.attributes?.placeholder}
+        placeholder={row.attributes?.placeholder}
         disabled={isDisabled}
         handleChange={handleChange}
         row={row}
@@ -292,7 +332,7 @@ export const getFieldByType = ({
         isTableView={isTableView}
         mask={"99.99.9999"}
         required={field?.required}
-        placeholder={field.attributes?.placeholder}
+        placeholder={row.attributes?.placeholder}
         defaultValue={defaultValue}
         disabled={isDisabled}
         isNewTableView={true}
@@ -304,7 +344,6 @@ export const getFieldByType = ({
         disabled={isDisabled}
         row={row}
         handleChange={handleChange}
-        field={field}
       />
     ),
     NUMBER: (
@@ -313,12 +352,10 @@ export const getFieldByType = ({
         isNewTableView={true}
         name={computedSlug}
         fullWidth
-        isBlackBg={isBlackBg}
         isTransparent={true}
         newColumn={newColumn}
         newUi={newUi}
         row={row}
-        field={field}
         handleChange={handleChange}
       />
     ),
@@ -327,29 +364,19 @@ export const getFieldByType = ({
         disabled={isDisabled}
         isFormEdit
         fullWidth
-        isBlackBg={isBlackBg}
         isTransparent={true}
         row={row}
-        field={field}
         handleChange={handleChange}
       />
     ),
     CHECKBOX: (
-      <HFCheckbox
-        field={field}
-        disabled={isDisabled}
-        isBlackBg={isBlackBg}
-        handleChange={handleChange}
-        row={row}
-      />
+      <HFCheckbox disabled={isDisabled} handleChange={handleChange} row={row} />
     ),
     SWITCH: (
       <HFSwitch
         newColumn={newColumn}
         disabled={isDisabled}
-        field={field}
-        isBlackBg={isBlackBg}
-        required={field.required}
+        required={required}
         handleChange={handleChange}
         row={row}
       />
@@ -360,21 +387,14 @@ export const getFieldByType = ({
         isFormEdit
         updateObject={updateObject}
         isNewTableView={true}
-        isBlackBg={isBlackBg}
         control={control}
         name={computedSlug}
-        rules={{
-          pattern: {
-            value: /\S+@\S+\.\S+/,
-            message: "Incorrect email format",
-          },
-        }}
+        rules={rules}
         fullWidth
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
+        required={required}
+        placeholder={row.attributes?.placeholder}
         defaultValue={defaultValue}
         row={row}
-        field={field}
       />
     ),
     ICON: (
@@ -382,13 +402,11 @@ export const getFieldByType = ({
         disabled={isDisabled}
         handleChange={handleChange}
         row={row}
-        field={field}
       />
     ),
     MAP: (
       <HFModalMap
         isTransparent={true}
-        field={field}
         defaultValue={defaultValue}
         handleChange={handleChange}
         row={row}
@@ -398,15 +416,13 @@ export const getFieldByType = ({
       <HFQrFieldComponent
         disabled={isDisabled}
         isTableView={isTableView}
-        field={field}
-        required={field?.required}
+        required={row?.required}
         newColumn={newColumn}
         row={row}
       />
     ),
     POLYGON: (
       <PolygonFieldTable
-        field={field}
         computedSlug={computedSlug}
         isDisabled={isDisabled}
         isNewTableView={true}
@@ -419,50 +435,37 @@ export const getFieldByType = ({
       <MultiLineCellFormElement
         isWrapField={isWrapField}
         isNewTableView={true}
-        field={field}
         isDisabled={isDisabled}
         row={row}
         handleChange={handleChange}
       />
     ),
-    CUSTOM_IMAGE: (
-      <HFFileUpload field={field} handleChange={handleChange} row={row} />
-    ),
-    VIDEO: (
-      <HFVideoUpload row={row} field={field} handleChange={handleChange} />
-    ),
+    CUSTOM_IMAGE: <HFFileUpload handleChange={handleChange} row={row} />,
+    VIDEO: <HFVideoUpload row={row} handleChange={handleChange} />,
     FILE: (
       <HFFileUpload
-        control={control}
-        updateObject={updateObject}
+        row={row}
         isNewTableView={true}
         name={computedSlug}
         defaultValue={defaultValue}
         isFormEdit
-        isBlackBg={isBlackBg}
-        required={field.required}
-        placeholder={field.attributes?.placeholder}
+        required={required}
+        placeholder={row.attributes?.placeholder}
         isTransparent={true}
+        handleChange={handleChange}
       />
     ),
     COLOR: (
       <HFColorPicker
-        field={field}
         row={row}
         handleChange={handleChange}
         disabled={isDisabled}
       />
     ),
-    default: (
-      <div style={{ padding: "0 4px" }}>
-        <CellElementGenerator
-          field={field}
-          row={row}
-          handleChange={handleChange}
-        />
-      </div>
-    ),
+    DYNAMIC: <div style={{ padding: "0 4px" }}>{row?.value}</div>,
+    MONEY: <div style={{ padding: "0 4px" }}>{row?.value}</div>,
+    default: <div style={{ padding: "0 4px" }}>{row?.value}</div>,
   };
 
-  return fieldsMap[field.type] || fieldsMap.default;
+  return fieldsMap[row.type] || fieldsMap.default;
 };

@@ -1,8 +1,6 @@
 import { TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { numberWithSpaces } from "@/utils/formatNumbers";
 import clsx from "clsx";
-import { useState } from "react";
 
 const useStyles = makeStyles(() => ({
   input: {
@@ -21,52 +19,27 @@ const HFTextField = ({
   disabledHelperText = false,
   required = false,
   fullWidth = false,
-  withTrim = false,
   disabled,
   tabIndex,
   placeholder,
   endAdornment,
-  field,
   inputHeight,
-  // disabled_text = "This field is disabled for this role!",
   exist = false,
   className,
   inputStyles = {},
   wrapperStyles = {},
   startAdornment = <></>,
-  handleChange = () => {},
   row,
+  handleBlur,
+  error,
   ...props
 }) => {
-  const [error, setError] = useState({});
   const classes = useStyles();
-
-  const handleBlur = (e) => {
-    const value = e.target.value;
-
-    if (required && !value?.trim()) {
-      setError({
-        message: "This field is required",
-      });
-    } else {
-      setError({});
-    }
-
-    handleChange({
-      value: withTrim
-        ? value?.trim()
-        : typeof value === "number"
-          ? numberWithSpaces(value)
-          : value,
-      name: field?.slug,
-      rowId: row?.guid,
-    });
-  };
 
   return (
     <TextField
       size="small"
-      defaultValue={row?.[field?.slug]}
+      defaultValue={row?.value}
       onBlur={handleBlur}
       disabled={disabled}
       sx={{
@@ -80,7 +53,7 @@ const HFTextField = ({
       required={required}
       // inputProps={{ style: { height: "25px", padding: "0px 2px 0 7px" } }}
       name={name}
-      id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
+      id={row?.slug ? `${row?.slug}_${name}` : `${name}`}
       fullWidth={fullWidth}
       placeholder={placeholder}
       autoFocus={tabIndex === 1}

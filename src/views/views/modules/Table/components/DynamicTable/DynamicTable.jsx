@@ -1,11 +1,10 @@
-import { ChakraProvider, Flex, Skeleton } from "@chakra-ui/react";
+import { ChakraProvider, Flex } from "@chakra-ui/react";
 import { Pagination, Button } from "@mui/material";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import SummaryRow from "@/components/DataTable/SummaryRow";
 import { CreatableSelect } from "chakra-react-select";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
-import { mockColumns } from "./constants";
 import { useDynamicTableProps } from "./useDynamicTableProps";
 import { Th } from "./components/Th";
 import { TableDataSkeleton } from "@/components/TableDataSkeleton";
@@ -29,7 +28,6 @@ export const DynamicTable = ({
   multipleDelete,
   sortedDatas,
   fields = [],
-  isRelationTable = false,
   currentPage = 1,
   onPaginationChange = () => {},
   setSortedDatas,
@@ -79,6 +77,7 @@ export const DynamicTable = ({
     isRelationView,
   } = useDynamicTableProps({ columns, isResizable, setLimit, data, fields });
 
+  console.log({ loader });
   return (
     <div
       className="CTableContainer"
@@ -109,106 +108,68 @@ export const DynamicTable = ({
           >
             <tr>
               <IndexTh
-                items={isRelationTable ? fields : data}
+                items={data}
                 selectedItems={selectedObjectsForDelete}
-                onSelectAll={(checked) =>
+                onSelectAll={(checked) => {
                   setSelectedObjectsForDelete(
-                    checked ? (isRelationTable ? fields : data) : [],
-                  )
-                }
+                    checked ? data?.map((item) => item?.guid) : [],
+                  );
+                }}
               />
-              {loader
-                ? mockColumns.map((column) => (
-                    <th key={column.id}>
-                      <Skeleton
-                        height="32px"
-                        width="316px"
-                        startColor="#F9FAFB"
-                        endColor="#ffffff"
-                      />
-                    </th>
-                  ))
-                : renderColumns.map((column) => (
-                    <Th
-                      key={column.id}
-                      tableSlug={tableSlug}
-                      columns={renderColumns}
-                      column={column}
-                      tableSettings={tableSettings}
-                      tableSize={tableSize}
-                      pageName={pageName}
-                      relationAction={relationAction}
-                      isRelationTable={isRelationTable}
-                      setFieldCreateAnchor={(e) => {
-                        setFormType("EDIT");
-                        setFieldCreateAnchor(e);
-                      }}
-                      setFieldData={setFieldData}
-                      getAllData={getAllData}
-                    />
-                  ))}
-              {!isRelationTable && (
-                <PermissionWrapperV2
+              {renderColumns.map((column) => (
+                <Th
+                  key={column.id}
                   tableSlug={tableSlug}
-                  type="add_field"
-                  id="addField"
-                >
-                  <FieldButton
-                    // tableSlug={tableSlug}
-                    tableLan={tableLan}
-                    // view={view}
-                    // mainForm={mainForm}
-                    setFieldCreateAnchor={setFieldCreateAnchor}
-                    fieldCreateAnchor={fieldCreateAnchor}
-                    fieldData={fieldData}
-                    setFieldData={setFieldData}
-                    setDrawerState={setDrawerState}
-                    setDrawerStateField={setDrawerStateField}
-                    menuItem={menuItem}
-                    setSortedDatas={setSortedDatas}
-                    sortedDatas={sortedDatas}
-                    formType={formType}
-                    setFormType={setFormType}
-                    renderColumns={renderColumns}
-                  />
-                </PermissionWrapperV2>
-              )}
+                  columns={renderColumns}
+                  column={column}
+                  tableSettings={tableSettings}
+                  tableSize={tableSize}
+                  pageName={pageName}
+                  relationAction={relationAction}
+                  setFieldCreateAnchor={(e) => {
+                    setFormType("EDIT");
+                    setFieldCreateAnchor(e);
+                  }}
+                  setFieldData={setFieldData}
+                  getAllData={getAllData}
+                />
+              ))}
+              <PermissionWrapperV2
+                tableSlug={tableSlug}
+                type="add_field"
+                id="addField"
+              >
+                <FieldButton
+                  // tableSlug={tableSlug}
+                  tableLan={tableLan}
+                  // view={view}
+                  // mainForm={mainForm}
+                  setFieldCreateAnchor={setFieldCreateAnchor}
+                  fieldCreateAnchor={fieldCreateAnchor}
+                  fieldData={fieldData}
+                  setFieldData={setFieldData}
+                  setDrawerState={setDrawerState}
+                  setDrawerStateField={setDrawerStateField}
+                  menuItem={menuItem}
+                  setSortedDatas={setSortedDatas}
+                  sortedDatas={sortedDatas}
+                  formType={formType}
+                  setFormType={setFormType}
+                  renderColumns={renderColumns}
+                />
+              </PermissionWrapperV2>
             </tr>
           </thead>
           <tbody>
             {loader ? (
-              <TableDataSkeleton colLength={4 + (!isRelationTable ? 2 : 1)} />
+              <TableDataSkeleton colLength={renderColumns?.length || 6} />
             ) : (
-              // (isRelationTable ? fields : data)
-              rows.map((rowObject, index) => {
-                // return (
-                //   <tr key={rowObject?.guid || rowObject?.id}>
-                //     <td></td>
-                //     {columns?.map((field) => (
-                //       <td
-                //         key={field.id}
-                //         style={{
-                //           padding: "0 4px",
-                //           position: "sticky",
-                //           left: "0",
-                //           backgroundColor: "#F6F6F6",
-                //           zIndex: "1",
-                //           height: "20px",
-                //         }}
-                //       >
-                //         {rowObject?.[field?.slug]}
-                //       </td>
-                //     ))}
-                //     <td></td>
-                //   </tr>
-                // );
+              rows?.map((row, index) => {
                 return (
                   <TableRow
-                    key={
-                      (isRelationTable ? rowObject?.id : rowObject?.guid) ||
-                      index
-                    }
-                    row={rowObject}
+                    key={row[0]?.guid}
+                    rows={rows}
+                    row={row}
                     width={"40px"}
                     rowIndex={index}
                     remove={remove}
@@ -219,7 +180,6 @@ export const DynamicTable = ({
                     isTableView={isTableView}
                     selectedObjectsForDelete={selectedObjectsForDelete}
                     setSelectedObjectsForDelete={setSelectedObjectsForDelete}
-                    isRelationTable={isRelationTable}
                     onRowClick={onRowClick}
                     calculateWidthFixedColumn={calculateWidthFixedColumn}
                     currentPage={currentPage}
@@ -237,7 +197,6 @@ export const DynamicTable = ({
                     data={data}
                     // view={view}
                     firstRowWidth={45}
-                    rows={rows}
                     handleChange={handleChange}
                   />
                 );
@@ -246,7 +205,7 @@ export const DynamicTable = ({
             {addNewRow && (
               <AddNewData
                 key={`addNewData`}
-                rows={isRelationTable ? fields : data}
+                rows={data}
                 columns={columns}
                 // isRelationTable={isRelationTable}
                 setAddNewRow={setAddNewRow}

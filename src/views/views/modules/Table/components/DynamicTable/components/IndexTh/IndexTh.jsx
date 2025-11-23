@@ -6,6 +6,8 @@ export const IndexTh = ({ items, selectedItems, onSelectAll }) => {
   const [hover, setHover] = useState(false);
   const showCheckbox = hover || selectedItems?.length > 0;
 
+  const [checked, setChecked] = useState(false);
+
   return (
     <Box
       minWidth="45px"
@@ -25,11 +27,14 @@ export const IndexTh = ({ items, selectedItems, onSelectAll }) => {
       {showCheckbox && (
         <Checkbox
           style={{ width: 10, height: 10 }}
-          checked={items?.length === selectedItems?.length && items?.length > 0}
-          indeterminate={
-            selectedItems?.length > 0 && items?.length !== selectedItems?.length
+          defaultChecked={
+            items?.length === selectedItems?.length && items?.length > 0
           }
-          onChange={(_, checked) => onSelectAll(checked)}
+          checked={checked}
+          onChange={(_, checked) => {
+            onSelectAll(checked);
+            setChecked(checked);
+          }}
         />
       )}
     </Box>

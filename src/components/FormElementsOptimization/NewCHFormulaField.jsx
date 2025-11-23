@@ -12,15 +12,14 @@ const NewCHFFormulaField = ({
   fieldsList,
   disabled,
   isTransparent = false,
-  field,
   newUi,
   row,
   ...props
 }) => {
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
-  let formula = field?.attributes?.formula ?? "";
+  let formula = row?.attributes?.formula ?? "";
 
-  const [innerValue, setInnerValue] = useState(row?.[field?.slug])
+  const [innerValue, setInnerValue] = useState(row?.value);
 
   const updateValue = () => {
     let value;
@@ -28,7 +27,7 @@ const NewCHFFormulaField = ({
       ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
       : [];
     fieldsListSorted?.forEach((field) => {
-      value = row?.[field?.slug] ?? 0;
+      value = row?.value ?? 0;
       if (typeof value === "string") value = `${value}`;
       const regex = new RegExp(`\\b${field.slug}\\b`, "g");
       formula = formula.replace(regex, value);

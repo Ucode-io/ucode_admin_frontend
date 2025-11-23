@@ -7,7 +7,6 @@ const HFMultiImage = ({
   tabIndex,
   disabledHelperText = false,
   disabled = false,
-  field,
   isTableView = false,
   drawerDetail = false,
   updateObject = () => {},
@@ -16,29 +15,27 @@ const HFMultiImage = ({
   row,
   ...props
 }) => {
-
-
-  const [error] = useState({})
+  const [error] = useState({});
 
   const onChange = (value) => {
     handleChange({
       value,
       rowId: row?.guid,
-      name: field?.slug
-    })
-  }
+      name: row?.slug,
+    });
+  };
 
   return (
     <>
       <MultiImageUpload
         name={name}
         drawerDetail={drawerDetail}
-        value={row?.[field?.slug]}
+        value={row?.value}
         tabIndex={tabIndex}
         onChange={onChange}
         updateObject={updateObject}
         disabled={disabled}
-        field={field}
+        field={row}
         isTableView={isTableView}
         newUi={newUi}
         {...props}

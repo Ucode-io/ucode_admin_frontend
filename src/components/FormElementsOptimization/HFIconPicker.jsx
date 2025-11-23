@@ -8,22 +8,20 @@ const HFIconPicker = ({
   disabled = false,
   shape,
   row,
-  field,
   handleChange,
   ...props
 }) => {
+  const [error] = useState({});
 
-  const [error, setError] = useState({})
-
-  const value = row?.[field?.slug]
+  const value = row?.value;
 
   const onChange = (value) => {
     handleChange({
       value,
-      name: field?.slug,
+      name: row?.slug,
       rowId: row?.guid,
-    })
-  }
+    });
+  };
 
   return (
     <>

@@ -3,13 +3,7 @@ import React from "react";
 import styles from "./style.module.scss";
 import { useTranslation } from "react-i18next";
 
-function HFStatusField({
-  field = {},
-  newUi,
-  disabled = false,
-  handleChange,
-  row,
-}) {
+function HFStatusField({ newUi, disabled = false, handleChange, row }) {
   const { i18n } = useTranslation();
 
   const onChange = (e) => {
@@ -17,7 +11,7 @@ function HFStatusField({
 
     handleChange({
       value,
-      name: field?.slug,
+      name: row?.slug,
       rowId: row?.guid,
     });
   };
@@ -39,19 +33,19 @@ function HFStatusField({
             borderRadius: "4px",
           },
         }}
-        value={row?.[field?.slug] || ""}
-        // value={row?.[field?.slug]}
+        value={row?.value || ""}
+        // value={row?.value}
         onChange={onChange}
         fullWidth
         renderValue={(selected) => {
           const selectedOption =
-            field?.attributes?.todo?.options?.find((el) =>
+            row?.attributes?.todo?.options?.find((el) =>
               el?.value ? el?.value === selected : selected === el?.label,
             ) ||
-            field?.attributes?.progress?.options?.find((el) =>
+            row?.attributes?.progress?.options?.find((el) =>
               el?.value ? el?.value === selected : selected === el?.label,
             ) ||
-            field?.attributes?.complete?.options?.find((el) =>
+            row?.attributes?.complete?.options?.find((el) =>
               el?.value ? el?.value === selected : selected === el?.label,
             );
           return (
@@ -73,7 +67,7 @@ function HFStatusField({
         }}
       >
         <ListSubheader className={styles.selectGroup}>To do</ListSubheader>
-        {field?.attributes?.todo?.options?.map((el) => {
+        {row?.attributes?.todo?.options?.map((el) => {
           return (
             <MenuItem
               id={el?.value ?? "selectOptionTodo"}
@@ -93,7 +87,7 @@ function HFStatusField({
         <ListSubheader className={styles.selectGroup}>
           In Progress
         </ListSubheader>
-        {field?.attributes?.progress?.options?.map((el) => (
+        {row?.attributes?.progress?.options?.map((el) => (
           <MenuItem
             id={el?.value ?? "selectOptionProgress"}
             style={{
@@ -109,7 +103,7 @@ function HFStatusField({
         ))}
 
         <ListSubheader className={styles.selectGroup}>Complete</ListSubheader>
-        {field?.attributes?.complete?.options?.map((el) => (
+        {row?.attributes?.complete?.options?.map((el) => (
           <MenuItem
             id={el?.value ?? "selectOptionComplete"}
             style={{

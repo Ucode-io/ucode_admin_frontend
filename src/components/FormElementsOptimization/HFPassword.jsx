@@ -9,10 +9,12 @@ function HFPassword({
   isNewTableView = false,
   isTransparent,
   props,
-  field,
   newUi,
   row,
-  handleChange = () => {}
+  required,
+  handleBlur = () => {},
+  error,
+  rules,
 }) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -27,12 +29,13 @@ function HFPassword({
       isBlackBg={isBlackBg}
       name={name}
       fullWidth
-      field={field}
-      required={field?.required}
-      placeholder={field?.attributes?.placeholder}
+      required={required}
+      placeholder={row?.attributes?.placeholder}
       row={row}
       autoComplete="off"
       type={showPassword ? "text" : "password"}
+      error={error}
+      rules={rules}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
@@ -50,7 +53,7 @@ function HFPassword({
         },
       }}
       {...props}
-      handleChange={handleChange}
+      handleBlur={handleBlur}
     />
   );
 }

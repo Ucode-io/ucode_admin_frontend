@@ -1,17 +1,13 @@
 import { usePermission } from "@/hooks/usePermission";
 import { useViewContext } from "@/providers/ViewProvider";
-import { constructorObjectService } from "@/services/objectService/object.service";
 import { store } from "@/store/index";
 import { useRef } from "react";
-import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 
 export const useTableRowProps = ({
   selectedObjectsForDelete,
   setSelectedObjectsForDelete,
   row,
-  getValues,
-  rowIndex,
 }) => {
   const { tableSlug, viewForm, view } = useViewContext();
 
@@ -19,24 +15,21 @@ export const useTableRowProps = ({
   const projectId = store.getState().auth?.projectId;
   const hasPermission = usePermission({ tableSlug, type: "delete" });
 
-  const { mutate: updateObject } = useMutation(() =>
-    constructorObjectService.update(tableSlug, {
-      data: { ...getValues(`multi.${rowIndex}`), guid: row?.guid },
-    }),
-  );
-
   const changeSetDelete = (row) => {
-    if (selectedObjectsForDelete?.find((item) => item?.guid === row?.guid)) {
+    if (selectedObjectsForDelete?.find((item) => item === row?.[0]?.guid)) {
       setSelectedObjectsForDelete(
-        selectedObjectsForDelete?.filter((item) => item?.guid !== row?.guid),
+        selectedObjectsForDelete?.filter((item) => item !== row?.[0]?.guid),
       );
     } else {
-      setSelectedObjectsForDelete([...selectedObjectsForDelete, row]);
+      setSelectedObjectsForDelete([
+        ...selectedObjectsForDelete,
+        row?.[0]?.guid,
+      ]);
     }
   };
   const parentRef = useRef(null);
   const selected = Boolean(
-    selectedObjectsForDelete?.find((item) => item?.guid === row?.guid),
+    selectedObjectsForDelete?.find((item) => item === row?.[0]?.guid),
   );
 
   return {
@@ -49,6 +42,5 @@ export const useTableRowProps = ({
     viewForm,
     view,
     tableSlug,
-    updateObject,
   };
 };

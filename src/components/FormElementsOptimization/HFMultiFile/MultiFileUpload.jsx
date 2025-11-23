@@ -26,7 +26,6 @@ const style = {
 
 function MultiFileUpload({
   value = [],
-  field,
   tabIndex,
   onChange = () => {},
   isTableView = false,
@@ -43,7 +42,7 @@ function MultiFileUpload({
 
   const handleClick = () => setUploadImg(true);
   const handleClose = () => setUploadImg(false);
-  const {download} = useDownloader();
+  const { download } = useDownloader();
 
   const inputChangeHandler = (e) => {
     setLoading(true);
@@ -105,7 +104,8 @@ function MultiFileUpload({
                 alignItems: "center",
                 gap: "10px",
                 padding: drawerDetail ? "0 9.6px" : "0",
-              }}>
+              }}
+            >
               <Box
                 sx={{
                   height: "25px",
@@ -113,10 +113,11 @@ function MultiFileUpload({
                   borderRadius: "4px",
                   overflow: "hidden",
                   padding: "0 0 0 0",
-                }}>
+                }}
+              >
                 <AttachFileIcon />
               </Box>
-              <Box sx={{fontSize: "10px", wordBreak: "keep-all"}}>
+              <Box sx={{ fontSize: "10px", wordBreak: "keep-all" }}>
                 {valueGenerate(value?.[0])}
               </Box>
             </Box>
@@ -133,9 +134,10 @@ function MultiFileUpload({
                 justifyContent: "center",
                 cursor: disabled ? "not-allowed" : "pointer",
                 position: "relative",
-              }}>
+              }}
+            >
               <img
-                style={{width: "100%", height: "100%", border: "none"}}
+                style={{ width: "100%", height: "100%", border: "none" }}
                 src={value?.[0]}
                 type="text"
               />
@@ -158,7 +160,8 @@ function MultiFileUpload({
                   justifyContent: "center",
                   fontSize: "16px",
                   color: "#fff",
-                }}>
+                }}
+              >
                 {value?.length > 1 ? `${value?.length}+` : value?.length}
               </Box>
             </Box>
@@ -179,7 +182,8 @@ function MultiFileUpload({
                 cursor: disabled ? "not-allowed" : "pointer",
                 justifyContent: "flex-start",
                 alignItems: "center",
-              }}>
+              }}
+            >
               <Box
                 sx={{
                   display: "flex",
@@ -189,11 +193,12 @@ function MultiFileUpload({
                   fontSize: "10px",
                   gap: "5px",
                   padding: "0 8px",
-                }}>
+                }}
+              >
                 <img
                   src="/img/newUpload.svg"
                   alt="Upload"
-                  style={{width: 22, height: 22}}
+                  style={{ width: 22, height: 22 }}
                 />
               </Box>
             </Box>
@@ -213,7 +218,8 @@ function MultiFileUpload({
                 flexDirection: "column",
                 justifyContent: "center",
                 cursor: disabled ? "not-allowed" : "pointer",
-              }}>
+              }}
+            >
               <Box
                 sx={{
                   display: "flex",
@@ -222,8 +228,9 @@ function MultiFileUpload({
                   color: "#777",
                   fontSize: "10px",
                   gap: "5px",
-                }}>
-                <AddIcon style={{width: "24px", height: "24px"}} />
+                }}
+              >
+                <AddIcon style={{ width: "24px", height: "24px" }} />
 
                 <span>Add Photo</span>
               </Box>
@@ -245,9 +252,10 @@ function MultiFileUpload({
               top: "0",
               zIndex: "999",
               background: "white",
-            }}>
+            }}
+          >
             <Button onClick={handleClose}>
-              <CloseIcon style={{width: "24", height: "24px"}} />
+              <CloseIcon style={{ width: "24", height: "24px" }} />
             </Button>
           </Box>
 
@@ -260,7 +268,8 @@ function MultiFileUpload({
                   onClick={(e) => {
                     e.stopPropagation();
                     fileDownload(item);
-                  }}>
+                  }}
+                >
                   <Flex
                     textAlign={"center"}
                     w={"100%"}
@@ -269,8 +278,9 @@ function MultiFileUpload({
                     flexDirection={"column"}
                     justifyContent={"center"}
                     color="#787774"
-                    alignItems={"center"}>
-                    <AttachFileIcon style={{width: "32px", height: "32px"}} />
+                    alignItems={"center"}
+                  >
+                    <AttachFileIcon style={{ width: "32px", height: "32px" }} />
                     {valueGenerate(item)?.length > 30
                       ? `${valueGenerate(item)?.slice(0, 25)}...`
                       : valueGenerate(item)}
@@ -282,8 +292,9 @@ function MultiFileUpload({
                       e.stopPropagation();
                       removeImage(item);
                     }}
-                    className={styles.clearBtn}>
-                    <DeleteIcon style={{color: "red"}} />
+                    className={styles.clearBtn}
+                  >
+                    <DeleteIcon style={{ color: "red" }} />
                   </button>
                 </div>
               ))}
@@ -304,7 +315,8 @@ function MultiFileUpload({
               onClick={(e) => {
                 e.stopPropagation();
                 inputRef.current.click();
-              }}>
+              }}
+            >
               <input
                 type="file"
                 style={{
@@ -317,7 +329,7 @@ function MultiFileUpload({
                 autoFocus={tabIndex === 1}
                 onChange={inputChangeHandler}
               />
-              <UploadIcon style={{width: "32px", height: "32px"}} />
+              <UploadIcon style={{ width: "32px", height: "32px" }} />
             </Box>
           </div>
 
@@ -333,14 +345,16 @@ function MultiFileUpload({
               zIndex: "999",
               background: "white",
               width: "100%",
-            }}>
+            }}
+          >
             <Box></Box>
             <Button
               variant="contained"
               onClick={() => {
                 isTableView && updateObject();
                 handleClose();
-              }}>
+              }}
+            >
               Save
             </Button>
           </Box>

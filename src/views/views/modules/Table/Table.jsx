@@ -23,7 +23,7 @@ export const Table = ({ tab, ...props }) => {
     columns,
     control,
     deleteHandler,
-    navigateToEditPage,
+    onRowClick,
     selectedObjectsForDelete,
     setSelectedObjectsForDelete,
     limit,
@@ -63,7 +63,7 @@ export const Table = ({ tab, ...props }) => {
           control={control}
           setFormValue={setFormValue}
           onDeleteClick={deleteHandler}
-          onRowClick={navigateToEditPage}
+          onRowClick={onRowClick}
           selectedObjectsForDelete={selectedObjectsForDelete}
           setSelectedObjectsForDelete={setSelectedObjectsForDelete}
           limit={limit}
@@ -76,130 +76,6 @@ export const Table = ({ tab, ...props }) => {
           rows={rows}
           {...props}
         />
-        {/* TEMPORARY COMMENT */}
-        {/* {Boolean(open && projectInfo?.new_layout) &&
-        selectedViewType === "SidePeek" ? (
-          new_router ? (
-            <DrawerDetailPage
-              view={view}
-              projectInfo={projectInfo}
-              open={open}
-              setFormValue={setFormValue}
-              selectedRow={selectedRow}
-              menuItem={menuItem}
-              layout={layout}
-              fieldsMap={fieldsMap}
-              refetch={refetch}
-              layoutType={layoutType}
-              setLayoutType={setLayoutType}
-              selectedViewType={selectedViewType}
-              setSelectedViewType={setSelectedViewType}
-              navigateToEditPage={navigateToDetailPage}
-            />
-          ) : (
-            <OldDrawerDetailPage
-              view={view}
-              projectInfo={projectInfo}
-              open={open}
-              setFormValue={setFormValue}
-              selectedRow={selectedRow}
-              menuItem={menuItem}
-              layout={layout}
-              fieldsMap={fieldsMap}
-              refetch={refetch}
-              layoutType={layoutType}
-              setLayoutType={setLayoutType}
-              selectedViewType={selectedViewType}
-              setSelectedViewType={setSelectedViewType}
-              navigateToEditPage={navigateToDetailPage}
-            />
-          )
-        ) : selectedViewType === "CenterPeek" ? (
-          Boolean(new_router) ? (
-            <ModalDetailPage
-              view={view}
-              projectInfo={projectInfo}
-              open={open}
-              setFormValue={setFormValue}
-              selectedRow={selectedRow}
-              menuItem={menuItem}
-              layout={layout}
-              fieldsMap={fieldsMap}
-              refetch={refetch}
-              layoutType={layoutType}
-              setLayoutType={setLayoutType}
-              selectedViewType={selectedViewType}
-              setSelectedViewType={setSelectedViewType}
-              navigateToEditPage={navigateToDetailPage}
-              tableSlug={tableSlug}
-            />
-          ) : (
-            <OldModalDetailPage
-              open={open}
-              selectedRow={selectedRow}
-              menuItem={menuItem}
-              layout={layout}
-              fieldsMap={fieldsMap}
-              refetch={refetch}
-              setLayoutType={setLayoutType}
-              selectedViewType={selectedViewType}
-              setSelectedViewType={setSelectedViewType}
-              navigateToEditPage={navigateToDetailPage}
-            />
-          )
-        ) : null} */}
-
-        {/* {Boolean(open && !projectInfo?.new_layout) && (
-          <ModalDetailPage
-            open={open}
-            selectedRow={selectedRow}
-            menuItem={menuItem}
-            layout={layout}
-            fieldsMap={fieldsMap}
-            refetch={refetch}
-            setLayoutType={setLayoutType}
-            selectedViewType={selectedViewType}
-            setSelectedViewType={setSelectedViewType}
-            navigateToEditPage={navigateToDetailPage}
-            tableSlug={tableSlug}
-            modal
-          />
-        )}
-
-        <Drawer
-          open={drawerState}
-          anchor="right"
-          onClose={() => setDrawerState(null)}
-          orientation="horizontal"
-        >
-          <FieldSettings
-            closeSettingsBlock={() => setDrawerState(null)}
-            isTableView={true}
-            onSubmit={(index, field) => update(index, field)}
-            field={drawerState}
-            formType={drawerState}
-            mainForm={mainForm}
-            selectedTabIndex={selectedTabIndex}
-            height={`calc(100vh - 48px)`}
-            getRelationFields={getRelationFields}
-            menuItem={menuItem}
-          />
-        </Drawer>
-
-        <Drawer
-          open={drawerStateField}
-          anchor="right"
-          onClose={() => setDrawerState(null)}
-          orientation="horizontal"
-        >
-          <RelationSettings
-            relation={drawerStateField}
-            closeSettingsBlock={() => setDrawerStateField(null)}
-            getRelationFields={getRelationFields}
-            formType={drawerStateField}
-            height={`calc(100vh - 48px)`}
-          />
-        </Drawer> */}
       </div>
     </MaterialUIProvider>
   );

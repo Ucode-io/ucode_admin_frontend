@@ -10,15 +10,14 @@ import { parseHTMLToText } from "@/utils/parseHTMLToText";
 export default function MultiLineCellFormElement({
   isWrapField,
   isNewTableView = false,
-  field,
   isDisabled,
   row,
   handleChange,
   ...props
 }) {
-  const [innerValue, setInnerValue] = useState(row?.[field?.slug]);
+  const [innerValue, setInnerValue] = useState(row?.value);
 
-  const defaultValue = row?.[field?.slug];
+  const defaultValue = row?.value;
 
   const stripHtmlTags = (input) => {
     return input.replace(/<[^>]*>/g, "");
@@ -31,10 +30,9 @@ export default function MultiLineCellFormElement({
   };
 
   const handleClose = () => {
-    console.log("CLOSE");
     handleChange({
       value: innerValue,
-      name: field?.slug,
+      name: row?.slug,
       rowId: row?.guid,
     });
     setAnchorEl(null);
@@ -53,8 +51,8 @@ export default function MultiLineCellFormElement({
   };
 
   useEffect(() => {
-    if (row?.[field?.slug] !== innerValue) {
-      setInnerValue(row?.[field?.slug]);
+    if (row?.value !== innerValue) {
+      setInnerValue(row?.value);
     }
   }, [row]);
 
@@ -120,10 +118,9 @@ export default function MultiLineCellFormElement({
           }}
         >
           <HFTextEditor
-            field={field}
             row={row}
             isNewTableView={isNewTableView}
-            tabIndex={field?.tabIndex}
+            // tabIndex={field?.tabIndex}
             disabled={isDisabled}
             isTransparent={true}
             setInnerValue={setInnerValue}

@@ -21,6 +21,8 @@ const NewCHFFormulaField = ({
 
   const [innerValue, setInnerValue] = useState(row?.value);
 
+  console.log(innerValue);
+
   const updateValue = () => {
     let value;
     const fieldsListSorted = fieldsList

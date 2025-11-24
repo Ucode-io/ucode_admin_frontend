@@ -446,6 +446,7 @@ export const useViewsProps = ({ isRelationView }) => {
       visibleColumns: [],
       visibleRelationColumns: [],
     },
+    isLoading: isLoadingTableInfo,
     refetch: refetchTableInfo,
   } = useGetTableInfo(
     {
@@ -701,6 +702,7 @@ export const useViewsProps = ({ isRelationView }) => {
     fieldsForm,
     fields,
     isLoadingTable,
+    isLoadingTableInfo,
     selectedTabIndex,
     navigateToEditPage,
     refetchMainDataList,

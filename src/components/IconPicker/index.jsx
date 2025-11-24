@@ -68,7 +68,7 @@ const IconPicker = ({
         className={`${styles.iconWrapper} ${error ? styles.error : ""} ${styles[shape]}`}
         style={{
           backgroundColor: value ?? "#fff",
-          color: newIconsList.includes(value) ? "transparent" : "#0067f4",
+          // color: newIconsList.includes(value) ? "transparent" : "#0067f4",
         }}
         aria-describedby={id}
         onClick={customeClick ? clickItself : !disabled && handleOpen}

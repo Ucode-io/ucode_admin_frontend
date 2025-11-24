@@ -54,18 +54,20 @@ const IconPicker = ({
 
   return (
     <div
-      style={{height: "16px"}}
+      style={{ height: "16px" }}
       onClick={(e) => e.stopPropagation()}
-      {...props}>
+      {...props}
+    >
       <div
         ref={buttonRef}
         className={`${styles.iconWrapper} ${error ? styles.error : ""} ${styles[shape]}`}
-        style={{backgroundColor: value ?? "#fff"}}
+        style={{ backgroundColor: value ?? "#fff" }}
         aria-describedby={id}
-        onClick={customeClick ? clickItself : !disabled && handleOpen}>
+        onClick={customeClick ? clickItself : !disabled && handleOpen}
+      >
         {disabled ? (
           <Tooltip title="This field is disabled for this role!">
-            <Lock style={{fontSize: "20px"}} />
+            <Lock style={{ fontSize: "20px" }} />
           </Tooltip>
         ) : value?.includes(":") ? (
           <IconGeneratorIconjs icon={value} disabled={disabled} />
@@ -79,8 +81,9 @@ const IconPicker = ({
         anchorEl={buttonRef.current}
         onClose={handleClose}
         open={dropdownIsOpen}
-        anchorOrigin={{horizontal: "left", vertical: "bottom"}}
-        classes={{paper: styles.menuPaper, list: styles.menuList}}>
+        anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+        classes={{ paper: styles.menuPaper, list: styles.menuList }}
+      >
         <Tabs onSelect={(e) => setSelectedTabIndex(e)} className={styles.tabs}>
           <TabList className={styles.tabList}>
             {iconCategories?.map((tab, index) => (
@@ -88,7 +91,8 @@ const IconPicker = ({
                 onClick={() => setSelectedTab(tab)}
                 key={index}
                 selectedClassName={styles.active}
-                className={styles.tab}>
+                className={styles.tab}
+              >
                 {tab?.label}
               </Tab>
             ))}

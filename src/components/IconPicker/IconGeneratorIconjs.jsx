@@ -4,6 +4,22 @@ import SVG from "react-inlinesvg";
 const IconGeneratorIconJs = ({icon, size = 20, prefix = "", ...props}) => {
   let iconName = "";
 
+  const isUrl = icon.includes("http");
+
+  if (isUrl) {
+    return (
+      <SVG
+        src={icon}
+        width={size}
+        height={size}
+        preProcessor={(code) =>
+          code.replace("path", 'path fill="currentColor"')
+        }
+        {...props}
+      />
+    );
+  }
+
   if (!icon) return null;
   const splittedByColon = icon.split(":");
 

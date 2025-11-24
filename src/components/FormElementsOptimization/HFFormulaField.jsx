@@ -19,7 +19,6 @@ const HFFormulaField = ({
   tabIndex,
   fieldsList,
   disabled,
-  field,
   row,
   ...props
 }) => {
@@ -27,7 +26,7 @@ const HFFormulaField = ({
 
   const [innerValue, setInnerValue] = useState(row?.value);
 
-  const formula = field?.attributes?.formula ?? "";
+  const formula = row?.attributes?.formula ?? "";
 
   const updateValue = () => {
     let computedFormula = formula;
@@ -37,7 +36,7 @@ const HFFormulaField = ({
       : [];
 
     fieldsListSorted?.forEach((field) => {
-      let value = row[field.slug] ?? 0;
+      let value = row?.value ?? 0;
 
       if (typeof value === "string") value = `'${value}'`;
       if (typeof value === "object") value = `"${value}"`;
@@ -46,11 +45,12 @@ const HFFormulaField = ({
       computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
     });
 
-    const {error, result} = parser.parse(computedFormula);
+    const { error, result } = parser.parse(computedFormula);
 
     let newValue = error ?? result;
     const prevValue = row?.value;
-    if (`${newValue}` !== `${prevValue}`) setInnerValue(name, newValue);
+
+    if (`${newValue}` !== `${prevValue}`) setInnerValue(newValue);
   };
 
   useEffect(() => {
@@ -59,84 +59,84 @@ const HFFormulaField = ({
 
   return (
     <>
-     <TextField
-          size="small"
-          value={
-            formulaIsVisible
-              ? formula
-              : typeof innerValue === "number"
+      <TextField
+        size="small"
+        value={
+          formulaIsVisible
+            ? formula
+            : typeof innerValue === "number"
               ? numberWithSpaces(parseFloat(innerValue).toFixed(2))
               : innerValue
-          }
-          name={name}
-          // onChange={(e) => {
-          //   const val = e.target.value;
-          //   const valueWithoutSpaces = val.replaceAll(" ", "");
+        }
+        name={name}
+        // onChange={(e) => {
+        //   const val = e.target.value;
+        //   const valueWithoutSpaces = val.replaceAll(" ", "");
 
-          //   if (!valueWithoutSpaces) onChange("");
-          //   else
-          //     onChange(
-          //       !isNaN(Number(valueWithoutSpaces))
-          //         ? Number(valueWithoutSpaces)
-          //         : ""
-          //     );
-          //   isNewTableView && updateObject();
-          // }}
-          // error={error}
-          sx={
-            isTableView
-              ? {
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    border: "0",
-                  },
-                }
-              : ""
-          }
-          fullWidth
-          disabled={disabled}
-          autoFocus={tabIndex === 1}
-          // helperText={!disabledHelperText && error?.message}
-          InputProps={{
-            inputProps: {tabIndex},
-            readOnly: disabled,
-            style: disabled
-              ? {
-                  background: "inherit",
-                  paddingRight: "0",
-                }
-              : {
-                  background: "inherit",
-                  color: "inherit",
+        //   if (!valueWithoutSpaces) onChange("");
+        //   else
+        //     onChange(
+        //       !isNaN(Number(valueWithoutSpaces))
+        //         ? Number(valueWithoutSpaces)
+        //         : ""
+        //     );
+        //   isNewTableView && updateObject();
+        // }}
+        // error={error}
+        sx={
+          isTableView
+            ? {
+                "& .MuiOutlinedInput-notchedOutline": {
+                  border: "0",
                 },
-            endAdornment: (
-              <InputAdornment position="end">
-                <Box
-                  style={{display: "flex", alignItems: "center", gap: "10px"}}
+              }
+            : ""
+        }
+        fullWidth
+        disabled={disabled}
+        autoFocus={tabIndex === 1}
+        // helperText={!disabledHelperText && error?.message}
+        InputProps={{
+          inputProps: { tabIndex },
+          readOnly: disabled,
+          style: disabled
+            ? {
+                background: "inherit",
+                paddingRight: "0",
+              }
+            : {
+                background: "inherit",
+                color: "inherit",
+              },
+          endAdornment: (
+            <InputAdornment position="end">
+              <Box
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}
+              >
+                <Tooltip
+                  title={formulaIsVisible ? "Hide formula" : "Show formula"}
                 >
-                  <Tooltip
-                    title={formulaIsVisible ? "Hide formula" : "Show formula"}
+                  <IconButton
+                    edge="end"
+                    color={formulaIsVisible ? "primary" : "default"}
+                    onClick={() => setFormulaIsVisible((prev) => !prev)}
                   >
-                    <IconButton
-                      edge="end"
-                      color={formulaIsVisible ? "primary" : "default"}
-                      onClick={() => setFormulaIsVisible((prev) => !prev)}
-                    >
-                      <FunctionsIcon />
-                    </IconButton>
+                    <FunctionsIcon />
+                  </IconButton>
+                </Tooltip>
+                {disabled && (
+                  <Tooltip title="This field is disabled for this role!">
+                    <InputAdornment position="start">
+                      <Lock style={{ fontSize: "20px" }} />
+                    </InputAdornment>
                   </Tooltip>
-                  {disabled && (
-                    <Tooltip title="This field is disabled for this role!">
-                      <InputAdornment position="start">
-                        <Lock style={{fontSize: "20px"}} />
-                      </InputAdornment>
-                    </Tooltip>
-                  )}
-                </Box>
-              </InputAdornment>
-            ),
-          }}
-          {...props}
-        />
+                )}
+              </Box>
+            </InputAdornment>
+          ),
+        }}
+        {...props}
+      />
     </>
   );
 };

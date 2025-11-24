@@ -11,32 +11,58 @@ import { useFieldsContext } from "../../providers/FieldsProvider";
 import { useFilterContext } from "../../providers/FilterProvider";
 import { useGetLang } from "@/hooks/useGetLang";
 import { QUERY_KEYS } from "@/utils/constants/queryKeys";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
-function combine(columns, rows) {
-  return rows.map((row) => {
-    return columns.map((col) => ({
-      value: row[col.slug] ?? null,
-      slug: col.slug,
-      guid: row.guid,
-      id: col.id,
-      type: col.type,
-      enable_multilanguage: col.enable_multilanguage,
-      table_slug: col.table_slug,
-      relation_type: col.relation_type,
-      tabIndex: col.tabIndex,
-      attributes: {
-        ...col.attributes,
-        required: col.required,
-      },
-    }));
-  });
-}
+// eslint-disable-next-line import/no-unresolved
+import TableWorker from "@/workers/tableWorker?worker";
+
+
+// function combine(columns, rows) {
+//   return rows.map((row) => {
+//     return columns.map((col) => ({
+//       guid: row.guid,
+//       slug: col.slug,
+//       value: row[col.slug] ?? null,
+
+//       [`${col.slug}_data`]: row[`${col.slug}_data`],
+
+//       id: col.id,
+//       type: col.type,
+//       enable_multilanguage: col.enable_multilanguage,
+//       table_slug: col.table_slug,
+//       table_id: col.table_id,
+//       relation_type: col.relation_type,
+//       tabIndex: col.tabIndex,
+//       required: col.required,
+//       view_fields: col.view_fields,
+//       attributes: {
+//         ...col.attributes,
+//         required: col.required,
+//       },
+//     }));
+//   });
+// }
 
 function rowToObject(rowArray) {
   const obj = {};
+
   for (const cell of rowArray) {
-    obj[cell.slug] = cell.value;
+    const slug = cell.slug;
+
+    if (cell.type === FIELD_TYPES.LOOKUP || FIELD_TYPES.LOOKUPS) {
+      obj[slug] =
+        typeof cell.value === "object"
+          ? (cell.value?.guid ?? null)
+          : cell.value;
+
+      if (cell[`${slug}_data`]) {
+        obj[`${slug}_data`] = cell[`${slug}_data`];
+      }
+    } else {
+      obj[slug] = cell.value;
+    }
   }
+
   return obj;
 }
 
@@ -53,6 +79,7 @@ export const useTableProps = ({ tab }) => {
     checkedColumns,
     navigateToEditPage,
     isRelationView,
+    isLoadingTableInfo,
   } = useViewContext();
 
   const { fieldsMap, fieldsForm, fields } = useFieldsContext();
@@ -77,6 +104,8 @@ export const useTableProps = ({ tab }) => {
   const { filters } = useFilters(tableSlug, view?.id);
 
   const dispatch = useDispatch();
+
+  const workerRef = useRef(null);
 
   const [limit, setLimit] = useState(20);
   const [drawerStateField, setDrawerStateField] = useState(null);
@@ -303,22 +332,29 @@ export const useTableProps = ({ tab }) => {
       };
     },
     onSuccess: (data) => {
-      let combinedTableData = combine(columns, data?.tableData);
+      if (!workerRef.current) return;
 
-      rowsMap.clear();
-      cellMap.clear();
-
-      combinedTableData.forEach((row) => {
-        const rowId = row[0]?.guid;
-
-        rowsMap.set(rowId, row);
-
-        row.forEach((cell) => {
-          cellMap.set(rowId + ":" + cell.slug, cell);
-        });
+      workerRef.current.postMessage({
+        tableData: data.tableData,
+        columns,
       });
 
-      setRows(combinedTableData);
+      // let combinedTableData = combine(columns, data?.tableData);
+
+      // rowsMap.clear();
+      // cellMap.clear();
+
+      // combinedTableData.forEach((row) => {
+      //   const rowId = row[0]?.guid;
+
+      //   rowsMap.set(rowId, row);
+
+      //   row.forEach((cell) => {
+      //     cellMap.set(rowId + ":" + cell.slug, cell);
+      //   });
+      // });
+
+      // setRows(combinedTableData);
     },
   });
 
@@ -368,30 +404,71 @@ export const useTableProps = ({ tab }) => {
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 
-  const loader = tableLoader;
+  const initWorkers = () => {
+    workerRef.current = new TableWorker();
 
-  const isFirstRender = useRef(true);
+    workerRef.current.onmessage = (event) => {
+      const combinedTableData = event.data;
+
+      rowsMap.clear();
+      cellMap.clear();
+
+      combinedTableData.forEach((row) => {
+        const rowId = row[0]?.guid;
+        rowsMap.set(rowId, row);
+
+        row.forEach((cell) => {
+          cellMap.set(rowId + ":" + cell.slug, cell);
+        });
+      });
+
+      setRows(combinedTableData);
+    };
+  };
+
+  const terminateWorkers = () => {
+    workerRef.current?.terminate();
+  };
+
+  const loader = tableLoader || isLoadingTableInfo;
 
   useEffect(() => {
-    if (!tableData || tableData.length === 0 || isFirstRender.current) return;
+    initWorkers();
 
-    isFirstRender.current = false;
+    return () => {
+      terminateWorkers();
+    };
+  }, []);
 
-    const newCombined = combine(columns, tableData);
+  useEffect(() => {
+    if (!tableData || tableData.length === 0) return;
 
-    rowsMap.clear();
-    cellMap.clear();
-
-    newCombined.forEach((row) => {
-      const rowId = row?.[0]?.guid;
-      rowsMap.set(rowId, row);
-      row.forEach((cell) => {
-        cellMap.set(rowId + ":" + cell.slug, cell);
-      });
+    workerRef.current.postMessage({
+      columns,
+      tableData,
     });
-
-    setRows(newCombined);
   }, [columns]);
+
+  // useEffect(() => {
+  //   if (!tableData || tableData.length === 0 || isFirstRender.current) return;
+
+  //   isFirstRender.current = false;
+
+  //   const newCombined = combine(columns, tableData);
+
+  //   rowsMap.clear();
+  //   cellMap.clear();
+
+  //   newCombined.forEach((row) => {
+  //     const rowId = row?.[0]?.guid;
+  //     rowsMap.set(rowId, row);
+  //     row.forEach((cell) => {
+  //       cellMap.set(rowId + ":" + cell.slug, cell);
+  //     });
+  //   });
+
+  //   setRows(newCombined);
+  // }, [columns]);
 
   return {
     tableLan,
@@ -423,5 +500,6 @@ export const useTableProps = ({ tab }) => {
     rows,
     handleChange: handleChangeInput,
     onRowClick,
+    updateObject,
   };
 };

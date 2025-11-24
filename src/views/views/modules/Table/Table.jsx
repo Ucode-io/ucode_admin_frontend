@@ -39,6 +39,7 @@ export const Table = ({ tab, ...props }) => {
     currentPage,
     handleChange,
     rows,
+    updateObject,
   } = useTableProps({ tab });
 
   return (
@@ -71,6 +72,7 @@ export const Table = ({ tab, ...props }) => {
           // isChecked={(row) => selectedObjects?.includes(row.guid)}
           summaries={view?.attributes?.summaries}
           refetch={refetch}
+          updateObject={updateObject}
           handleChange={handleChange}
           loader={loader}
           rows={rows}

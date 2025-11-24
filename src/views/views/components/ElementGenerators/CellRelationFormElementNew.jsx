@@ -59,6 +59,7 @@ const CellRelationFormElementNew = ({
   objectIdFromJWT,
   relationView,
   newColumn,
+  handleChange = () => {},
 }) => {
   const classes = useStyles();
 
@@ -116,8 +117,9 @@ const CellRelationFormElementNew = ({
               classes={classes}
               name={name}
               setValue={(e) => {
-                onChange(e);
-                isTableView && updateObject();
+                onChange(e?.guid);
+                isTableView &&
+                  handleChange({ name: row?.slug, value: e, rowId: row?.guid });
               }}
               field={field}
               isTableView={isTableView}
@@ -397,7 +399,7 @@ const AutoCompleteElement = ({
 
   const changeHandler = (value) => {
     const val = value;
-    setValue(val?.guid ?? null);
+    setValue(val, row.guid);
     setLocalValue(value);
 
     if (!field?.attributes?.autofill) return;

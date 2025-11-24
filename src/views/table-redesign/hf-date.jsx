@@ -161,7 +161,7 @@ export const HFTimePickerNew = ({ disabled, handleChange, row }) => {
       rightSection={<img src="/table-icons/time.svg" alt="" />}
       onChange={(value) => {
         handleChange({
-          value,
+          value: value.toISOString(),
           name: row?.slug,
           rowId: row?.guid,
         });

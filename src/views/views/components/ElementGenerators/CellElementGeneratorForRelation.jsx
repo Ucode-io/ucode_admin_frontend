@@ -32,6 +32,7 @@ const CellElementGeneratorForRelation = ({
   newUi,
   relationView,
   fieldsMap,
+  handleChange = () => {},
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -158,6 +159,7 @@ const CellElementGeneratorForRelation = ({
           isNewTableView={true}
           setFormValue={setFormValue}
           updateObject={updateObject}
+          handleChange={handleChange}
           defaultValue={defaultValue}
           relationfields={relationfields}
           placeholder={field.attributes?.placeholder}

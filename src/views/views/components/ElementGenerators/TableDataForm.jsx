@@ -94,6 +94,7 @@ const TableDataForm = ({
           relationView={relationView}
           newUi={newUi}
           name={computedSlug}
+          handleChange={handleChange}
         />
       ) : (
         <CellElementGeneratorForTableView

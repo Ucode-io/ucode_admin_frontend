@@ -42,6 +42,7 @@ export const TableRow = ({
   firstRowWidth = 80,
   relationView,
   handleChange,
+  updateObject,
 }) => {
   const {
     navigate,
@@ -187,6 +188,7 @@ export const TableRow = ({
                         view={view}
                         newUi={true}
                         handleChange={handleChange}
+                        updateObject={updateObject}
                       />
                     ) : (
                       <CellElementGenerator field={field} row={row} />

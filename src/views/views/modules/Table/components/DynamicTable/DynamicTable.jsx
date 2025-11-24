@@ -50,6 +50,7 @@ export const DynamicTable = ({
   isPaginationPositionSticky,
   getAllData = () => {},
   handleChange = () => {},
+  updateObject = () => {},
   rows,
 }) => {
   const {
@@ -77,7 +78,6 @@ export const DynamicTable = ({
     isRelationView,
   } = useDynamicTableProps({ columns, isResizable, setLimit, data, fields });
 
-  console.log({ loader });
   return (
     <div
       className="CTableContainer"
@@ -198,6 +198,7 @@ export const DynamicTable = ({
                     // view={view}
                     firstRowWidth={45}
                     handleChange={handleChange}
+                    updateObject={updateObject}
                   />
                 );
               })

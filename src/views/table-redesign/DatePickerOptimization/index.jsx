@@ -8,6 +8,7 @@ import HFQuarterPicker from "./HFQuarterPicker";
 import HFYearPicker from "./HFYearPicker";
 import styles from "./style.module.scss";
 import InputMask from "react-input-mask";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
 function HFDatePickerNew({
   withTime = false,
@@ -29,13 +30,13 @@ function HFDatePickerNew({
     if (value && !isNaN(Date.parse(value))) {
       setInputValue(format(new Date(value), formatString));
     } else {
-      setInputValue("");
+      setInputValue(value || "");
     }
   }, [value, formatString]);
 
   const onChange = (value) => {
     handleChange({
-      value,
+      value: value.toISOString(),
       name: row?.slug,
       rowId: row?.guid,
     });

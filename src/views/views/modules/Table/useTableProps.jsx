@@ -11,19 +11,26 @@ import { useFieldsContext } from "../../providers/FieldsProvider";
 import { useFilterContext } from "../../providers/FilterProvider";
 import { useGetLang } from "@/hooks/useGetLang";
 import { QUERY_KEYS } from "@/utils/constants/queryKeys";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
 function combine(columns, rows) {
   return rows.map((row) => {
     return columns.map((col) => ({
-      value: row[col.slug] ?? null,
-      slug: col.slug,
       guid: row.guid,
+      slug: col.slug,
+      value: row[col.slug] ?? null,
+
+      [`${col.slug}_data`]: row[`${col.slug}_data`],
+
       id: col.id,
       type: col.type,
       enable_multilanguage: col.enable_multilanguage,
       table_slug: col.table_slug,
+      table_id: col.table_id,
       relation_type: col.relation_type,
       tabIndex: col.tabIndex,
+      required: col.required,
+      view_fields: col.view_fields,
       attributes: {
         ...col.attributes,
         required: col.required,
@@ -34,9 +41,24 @@ function combine(columns, rows) {
 
 function rowToObject(rowArray) {
   const obj = {};
+
   for (const cell of rowArray) {
-    obj[cell.slug] = cell.value;
+    const slug = cell.slug;
+
+    if (cell.type === FIELD_TYPES.LOOKUP || FIELD_TYPES.LOOKUPS) {
+      obj[slug] =
+        typeof cell.value === "object"
+          ? (cell.value?.guid ?? null)
+          : cell.value;
+
+      if (cell[`${slug}_data`]) {
+        obj[`${slug}_data`] = cell[`${slug}_data`];
+      }
+    } else {
+      obj[slug] = cell.value;
+    }
   }
+
   return obj;
 }
 
@@ -423,5 +445,6 @@ export const useTableProps = ({ tab }) => {
     rows,
     handleChange: handleChangeInput,
     onRowClick,
+    updateObject,
   };
 };

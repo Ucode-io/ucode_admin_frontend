@@ -42,6 +42,7 @@ const BoardColumn = ({
   groupField,
   layoutType,
   menuItem,
+  handleCreateItem,
 }) => {
   const dispatch = useDispatch();
   const { menuId, appId } = useParams();
@@ -51,7 +52,6 @@ const BoardColumn = ({
   const viewId = searchParams.get("v") ?? view?.id;
   const new_router = localStorage.getItem("new_router") === "true";
   const selectedGroupField = fieldsMap?.[view?.group_fields?.[0]];
-  const isStatusType = selectedGroupField?.type === "STATUS";
   const [computedBoardData, setComputedBoardData] = useState(boardData);
   const navigate = useNavigate();
 
@@ -138,31 +138,6 @@ const BoardColumn = ({
     return view.columns?.map((id) => fieldsMap[id]).filter((el) => el) ?? [];
   }, [view, fieldsMap]);
 
-  const navigateToCreatePage = () => {
-    setSelectedRow(null);
-    if (isStatusType) {
-      setDefaultValue({
-        field: selectedGroupField?.slug,
-        value: group?.name,
-      });
-    } else {
-      setDefaultValue({
-        field: group.name,
-        value: group.name,
-      });
-    }
-
-    if (subGroupById) {
-      setDefaultValue((prev) => [
-        prev,
-        {
-          field: subGroupFieldSlug,
-          value: subItem,
-        },
-      ]);
-    }
-  };
-
   const navigateToEditPage = (row) => {
     setLoading(true);
     setDefaultValue({});
@@ -179,7 +154,7 @@ const BoardColumn = ({
           relation_table_slug: view.relation_table_slug ?? null,
           is_relation_view: view?.is_relation_view,
           detailId: row?.guid,
-        })
+        }),
       );
       setSelectedView(view);
       setSelectedRow(row);
@@ -235,8 +210,8 @@ const BoardColumn = ({
           (param) =>
             `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
               param.value,
-              row
-            )}`
+              row,
+            )}`,
         )
         .join("&");
 
@@ -289,7 +264,7 @@ const BoardColumn = ({
   // });
 
   const photoViewFields = viewFields.filter(
-    (field) => field?.type === FIELD_TYPES.PHOTO
+    (field) => field?.type === FIELD_TYPES.PHOTO,
   );
 
   useEffect(() => {
@@ -401,7 +376,7 @@ const BoardColumn = ({
             fullWidth
             onClick={(e) => {
               e.stopPropagation();
-              navigateToCreatePage();
+              handleCreateItem({ group });
             }}
           >
             <Add /> Add new

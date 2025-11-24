@@ -224,7 +224,7 @@ const LayoutHeading = ({
   };
 
   const fields = sections?.flatMap((item) =>
-    Array.isArray(item?.fields) ? [...item?.fields] : []
+    Array.isArray(item?.fields) ? [...item.fields] : [],
   );
 
   const fieldsList = fields
@@ -443,9 +443,16 @@ const MainSection = ({
         </Flex>
         <Box p={15}>
           {section?.fields
-            ?.filter((el) => el?.attributes?.field_hide_layout !== true)
+            ?.filter(
+              (el) =>
+                el?.is_visible_layout === undefined || el?.is_visible_layout,
+            )
             ?.map((field) => (
-              <FieldGenerator field={field} selectedRow={selectedRow} />
+              <FieldGenerator
+                key={field?.slug}
+                field={field}
+                selectedRow={selectedRow}
+              />
             ))}
         </Box>
       </Box>

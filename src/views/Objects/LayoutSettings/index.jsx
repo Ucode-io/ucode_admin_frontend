@@ -17,10 +17,14 @@ import {useViewContext} from "../../../providers/ViewProvider";
 import {FIELD_TYPES} from "../../../utils/constants/fieldTypes";
 
 function LayoutSettings() {
-  const {state} = useLocation();
+  const { state } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {menuId: menuIdParam, appId, tableSlug: tableSlugParams} = useParams();
+  const {
+    menuId: menuIdParam,
+    appId,
+    tableSlug: tableSlugParams,
+  } = useParams();
   const menuId = menuIdParam || appId;
   const [sectionIndex, setSectionIndex] = useState(null);
   const [selectedSection, setSelectedSection] = useState();
@@ -30,7 +34,7 @@ function LayoutSettings() {
   const [loader, setLoader] = useState(false);
 
   const {
-    data: {layout} = {
+    data: { layout } = {
       layout: [],
     },
     refetch: refetchLayout,
@@ -59,7 +63,7 @@ function LayoutSettings() {
 
   const updateSectionFields = (newFields) => {
     const updatedSection = sections.map((section, index) =>
-      index === sectionIndex ? {...section, fields: newFields} : section
+      index === sectionIndex ? { ...section, fields: newFields } : section,
     );
 
     setSections(updatedSection);
@@ -73,7 +77,7 @@ function LayoutSettings() {
             ...tab,
             sections: sections,
           }
-        : tab
+        : tab,
     );
 
     const currentUpdatedLayout = {
@@ -213,6 +217,7 @@ const Header = ({ loader = false, applyAllChanges = () => {}, state = {} }) => {
           color={"#fff"}
           cursor={"pointer"}
           fontSize={14}
+          type={"button"}
         >
           <Flex mr={6}>
             <DoneIcon style={{ width: "14px", height: "14px" }} />

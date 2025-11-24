@@ -122,7 +122,7 @@ const SettingFields = ({
   };
 
   const addFieldSections = (field) => {
-    const updatedSection = [...selectedSection?.fields, field];
+    const updatedSection = [...(selectedSection.fields || []), field];
     setSelectedSection({ ...selectedSection, fields: updatedSection });
     updateSectionFields(updatedSection);
   };
@@ -134,13 +134,22 @@ const SettingFields = ({
       field.slug === fieldSlug
         ? {
             ...field,
-            attributes: {
-              ...field.attributes,
-              field_hide_layout: !field.attributes?.field_hide_layout,
-            },
+            is_visible_layout: !Boolean(
+              field?.is_visible_layout === undefined ||
+                field?.is_visible_layout,
+            ),
+            // attributes: {
+            //   ...field.attributes,
+            //   field_hide_layout: !Boolean(field.attributes?.field_hide_layout),
+            // },
           }
         : field,
     );
+
+    // {
+    //   ...field,
+    //   is_visible_layout: !Boolean(field?.is_visible_layout),
+    // }
 
     setSelectedSection({ ...selectedSection, fields: updatedFields });
     updateSectionFields(updatedFields);
@@ -179,7 +188,7 @@ const SettingFields = ({
         {sectionFields
           ?.filter((el) => getFieldLabel(el))
           ?.map((item) => (
-            <Draggable>
+            <Draggable key={item?.slug}>
               <Flex
                 cursor={"pointer"}
                 alignItems={"center"}
@@ -273,6 +282,9 @@ const FieldControl = ({
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
+  const isVisibleLayout =
+    item?.is_visible_layout === undefined || item?.is_visible_layout;
+
   return (
     <>
       <Button
@@ -284,14 +296,15 @@ const FieldControl = ({
         w={"24px"}
         h={"24px"}
         borderRadius={4}
-        border={"none"}>
-        {item?.attributes?.field_hide_layout ? (
-          <VisibilityOffIcon
-            style={{color: "#53524C", width: "16px", height: "16px"}}
+        border={"none"}
+      >
+        {isVisibleLayout ? (
+          <RemoveRedEyeIcon
+            style={{ color: "#53524C", width: "16px", height: "16px" }}
           />
         ) : (
-          <RemoveRedEyeIcon
-            style={{color: "#53524C", width: "16px", height: "16px"}}
+          <VisibilityOffIcon
+            style={{ color: "#53524C", width: "16px", height: "16px" }}
           />
         )}
       </Button>
@@ -312,19 +325,18 @@ const FieldControl = ({
               toggleFieldVisibility(item.slug);
               handleClose();
             }}
-            cursor={"pointer"}>
-            {!item?.attributes?.field_hide_layout ? (
-              <VisibilityOffIcon
-                style={{color: "#53524C", width: "16px", height: "16px"}}
+            cursor={"pointer"}
+          >
+            {isVisibleLayout ? (
+              <RemoveRedEyeIcon
+                style={{ color: "#53524C", width: "16px", height: "16px" }}
               />
             ) : (
-              <RemoveRedEyeIcon
-                style={{color: "#53524C", width: "16px", height: "16px"}}
+              <VisibilityOffIcon
+                style={{ color: "#53524C", width: "16px", height: "16px" }}
               />
             )}
-            <Text fontSize={14}>
-              {item?.attributes?.field_hide_layout ? "Show" : "Hide"}
-            </Text>
+            <Text fontSize={14}>{isVisibleLayout ? "Hide" : "Show"}</Text>
           </Flex>
           <Flex
             onClick={() => {
@@ -339,9 +351,10 @@ const FieldControl = ({
             px={8}
             gap={10}
             h={28}
-            cursor={"pointer"}>
+            cursor={"pointer"}
+          >
             <DeleteOutlineIcon
-              style={{color: "#53524C", width: "18px", height: "18px"}}
+              style={{ color: "#53524C", width: "18px", height: "18px" }}
             />
             <Text fontSize={14}>Delete</Text>
           </Flex>
@@ -358,7 +371,7 @@ const FieldsList = ({
   fields,
 }) => {
   const open = Boolean(anchorEl);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [search, setSearch] = useState("");
 
   return (
@@ -370,7 +383,8 @@ const FieldsList = ({
         borderRadius={"10px"}
         minH={"100px"}
         maxH={"600px"}
-        overflow={"auto"}>
+        overflow={"auto"}
+      >
         <Box p={"8px 12px"}>
           <SearchInput
             onChange={setSearch}
@@ -389,10 +403,11 @@ const FieldsList = ({
             ?.filter((el) =>
               (el?.attributes?.[`label_${i18n?.language}`] ?? el?.label)
                 ?.toLowerCase()
-                ?.includes(search?.toLowerCase())
+                ?.includes(search?.toLowerCase()),
             )
             ?.map((field) => (
               <Flex
+                key={field?.slug}
                 onClick={() => addFieldSections(field)}
                 _hover={{
                   background: "#F3F3F3",
@@ -402,7 +417,8 @@ const FieldsList = ({
                 h={"34px"}
                 borderRadius={"4px"}
                 alignItems="center"
-                gap={"8px"}>
+                gap={"8px"}
+              >
                 <Flex>
                   {getColumnIcon({
                     column: {

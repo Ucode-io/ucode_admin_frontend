@@ -443,10 +443,7 @@ const MainSection = ({
         </Flex>
         <Box p={15}>
           {section?.fields
-            ?.filter(
-              (el) =>
-                el?.is_visible_layout === undefined || el?.is_visible_layout,
-            )
+            ?.filter((el) => !el?.attributes?.field_hide_layout)
             ?.map((field) => (
               <FieldGenerator
                 key={field?.slug}

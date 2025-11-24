@@ -134,14 +134,10 @@ const SettingFields = ({
       field.slug === fieldSlug
         ? {
             ...field,
-            is_visible_layout: !Boolean(
-              field?.is_visible_layout === undefined ||
-                field?.is_visible_layout,
-            ),
-            // attributes: {
-            //   ...field.attributes,
-            //   field_hide_layout: !Boolean(field.attributes?.field_hide_layout),
-            // },
+            attributes: {
+              ...field.attributes,
+              field_hide_layout: !field?.attributes?.field_hide_layout,
+            },
           }
         : field,
     );
@@ -282,8 +278,7 @@ const FieldControl = ({
   const handleClick = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
-  const isVisibleLayout =
-    item?.is_visible_layout === undefined || item?.is_visible_layout;
+  const isVisibleLayout = !item?.attributes?.field_hide_layout;
 
   return (
     <>

@@ -11,6 +11,9 @@ export const Additional = ({control, watch, register, setValue, }) => {
     <Box display="flex" flexDirection="column" alignItems="flex-start">
       <FieldCheckbox
         control={control}
+        register={register}
+        setValue={setValue}
+        watch={watch}
         name="attributes.disabled"
         label={"Disabled"}
       />
@@ -21,11 +24,8 @@ export const Additional = ({control, watch, register, setValue, }) => {
         watch={watch}
         name="required"
         label={
-          generateLangaugeText(
-            tableLan,
-            i18n?.language,
-            "Required"
-          ) || "Required"
+          generateLangaugeText(tableLan, i18n?.language, "Required") ||
+          "Required"
         }
       />
       <FieldCheckbox
@@ -53,5 +53,5 @@ export const Additional = ({control, watch, register, setValue, }) => {
         label={"Relation Buttons"}
       />
     </Box>
-  )
+  );
 }

@@ -218,6 +218,7 @@ function DrawerFormDetailPage({
           <div className={"language"}>
             {projectInfo?.language?.map((lang) => (
               <Button
+                key={lang?.short_name}
                 className={activeLang === lang?.short_name && "active"}
                 onClick={() => setActiveLang(lang?.short_name)}
               >

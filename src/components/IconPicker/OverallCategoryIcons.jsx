@@ -82,7 +82,11 @@ function OverallCategoryIcons({
               color: newIconsList.includes(icon) ? "transparent" : "#101828",
             }}
             onClick={() => {
-              onChange(icon);
+              onChange(
+                icon.includes(":")
+                  ? `${import.meta.env.VITE_ICONJS_PICKER_URL}/${icon}.svg`
+                  : `${import.meta.env.VITE_ICON_PICKER_CDN_BASE_URL}${icon}`,
+              );
               handleClose();
             }}
           >

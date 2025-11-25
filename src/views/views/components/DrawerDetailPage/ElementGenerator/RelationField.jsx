@@ -287,10 +287,6 @@ const AutoCompleteElement = ({
     return Object.values(autoFiltersValue).join(",");
   }, [autoFiltersValue]);
 
-  // if (field?.slug === "metrics_category_values_id") {
-  //   console.log({ autoFiltersFirstValues, autoFiltersNewValues });
-  // }
-
   const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", page, tableSlug, debouncedValue, autoFiltersValue],
     queryFn,

@@ -173,6 +173,7 @@ function DrawerFormDetailPage({
   }, [isMultiLanguage, projectInfo]);
 
   const filterFields = (field) => {
+    if (field?.attributes?.field_hide_layout) return false;
     const slugParts = field?.slug?.split("_");
     const lastPart = slugParts?.[slugParts.length - 1];
 

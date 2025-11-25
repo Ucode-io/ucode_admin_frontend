@@ -1,4 +1,4 @@
-import { ChakraProvider, Flex } from "@chakra-ui/react";
+import { ChakraProvider, Flex, Skeleton } from "@chakra-ui/react";
 import { Pagination, Button } from "@mui/material";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
@@ -46,7 +46,8 @@ export const DynamicTable = ({
   relationAction,
   onChecked,
   refetch = () => {},
-  loader,
+  headLoader,
+  dataLoader,
   isPaginationPositionSticky,
   getAllData = () => {},
   handleChange = () => {},
@@ -76,7 +77,13 @@ export const DynamicTable = ({
     tableSlug,
     menuItem,
     isRelationView,
-  } = useDynamicTableProps({ columns, isResizable, setLimit, data, fields });
+  } = useDynamicTableProps({
+    columns,
+    isResizable,
+    setLimit,
+    data,
+    fields,
+  });
 
   return (
     <div
@@ -116,24 +123,43 @@ export const DynamicTable = ({
                   );
                 }}
               />
-              {renderColumns.map((column) => (
-                <Th
-                  key={column.id}
-                  tableSlug={tableSlug}
-                  columns={renderColumns}
-                  column={column}
-                  tableSettings={tableSettings}
-                  tableSize={tableSize}
-                  pageName={pageName}
-                  relationAction={relationAction}
-                  setFieldCreateAnchor={(e) => {
-                    setFormType("EDIT");
-                    setFieldCreateAnchor(e);
-                  }}
-                  setFieldData={setFieldData}
-                  getAllData={getAllData}
-                />
-              ))}
+              {headLoader
+                ? Array.from({ length: 8 }).map((_, index) => (
+                    <th
+                      key={index}
+                      style={{
+                        width: "316px",
+                        padding: "6px",
+                        background: "#fff",
+                      }}
+                    >
+                      <Skeleton
+                        key={index}
+                        variant="rounded"
+                        animation="wave"
+                        height="20px"
+                        width="100%"
+                      />
+                    </th>
+                  ))
+                : renderColumns.map((column) => (
+                    <Th
+                      key={column.id}
+                      tableSlug={tableSlug}
+                      columns={renderColumns}
+                      column={column}
+                      tableSettings={tableSettings}
+                      tableSize={tableSize}
+                      pageName={pageName}
+                      relationAction={relationAction}
+                      setFieldCreateAnchor={(e) => {
+                        setFormType("EDIT");
+                        setFieldCreateAnchor(e);
+                      }}
+                      setFieldData={setFieldData}
+                      getAllData={getAllData}
+                    />
+                  ))}
               <PermissionWrapperV2
                 tableSlug={tableSlug}
                 type="add_field"
@@ -161,8 +187,10 @@ export const DynamicTable = ({
             </tr>
           </thead>
           <tbody>
-            {loader ? (
-              <TableDataSkeleton colLength={renderColumns?.length || 6} />
+            {dataLoader || headLoader ? (
+              <TableDataSkeleton
+                colLength={headLoader ? 10 : renderColumns.length + 2}
+              />
             ) : (
               rows?.map((row, index) => {
                 return (

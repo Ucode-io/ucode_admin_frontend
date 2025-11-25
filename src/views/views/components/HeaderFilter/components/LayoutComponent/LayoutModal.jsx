@@ -96,13 +96,13 @@ const LayoutModal = ({
   };
 
   const getRelationFields = async () => {
-    console.log("entered");
+
     return new Promise(async (resolve) => {
       const getFieldsData = constructorFieldService.getList(
         {
           table_id: tableInfo?.id,
         },
-        tableSlug
+        tableSlug,
       );
 
       const getRelations = constructorRelationService.getList(
@@ -111,13 +111,13 @@ const LayoutModal = ({
           relation_table_slug: tableSlug,
         },
         {},
-        tableSlug
+        tableSlug,
       );
-      const [{relations = []}, {fields = []}] = await Promise.all([
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
-      console.log("fieldddddss", fields);
+
       mainForm.setValue("fields", fields);
       const relationsWithRelatedTableSlug = relations?.map((relation) => ({
         ...relation,

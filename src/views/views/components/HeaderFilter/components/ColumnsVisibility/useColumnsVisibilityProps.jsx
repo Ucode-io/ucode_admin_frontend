@@ -93,7 +93,7 @@ export const useColumnsVisibilityProps = () => {
 
   const onChange = (column, checked) => {
     const columns = view?.columns ?? [];
-    console.log({ column, checked });
+
     const id =
       column?.type === "LOOKUP" || column?.type === "LOOKUPS"
         ? column.relation_id

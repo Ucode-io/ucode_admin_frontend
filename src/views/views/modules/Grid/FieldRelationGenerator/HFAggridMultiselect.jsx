@@ -179,7 +179,7 @@ const AutoCompleteElement = ({
 }) => {
   const [dialogState, setDialogState] = useState(null);
   const {appId} = useParams();
-  console.log("editModeeditMode", editMode);
+
   const editPermission = field?.attributes?.field_permission?.edit_permission;
 
   const handleClose = () => {

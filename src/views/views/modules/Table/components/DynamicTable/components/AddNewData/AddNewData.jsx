@@ -139,7 +139,10 @@ export const AddNewData = memo(
     // }, []);
 
     return (
-      <CTableRow parentRef={rowRef}>
+      <CTableRow
+        parentRef={rowRef}
+        style={{ height: "32px", overflow: "auto" }}
+      >
         <CTableCell
           className="data_table__number_cell"
           style={{
@@ -170,16 +173,18 @@ export const AddNewData = memo(
               left: view?.attributes?.fixedColumns?.[column?.id]
                 ? `${calculateWidthFixedColumn(column.id) + firstRowWidth}px`
                 : "0",
-              backgroundColor: `${
-                tableSettings?.[pageName]?.find(
-                  (item) => item?.id === column?.id,
-                )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
-                  ? "#F6F6F6"
-                  : column.attributes?.disabled ||
-                      !column.attributes?.field_permission?.edit_permission
-                    ? "#f8f8f8"
-                    : "#fff"
-              }`,
+              backgroundColor: errors[column?.slug]
+                ? `rgb(255 72 66 / 20%)`
+                : `${
+                    tableSettings?.[pageName]?.find(
+                      (item) => item?.id === column?.id,
+                    )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
+                      ? "#F6F6F6"
+                      : column.attributes?.disabled ||
+                          !column.attributes?.field_permission?.edit_permission
+                        ? "#f8f8f8"
+                        : "#fff"
+                  }`,
               zIndex: `${
                 tableSettings?.[pageName]?.find(
                   (item) => item?.id === column?.id,
@@ -187,7 +192,7 @@ export const AddNewData = memo(
                   ? "1"
                   : "0"
               }`,
-              borderColor: `${errors[column?.slug] ? "#f44336" : "inherit"}`,
+              // borderColor: `${errors[column?.slug] ? "#f44336" : "inherit"}`,
             }}
           >
             <NewTableDataForm

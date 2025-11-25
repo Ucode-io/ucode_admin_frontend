@@ -352,54 +352,60 @@ export const useViewsProps = ({ isRelationView }) => {
       ? selectedV?.relation_table_slug
       : menuId;
 
-  const { refetch: refetchViewsList, isRefetching } = useGetViewsList(
-    menuIdForViewsList,
-    {
-      enabled: Boolean(menuIdForViewsList),
-      select: (res) => {
-        const relationViews =
-          res?.views?.filter(
-            (item) => item?.type === "SECTION" || item?.is_relation_view,
-          ) ?? [];
+  const {
+    refetch: refetchViewsList,
+    isRefetching,
+    isLoading: isLoadingViews,
+    isFetching: isFetchingViews,
+  } = useGetViewsList(menuIdForViewsList, {
+    enabled: Boolean(menuIdForViewsList),
+    select: (res) => {
+      const relationViews =
+        res?.views?.filter(
+          (item) => item?.type === "SECTION" || item?.is_relation_view,
+        ) ?? [];
 
-        const views =
-          res?.views?.filter(
-            (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view),
-          ) ?? [];
+      const views =
+        res?.views?.filter(
+          (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view),
+        ) ?? [];
 
-        return { views, relationViews };
-      },
-      onSuccess: ({ views, relationViews }) => {
-        if (
-          (!selectedView ||
-            selectedView?.id !== views?.[selectedTabIndex]?.id ||
-            isRefetching) &&
-          !isRelationView &&
-          selectedTabIndex != null
-        ) {
-          setSelectedView(views?.[selectedTabIndex]);
-        }
-
-        if (isRelationView) {
-          dispatch(detailDrawerActions.setDrawerTabIndex(0));
-          setSelectedView(relationViews?.[0]);
-          setRelationViews(relationViews);
-          updateQueryWithoutRerender("dv", relationViews?.[0]?.id);
-          // if (state?.toDocsTab) setSelectedTabIndex(data?.length);
-        } else {
-          dispatch(viewsActions.setViews(views));
-
-          if (!pathname.includes("/login")) {
-            if (selectedTabIndex != null) {
-              updateQueryWithoutRerender("v", views?.[selectedTabIndex]?.id);
-            }
-          }
-          if (state?.toDocsTab)
-            dispatch(detailDrawerActions.setDrawerTabIndex(views?.length));
-        }
-      },
+      return { views, relationViews };
     },
-  );
+    onSuccess: ({ views, relationViews }) => {
+      if (
+        (!selectedView ||
+          selectedView?.id !== views?.[selectedTabIndex]?.id ||
+          isRefetching) &&
+        !isRelationView &&
+        selectedTabIndex != null
+      ) {
+        setSelectedView(views?.[selectedTabIndex]);
+      }
+
+      if (isRelationView) {
+        dispatch(detailDrawerActions.setDrawerTabIndex(0));
+        setSelectedView(relationViews?.[0]);
+        setRelationViews(relationViews);
+        updateQueryWithoutRerender("dv", relationViews?.[0]?.id);
+        // if (state?.toDocsTab) setSelectedTabIndex(data?.length);
+      } else {
+        dispatch(viewsActions.setViews(views));
+
+        if (!pathname.includes("/login")) {
+          if (selectedTabIndex != null) {
+            updateQueryWithoutRerender("v", views?.[selectedTabIndex]?.id);
+          }
+        }
+        if (state?.toDocsTab)
+          dispatch(detailDrawerActions.setDrawerTabIndex(views?.length));
+      }
+    },
+    slateTime: 0,
+    keepPreviousData: true,
+  });
+
+  const viewLoader = isLoadingViews || (!selectedView && isFetchingViews);
 
   const {
     data: { layout } = {
@@ -446,7 +452,9 @@ export const useViewsProps = ({ isRelationView }) => {
       visibleColumns: [],
       visibleRelationColumns: [],
     },
-    isLoading: isLoadingTableInfo,
+    isLoading: isLoadingInfo,
+    isFetching: isFetchingTableInfo,
+    isRefetching: isRefetchingTableInfo,
     refetch: refetchTableInfo,
   } = useGetTableInfo(
     {
@@ -499,6 +507,10 @@ export const useViewsProps = ({ isRelationView }) => {
         : selectedView?.table_slug,
     },
   );
+
+  const isLoadingTableInfo = isRefetchingTableInfo
+    ? false
+    : isFetchingTableInfo || isLoadingInfo;
 
   const tableName =
     tableInfo?.attributes?.[`label_${i18n.language}`] || tableInfo?.label;
@@ -706,5 +718,6 @@ export const useViewsProps = ({ isRelationView }) => {
     selectedTabIndex,
     navigateToEditPage,
     refetchMainDataList,
+    viewLoader,
   };
 };

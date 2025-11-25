@@ -79,7 +79,7 @@ export const useTableProps = ({ tab }) => {
     checkedColumns,
     navigateToEditPage,
     isRelationView,
-    isLoadingTableInfo,
+    viewLoader,
   } = useViewContext();
 
   const { fieldsMap, fieldsForm, fields } = useFieldsContext();
@@ -283,7 +283,8 @@ export const useTableProps = ({ tab }) => {
       dataCount: 0,
     },
     refetch,
-    isLoading: tableLoader,
+    isLoading,
+    isFetching: tableFetching,
   } = useQuery({
     queryKey: [
       QUERY_KEYS.TABLE_DATA_KEY,
@@ -296,9 +297,12 @@ export const useTableProps = ({ tab }) => {
         filters: { ...filters, [tab?.slug]: tab?.value },
         pagination,
         orderBy,
+        viewId,
+        computedSortColumns,
+        checkedColumns,
+        menuId,
       },
     ],
-
     queryFn: () => {
       return menuService.getFieldsTableData(menuId, viewId, tableSlug, {
         data: {
@@ -338,25 +342,12 @@ export const useTableProps = ({ tab }) => {
         tableData: data.tableData,
         columns,
       });
-
-      // let combinedTableData = combine(columns, data?.tableData);
-
-      // rowsMap.clear();
-      // cellMap.clear();
-
-      // combinedTableData.forEach((row) => {
-      //   const rowId = row[0]?.guid;
-
-      //   rowsMap.set(rowId, row);
-
-      //   row.forEach((cell) => {
-      //     cellMap.set(rowId + ":" + cell.slug, cell);
-      //   });
-      // });
-
-      // setRows(combinedTableData);
     },
+    staleTime: 1000 * 60,
+    keepPreviousData: true,
   });
+
+  const tableLoader = isLoading || (!tableData.length && tableFetching);
 
   const deleteHandler = async (rowId) => {
     // setDeleteLoader(true);
@@ -430,7 +421,8 @@ export const useTableProps = ({ tab }) => {
     workerRef.current?.terminate();
   };
 
-  const loader = tableLoader || isLoadingTableInfo;
+  const headLoader = viewLoader;
+  const dataLoader = tableLoader;
 
   useEffect(() => {
     initWorkers();
@@ -490,7 +482,8 @@ export const useTableProps = ({ tab }) => {
     setLimit,
     view,
     refetch,
-    loader,
+    headLoader,
+    dataLoader,
     setSortedDatas,
     sortedDatas,
     setFormValue,

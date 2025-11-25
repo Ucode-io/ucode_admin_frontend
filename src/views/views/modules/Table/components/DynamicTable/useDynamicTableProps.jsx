@@ -8,7 +8,12 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 
-export const useDynamicTableProps = ({ isResizable, columns, setLimit, data }) => {
+export const useDynamicTableProps = ({
+  isResizable,
+  columns,
+  setLimit,
+  data,
+}) => {
   const { i18n } = useTranslation();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -29,7 +34,7 @@ export const useDynamicTableProps = ({ isResizable, columns, setLimit, data }) =
     isRelationView && localStorage.getItem("detailPage") === "CenterPeek";
 
   const tableViewFiltersOpen = useSelector(
-    (state) => state.main.tableViewFiltersOpen
+    (state) => state.main.tableViewFiltersOpen,
   );
 
   const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
@@ -102,7 +107,7 @@ export const useDynamicTableProps = ({ isResizable, columns, setLimit, data }) =
             colWidth,
             isStiky: "ineffective",
             colIdx: idx - 1,
-          })
+          }),
         );
       };
 
@@ -118,27 +123,27 @@ export const useDynamicTableProps = ({ isResizable, columns, setLimit, data }) =
     createResizableTable(document.getElementById("resizeMe"));
   }, [data, isResizable, pageName, dispatch]);
 
-  const calculateWidth = (colId, index) => {
-    const colIdx = tableSettings?.[pageName]
-      ?.filter((item) => item?.isStiky === true)
-      ?.findIndex((item) => item?.id === colId);
+  // const calculateWidth = (colId, index) => {
+  //   const colIdx = tableSettings?.[pageName]
+  //     ?.filter((item) => item?.isStiky === true)
+  //     ?.findIndex((item) => item?.id === colId);
 
-    if (index === 0) {
-      return 0;
-    } else if (colIdx === 0) {
-      return 0;
-    } else if (
-      tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)
-        .length === 1
-    ) {
-      return 0;
-    } else {
-      return tableSettings?.[pageName]
-        ?.filter((item) => item?.isStiky === true)
-        ?.slice(0, colIdx)
-        ?.reduce((acc, item) => acc + item?.colWidth, 0);
-    }
-  };
+  //   if (index === 0) {
+  //     return 0;
+  //   } else if (colIdx === 0) {
+  //     return 0;
+  //   } else if (
+  //     tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)
+  //       .length === 1
+  //   ) {
+  //     return 0;
+  //   } else {
+  //     return tableSettings?.[pageName]
+  //       ?.filter((item) => item?.isStiky === true)
+  //       ?.slice(0, colIdx)
+  //       ?.reduce((acc, item) => acc + item?.colWidth, 0);
+  //   }
+  // };
 
   const calculateWidthFixedColumn = (colId) => {
     const prevElementIndex = columns?.findIndex((item) => item.id === colId);
@@ -158,7 +163,7 @@ export const useDynamicTableProps = ({ isResizable, columns, setLimit, data }) =
   };
 
   const renderColumns = (columns ?? []).filter((column) =>
-    Boolean(column?.attributes?.field_permission?.view_permission)
+    Boolean(column?.attributes?.field_permission?.view_permission),
   );
 
   const onCreateLimitOption = (value) => {
@@ -182,7 +187,7 @@ export const useDynamicTableProps = ({ isResizable, columns, setLimit, data }) =
       paginationActions.setTablePages({
         tableSlug: tableSlug,
         pageLimit: item,
-      })
+      }),
     );
   };
 

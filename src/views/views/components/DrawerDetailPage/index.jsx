@@ -136,10 +136,13 @@ function DrawerDetailPage({
               return {
                 ...section,
                 fields: section?.fields?.map((field) => {
-                  if (field?.is_visible_layout === undefined) {
+                  if (field?.attributes?.field_hide_layout === undefined) {
                     return {
                       ...field,
-                      is_visible_layout: true,
+                      attributes: {
+                        ...field?.attributes,
+                        field_hide_layout: false,
+                      },
                     };
                   } else {
                     return field;

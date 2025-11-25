@@ -49,7 +49,7 @@ function rowToObject(rowArray) {
   for (const cell of rowArray) {
     const slug = cell.slug;
 
-    if (cell.type === FIELD_TYPES.LOOKUP || FIELD_TYPES.LOOKUPS) {
+    if (cell.type === FIELD_TYPES.LOOKUP || cell.type === FIELD_TYPES.LOOKUPS) {
       obj[slug] =
         typeof cell.value === "object"
           ? (cell.value?.guid ?? null)

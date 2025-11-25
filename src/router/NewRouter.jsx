@@ -31,7 +31,7 @@ import VariableResourceForm from "../components/LayoutSidebar/Components/Resourc
 import Scenarios from "../components/LayoutSidebar/Components/Scenario";
 import PageFallback from "../components/PageFallback";
 import ReloadPage from "../components/ReloadComponent/index";
-import ReloadWrapper from "../components/ReloadWrapper";
+// import ReloadWrapper from "../components/ReloadWrapper";
 import LoginMicrofrontend from "../layouts/AuthLayout/LoginMicrofrontend";
 import MainLayout from "../layouts/MainLayout";
 import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
@@ -113,7 +113,7 @@ const NewRouter = () => {
   const auth = useSelector((state) => state.auth);
   const companyDefaultLink = useSelector((state) => state.company?.defaultPage);
   const applications = useSelector((state) => state.application.list);
-  const cashbox = useSelector((state) => state.cashbox.data);
+  // const cashbox = useSelector((state) => state.cashbox.data);
   const [favicon, setFavicon] = useState("");
 
   const parts = auth?.clientType?.default_page

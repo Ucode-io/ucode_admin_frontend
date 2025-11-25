@@ -283,7 +283,9 @@ export const useTableProps = ({ tab }) => {
       dataCount: 0,
     },
     refetch,
-    isLoading: tableLoader,
+    isLoading,
+    isFetching: tableFetching,
+    isRefetching,
   } = useQuery({
     queryKey: [
       QUERY_KEYS.TABLE_DATA_KEY,
@@ -357,6 +359,8 @@ export const useTableProps = ({ tab }) => {
       // setRows(combinedTableData);
     },
   });
+
+  const tableLoader = isRefetching ? false : isLoading || tableFetching;
 
   const deleteHandler = async (rowId) => {
     // setDeleteLoader(true);

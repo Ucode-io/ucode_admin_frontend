@@ -33,7 +33,7 @@ export const RelationElement = ({
   newColumn,
 }) => {
   const classes = useStyles();
-  console.log({ name });
+
   if (!isLayout)
     return (
       <Controller

@@ -1,7 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import LaunchIcon from "@mui/icons-material/Launch";
 import { Box, Popover } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import { get } from "@ngard/tiny-get";
 import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
@@ -27,61 +26,39 @@ import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
 import { groupFieldActions } from "@/store/groupField/groupField.slice";
 import { useViewContext } from "@/providers/ViewProvider";
 
-const useStyles = makeStyles(() => ({
-  input: {
-    "&::placeholder": {
-      color: "#fff",
-    },
-  },
-}));
-
 const CellRelationFormElementNew = ({
   relOptions,
-  tableView,
   isBlackBg,
-  isFormEdit,
   control,
   name,
   updateObject,
   disabled,
-  placeholder,
   field,
   isLayout,
-  disabledHelperText,
   setFormValue,
   index,
   defaultValue = null,
   relationfields,
-  data,
   isTableView = false,
   row,
   newUi,
   objectIdFromJWT,
   relationView,
-  newColumn,
   handleChange = () => {},
 }) => {
-  const classes = useStyles();
-
   if (!isLayout)
     return (
       <Controller
         control={control}
         name={name}
         defaultValue={defaultValue}
-        render={({ field: { onChange, value }, fieldState: { error } }) => {
+        render={({ field: { onChange, value } }) => {
           return field?.attributes?.cascading_tree_table_slug ? (
             <RelationGroupCascading
               field={field}
               tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
               value={value ?? ""}
               setFormValue={setFormValue}
-              classes={classes}
-              name={name}
-              control={control}
-              index={index}
               setValue={(e) => {
                 onChange(e);
                 updateObject();
@@ -91,13 +68,9 @@ const CellRelationFormElementNew = ({
             <CascadingElement
               field={field}
               tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
               value={value ?? ""}
               setFormValue={setFormValue}
-              classes={classes}
               name={name}
-              control={control}
               index={index}
               setValue={(e) => {
                 onChange(e);
@@ -108,13 +81,9 @@ const CellRelationFormElementNew = ({
             <AutoCompleteElement
               row={row}
               relOptions={relOptions}
-              tableView={tableView}
               disabled={disabled}
-              isFormEdit={isFormEdit}
-              placeholder={placeholder}
               isBlackBg={isBlackBg}
               value={value}
-              classes={classes}
               name={name}
               setValue={(e) => {
                 onChange(e?.guid);
@@ -122,20 +91,14 @@ const CellRelationFormElementNew = ({
                   handleChange({ name: row?.slug, value: e, rowId: row?.guid });
               }}
               field={field}
-              isTableView={isTableView}
-              defaultValue={defaultValue}
               tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
               setFormValue={setFormValue}
               control={control}
               index={index}
               relationfields={relationfields}
-              data={data}
               newUi={newUi}
               objectIdFromJWT={objectIdFromJWT}
               relationView={relationView}
-              newColumn={newColumn}
             />
           );
         }}

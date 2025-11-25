@@ -9,7 +9,6 @@ const parser = new Parser();
 
 const CellElementGeneratorForTableView = ({
   row,
-  data,
   field,
   index,
   fields,
@@ -32,7 +31,7 @@ const CellElementGeneratorForTableView = ({
 
   let relationTableSlug = "";
 
-  if (field?.id.includes("#")) {
+  if (field?.id?.includes("#")) {
     relationTableSlug = field?.id.split("#")[0];
   } else if (field?.type === "LOOKUP") {
     relationTableSlug = field?.table_slug;
@@ -59,8 +58,8 @@ const CellElementGeneratorForTableView = ({
   }, [field, i18n?.language]);
 
   const isDisabled =
-    (field.attributes?.disabled ||
-      !field.attributes?.field_permission?.edit_permission) &&
+    (row.attributes?.disabled ||
+      !row.attributes?.field_permission?.edit_permission) &&
     !isNewRow;
 
   const defaultValue = useMemo(() => {
@@ -99,21 +98,30 @@ const CellElementGeneratorForTableView = ({
   }, [field, objectIdFromJWT]);
 
   useEffect(() => {
-    tables?.forEach((table) => {
-      if (table.table_slug === relationTableSlug) {
-        setObjectIdFromJWT(table?.object_id);
-      }
-    });
+    if (tables?.length) {
+      tables?.forEach((table) => {
+        if (table.table_slug === relationTableSlug) {
+          setObjectIdFromJWT(table?.object_id);
+        }
+      });
+    }
   }, [tables, relationTableSlug, field]);
 
   useEffect(() => {
-    if (!row?.[field.slug] && (defaultValue || row?.[field.table_slug]?.guid)) {
-      setFormValue(computedSlug, row?.[field.table_slug]?.guid || defaultValue);
+    if (!newUi) {
+      if (
+        !row?.[field.slug] &&
+        (defaultValue || row?.[field.table_slug]?.guid)
+      ) {
+        setFormValue(
+          computedSlug,
+          row?.[field.table_slug]?.guid || defaultValue,
+        );
+      }
     }
   }, [row, computedSlug, defaultValue]);
 
   return getFieldByType({
-    isDisabled,
     control,
     updateObject,
     computedSlug,
@@ -121,15 +129,12 @@ const CellElementGeneratorForTableView = ({
     defaultValue,
     row,
     newUi,
-    index,
-    setFormValue,
     newColumn,
-    data,
     isTableView,
     fields,
     isWrapField,
-    debouncedUpdateObject,
     handleChange,
+    isDisabled,
   });
 };
 

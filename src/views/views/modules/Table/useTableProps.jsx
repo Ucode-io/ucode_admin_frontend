@@ -15,7 +15,7 @@ import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
 // eslint-disable-next-line import/no-unresolved
 import TableWorker from "@/workers/tableWorker?worker";
-
+import { staticRow } from "./static";
 
 // function combine(columns, rows) {
 //   return rows.map((row) => {
@@ -274,6 +274,79 @@ export const useTableProps = ({ tab }) => {
       ? parseInt(searchText)
       : searchText;
 
+  // const {
+  //   data: { tableData, dataCount } = {
+  //     tableData: [],
+  //     pageCount: 1,
+  //     fieldView: [],
+  //     fiedlsarray: [],
+  //     dataCount: 0,
+  //   },
+  //   refetch,
+  //   isLoading,
+  //   isFetching: tableFetching,
+  // } = useQuery({
+  //   queryKey: [
+  //     QUERY_KEYS.TABLE_DATA_KEY,
+  //     {
+  //       tableSlug,
+  //       searchText,
+  //       sortedDatas,
+  //       currentPage,
+  //       limit,
+  //       filters: { ...filters, [tab?.slug]: tab?.value },
+  //       pagination,
+  //       orderBy,
+  //       viewId,
+  //       computedSortColumns,
+  //       checkedColumns,
+  //       menuId,
+  //     },
+  //   ],
+  //   queryFn: () => {
+  //     return menuService.getFieldsTableData(menuId, viewId, tableSlug, {
+  //       data: {
+  //         row_view_id: view?.id,
+  //         offset: pageToOffset(currentPage, pagination),
+  //         order: computedSortColumns,
+  //         view_fields: checkedColumns,
+  //         search: tableSearch,
+  //         [`${selectedV?.table_slug}_id`]: isRelationView
+  //           ? selectedV?.detailId
+  //           : undefined,
+  //         limit: pagination ?? limit,
+  //         ...filters,
+  //         [tab?.slug]: tab
+  //           ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
+  //               ?.type === "MULTISELECT"
+  //             ? [`${tab?.value}`]
+  //             : tab?.value
+  //           : "",
+  //       },
+  //     });
+  //   },
+  //   enabled: Boolean(tableSlug && menuId && viewId && columns?.length > 0),
+  //   select: (res) => {
+  //     return {
+  //       tableData: res.data?.response ?? [],
+  //       pageCount: isNaN(res.data?.count)
+  //         ? 1
+  //         : Math.ceil(res.data?.count / (pagination ?? limit)),
+  //       dataCount: res?.data?.count,
+  //     };
+  //   },
+  //   onSuccess: (data) => {
+  //     if (!workerRef.current) return;
+
+  //     workerRef.current.postMessage({
+  //       tableData: data.tableData,
+  //       columns,
+  //     });
+  //   },
+  //   staleTime: 1000 * 60,
+  //   keepPreviousData: true,
+  // });
+
   const {
     data: { tableData, dataCount } = {
       tableData: [],
@@ -285,67 +358,64 @@ export const useTableProps = ({ tab }) => {
     refetch,
     isLoading,
     isFetching: tableFetching,
-  } = useQuery({
-    queryKey: [
-      QUERY_KEYS.TABLE_DATA_KEY,
+  } = useQuery(
+    [
+      "GET_OBJECTS_LIST_DATA",
       {
         tableSlug,
-        searchText,
-        sortedDatas,
-        currentPage,
-        limit,
-        filters: { ...filters, [tab?.slug]: tab?.value },
-        pagination,
-        orderBy,
-        viewId,
-        computedSortColumns,
-        checkedColumns,
-        menuId,
+        filters: {
+          offset: pageToOffset(currentPage, pagination),
+          pagination,
+          ...filters,
+          searchText,
+          [tab?.slug]: tab?.value,
+        },
       },
     ],
-    queryFn: () => {
-      return menuService.getFieldsTableData(menuId, viewId, tableSlug, {
+    () =>
+      constructorObjectService.getListV2(tableSlug, {
         data: {
-          row_view_id: view?.id,
-          offset: pageToOffset(currentPage, pagination),
-          order: computedSortColumns,
-          view_fields: checkedColumns,
-          search: tableSearch,
-          [`${selectedV?.table_slug}_id`]: isRelationView
-            ? selectedV?.detailId
-            : undefined,
-          limit: pagination ?? limit,
           ...filters,
+          limit: pagination ?? limit,
+          search: tableSearch,
+          view_fields: checkedColumns,
           [tab?.slug]: tab
             ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
                 ?.type === "MULTISELECT"
               ? [`${tab?.value}`]
               : tab?.value
             : "",
+          offset: pageToOffset(currentPage, pagination),
         },
-      });
-    },
-    enabled: Boolean(tableSlug && menuId && viewId && columns?.length > 0),
-    select: (res) => {
-      return {
-        tableData: res.data?.response ?? [],
-        pageCount: isNaN(res.data?.count)
-          ? 1
-          : Math.ceil(res.data?.count / (pagination ?? limit)),
-        dataCount: res?.data?.count,
-      };
-    },
-    onSuccess: (data) => {
-      if (!workerRef.current) return;
+      }),
+    {
+      enabled: !!tableSlug,
+      select: (res) => {
+        return {
+          tableData: res.data?.response ?? [],
+          pageCount: isNaN(res.data?.count)
+            ? 1
+            : Math.ceil(res.data?.count / (pagination ?? limit)),
+          dataCount: res?.data?.count,
+        };
+      },
+      onSuccess: (data) => {
+        if (!workerRef.current) return;
 
-      workerRef.current.postMessage({
-        tableData: data.tableData,
-        columns,
-      });
+        workerRef.current.postMessage({
+          tableData: data.tableData,
+          columns,
+        });
+
+        // setCount(data?.data?.count);
+        // setRowData([...(data?.data?.response ?? [])] ?? []);
+        // setLoadings(false);
+      },
+      onError: () => {
+        // setLoadings(false);
+      },
     },
-    staleTime: 1000 * 60,
-    keepPreviousData: true,
-  });
+  );
 
   const tableLoader = isLoading || (!tableData.length && tableFetching);
 
@@ -491,6 +561,7 @@ export const useTableProps = ({ tab }) => {
     watch,
     currentPage,
     rows,
+    // rows: [staticRow],
     handleChange: handleChangeInput,
     onRowClick,
     updateObject,

@@ -50,9 +50,8 @@ export const getFieldByType = ({
   fields,
   isWrapField,
   handleChange,
+  isDisabled,
 }) => {
-  const isDisabled = row?.attributes?.disabled;
-
   const [errors, setErrors] = useState({});
 
   const required = row.attributes?.required;

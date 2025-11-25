@@ -14,6 +14,9 @@ const useStyles = makeStyles(() => ({
       color: "#fff",
     },
   },
+  helperText: {
+    bottom: "-3px",
+  },
 }));
 
 const HFTextField = ({
@@ -95,7 +98,7 @@ const HFTextField = ({
             error={error}
             fullWidth={fullWidth}
             placeholder={placeholder}
-            autoFocus={tabIndex === 1}
+            autoFocus={tabIndex === 1 || error?.message}
             InputProps={{
               readOnly: disabled,
               startAdornment,

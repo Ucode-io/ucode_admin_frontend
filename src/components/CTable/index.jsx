@@ -132,6 +132,8 @@ export const CTableBody = forwardRef(
   }
 );
 
+CTableBody.displayName = "CTableBody";
+
 export const CTableRow = ({children, className, parentRef, ...props}) => {
   return (
     <tr className={`CTableRow ${className}`} {...props} ref={parentRef}>

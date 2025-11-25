@@ -186,6 +186,7 @@ export const Board = () => {
                             subGroupFieldSlug={subGroupFieldSlug}
                             layoutType={layoutType}
                             menuItem={menuItem}
+                            handleCreateItem={handleCreateItem}
                           />
                         ))}
                       </div>
@@ -221,6 +222,7 @@ export const Board = () => {
                       groupField={groupField}
                       layoutType={layoutType}
                       menuItem={menuItem}
+                      handleCreateItem={handleCreateItem}
                     />
                   </div>
                 ))}

@@ -68,12 +68,12 @@ export const TableRow = ({
         <>
           <CTableRow
             style={{ ...style, height: "32px" }}
-            className="new-ui"
+            className="new-ui small"
             ref={parentRef}
           >
             <CTableCell
               align="center"
-              className="data_table__number_cell"
+              className="data_table__number_cell small"
               style={{
                 padding: "0 4px",
                 position: "sticky",

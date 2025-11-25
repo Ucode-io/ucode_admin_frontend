@@ -446,7 +446,9 @@ export const useViewsProps = ({ isRelationView }) => {
       visibleColumns: [],
       visibleRelationColumns: [],
     },
-    isLoading: isLoadingTableInfo,
+    isLoading: isLoadingInfo,
+    isFetching: isFetchingTableInfo,
+    isRefetching: isRefetchingTableInfo,
     refetch: refetchTableInfo,
   } = useGetTableInfo(
     {
@@ -499,6 +501,10 @@ export const useViewsProps = ({ isRelationView }) => {
         : selectedView?.table_slug,
     },
   );
+
+  const isLoadingTableInfo = isRefetchingTableInfo
+    ? false
+    : isFetchingTableInfo || isLoadingInfo;
 
   const tableName =
     tableInfo?.attributes?.[`label_${i18n.language}`] || tableInfo?.label;

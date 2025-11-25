@@ -94,7 +94,6 @@ const TimelineMonthBlock = ({
   useEffect(() => {
     if (formattedDate === today && dayBlockRef.current) {
       requestAnimationFrame(() => {
-        console.log("Month effect");
         scrollToToday(dayBlockRef.current);
       });
     }

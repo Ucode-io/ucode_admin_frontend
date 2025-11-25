@@ -1,5 +1,5 @@
-import { ChakraProvider, Flex } from "@chakra-ui/react";
-import { Pagination, Button, Skeleton } from "@mui/material";
+import { ChakraProvider, Flex, Skeleton } from "@chakra-ui/react";
+import { Pagination, Button } from "@mui/material";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import SummaryRow from "@/components/DataTable/SummaryRow";
@@ -46,7 +46,8 @@ export const DynamicTable = ({
   relationAction,
   onChecked,
   refetch = () => {},
-  loader,
+  headLoader,
+  dataLoader,
   isPaginationPositionSticky,
   getAllData = () => {},
   handleChange = () => {},
@@ -76,7 +77,13 @@ export const DynamicTable = ({
     tableSlug,
     menuItem,
     isRelationView,
-  } = useDynamicTableProps({ columns, isResizable, setLimit, data, fields });
+  } = useDynamicTableProps({
+    columns,
+    isResizable,
+    setLimit,
+    data,
+    fields,
+  });
 
   return (
     <div
@@ -116,7 +123,7 @@ export const DynamicTable = ({
                   );
                 }}
               />
-              {loader
+              {headLoader
                 ? Array.from({ length: 8 }).map((_, index) => (
                     <th
                       key={index}
@@ -180,8 +187,10 @@ export const DynamicTable = ({
             </tr>
           </thead>
           <tbody>
-            {loader ? (
-              <TableDataSkeleton colLength={10} />
+            {dataLoader || headLoader ? (
+              <TableDataSkeleton
+                colLength={headLoader ? 10 : renderColumns.length + 2}
+              />
             ) : (
               rows?.map((row, index) => {
                 return (

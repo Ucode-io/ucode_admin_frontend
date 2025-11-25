@@ -30,7 +30,8 @@ export const Table = ({ tab, ...props }) => {
     setLimit,
     view,
     refetch,
-    loader,
+    headLoader,
+    dataLoader,
     setSortedDatas,
     sortedDatas,
     setFormValue,
@@ -74,7 +75,8 @@ export const Table = ({ tab, ...props }) => {
           refetch={refetch}
           updateObject={updateObject}
           handleChange={handleChange}
-          loader={loader}
+          headLoader={headLoader}
+          dataLoader={dataLoader}
           rows={rows}
           {...props}
         />

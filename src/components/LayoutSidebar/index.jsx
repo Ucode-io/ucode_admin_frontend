@@ -86,6 +86,8 @@ import {
   SIDEBAR_CLOSED_WIDTH,
   SIDEBAR_OPENED_WIDTH,
 } from "@/utils/constants/main";
+import { viewsActions } from "@/store/views/view.slice";
+import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
 
@@ -93,6 +95,7 @@ const LayoutSidebar = ({
   toggleDarkMode = () => {},
   darkMode,
   handleOpenProfileModal = () => {},
+  resetQueryClient = () => {},
 }) => {
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
@@ -137,7 +140,7 @@ const LayoutSidebar = ({
   const [templatePopover, setTemplatePopover] = useState("");
 
   const sidebarIsOpen = useSelector(
-    (state) => state.main.settingsSidebarIsOpen
+    (state) => state.main.settingsSidebarIsOpen,
   );
 
   const setSubMenuIsOpen = (val) => {
@@ -296,10 +299,10 @@ const LayoutSidebar = ({
                 read: true,
               },
             },
-          }))
+          })),
         );
       },
-    }
+    },
   );
 
   const onDrop = (dropResult) => {
@@ -356,7 +359,7 @@ const LayoutSidebar = ({
 
       window.history.replaceState(
         { ...location.state, refetch: undefined },
-        ""
+        "",
       );
     }
   }, [location?.state?.refetch, hasFetchedOnce]);
@@ -411,7 +414,7 @@ const LayoutSidebar = ({
           translations: item.translations || {},
         }));
         setProfileSettingLan(
-          formattedData?.find((item) => item?.key === "Profile Setting")
+          formattedData?.find((item) => item?.key === "Profile Setting"),
         );
         setMenuLanguages(formattedData?.find((item) => item?.key === "Menu"));
         setLanguageData(formattedData);
@@ -510,6 +513,7 @@ const LayoutSidebar = ({
             menuLanguages={menuLanguages}
             profileSettingLan={profileSettingLan}
             handleOpenProfileModal={handleOpenProfileModal}
+            resetQueryClient={resetQueryClient}
           />
         </Flex>
 
@@ -1170,7 +1174,7 @@ const AIChat = forwardRef(
         />
       </>
     );
-  }
+  },
 );
 
 const Header = ({
@@ -1179,6 +1183,7 @@ const Header = ({
   menuLanguages,
   profileSettingLan,
   handleOpenProfileModal,
+  resetQueryClient,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -1222,7 +1227,7 @@ const Header = ({
         dispatch(companyActions.setProjectId(environment.project_id));
         dispatch(permissionsActions.setPermissions(res?.permissions));
         dispatch(
-          permissionsActions.setGlobalPermissions(res?.global_permission)
+          permissionsActions.setGlobalPermissions(res?.global_permission),
         );
         store.dispatch(authActions.setTokens(res));
         navigate("/");
@@ -1247,7 +1252,7 @@ const Header = ({
           client_type_id: clientTypeId,
           "user-id": userId,
         },
-        { "Environment-id": env?.id }
+        { "Environment-id": env?.id },
       )
       .then((res) => {
         console.log("ressssssssssssssssss", res?.data?.response);
@@ -1366,6 +1371,7 @@ const Header = ({
             <ProfileBottom
               projectInfo={projectInfo}
               menuLanguages={profileSettingLan}
+              resetQueryClient={resetQueryClient}
             />
           </>
         </PopoverContent>
@@ -1510,17 +1516,17 @@ const ProfilePanel = ({
   );
 };
 
-const ProfileBottom = ({projectInfo, menuLanguages}) => {
+const ProfileBottom = ({ projectInfo, menuLanguages, resetQueryClient }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {isOpen, onOpen, onClose} = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const projectId = useSelector((state) => state.company.projectId);
   const accessToken = useSelector((state) => state.auth?.token);
 
   const popoverRef = useRef();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const defaultLanguage = useSelector(
-    (state) => state.languages.defaultLanguage
+    (state) => state.languages.defaultLanguage,
   );
 
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -1542,7 +1548,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
 
   const getDefaultLanguage = () => {
     const isLanguageExist = languages?.some(
-      (item) => defaultLanguage === item?.slug
+      (item) => defaultLanguage === item?.slug,
     );
 
     if (languages?.length) {
@@ -1573,13 +1579,18 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
   }, [languages?.length]);
 
   const logoutClickHandler = () => {
-    authService.sendAccessToken({access_token: accessToken}).then((res) => {
+    authService.sendAccessToken({ access_token: accessToken }).then((res) => {
       indexedDB.deleteDatabase("SearchTextDB");
       indexedDB.deleteDatabase("ChartDB");
       navigate("/");
       dispatch(menuAccordionActions.toggleMenuChilds({}));
       store.dispatch(authActions.logout());
       dispatch(companyActions.logout());
+      dispatch(viewsActions.clearViews());
+      dispatch(detailDrawerActions.reset());
+      resetQueryClient();
+      localStorage.clear();
+      sessionStorage.clear();
     });
   };
 
@@ -1602,9 +1613,10 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
           cursor: "pointer",
           color: "#475467",
         }}
-        _hover={{background: "#eeee"}}
-        onClick={onOpenModal}>
-        <Logout style={{color: "#475467"}} />
+        _hover={{ background: "#eeee" }}
+        onClick={onOpenModal}
+      >
+        <Logout style={{ color: "#475467" }} />
         <span>
           {generateLangaugeText(menuLanguages, i18n?.language, "Log out") ||
             "Log out"}
@@ -1625,16 +1637,17 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
             padding: "20px",
             boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
             textAlign: "center",
-          }}>
+          }}
+        >
           <Box display="flex" justifyContent="center" mb={2}>
-            <LogoutIcon style={{width: "48", height: "28px"}} />
+            <LogoutIcon style={{ width: "48", height: "28px" }} />
           </Box>
 
           <Box fontWeight={700} fontSize={"18px"}>
             {generateLangaugeText(
               menuLanguages,
               i18n?.language,
-              "Log out of your account"
+              "Log out of your account",
             ) || "Log out of your account"}
           </Box>
 
@@ -1642,7 +1655,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
             {generateLangaugeText(
               menuLanguages,
               i18n?.language,
-              "You will need to log back in to access your workspace."
+              "You will need to log back in to access your workspace.",
             )}
           </Box>
 
@@ -1655,9 +1668,10 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
               fullWidth
               bg={"#a63431"}
               color="#fff"
-              _hover={{bg: "#a63400"}}
-              style={{height: "40px"}}
-              onClick={logoutClickHandler}>
+              _hover={{ bg: "#a63400" }}
+              style={{ height: "40px" }}
+              onClick={logoutClickHandler}
+            >
               {generateLangaugeText(menuLanguages, i18n?.language, "Logout") ||
                 "Logout"}
             </Button>
@@ -1668,10 +1682,11 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
               fontSize={14}
               fullWidth
               bg={"#fff"}
-              _hover={{bg: "#eee"}}
+              _hover={{ bg: "#eee" }}
               border="2px solid #eee"
-              style={{height: "40px"}}
-              onClick={onCloseModal}>
+              style={{ height: "40px" }}
+              onClick={onCloseModal}
+            >
               {generateLangaugeText(menuLanguages, i18n?.language, "Cancel") ||
                 "Cancel"}
             </Button>

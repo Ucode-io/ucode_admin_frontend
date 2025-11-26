@@ -19,7 +19,7 @@ import {iconCategoryActions} from "../../store/IconCategory/iconCategory.slice";
 import AddingGroup from "./AddingGroup";
 import { settingsModalActions } from "@/store/settingsModal/settingsModal.slice";
 
-const MainLayout = ({ setFavicon, favicon }) => {
+const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
   const dispatch = useDispatch();
   const { appId } = useParams();
   const projectId = store.getState().company.projectId;
@@ -40,7 +40,7 @@ const MainLayout = ({ setFavicon, favicon }) => {
   });
 
   const [darkMode, setDarkMode] = useState(
-    () => localStorage.getItem("theme") === "dark"
+    () => localStorage.getItem("theme") === "dark",
   );
 
   useEffect(() => {
@@ -94,7 +94,7 @@ const MainLayout = ({ setFavicon, favicon }) => {
       {
         key: "invite",
         value: true,
-      }
+      },
     );
     handleOpenProfileModal();
   };
@@ -136,6 +136,7 @@ const MainLayout = ({ setFavicon, favicon }) => {
             toggleDarkMode={toggleDarkMode}
             handleOpenProfileModal={handleOpenProfileModal}
             handleOpenUserInvite={handleOpenUserInvite}
+            resetQueryClient={resetQueryClient}
           />
           <div
             className={

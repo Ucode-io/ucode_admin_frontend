@@ -107,7 +107,7 @@ const MatrixPage = lazy(() => import("../views/Matrix"));
 const MatrixDetail = lazy(() => import("../views/Matrix/MatrixDetail"));
 const MatrixRolePage = lazy(() => import("../views/Matrix/MatrixRolePage"));
 
-const NewRouter = () => {
+const NewRouter = ({ resetQueryClient }) => {
   const location = useLocation();
   const isAuth = useSelector((state) => state.auth.isAuth);
   const auth = useSelector((state) => state.auth);
@@ -205,7 +205,13 @@ const NewRouter = () => {
     <Routes>
       <Route
         path="/"
-        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}
+        element={
+          <MainLayout
+            favicon={favicon}
+            setFavicon={setFavicon}
+            resetQueryClient={resetQueryClient}
+          />
+        }
       >
         <Route path="client-types" element={<ClientTypes />} />
 

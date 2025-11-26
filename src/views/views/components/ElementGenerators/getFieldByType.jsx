@@ -228,6 +228,7 @@ export const getFieldByType = ({
     ),
     FORMULA: (
       <HFFormulaField
+        fieldsList={fields}
         disabled={isDisabled}
         isTableView={true}
         name={computedSlug}

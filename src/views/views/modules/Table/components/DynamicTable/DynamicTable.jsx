@@ -123,7 +123,7 @@ export const DynamicTable = ({
                   );
                 }}
               />
-              {headLoader
+              {headLoader || dataLoader
                 ? Array.from({ length: 8 }).map((_, index) => (
                     <th
                       key={index}
@@ -188,9 +188,7 @@ export const DynamicTable = ({
           </thead>
           <tbody>
             {dataLoader || headLoader ? (
-              <TableDataSkeleton
-                colLength={headLoader ? 10 : renderColumns.length + 2}
-              />
+              <TableDataSkeleton colLength={10} />
             ) : (
               rows?.map((row, index) => {
                 return (

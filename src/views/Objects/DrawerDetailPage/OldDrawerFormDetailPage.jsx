@@ -157,6 +157,7 @@ function OldDrawerFormDetailPage({
   }, [isMultiLanguage, projectInfo]);
 
   const filterFields = (field) => {
+    if (field?.attributes?.field_hide_layout) return false;
     const slugParts = field?.slug?.split("_");
     const lastPart = slugParts?.[slugParts.length - 1];
 
@@ -189,6 +190,7 @@ function OldDrawerFormDetailPage({
           <div className={"language"}>
             {projectInfo?.language?.map((lang) => (
               <Button
+                key={lang?.short_name}
                 className={activeLang === lang?.short_name && "active"}
                 onClick={() => setActiveLang(lang?.short_name)}
               >

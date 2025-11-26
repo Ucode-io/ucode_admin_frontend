@@ -1,7 +1,7 @@
 import { viewsActions } from "@/store/views/view.slice";
 import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -402,7 +402,7 @@ export const useViewsProps = ({ isRelationView }) => {
       }
     },
     slateTime: 0,
-    keepPreviousData: true,
+    keepPreviousData: false,
   });
 
   const viewLoader = isLoadingViews || (!selectedView && isFetchingViews);
@@ -496,8 +496,8 @@ export const useViewsProps = ({ isRelationView }) => {
           setOrderBy(data?.orderBy);
         }
       },
-      staleTime: 1000 * 60, // 1 min
-      cacheTime: 1000 * 60 * 10, // 10 min
+      // staleTime: 1000 * 60, // 1 min
+      // cacheTime: 1000 * 60 * 10, // 10 min
     },
     {
       menuId,

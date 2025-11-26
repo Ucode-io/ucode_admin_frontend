@@ -284,7 +284,6 @@ export const useTableProps = ({ tab }) => {
     },
     refetch,
     isLoading,
-    isFetching: tableFetching,
   } = useQuery({
     queryKey: [
       QUERY_KEYS.TABLE_DATA_KEY,
@@ -343,11 +342,12 @@ export const useTableProps = ({ tab }) => {
         columns,
       });
     },
-    staleTime: 1000 * 60,
-    keepPreviousData: true,
+    staleTime: 0,
+    cacheTime: 0,
+    keepPreviousData: false,
   });
 
-  const tableLoader = isLoading || (!tableData.length && tableFetching);
+  const tableLoader = isLoading;
 
   const deleteHandler = async (rowId) => {
     // setDeleteLoader(true);
@@ -385,7 +385,7 @@ export const useTableProps = ({ tab }) => {
   }, [reset, tableData]);
 
   useEffect(() => {
-    if (tableSlug) {
+    if (tableSlug && menuId && viewId && columns?.length > 0) {
       refetch();
     }
     dispatch(
@@ -440,27 +440,6 @@ export const useTableProps = ({ tab }) => {
       tableData,
     });
   }, [columns]);
-
-  // useEffect(() => {
-  //   if (!tableData || tableData.length === 0 || isFirstRender.current) return;
-
-  //   isFirstRender.current = false;
-
-  //   const newCombined = combine(columns, tableData);
-
-  //   rowsMap.clear();
-  //   cellMap.clear();
-
-  //   newCombined.forEach((row) => {
-  //     const rowId = row?.[0]?.guid;
-  //     rowsMap.set(rowId, row);
-  //     row.forEach((cell) => {
-  //       cellMap.set(rowId + ":" + cell.slug, cell);
-  //     });
-  //   });
-
-  //   setRows(newCombined);
-  // }, [columns]);
 
   return {
     tableLan,

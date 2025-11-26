@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import NewRouter from "./NewRouter";
 import OldRouter from "./OldRouter";
 
-function Router() {
+function Router({ resetQueryClient }) {
   const [routerSwitch, setRouterSwitch] = useState(null);
 
   useEffect(() => {
@@ -22,7 +22,15 @@ function Router() {
     return <>Loading...</>;
   }
 
-  return <>{!!routerSwitch ? <NewRouter /> : <OldRouter />}</>;
+  return (
+    <>
+      {!!routerSwitch ? (
+        <NewRouter resetQueryClient={resetQueryClient} />
+      ) : (
+        <OldRouter resetQueryClient={resetQueryClient} />
+      )}
+    </>
+  );
 }
 
 export default Router;

@@ -22,6 +22,7 @@ const CellElementGeneratorForTableView = ({
   updateObject = () => {},
   handleChange = () => {},
   newUi = false,
+  rowData = [],
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -130,6 +131,7 @@ const CellElementGeneratorForTableView = ({
     isWrapField,
     debouncedUpdateObject,
     handleChange,
+    rowData,
   });
 };
 

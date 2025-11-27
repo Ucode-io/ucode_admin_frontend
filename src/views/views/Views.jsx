@@ -81,6 +81,7 @@ export const Views = ({
     refetchMainDataList,
     isLoadingTableInfo,
     viewLoader,
+    setViewsLoader,
   } = useViewsProps({ isRelationView });
 
   return (
@@ -144,6 +145,7 @@ export const Views = ({
           navigateCreatePage,
           isLoadingTableInfo,
           viewLoader,
+          setViewsLoader,
         }}
       >
         <FilterProvider

@@ -176,6 +176,7 @@ export const TableRow = ({
                         getValues={getValues}
                         mainForm={viewForm}
                         row={field}
+                        rowData={row}
                         index={rowIndex}
                         control={control}
                         setFormValue={setFormValue}

@@ -50,6 +50,7 @@ export const getFieldByType = ({
   fields,
   isWrapField,
   handleChange,
+  rowData,
 }) => {
   const isDisabled = row?.attributes?.disabled;
 
@@ -244,6 +245,7 @@ export const getFieldByType = ({
         isTransparent={true}
         newUi={newUi}
         row={row}
+        rowData={rowData}
       />
     ),
     INTERNATION_PHONE: (

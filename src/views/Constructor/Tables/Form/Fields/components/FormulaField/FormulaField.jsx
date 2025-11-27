@@ -104,58 +104,6 @@ export const FormulaField = ({
         </Box>
       ) : (
         <Box>
-          {/* <Box className={cls.formula}>
-            <DropdownSelect
-              className={cls.input}
-              disabledHelperText
-              options={fields}
-              name="attributes.from_formula"
-              control={control}
-              fullWidth
-              id="variable"
-              required
-              placeholder={
-                generateLangaugeText(
-                  tableLan,
-                  i18n?.language,
-                  "Select variable"
-                ) || "Select variable"
-              }
-            />
-            <span
-              id={`math_plus`}
-              className={clsx(cls.math, cls[`math_${mathType?.label}`])}
-              onClick={() => {
-                const nextItemIndex = math?.findIndex(
-                  (item) => item.value === mathType?.value
-                );
-                if (nextItemIndex < math.length - 1) {
-                  setValue("attributes.math", math[nextItemIndex + 1]);
-                } else {
-                  setValue("attributes.math", math[0]);
-                }
-              }}
-            >
-              <span>{mathType?.value}</span>
-            </span>
-            <DropdownSelect
-              className={cls.input}
-              disabledHelperText
-              options={fields}
-              id="variable_second"
-              name="attributes.to_formula"
-              control={control}
-              fullWidth
-              required
-              placeholder={
-                generateLangaugeText(
-                  tableLan,
-                  i18n?.language,
-                  "Select variable"
-                ) || "Select variable"
-              }
-            />
-          </Box> */}
           <Box className={cls.suggestionsContainer}>
             <div
               // ref={mirrorRef}
@@ -181,74 +129,7 @@ export const FormulaField = ({
                 fields={fieldsList}
               />
             </Box>
-            {/* <textarea
-              className={cls.textArea}
-              ref={textareaRef}
-              disabledHelperText
-              id="formula_textarea"
-              required
-              placeholder={
-                generateLangaugeText(
-                  tableLan,
-                  i18n?.language,
-                  "Write or tick  formula"
-                ) || "Write or tick  formula"
-              }
-              value={code}
-              onChange={(e) => {
-                handleChange(e);
-                setValue("attributes.formula", e.target.value);
-              }}
-            />
-            {showSuggestions && (
-              <ul
-                className={cls.suggestions}
-                style={{
-                  top: `${Math.ceil(textareaRef.current?.value?.length / 35) * 25}px`,
-                }}
-              >
-                {filteredSuggestions.map((s, i) => (
-                  <li
-                    key={i}
-                    onClick={() => handleSuggestionClick(s?.slug)}
-                    className={cls.suggestion}
-                  >
-                    <img
-                      src={getColumnIconPath({ column: s })}
-                      width={"12px"}
-                      height={"12px"}
-                      alt=""
-                    />
-                    {s?.slug}
-                  </li>
-                ))}
-              </ul>
-            )} */}
-            {/* <HFTextArea
-              className={cls.input}
-              disabledHelperText
-              name="attributes.formula"
-              control={control}
-              fullWidth
-              id="formula_textarea"
-              required
-              placeholder={
-                generateLangaugeText(
-                  tableLan,
-                  i18n?.language,
-                  "Write or tick  formula"
-                ) || "Write or tick  formula"
-              }
-            /> */}
           </Box>
-          {/* <h2 className={cls.fieldHeading}>
-            {generateLangaugeText(tableLan, i18n?.language, "Fields list") ||
-              "Fields list"}
-            :
-          </h2> */}
-          {/* <Box marginBottom="8px" marginTop="12px">
-            <SearchInput onChange={handleSearch} />
-          </Box> */}
           <Box display="grid" gridTemplateColumns="230px 1fr" gap="8px">
             <Box
               display="flex"

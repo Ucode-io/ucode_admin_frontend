@@ -12,9 +12,7 @@ const IconGeneratorIconJs = ({icon, size = 20, prefix = "", ...props}) => {
         src={icon}
         width={size}
         height={size}
-        preProcessor={(code) =>
-          code.replace("path", 'path fill="currentColor"')
-        }
+        // preProcessor={(code) => code.replace("path", "path ")}
         {...props}
       />
     );
@@ -33,9 +31,9 @@ const IconGeneratorIconJs = ({icon, size = 20, prefix = "", ...props}) => {
         src={`${import.meta.env.VITE_ICONJS_PICKER_URL}/${iconName}.svg`}
         width={size}
         height={size}
-        preProcessor={(code) =>
-          code.replace("path", 'path fill="currentColor"')
-        }
+        // preProcessor={(code) =>
+        //   code.replace("path", 'path fill="currentColor"')
+        // }
         {...props}
       />
     );
@@ -46,7 +44,7 @@ const IconGeneratorIconJs = ({icon, size = 20, prefix = "", ...props}) => {
       src={`${import.meta.env.VITE_ICONJS_PICKER_URL}/${prefix}:${icon}.svg`}
       width={size}
       height={size}
-      preProcessor={(code) => code.replace("path", 'path fill="currentColor"')}
+      // preProcessor={(code) => code.replace("path", 'path fill="currentColor"')}
       {...props}
     />
   ) : (
@@ -54,7 +52,7 @@ const IconGeneratorIconJs = ({icon, size = 20, prefix = "", ...props}) => {
       src={`${import.meta.env.VITE_ICONJS_PICKER_URL}/${icon}.svg`}
       width={size}
       height={size}
-      preProcessor={(code) => code.replace("path", 'path fill="currentColor"')}
+      // preProcessor={(code) => code.replace("path", 'path fill="currentColor"')}
       {...props}
     />
   );

@@ -8,8 +8,13 @@ import YMonthPicker from "./YMonthPicker";
 import YYearPicker from "./YYearPicker";
 import {format} from "date-fns";
 import YQuarterPicker from "./YQuarterPicker";
+import { useTranslation } from "react-i18next";
+import InlineSVG from "react-inlinesvg";
+import { getColumnIconPath } from "@/utils/constants/tableIcons";
 
 function YDateFilter({ field, value, onChange = () => {}, name, withTime }) {
+  const { i18n } = useTranslation();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -20,6 +25,8 @@ function YDateFilter({ field, value, onChange = () => {}, name, withTime }) {
     const d = new Date(date);
     return d instanceof Date && !isNaN(d);
   };
+
+  const showCloseIcon = isValidDate(value?.$gte) && isValidDate(value?.$lte);
 
   return (
     <>
@@ -35,14 +42,26 @@ function YDateFilter({ field, value, onChange = () => {}, name, withTime }) {
             borderRadius: "12px",
             cursor: "pointer",
             fontSize: "12px",
+            borderColor: showCloseIcon ? "#2383e2" : "#EAECF0",
+            backgroundColor: showCloseIcon
+              ? "rgba(35, 131, 226, 0.07)"
+              : "none",
           }}
         >
-          <span>
+          <InlineSVG
+            src={getColumnIconPath({ column: field })}
+            width={14}
+            height={14}
+            color={showCloseIcon ? "#2383e2" : "#909EAB"}
+          />
+          <span style={{ color: showCloseIcon ? "#2383e2" : "#909EAB" }}>
             {isValidDate(value?.$gte) && isValidDate(value?.$lte) ? (
               `${format(new Date(value?.$gte), "dd.MM.yyyy")} - ${format(new Date(value?.$lte), "dd.MM.yyyy")}`
             ) : (
               <span style={{ color: "#909EAB" }}>
-                {"DD.MM.YYYY - DD.MM.YYYY"}
+                {field?.attributes?.[`label_${i18n?.language}`] ||
+                  field.label ||
+                  "DD.MM.YYYY - DD.MM.YYYY"}
               </span>
             )}
           </span>
@@ -58,6 +77,7 @@ function YDateFilter({ field, value, onChange = () => {}, name, withTime }) {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                color: "#2383e2",
               }}
             >
               <CloseIcon style={{ height: "16px", width: "16px" }} />

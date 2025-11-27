@@ -5,57 +5,54 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import {Parser} from "hot-formula-parser";
-import {useEffect,useState} from "react";
-import {numberWithSpaces} from "@/utils/formatNumbers";
-import {Lock} from "@mui/icons-material";
+import { useState } from "react";
+import { numberWithSpaces } from "@/utils/formatNumbers";
 import FunctionsIcon from "@mui/icons-material/Functions";
-
-const parser = new Parser();
 
 const HFFormulaField = ({
   name,
   isTableView = false,
   tabIndex,
-  fieldsList,
   disabled,
   row,
   ...props
 }) => {
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
 
-  const [innerValue, setInnerValue] = useState(row?.value);
+  const value = row?.value;
 
   const formula = row?.attributes?.formula ?? "";
 
-  const updateValue = () => {
-    let computedFormula = formula;
+  // const updateValue = () => {
+  //   let computedFormula = formula;
 
-    const fieldsListSorted = fieldsList
-      ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
-      : [];
+  //   const fieldsListSorted = fieldsList
+  //     ? [...fieldsList]?.sort((a, b) => b.slug?.length - a.slug?.length)
+  //     : [];
 
-    fieldsListSorted?.forEach((field) => {
-      let value = row?.value ?? 0;
+  //   fieldsListSorted?.forEach((field) => {
+  //     let value = row?.value ?? 0;
 
-      if (typeof value === "string") value = `'${value}'`;
-      if (typeof value === "object") value = `"${value}"`;
-      if (typeof value === "boolean")
-        value = JSON.stringify(value).toUpperCase();
-      computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
-    });
+  //     if (typeof value === "string") value = `'${value}'`;
+  //     if (typeof value === "object") value = `"${value}"`;
+  //     if (typeof value === "boolean")
+  //       value = JSON.stringify(value).toUpperCase();
+  //     computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
+  //   });
 
-    const { error, result } = parser.parse(computedFormula);
+  //   const { error, result } = parser.parse(computedFormula);
 
-    let newValue = error ?? result;
-    const prevValue = row?.value;
+  //   let newValue = error ?? result;
+  //   const prevValue = row?.value;
 
-    if (`${newValue}` !== `${prevValue}`) setInnerValue(newValue);
-  };
+  //   if (`${newValue}` !== `${prevValue}`) setInnerValue(newValue);
+  // };
 
-  useEffect(() => {
-    updateValue();
-  }, [row]);
+  // console.log(row?.value);
+
+  // useEffect(() => {
+  //   updateValue();
+  // }, [row]);
 
   return (
     <>
@@ -64,9 +61,9 @@ const HFFormulaField = ({
         value={
           formulaIsVisible
             ? formula
-            : typeof innerValue === "number"
-              ? numberWithSpaces(parseFloat(innerValue).toFixed(2))
-              : innerValue
+            : typeof value === "number"
+              ? numberWithSpaces(parseFloat(value).toFixed(2))
+              : value
         }
         name={name}
         // onChange={(e) => {
@@ -99,15 +96,11 @@ const HFFormulaField = ({
         InputProps={{
           inputProps: { tabIndex },
           readOnly: disabled,
-          style: disabled
-            ? {
-                background: "inherit",
-                paddingRight: "0",
-              }
-            : {
-                background: "inherit",
-                color: "inherit",
-              },
+          style: {
+            paddingRight: "26px",
+            background: "inherit",
+            color: "inherit",
+          },
           endAdornment: (
             <InputAdornment position="end">
               <Box
@@ -124,13 +117,13 @@ const HFFormulaField = ({
                     <FunctionsIcon />
                   </IconButton>
                 </Tooltip>
-                {disabled && (
+                {/* {disabled && (
                   <Tooltip title="This field is disabled for this role!">
                     <InputAdornment position="start">
                       <Lock style={{ fontSize: "20px" }} />
                     </InputAdornment>
                   </Tooltip>
-                )}
+                )} */}
               </Box>
             </InputAdornment>
           ),

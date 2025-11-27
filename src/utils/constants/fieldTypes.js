@@ -760,14 +760,6 @@ export const newFieldTypes = [
     icon: "map-pin.svg",
   },
   {
-    label: "Photo",
-    label_ru: "Фото",
-    label_en: "Photo",
-    label_uz: "Rasm",
-    value: "PHOTO",
-    icon: "map-pin.svg",
-  },
-  {
     label: "Video",
     label_ru: "Видео",
     label_en: "Video",

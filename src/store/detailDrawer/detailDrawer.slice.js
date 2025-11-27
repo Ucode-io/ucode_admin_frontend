@@ -1,16 +1,18 @@
 import {createSlice} from "@reduxjs/toolkit";
 
+const initialState = {
+  openDrawer: false,
+  mainTabIndex: 0,
+  drawerTabIndex: 0,
+  tableInfo: null,
+  selectedView: {},
+  defaultValue: null,
+};
+
 export const { actions: detailDrawerActions, reducer: detailDrawerReducer } =
   createSlice({
     name: "detailDrawer",
-    initialState: {
-      openDrawer: false,
-      mainTabIndex: 0,
-      drawerTabIndex: 0,
-      tableInfo: null,
-      selectedView: {},
-      defaultValue: null,
-    },
+    initialState,
     reducers: {
       setMainTabIndex: (state, action) => {
         state.mainTabIndex = action.payload;
@@ -33,6 +35,9 @@ export const { actions: detailDrawerActions, reducer: detailDrawerReducer } =
       },
       setDefaultValue: (state, action) => {
         state.defaultValue = action.payload;
+      },
+      reset: () => {
+        return initialState;
       },
     },
   });

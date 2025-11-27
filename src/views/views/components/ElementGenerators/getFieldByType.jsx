@@ -50,6 +50,7 @@ export const getFieldByType = ({
   fields,
   isWrapField,
   handleChange,
+  rowData,
 }) => {
   const isDisabled = row?.attributes?.disabled;
 
@@ -228,6 +229,7 @@ export const getFieldByType = ({
     ),
     FORMULA: (
       <HFFormulaField
+        fieldsList={fields}
         disabled={isDisabled}
         isTableView={true}
         name={computedSlug}
@@ -243,6 +245,7 @@ export const getFieldByType = ({
         isTransparent={true}
         newUi={newUi}
         row={row}
+        rowData={rowData}
       />
     ),
     INTERNATION_PHONE: (

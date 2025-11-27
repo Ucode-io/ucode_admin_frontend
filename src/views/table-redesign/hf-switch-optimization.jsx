@@ -1,5 +1,5 @@
 import {Switch, ChakraProvider} from "@chakra-ui/react";
-import {useId} from "react";
+import { useId, useState } from "react";
 
 const HFSwitch = ({
   label,
@@ -15,7 +15,11 @@ const HFSwitch = ({
 }) => {
   const id = useId();
 
+  const value = row?.value;
+  const [checked, setChecked] = useState(value);
+
   const onChange = (value) => {
+    setChecked(value);
     handleChange({
       value,
       rowId: row?.guid,
@@ -23,7 +27,6 @@ const HFSwitch = ({
     });
   };
 
-  const value = row?.[row?.slug];
 
   return (
     <div
@@ -39,7 +42,7 @@ const HFSwitch = ({
           {...props}
           autoFocus={tabIndex === 1}
           tabIndex={tabIndex}
-          isChecked={value || false}
+          isChecked={checked}
           onChange={(e) => {
             onChange(e.target.checked);
           }}

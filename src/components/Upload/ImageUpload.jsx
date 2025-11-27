@@ -62,6 +62,7 @@ const ImageUpload = ({
 
   const inputRef = useRef(null);
   const imageRef = useRef(null);
+  const fileRef = useRef(null);
   const previewCanvasRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
@@ -70,6 +71,7 @@ const ImageUpload = ({
   const [imgScale, setImgScale] = useState(1);
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const [isCropped, setIsCropped] = useState(false);
   const [openFullImg, setOpenFullImg] = useState(false);
 
   const splitVal = value?.split("#")?.[1];
@@ -111,7 +113,13 @@ const ImageUpload = ({
   };
 
   const onSelectFile = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
     if (e.target.files && e.target.files.length > 0) {
+      fileRef.current = file;
+      setIsCropped(false);
+
       const reader = new FileReader();
       reader.addEventListener("load", () => setImageSrc(reader.result));
       reader.readAsDataURL(e.target.files[0]);
@@ -129,6 +137,10 @@ const ImageUpload = ({
   };
 
   const onCropComplete = (crop) => {
+    if (!isCropped || !imageRef.current || !crop?.width || !crop?.height) {
+      return;
+    }
+
     const canvas = document.createElement("canvas");
     setCompletedCrop(crop);
 
@@ -177,6 +189,10 @@ const ImageUpload = ({
   };
 
   const getCroppedBlob = async () => {
+    if (!isCropped && fileRef.current) {
+      return fileRef.current;
+    }
+
     if (previewCanvasRef.current) {
       return new Promise((resolve) => {
         previewCanvasRef.current.toBlob(
@@ -187,17 +203,29 @@ const ImageUpload = ({
           0.95,
         );
       });
-    } else {
+    }
+
+    if (imageSrc) {
       return fetch(imageSrc).then((res) => res.blob());
     }
+
+    return null;
   };
 
   // пример: загрузка вырезанного
   const uploadCropped = async () => {
+    setLoading(true);
     try {
       const blob = await getCroppedBlob();
       const formData = new FormData();
-      formData.append("file", blob, "cropped.jpg");
+
+      const filename =
+        fileRef.current?.name ||
+        (fileRef.current?.type === "image/svg+xml"
+          ? "image.svg"
+          : "cropped.jpg");
+
+      formData.append("file", blob, filename);
 
       const res = await fileService.folderUpload(formData, {
         folder_name: field?.attributes?.path,
@@ -556,7 +584,10 @@ const ImageUpload = ({
           <Box display={"flex"}>
             <ReactCrop
               crop={crop}
-              onChange={setCrop}
+              onChange={(newCrop) => {
+                setCrop(newCrop);
+                setIsCropped(true);
+              }}
               aspect={false}
               onComplete={onCropComplete}
               // aspect={field?.attributes?.ratio || 1}
@@ -585,7 +616,10 @@ const ImageUpload = ({
             <Button
               onClick={uploadCropped}
               disabled={loading}
-              sx={{ color: "#007AFF", border: "1px solid #007AFF" }}
+              sx={{
+                color: "#007AFF",
+                border: loading ? "1px solid #007AFF" : "1px solid #007AFF",
+              }}
             >
               Save
             </Button>

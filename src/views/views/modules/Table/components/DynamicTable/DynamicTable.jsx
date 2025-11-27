@@ -1,5 +1,5 @@
-import { ChakraProvider, Flex, Skeleton } from "@chakra-ui/react";
-import { Pagination, Button } from "@mui/material";
+import { ChakraProvider, Flex } from "@chakra-ui/react";
+import { Pagination, Button, Skeleton } from "@mui/material";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import SummaryRow from "@/components/DataTable/SummaryRow";
@@ -46,13 +46,12 @@ export const DynamicTable = ({
   relationAction,
   onChecked,
   refetch = () => {},
-  headLoader,
-  dataLoader,
   isPaginationPositionSticky,
   getAllData = () => {},
   handleChange = () => {},
   updateObject = () => {},
   rows,
+  tableLoading,
 }) => {
   const {
     i18n,
@@ -123,7 +122,7 @@ export const DynamicTable = ({
                   );
                 }}
               />
-              {headLoader
+              {tableLoading
                 ? Array.from({ length: 8 }).map((_, index) => (
                     <th
                       key={index}
@@ -187,10 +186,8 @@ export const DynamicTable = ({
             </tr>
           </thead>
           <tbody>
-            {dataLoader || headLoader ? (
-              <TableDataSkeleton
-                colLength={headLoader ? 10 : renderColumns.length + 2}
-              />
+            {tableLoading ? (
+              <TableDataSkeleton colLength={10} />
             ) : (
               rows?.map((row, index) => {
                 return (

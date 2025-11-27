@@ -101,7 +101,7 @@ const MatrixPage = lazy(() => import("../views/Matrix"));
 const MatrixDetail = lazy(() => import("../views/Matrix/MatrixDetail"));
 const MatrixRolePage = lazy(() => import("../views/Matrix/MatrixRolePage"));
 
-const OldRouter = () => {
+const OldRouter = ({ resetQueryClient }) => {
   const location = useLocation();
   const isAuth = useSelector((state) => state.auth.isAuth);
   const auth = useSelector((state) => state.auth);
@@ -139,7 +139,7 @@ const OldRouter = () => {
       ? "fbs-integrations.mybazar.uz"
       : window.location.hostname;
 
-  const {data, isLoading} = useLoginMicrofrontendQuery({
+  const { data, isLoading } = useLoginMicrofrontendQuery({
     params: {
       subdomain,
       enabled: Boolean(!isAuth),
@@ -191,7 +191,14 @@ const OldRouter = () => {
     <Routes>
       <Route
         path="/"
-        element={<MainLayout favicon={favicon} setFavicon={setFavicon} />}>
+        element={
+          <MainLayout
+            favicon={favicon}
+            setFavicon={setFavicon}
+            resetQueryClient={resetQueryClient}
+          />
+        }
+      >
         <Route path="client-types" element={<ClientTypes />} />
 
         <Route path="main">

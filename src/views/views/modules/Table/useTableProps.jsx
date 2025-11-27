@@ -38,7 +38,7 @@ function rowToObject(rowArray) {
 
 const combine = (tableData, columns) => {
   return tableData.map((row) => {
-    return columns.map((col) => ({
+    return columns?.map((col) => ({
       guid: row.guid,
       slug: col.slug,
       value: row[col.slug] ?? null,
@@ -133,6 +133,7 @@ export const useTableProps = ({ tab }) => {
     const key = rowId + ":" + name;
 
     const cell = cellMap.get(key);
+    console.log({ name, value, key, cell, cellMap });
     if (!cell) return;
 
     cell.value = value;
@@ -393,14 +394,15 @@ export const useTableProps = ({ tab }) => {
 
   useEffect(() => {
     if (rows == null && columns?.length) refetch();
-    else if (prevViewId.current !== viewId && columns?.length) {
+    else if (prevViewId.current !== viewId) {
       prevViewId.current = viewId;
       refetch();
     }
   }, [viewId, columns]);
 
   useEffect(() => {
-    if (!tableData || tableData.length === 0) return;
+    if (!tableData || tableData.length === 0 || viewLoader || !columns?.length)
+      return;
 
     const newCombined = combine(tableData, columns);
 
@@ -408,7 +410,7 @@ export const useTableProps = ({ tab }) => {
     cellMap.clear();
 
     newCombined.forEach((row) => {
-      const rowId = row[0]?.guid;
+      const rowId = row?.[0]?.guid;
       rowsMap.set(rowId, row);
       row.forEach((cell) => {
         cellMap.set(rowId + ":" + cell.slug, cell);
@@ -416,7 +418,7 @@ export const useTableProps = ({ tab }) => {
     });
 
     setRows(newCombined);
-  }, [columns]);
+  }, [columns, tableData]);
 
   useEffect(() => {
     if (viewLoader && prevViewId.current !== viewId) {

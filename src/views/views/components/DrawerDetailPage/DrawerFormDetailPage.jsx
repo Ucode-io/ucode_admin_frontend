@@ -190,7 +190,7 @@ function DrawerFormDetailPage({
   const getAllData = () => {};
 
   const handleNavigateToMicroFrontend = (id) => {
-    navigate(`/microfrontend/${id}?itemId=${selectedRow?.guid}`);
+    navigate(`/microfrontend/${id}?itemId=${itemId}`);
   };
 
   const updateObject = () => {
@@ -248,7 +248,7 @@ function DrawerFormDetailPage({
         <Box
           sx={{
             overflow: "auto",
-            height: "calc(100vh - 200px)",
+            height: "calc(100vh - 224px)",
           }}
         >
           {sections?.map((section, secIndex) => (
@@ -373,13 +373,13 @@ function DrawerFormDetailPage({
           display="flex"
           justifyContent="flex-end"
           marginTop="auto"
-          marginBottom="12px"
+          marginBottom="22px"
           gap={"8px"}
         >
           <FormCustomActionButton
             control={rootForm?.control?._formValues}
             tableSlug={tableSlug}
-            id={selectedRow?.guid}
+            id={itemId}
             getAllData={getAllData}
             microFrontendCallback={handleNavigateToMicroFrontend}
           />

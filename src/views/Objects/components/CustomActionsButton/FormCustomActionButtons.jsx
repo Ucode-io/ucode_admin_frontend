@@ -1,6 +1,6 @@
-import {useMemo} from "react";
-import useCustomActionsQuery from "../../../../queries/hooks/useCustomActionsQuery";
+import { useMemo } from "react";
 import ActionButton from "./ActionButton";
+import useCustomActionsQuery from "@/queries/hooks/useCustomActionsQuery";
 
 const FormCustomActionButton = ({
   tableSlug,
@@ -37,7 +37,7 @@ const FormCustomActionButton = ({
           />
         ) : (
           ""
-        )
+        ),
       )}
     </>
   );

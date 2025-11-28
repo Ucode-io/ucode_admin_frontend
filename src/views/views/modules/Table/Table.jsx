@@ -30,8 +30,6 @@ export const Table = ({ tab, ...props }) => {
     setLimit,
     view,
     refetch,
-    headLoader,
-    dataLoader,
     setSortedDatas,
     sortedDatas,
     setFormValue,
@@ -41,6 +39,7 @@ export const Table = ({ tab, ...props }) => {
     handleChange,
     rows,
     updateObject,
+    tableLoading,
   } = useTableProps({ tab });
 
   return (
@@ -75,9 +74,8 @@ export const Table = ({ tab, ...props }) => {
           refetch={refetch}
           updateObject={updateObject}
           handleChange={handleChange}
-          headLoader={headLoader}
-          dataLoader={dataLoader}
           rows={rows}
+          tableLoading={tableLoading}
           {...props}
         />
       </div>

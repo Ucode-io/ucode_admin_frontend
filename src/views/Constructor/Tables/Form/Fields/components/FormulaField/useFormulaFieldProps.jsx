@@ -92,7 +92,6 @@ export const useFormulaFieldProps = ({
 
   const onItemMouseEnter = (type) => setExampleType(type);
   const onItemMouseLeave = () => setExampleType(null);
-  console.log({ BUILT_IN_OPERATORS });
   const getIsLastCharOperator = (value) => {
     let splittedValOperator = "";
 
@@ -225,14 +224,16 @@ export const useFormulaFieldProps = ({
   useEffect(() => {
     let result = watch("attributes.formula") || "";
 
-    if (result) {
-      fieldsList.forEach(({ attributes, label, slug }) => {
-        const currentLabel = attributes?.[`label_${i18n?.language}`] || label;
+    // if (result) {
+    //   fieldsList.forEach(({ attributes, label, slug }) => {
+    //     const currentLabel = attributes?.[`label_${i18n?.language}`] || label;
 
-        const regex = new RegExp(`\\b${slug}\\b`, "gi");
-        result = result.replace(regex, currentLabel);
-      });
-    }
+    //     console.log(currentLabel, slug);
+
+    //     const regex = new RegExp(`\\b${slug}\\b`, "gi");
+    //     result = result.replace(regex, currentLabel);
+    //   });
+    // }
 
     setEditorValue(result ?? "");
   }, []);

@@ -24,12 +24,14 @@ import { ViewOptions } from "./components/ViewOptions";
 import { LayoutPopup } from "./components/LayoutPopup";
 import MaterialUIProvider from "@/providers/MaterialUIProvider";
 import { ViewButton } from "./components/ViewButton";
+import { Skeleton } from "@mui/material";
 
 export const HeaderFilter = ({
   noDates,
   handleAddDate,
   navigateCreatePage,
   settingsForm,
+  isLoadingViews,
 }) => {
   const {
     viewsRef,
@@ -99,34 +101,50 @@ export const HeaderFilter = ({
           }}
           overflow={"scroll"}
         >
-          {(visibleViews ?? []).map((view, index) => (
-            <ViewButton
-              key={view?.id}
-              view={view}
-              viewId={viewId}
-              getViewName={getViewName}
-              handleClick={handleClick}
-              handleViewClick={handleViewClick}
-              overflowedViews={overflowedViews}
-              visibleViews={visibleViews}
-              index={index}
-            />
-          ))}
-          {overflowedViews?.length > 0 && (
-            <MoreViews
-              handleViewClick={handleViewClick}
-              open={Boolean(anchorEl)}
-              refetchViews={refetchViews}
-              selectedView={selectedView}
-              setSelectedView={setSelectedView}
-              handleClose={handleCloseViews}
-              selectedTabIndex={selectedTabIndex}
-              anchorEl={anchorEl}
-              tableLan={tableLan}
-              views={overflowedViews}
-              setViewAnchorEl={setViewAnchorEl}
-              getViewName={getViewName}
-            />
+          {isLoadingViews ? (
+            <Flex gap="8px">
+              {Array.from({ length: 3 }).map((el, index) => (
+                <Skeleton
+                  key={index}
+                  width="80px"
+                  height="16px"
+                  variant="rounded"
+                  animation="wave"
+                />
+              ))}
+            </Flex>
+          ) : (
+            <>
+              {(visibleViews ?? []).map((view, index) => (
+                <ViewButton
+                  key={view?.id}
+                  view={view}
+                  viewId={viewId}
+                  getViewName={getViewName}
+                  handleClick={handleClick}
+                  handleViewClick={handleViewClick}
+                  overflowedViews={overflowedViews}
+                  visibleViews={visibleViews}
+                  index={index}
+                />
+              ))}
+              {overflowedViews?.length > 0 && (
+                <MoreViews
+                  handleViewClick={handleViewClick}
+                  open={Boolean(anchorEl)}
+                  refetchViews={refetchViews}
+                  selectedView={selectedView}
+                  setSelectedView={setSelectedView}
+                  handleClose={handleCloseViews}
+                  selectedTabIndex={selectedTabIndex}
+                  anchorEl={anchorEl}
+                  tableLan={tableLan}
+                  views={overflowedViews}
+                  setViewAnchorEl={setViewAnchorEl}
+                  getViewName={getViewName}
+                />
+              )}
+            </>
           )}
         </Flex>
 

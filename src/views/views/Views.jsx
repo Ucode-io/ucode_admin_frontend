@@ -80,7 +80,9 @@ export const Views = ({
     navigateToEditPage,
     refetchMainDataList,
     isLoadingTableInfo,
-    viewLoader,
+    viewsLoader,
+    setViewsLoader,
+    isLoadingViews,
   } = useViewsProps({ isRelationView });
 
   return (
@@ -143,7 +145,8 @@ export const Views = ({
           refetchMainDataList,
           navigateCreatePage,
           isLoadingTableInfo,
-          viewLoader,
+          viewsLoader,
+          setViewsLoader,
         }}
       >
         <FilterProvider
@@ -171,6 +174,7 @@ export const Views = ({
               handleAddDate={handleAddDate}
               navigateCreatePage={navigateCreatePage}
               settingsForm={settingsForm}
+              isLoadingViews={isLoadingViews}
             />
 
             {getView(viewType)}

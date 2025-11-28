@@ -84,7 +84,6 @@ export const useFilterSwitchProps = ({ search }) => {
   };
 
   const onChange = (column, checked) => {
-
     !checked
       ? dispatch(
           filterActions.clearFilters({
@@ -92,7 +91,7 @@ export const useFilterSwitchProps = ({ search }) => {
             viewId: view?.id,
             name: "specialities_id",
             value: [`${queryParameters.get("specialities")}`],
-          })
+          }),
         )
       : dispatch(
           filterActions.setFilter({
@@ -100,14 +99,14 @@ export const useFilterSwitchProps = ({ search }) => {
             viewId: view?.id,
             name: "specialities_id",
             value: [`${queryParameters.get("specialities")}`],
-          })
+          }),
         );
 
     updateView(
       checked
         ? [...quickFilters, column]
         : quickFilters.filter((c) => c.id !== column.id),
-      checked
+      checked,
     );
   };
 

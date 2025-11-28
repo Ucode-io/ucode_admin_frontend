@@ -115,7 +115,7 @@ export const TableRow = ({
               </div>
             </CTableCell>
 
-            {row.map(
+            {row?.map(
               (field) =>
                 field?.attributes?.field_permission?.view_permission && (
                   <CTableCell
@@ -176,6 +176,7 @@ export const TableRow = ({
                         getValues={getValues}
                         mainForm={viewForm}
                         row={field}
+                        rowData={row}
                         index={rowIndex}
                         control={control}
                         setFormValue={setFormValue}
@@ -328,7 +329,7 @@ export const TableRow = ({
             </div>
           </CTableCell>
 
-          {columns.map(
+          {columns?.map(
             (column) =>
               column?.attributes?.field_permission?.view_permission && (
                 <CTableCell
@@ -492,7 +493,7 @@ export const TableRow = ({
             </div>
           </CTableCell>
 
-          {columns.map((column) => (
+          {columns?.map((column) => (
             <CTableCell
               key={column.id}
               className="overflow-ellipsis"

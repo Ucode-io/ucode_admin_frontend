@@ -23,7 +23,11 @@ export const useFiltersListProps = () => {
   const {i18n} = useTranslation();
   const filtersRef = useRef(null);
 
-  const tableLan = useGetLang("Table")
+  const filtersOpen = useSelector(
+    (state) => state.main.openedFiltersByView?.[view?.id]?.open,
+  );
+
+  const tableLan = useGetLang("Table");
 
   const computedFields = useMemo(() => {
     const filter = view?.attributes?.quick_filters ?? [];
@@ -36,8 +40,8 @@ export const useFiltersListProps = () => {
             (fast) =>
               fast.is_checked &&
               !view?.attributes?.quick_filters?.find(
-                (quick) => quick?.id === fast.id
-              )
+                (quick) => quick?.id === fast.id,
+              ),
           )
           ?.map((fast) => fast),
       ]
@@ -59,17 +63,17 @@ export const useFiltersListProps = () => {
         viewId: view.id,
         name: name,
         value,
-      })
+      }),
     );
   };
 
   useEffect(() => {
     if (filtersRef.current) {
-      console.log(filtersRef.current.offsetHeight);
       dispatch(
         mainActions.setViewFilter({
           id: view?.id,
           height: filtersRef.current.offsetHeight,
+          open: filtersOpen,
         }),
       );
     }

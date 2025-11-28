@@ -35,7 +35,6 @@ export const { actions: mainActions, reducer: mainReducer } = createSlice({
       state.selectedViewType = action.payload;
     },
     setViewFilter: (state, { payload: { id, open, height } }) => {
-      console.log({ id, open, height });
       state.openedFiltersByView[id] = {
         open,
         height: height || 37,

@@ -332,7 +332,6 @@ export const useTableProps = ({ tab }) => {
       };
     },
     onSuccess: (data) => {
-      console.log(columns)
       if (columns?.length > 0) {
         setRows(combine(data.tableData ?? [], columns ?? []));
         setViewsLoader(false);

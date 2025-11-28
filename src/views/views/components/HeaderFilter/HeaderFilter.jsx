@@ -107,7 +107,7 @@ export const HeaderFilter = ({
                 <Skeleton
                   key={index}
                   width="80px"
-                  height="30px"
+                  height="16px"
                   variant="rounded"
                   animation="wave"
                 />

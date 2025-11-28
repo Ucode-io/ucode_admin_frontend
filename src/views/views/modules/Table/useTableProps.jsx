@@ -37,7 +37,7 @@ function rowToObject(rowArray) {
 }
 
 const combine = (tableData, columns) => {
-  return tableData.map((row) => {
+  return tableData?.map((row) => {
     return columns?.map((col) => ({
       guid: row.guid,
       slug: col.slug,
@@ -201,7 +201,7 @@ export const useTableProps = ({ tab }) => {
 
     return customSortArray(
       uniqueColumns,
-      result.map((el) => el.id),
+      result?.map((el) => el.id),
     )
       ?.map((el) => fieldsMap[el])
       ?.filter((el) => el);
@@ -379,7 +379,7 @@ export const useTableProps = ({ tab }) => {
   useEffect(() => {
     if (tableData?.length > 0) {
       reset({
-        multi: tableData.map((i) => i),
+        multi: tableData?.map((i) => i),
       });
     }
   }, [reset, tableData]);

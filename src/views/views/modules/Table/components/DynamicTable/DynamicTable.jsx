@@ -141,7 +141,7 @@ export const DynamicTable = ({
                       />
                     </th>
                   ))
-                : renderColumns.map((column) => (
+                : renderColumns?.map((column) => (
                     <Th
                       key={column.id}
                       tableSlug={tableSlug}

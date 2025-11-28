@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import { useFieldsContext } from "../../../../providers/FieldsProvider";
 import { useGetLang } from "@/hooks/useGetLang";
+import { mainActions } from "@/store/main/main.slice";
 
 export const useFiltersListProps = () => {
 
@@ -64,7 +65,13 @@ export const useFiltersListProps = () => {
 
   useEffect(() => {
     if (filtersRef.current) {
-      localStorage.setItem("filtersHeight", filtersRef.current.offsetHeight);
+      console.log(filtersRef.current.offsetHeight);
+      dispatch(
+        mainActions.setViewFilter({
+          id: view?.id,
+          height: filtersRef.current.offsetHeight,
+        }),
+      );
     }
   }, [computedFields]);
 

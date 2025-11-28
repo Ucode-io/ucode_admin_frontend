@@ -34,11 +34,13 @@ export const useDynamicTableProps = ({
     isRelationView && localStorage.getItem("detailPage") === "CenterPeek";
 
   const tableViewFiltersOpen = useSelector(
-    (state) => state.main.tableViewFiltersOpen,
+    (state) => state.main.openedFiltersByView?.[view?.id]?.open,
   );
 
   const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
-  const filterHeight = localStorage.getItem("filtersHeight");
+  const filterHeight = useSelector(
+    (state) => state.main.openedFiltersByView?.[view?.id]?.height,
+  );
 
   const [limitOptions, setLimitOptions] = useState([
     {
@@ -209,14 +211,11 @@ export const useDynamicTableProps = ({
     if (isWarningActive || projectInfo?.status === "inactive") {
       warningHeight = 32;
     }
-    const filterHeightValue = Boolean(view?.attributes?.quick_filters?.length)
-      ? Number(filterHeight) || 0
-      : 0;
 
     const tabHeightValue = Number(tabHeight) || 0;
 
     return tableViewFiltersOpen
-      ? filterHeightValue + tabHeightValue + warningHeight
+      ? filterHeight + tabHeightValue + warningHeight
       : tabHeightValue + warningHeight;
   }, [
     tableViewFiltersOpen,

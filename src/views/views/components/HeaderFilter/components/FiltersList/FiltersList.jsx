@@ -10,7 +10,9 @@ export const FiltersList = () => {
 
   const { i18n, filtersRef, computedFields, onChange, tableSlug, visibleColumns, refetchViews, filters, view, tableLan } = useFiltersListProps();
 
-  const filtersOpen = useSelector((state) => state.main.tableViewFiltersOpen);
+  const filtersOpen = useSelector(
+    (state) => state.main.openedFiltersByView?.[view?.id]?.open,
+  );
 
   if (!filtersOpen) {
     return;

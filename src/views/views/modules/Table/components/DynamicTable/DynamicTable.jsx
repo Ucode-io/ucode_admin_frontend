@@ -186,7 +186,7 @@ export const DynamicTable = ({
             </tr>
           </thead>
           <tbody>
-            {tableLoading ? (
+            {tableLoading || rows?.[0]?.length === 0 ? (
               <TableDataSkeleton colLength={10} />
             ) : (
               rows?.map((row, index) => {

@@ -104,7 +104,7 @@ export const useViewsProps = ({ isRelationView }) => {
   const [relationViews, setRelationViews] = useState([]);
   // const [selectedView, setSelectedView] = useState(null);
 
-  const [viewsLoader, setViewsLoader] = useState(!isRelationView);
+  // const [viewsLoader, setViewsLoader] = useState(!isRelationView);
   const [authInfo, setAuthInfo] = useState(null);
 
   const { selectedViewType } = useSelector((state) => state.main);
@@ -352,63 +352,67 @@ export const useViewsProps = ({ isRelationView }) => {
       ? selectedV?.relation_table_slug
       : menuId;
 
-  const { refetch: refetchViewsList, isRefetching } = useGetViewsList(
-    menuIdForViewsList,
-    {
-      enabled: Boolean(menuIdForViewsList),
-      select: (res) => {
-        const relationViews =
-          res?.views?.filter(
-            (item) => item?.type === "SECTION" || item?.is_relation_view,
-          ) ?? [];
+  const {
+    refetch: refetchViewsList,
+    isRefetching,
+    isLoading: isLoadingViews,
+  } = useGetViewsList(menuIdForViewsList, {
+    enabled: Boolean(menuIdForViewsList),
+    select: (res) => {
+      const relationViews =
+        res?.views?.filter(
+          (item) => item?.type === "SECTION" || item?.is_relation_view,
+        ) ?? [];
 
-        const views =
-          res?.views?.filter(
-            (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view),
-          ) ?? [];
+      const views =
+        res?.views?.filter(
+          (el) => el?.type !== "SECTION" && Boolean(!el?.is_relation_view),
+        ) ?? [];
 
-        return { views, relationViews };
-      },
-      onSuccess: ({ views, relationViews }) => {
-        if (
-          (!selectedView ||
-            selectedView?.id !== views?.[selectedTabIndex]?.id ||
-            isRefetching) &&
-          !isRelationView &&
-          selectedTabIndex != null
-        ) {
-          setSelectedView(views?.[selectedTabIndex]);
-        }
-
-        if (isRelationView) {
-          dispatch(detailDrawerActions.setDrawerTabIndex(0));
-          setSelectedView(relationViews?.[0]);
-          setRelationViews(relationViews);
-          updateQueryWithoutRerender("dv", relationViews?.[0]?.id);
-          // if (state?.toDocsTab) setSelectedTabIndex(data?.length);
-        } else {
-          dispatch(viewsActions.setViews(views));
-
-          if (!pathname.includes("/login")) {
-            if (selectedTabIndex != null) {
-              updateQueryWithoutRerender("v", views?.[selectedTabIndex]?.id);
-            }
-          }
-          if (state?.toDocsTab)
-            dispatch(detailDrawerActions.setDrawerTabIndex(views?.length));
-        }
-
-        if (views?.[selectedTabIndex]?.type !== VIEW_TYPES_MAP.TABLE) {
-          setViewsLoader(false);
-        }
-      },
-      onError: () => {
-        setViewsLoader(false);
-      },
-      slateTime: 0,
-      keepPreviousData: false,
+      return { views, relationViews };
     },
-  );
+    onSuccess: ({ views, relationViews }) => {
+      if (
+        (!selectedView ||
+          selectedView?.id !== views?.[selectedTabIndex]?.id ||
+          isRefetching) &&
+        !isRelationView &&
+        selectedTabIndex != null
+      ) {
+        setSelectedView(views?.[selectedTabIndex]);
+      }
+
+      if (isRelationView) {
+        dispatch(detailDrawerActions.setDrawerTabIndex(0));
+        setSelectedView(relationViews?.[0]);
+        setRelationViews(relationViews);
+        updateQueryWithoutRerender("dv", relationViews?.[0]?.id);
+        // if (state?.toDocsTab) setSelectedTabIndex(data?.length);
+      } else {
+        dispatch(viewsActions.setViews(views));
+
+        if (!pathname.includes("/login")) {
+          if (selectedTabIndex != null) {
+            updateQueryWithoutRerender("v", views?.[selectedTabIndex]?.id);
+          }
+        }
+        if (state?.toDocsTab)
+          dispatch(detailDrawerActions.setDrawerTabIndex(views?.length));
+      }
+
+      if (
+        views?.[selectedTabIndex]?.type !== VIEW_TYPES_MAP.TABLE ||
+        !views?.[selectedTabIndex]?.columns
+      ) {
+        // setViewsLoader(false);
+      }
+    },
+    onError: () => {
+      // setViewsLoader(false);
+    },
+    slateTime: 0,
+    keepPreviousData: false,
+  });
 
   // useEffect(() => {
   //   if (prevMenuId.current !== menuIdForViewsList) {
@@ -671,7 +675,7 @@ export const useViewsProps = ({ isRelationView }) => {
   };
 
   useEffect(() => {
-    setViewsLoader(true);
+    // setViewsLoader(true);
   }, [menuIdForViewsList]);
 
   return {
@@ -739,7 +743,8 @@ export const useViewsProps = ({ isRelationView }) => {
     selectedTabIndex,
     navigateToEditPage,
     refetchMainDataList,
-    viewLoader: viewsLoader,
-    setViewsLoader,
+    viewsLoader: false,
+    setViewsLoader: () => {},
+    isLoadingViews,
   };
 };

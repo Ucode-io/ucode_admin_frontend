@@ -51,7 +51,6 @@ const NewCHFFormulaField = ({
   };
 
   useEffect(() => {
-    console.log(rowData);
     updateValue();
   }, [rowData, row]);
 

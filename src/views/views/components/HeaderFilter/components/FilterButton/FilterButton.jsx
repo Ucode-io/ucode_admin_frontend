@@ -5,21 +5,25 @@ import { Box, Flex, IconButton, Image } from "@chakra-ui/react";
 
 export const FilterButton = forwardRef(({ view, onClick, ...props }, ref) => {
   const tableViewFiltersOpen = useSelector(
-    (state) => state.main.tableViewFiltersOpen
+    (state) => state.main.openedFiltersByView?.[view?.id]?.open,
   );
   const dispatch = useDispatch();
 
-  const handleClick = (ev) => {
+  const handleClick = (e) => {
     if (
       tableViewFiltersOpen ||
       (view?.attributes?.quick_filters?.length > 0 && !tableViewFiltersOpen)
     ) {
-      ev.stopPropagation();
-      return dispatch(
-        mainActions.setTableViewFiltersOpen(!tableViewFiltersOpen)
+      e.stopPropagation();
+      dispatch(
+        mainActions.setViewFilter({
+          id: view?.id,
+          open: !tableViewFiltersOpen,
+        }),
       );
+    } else {
+      onClick(e);
     }
-    onClick(ev);
   };
 
   return (

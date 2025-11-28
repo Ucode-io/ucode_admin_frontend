@@ -1,7 +1,7 @@
 import useFilters from "@/hooks/useFilters";
 import { useViewContext } from "@/providers/ViewProvider";
 import { filterActions } from "@/store/filter/filter.slice";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
@@ -10,7 +10,6 @@ import { useGetLang } from "@/hooks/useGetLang";
 import { mainActions } from "@/store/main/main.slice";
 
 export const useFiltersListProps = () => {
-
   const { view, viewId, tableSlug, visibleColumns, refetchViews } =
     useViewContext();
 
@@ -20,7 +19,7 @@ export const useFiltersListProps = () => {
   const [queryParameters] = useSearchParams();
   const { filters } = useFilters(tableSlug, viewId);
   const dispatch = useDispatch();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const filtersRef = useRef(null);
 
   const filtersOpen = useSelector(
@@ -68,16 +67,36 @@ export const useFiltersListProps = () => {
   };
 
   useEffect(() => {
-    if (filtersRef.current) {
+    const node = filtersRef.current;
+    if (!node) return;
+
+    const observer = new ResizeObserver(() => {
       dispatch(
         mainActions.setViewFilter({
           id: view?.id,
-          height: filtersRef.current.offsetHeight,
+          height: node.offsetHeight,
           open: filtersOpen,
         }),
       );
-    }
-  }, [computedFields]);
+    });
+
+    observer.observe(node);
+
+    return () => observer.disconnect();
+  }, [filtersOpen, view?.id]);
+
+  // useLayoutEffect(() => {
+  //   if (filtersRef.current) {
+  //     console.log(filtersRef.current.offsetHeight);
+  //     dispatch(
+  //       mainActions.setViewFilter({
+  //         id: view?.id,
+  //         height: filtersRef.current.offsetHeight,
+  //         open: filtersOpen,
+  //       }),
+  //     );
+  //   }
+  // }, [computedFields, filtersOpen, view?.attributes?.quick_filters]);
 
   useEffect(() => {
     if (queryParameters.get("specialities")?.length) {
@@ -87,7 +106,7 @@ export const useFiltersListProps = () => {
           viewId: view?.id,
           name: "specialities_id",
           value: [`${queryParameters.get("specialities")}`],
-        })
+        }),
       );
     }
   }, [queryParameters]);
@@ -103,5 +122,5 @@ export const useFiltersListProps = () => {
     filters,
     view,
     tableLan,
-  }
-}
+  };
+};

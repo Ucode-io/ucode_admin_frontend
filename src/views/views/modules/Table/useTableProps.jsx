@@ -75,11 +75,11 @@ export const useTableProps = ({ tab }) => {
     checkedColumns,
     navigateToEditPage,
     isRelationView,
-    viewLoader,
-    setViewsLoader,
   } = useViewContext();
 
   const { fieldsMap, fieldsForm, fields } = useFieldsContext();
+
+  const [viewsLoader, setViewsLoader] = useState(true);
 
   const {
     reset,
@@ -133,7 +133,7 @@ export const useTableProps = ({ tab }) => {
     const key = rowId + ":" + name;
 
     const cell = cellMap.get(key);
-    console.log({ name, value, key, cell, cellMap });
+
     if (!cell) return;
 
     cell.value = value;
@@ -279,7 +279,6 @@ export const useTableProps = ({ tab }) => {
     },
     refetch,
     isSuccess,
-    isFetching,
   } = useQuery({
     queryKey: [
       QUERY_KEYS.TABLE_DATA_KEY,
@@ -333,10 +332,17 @@ export const useTableProps = ({ tab }) => {
       };
     },
     onSuccess: (data) => {
-      setRows(combine(data.tableData ?? [], columns));
-      setViewsLoader(false);
+      console.log(columns)
+      if (columns?.length > 0) {
+        setRows(combine(data.tableData ?? [], columns ?? []));
+        setViewsLoader(false);
+      } else {
+        setRows([]);
+        setViewsLoader(false);
+      }
     },
     onError: () => {
+      setRows([]);
       setViewsLoader(false);
     },
     staleTime: 0,
@@ -388,7 +394,7 @@ export const useTableProps = ({ tab }) => {
         view?.attributes?.quick_filters?.length ?? 0,
       ),
     );
-  }, [view?.attributes?.quick_filters?.length, filters]);
+  }, [view?.attributes?.quick_filters?.length, filters, columns]);
 
   const prevViewId = useRef(viewId);
 
@@ -401,7 +407,7 @@ export const useTableProps = ({ tab }) => {
   }, [viewId, columns]);
 
   useEffect(() => {
-    if (!tableData || tableData.length === 0 || viewLoader || !columns?.length)
+    if (!tableData || tableData.length === 0 || viewsLoader || !columns?.length)
       return;
 
     const newCombined = combine(tableData, columns);
@@ -421,10 +427,15 @@ export const useTableProps = ({ tab }) => {
   }, [columns, tableData]);
 
   useEffect(() => {
-    if (viewLoader && prevViewId.current !== viewId) {
+    if (!viewsLoader) setViewsLoader(true);
+  }, [menuId]);
+
+  useEffect(() => {
+    if (viewsLoader && view.id && !view?.columns?.length) {
+      setRows([]);
       setViewsLoader(false);
     }
-  }, [viewLoader, isSuccess]);
+  }, [view]);
 
   return {
     tableLan,
@@ -446,7 +457,7 @@ export const useTableProps = ({ tab }) => {
     setLimit,
     view,
     refetch,
-    tableLoading: viewLoader,
+    tableLoading: viewsLoader,
     setSortedDatas,
     sortedDatas,
     setFormValue,

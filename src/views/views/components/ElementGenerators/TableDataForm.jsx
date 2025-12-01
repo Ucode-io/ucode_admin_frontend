@@ -28,6 +28,8 @@ const TableDataForm = ({
   updateObject = () => {},
   handleChange = () => {},
   rowData,
+  errors = {},
+  setErrors = () => {},
 }) => {
   const { i18n } = useTranslation();
 
@@ -113,6 +115,8 @@ const TableDataForm = ({
           newUi={newUi}
           handleChange={handleChange}
           rowData={rowData}
+          errors={errors}
+          setErrors={setErrors}
         />
       )}
     </Box>

@@ -33,7 +33,6 @@ import {
 import HFSwitch from "@/views/table-redesign/hf-switch-optimization";
 import { HFVideoUpload } from "@/views/table-redesign/hf-video-upload-optimization";
 import HFDatePickerNew from "@/views/table-redesign/DatePickerOptimization";
-import { useState } from "react";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import { numberWithSpaces } from "@/utils/formatNumbers";
 
@@ -49,12 +48,12 @@ export const getFieldByType = ({
   isTableView = false,
   fields,
   isWrapField,
-  handleChange,
+  handleChange: handleChangeFieldValue,
   rowData,
+  errors,
+  setErrors,
 }) => {
   const isDisabled = row?.attributes?.disabled;
-
-  const [errors, setErrors] = useState({});
 
   const required = row.attributes?.required;
 
@@ -116,6 +115,29 @@ export const getFieldByType = ({
       name: row?.slug,
       rowId: row?.guid,
     });
+  };
+
+  const handleChange = (data) => {
+    const rule =
+      required && typeof data?.value === "string"
+        ? !data?.value?.trim()
+        : data?.value == null;
+
+    if (rule) {
+      setErrors((prev) => ({
+        ...prev,
+        [row?.slug]: {
+          message: "This field is required",
+        },
+      }));
+      return;
+    } else {
+      const newErrors = { ...errors };
+      delete newErrors[row?.slug];
+      setErrors(newErrors);
+
+      handleChangeFieldValue(data);
+    }
   };
 
   const fieldsMap = {
@@ -441,6 +463,9 @@ export const getFieldByType = ({
         isDisabled={isDisabled}
         row={row}
         handleChange={handleChange}
+        errors={errors}
+        setErrors={setErrors}
+        required={required}
       />
     ),
     CUSTOM_IMAGE: <HFFileUpload handleChange={handleChange} row={row} />,

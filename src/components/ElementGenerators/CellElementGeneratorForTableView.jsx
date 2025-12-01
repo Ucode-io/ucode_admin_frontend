@@ -47,7 +47,6 @@ const CellElementGeneratorForTableView = ({
   data,
   field,
   index,
-  watch,
   fields,
   control,
   isWrapField,

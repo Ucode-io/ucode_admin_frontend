@@ -26,7 +26,7 @@ export default function HFPhotoUpload({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <>
           <ImageUpload
             drawerDetail={drawerDetail}
@@ -42,10 +42,11 @@ export default function HFPhotoUpload({
             disabled={disabled}
             {...props}
           />
-          {!disabledHelperText && error?.message && (
+          {/* {!disabledHelperText && error?.message && (
             <FormHelperText error>{error?.message}</FormHelperText>
-          )}
+          )} */}
         </>
-      )}></Controller>
+      )}
+    ></Controller>
   );
 }

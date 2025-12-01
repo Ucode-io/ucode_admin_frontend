@@ -26,10 +26,13 @@ const ColorPicker = ({value, onChange, loading, disabled}) => {
   return (
     <div className="ColorPicker" onClick={(e) => e.stopPropagation()}>
       <div
-        id="round"
         className="round"
-        style={{backgroundColor: value ?? "#fff"}}
-        onClick={(e) => !disabled && handleClick(e)}></div>
+        id="round"
+        style={{
+          backgroundColor: value ?? "#fff",
+        }}
+        onClick={(e) => !disabled && handleClick(e)}
+      />
 
       <Popover
         open={open}
@@ -42,13 +45,14 @@ const ColorPicker = ({value, onChange, loading, disabled}) => {
         transformOrigin={{
           vertical: "top",
           horizontal: "left",
-        }}>
+        }}
+      >
         <Card elevation={12} className="ColorPickerPopup">
           {colorList.map((color, index) => (
             <div
               className="round"
               key={index}
-              style={{backgroundColor: color}}
+              style={{ backgroundColor: color }}
               onClick={() => {
                 onChange(color);
                 handleClose();

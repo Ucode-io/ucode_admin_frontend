@@ -21,11 +21,11 @@ const initialState = {
   user_data: null,
 };
 
-export const {actions: authActions, reducer: authReducer} = createSlice({
+export const { actions: authActions, reducer: authReducer } = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    loginSuccess(state, {payload}) {
+    loginSuccess(state, { payload }) {
       state.token = payload.token.access_token;
       state.refreshToken = payload.token.refresh_token;
       state.userInfo = payload.user;
@@ -73,13 +73,12 @@ export const {actions: authActions, reducer: authReducer} = createSlice({
       state.loading = false;
       state.after_login = true;
     },
-    setTokens(state, {payload}) {
+    setTokens(state, { payload }) {
       state.token = payload.token.access_token;
       state.refreshToken = payload.token.refresh_token;
       state.isAuth = true;
     },
-    setPermission(state, {payload}) {
-      console.log("payload", payload);
+    setPermission(state, { payload }) {
       state.permissions =
         payload?.permissions?.reduce((acc, curr) => {
           acc[curr.table_slug] = {
@@ -108,13 +107,13 @@ export const {actions: authActions, reducer: authReducer} = createSlice({
           return acc;
         }, {}) || [];
     },
-    updateUser(state, {payload}) {
+    updateUser(state, { payload }) {
       state.userInfo[payload.key] = payload.value;
     },
-    updateEnvId(state, {payload}) {
+    updateEnvId(state, { payload }) {
       state.environmentId = payload ?? "";
     },
-    logout: (state) => initialState,
+    logout: () => initialState,
     setStatus(state, payload) {
       state.access_type = payload;
     },

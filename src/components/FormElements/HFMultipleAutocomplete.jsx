@@ -284,7 +284,7 @@ const AutoCompleteElement = ({
                     padding: newUi ? "0" : undefined,
                     background: "inherit",
                     color: isBlackBg ? "#fff" : "inherit",
-                    border: error?.message ? "1px solid red" : "",
+                    // border: error?.message ? "1px solid red" : "",
                   },
 
               endAdornment: Boolean(
@@ -358,9 +358,9 @@ const AutoCompleteElement = ({
           </div>
         )}
       />
-      {!disabledHelperText && error?.message && (
+      {/* {!disabledHelperText && error?.message && (
         <FormHelperText error>{error?.message}</FormHelperText>
-      )}
+      )} */}
 
       {/* {Boolean(!value?.length && required) && (
         <FormHelperText error>{"This field is required"}</FormHelperText>

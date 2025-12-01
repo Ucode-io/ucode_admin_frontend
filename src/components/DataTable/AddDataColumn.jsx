@@ -10,7 +10,7 @@ import RectangleIconButton from "../Buttons/RectangleIconButton";
 import {CTableCell, CTableRow} from "../CTable";
 import NewTableDataForm from "../ElementGenerators/NewTableDataForm";
 import PermissionWrapperV2 from "../PermissionWrapper/PermissionWrapperV2";
-import {CircularProgress} from "@mui/material";
+import { CircularProgress, FormHelperText } from "@mui/material";
 
 const AddDataColumn = React.memo(
   ({
@@ -30,7 +30,7 @@ const AddDataColumn = React.memo(
   }) => {
     const rowRef = useRef();
     const dispatch = useDispatch();
-    const {tableSlug, id} = useParams();
+    const { tableSlug, id } = useParams();
     const [isLoading, setIsLoading] = useState();
 
     const computedSlug = isRelationTable
@@ -45,7 +45,7 @@ const AddDataColumn = React.memo(
       handleSubmit,
       control,
       setValue: setFormValue,
-      formState: {errors},
+      formState: { errors },
     } = useForm({});
 
     const onSubmit = (values) => {
@@ -57,7 +57,7 @@ const AddDataColumn = React.memo(
             [isRelationTable && computedSlug]: id,
           },
         })
-        .then((res) => {
+        .then(() => {
           setIsLoading(false);
           refetch();
           setAddNewRow(false);
@@ -80,7 +80,7 @@ const AddDataColumn = React.memo(
 
         const isInDatePicker =
           activeEl?.closest(
-            ".mantine-DatePickerInput-root, .mantine-DateTimePicker-root, .mantine-TimeInput-root"
+            ".mantine-DatePickerInput-root, .mantine-DateTimePicker-root, .mantine-TimeInput-root",
           ) != null;
 
         if (
@@ -105,7 +105,7 @@ const AddDataColumn = React.memo(
         const clickedInsideRow = rowRef.current?.contains(event.target);
 
         const isInDropdown = event.target.closest(
-          ".MuiPopover-root, .MuiMenu-paper, .MuiAutocomplete-popper, .dropdown-menu, [role='listbox'], .mantine-Popper-root, [data-mantine-portal]"
+          ".MuiPopover-root, .MuiMenu-paper, .MuiAutocomplete-popper, .dropdown-menu, [role='listbox'], .mantine-Popper-root, [data-mantine-portal]",
         );
 
         if (!clickedInsideRow && !isInDropdown) {
@@ -137,6 +137,7 @@ const AddDataColumn = React.memo(
         </CTableCell>
         {columns?.map((column, index) => (
           <CTableCell
+            key={column?.id}
             align="center"
             className="data_table__number_cell"
             style={{
@@ -164,6 +165,14 @@ const AddDataColumn = React.memo(
               watch={mainForm.watch}
               fieldsMap={fieldsMap}
             />
+            {errors[column?.slug]?.message && (
+              <FormHelperText
+                sx={{ position: "absolute", bottom: "0", left: "10px" }}
+                error
+              >
+                {errors[column?.slug]?.message}
+              </FormHelperText>
+            )}
           </CTableCell>
         ))}
         <CTableCell
@@ -223,7 +232,9 @@ const AddDataColumn = React.memo(
         </CTableCell>
       </CTableRow>
     );
-  }
+  },
 );
+
+AddDataColumn.displayName = "AddDataColumn";
 
 export default AddDataColumn;

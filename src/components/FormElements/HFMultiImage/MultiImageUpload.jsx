@@ -306,7 +306,6 @@ function MultiImageUpload({
                   <img src={item} alt="photo" />
 
                   <button
-                    variant="outlined"
                     onClick={(e) => {
                       e.stopPropagation();
                       removeImage(item);

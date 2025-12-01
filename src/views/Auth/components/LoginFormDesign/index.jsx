@@ -375,10 +375,9 @@ const LoginFormDesign = ({
     } else {
       setValue(
         "environment_id",
-        company?.[0]?.projects?.[0]?.resource_environments?.[0]?.environment_id
+        company?.[0]?.projects?.[0]?.resource_environments?.[0]?.environment_id,
       );
     }
-    console.log(company?.[0]?.projects);
     if (validLength) {
       if (company?.[0]?.projects?.length === 1) {
         if (company?.[0]?.projects?.[0]?.resource_environments?.length === 1) {

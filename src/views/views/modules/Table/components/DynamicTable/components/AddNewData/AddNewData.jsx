@@ -4,8 +4,7 @@ import {showAlert} from "@/store/alert/alert.thunk";
 import {memo, useEffect, useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
-import {useParams} from "react-router-dom";
-import {Box, Button} from "@mui/material";
+import { Box, Button, FormHelperText } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import { constructorObjectService } from "@/services/objectService/object.service";
 import useDebounce from "@/hooks/useDebounce";
@@ -27,7 +26,7 @@ export const AddNewData = memo(
     // isRelationTable,
     pageName,
     tableSettings,
-    relatedTableSlug,
+    // relatedTableSlug,
     calculateWidthFixedColumn,
     firstRowWidth = 45,
     // isTableView = false,
@@ -214,6 +213,14 @@ export const AddNewData = memo(
               relationView={isRelationView}
               fieldsMap={fieldsMap}
             />
+            {errors[column?.slug]?.message && (
+              <FormHelperText
+                sx={{ position: "absolute", bottom: "0", left: "10px" }}
+                error
+              >
+                {errors[column?.slug]?.message}
+              </FormHelperText>
+            )}
           </CTableCell>
         ))}
         <CTableCell

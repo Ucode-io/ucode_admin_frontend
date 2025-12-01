@@ -11,7 +11,7 @@ const HFIconPicker = ({
   handleChange,
   ...props
 }) => {
-  const [error] = useState({});
+  // const [error] = useState({});
 
   const value = row?.value;
 
@@ -34,9 +34,9 @@ const HFIconPicker = ({
         onChange={onChange}
         {...props}
       />
-      {!disabledHelperText && (
+      {/* {!disabledHelperText && (
         <FormHelperText error>{error?.message}</FormHelperText>
-      )}
+      )} */}
     </>
   );
 };

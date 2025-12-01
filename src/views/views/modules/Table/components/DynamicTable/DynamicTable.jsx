@@ -84,6 +84,8 @@ export const DynamicTable = ({
     fields,
   });
 
+  console.log({ data });
+
   return (
     <div
       className="CTableContainer"

@@ -43,9 +43,9 @@ const HFIconPicker = ({
             clickItself={clickItself}
             {...props}
           />
-          {!disabledHelperText && (
+          {/* {!disabledHelperText && (
             <FormHelperText error>{error?.message}</FormHelperText>
-          )}
+          )} */}
         </>
       )}
     ></Controller>

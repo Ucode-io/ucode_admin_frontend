@@ -87,9 +87,9 @@ const HFTextField = ({
 
         endAdornment,
       }}
-      helperText={!disabledHelperText && error?.message}
+      // helperText={!disabledHelperText && error?.message}
       className={clsx(className, { custom_textfield: isFormEdit })}
-      error={!disabledHelperText && Boolean(error?.message)}
+      // error={!disabledHelperText && Boolean(error?.message)}
       {...props}
     />
   );

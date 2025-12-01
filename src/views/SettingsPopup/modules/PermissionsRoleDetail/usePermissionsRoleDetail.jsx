@@ -1,5 +1,4 @@
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
 import { store } from "@/store";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,10 +9,8 @@ import {
   useRolePermissionUpdateMutation,
 } from "@/services/rolePermissionService";
 import { showAlert } from "@/store/alert/alert.thunk";
-import queryClient from "@/queries";
 import { useSettingsPopupContext } from "../../providers";
-import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import roleServiceV2 from "@/services/roleServiceV2";
 import cls from "./styles.module.scss";
 import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
@@ -33,6 +30,8 @@ export const usePermissionsRoleDetail = () => {
   const [isCategoryOpen, setCategoryOpen] = useState(false);
   const [activeRoleId, setActiveRoleId] = useState("");
 
+  const queryClient = useQueryClient();
+
   // const activeRoleId = useSelector((state) => state.settingsModal.roleId);
 
   const dispatch = useDispatch();
@@ -42,7 +41,7 @@ export const usePermissionsRoleDetail = () => {
   const { permissionChild } = useSettingsPopupContext();
 
   const activeClientType = permissionChild?.find(
-    (item) => item?.id === permissionId
+    (item) => item?.id === permissionId,
   );
 
   const handleOpenRoleModal = () => setCreateRoleModalOpen(true);
@@ -142,7 +141,7 @@ export const usePermissionsRoleDetail = () => {
         setActiveRoleId(res?.data?.response[0]?.guid);
         dispatch(settingsModalActions.setRoleId(res?.data?.response[0]?.guid));
       },
-    }
+    },
   );
 
   const onSubmit = (values) => {

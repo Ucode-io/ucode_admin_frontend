@@ -83,7 +83,7 @@ const HFLinkField = ({
                     ? e.target.value?.trim()
                     : typeof e.target.value === "number"
                       ? numberWithSpaces(e.target.value)
-                      : e.target.value
+                      : e.target.value,
                 );
                 customOnChange(e);
                 isNewTableView && updateObject();
@@ -112,7 +112,7 @@ const HFLinkField = ({
                 readOnly: disabled,
                 inputProps: {
                   tabIndex,
-                  style: {height: inputHeight, color: "blue"},
+                  style: { height: inputHeight, color: "blue" },
                 },
                 classes: {
                   input: isBlackBg ? classes.input : "",
@@ -139,8 +139,8 @@ const HFLinkField = ({
                         disabled={Boolean(!value)}
                         className={styles.linkBtn}
                         onClick={() => navigateToNewPage(value)}
-                        sx={{cursor: "pointer"}}>
-                        <LaunchIcon style={{fontSize: "20px"}} />
+                      >
+                        <LaunchIcon style={{ fontSize: "20px" }} />
                       </button>
                     ) : (
                       ""
@@ -148,7 +148,7 @@ const HFLinkField = ({
                   </InputAdornment>
                 ),
               }}
-              helperText={!disabledHelperText && error?.message}
+              // helperText={!disabledHelperText && error?.message}
               className={
                 drawerDetail ? "customLinkFieldDrawer" : "customLinkField"
               }

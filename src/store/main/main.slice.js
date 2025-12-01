@@ -10,6 +10,7 @@ export const { actions: mainActions, reducer: mainReducer } = createSlice({
     sidebarHighlightedAction: null,
     tableViewFiltersOpen: true,
     selectedViewType: "SidePeek",
+    openedFiltersByView: {},
   },
   reducers: {
     setSettingsSidebarIsOpen: (state, { payload }) => {
@@ -32,6 +33,12 @@ export const { actions: mainActions, reducer: mainReducer } = createSlice({
     },
     setSelectedViewType: (state, action) => {
       state.selectedViewType = action.payload;
+    },
+    setViewFilter: (state, { payload: { id, open, height } }) => {
+      state.openedFiltersByView[id] = {
+        open,
+        height: height || 37,
+      };
     },
   },
 });

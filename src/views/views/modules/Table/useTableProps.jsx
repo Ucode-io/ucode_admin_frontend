@@ -13,43 +13,13 @@ import { useGetLang } from "@/hooks/useGetLang";
 import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
-// eslint-disable-next-line import/no-unresolved
-import TableWorker from "@/workers/tableWorker?worker";
-// import { staticRow } from "./static";
-
-// function combine(columns, rows) {
-//   return rows.map((row) => {
-//     return columns.map((col) => ({
-//       guid: row.guid,
-//       slug: col.slug,
-//       value: row[col.slug] ?? null,
-
-//       [`${col.slug}_data`]: row[`${col.slug}_data`],
-
-//       id: col.id,
-//       type: col.type,
-//       enable_multilanguage: col.enable_multilanguage,
-//       table_slug: col.table_slug,
-//       table_id: col.table_id,
-//       relation_type: col.relation_type,
-//       tabIndex: col.tabIndex,
-//       required: col.required,
-//       view_fields: col.view_fields,
-//       attributes: {
-//         ...col.attributes,
-//         required: col.required,
-//       },
-//     }));
-//   });
-// }
-
 function rowToObject(rowArray) {
   const obj = {};
 
   for (const cell of rowArray) {
     const slug = cell.slug;
 
-    if (cell.type === FIELD_TYPES.LOOKUP || FIELD_TYPES.LOOKUPS) {
+    if (cell.type === FIELD_TYPES.LOOKUP || cell.type === FIELD_TYPES.LOOKUPS) {
       obj[slug] =
         typeof cell.value === "object"
           ? (cell.value?.guid ?? null)
@@ -66,6 +36,32 @@ function rowToObject(rowArray) {
   return obj;
 }
 
+const combine = (tableData, columns) => {
+  return tableData?.map((row) => {
+    return columns?.map((col) => ({
+      guid: row.guid,
+      slug: col.slug,
+      value: row[col.slug] ?? null,
+
+      [`${col.slug}_data`]: row[`${col.slug}_data`],
+
+      id: col.id,
+      type: col.type,
+      enable_multilanguage: col.enable_multilanguage,
+      table_slug: col.table_slug,
+      table_id: col.table_id,
+      relation_type: col.relation_type,
+      tabIndex: col.tabIndex,
+      required: col.required,
+      view_fields: col.view_fields,
+      attributes: {
+        ...col.attributes,
+        required: col.required,
+      },
+    }));
+  });
+};
+
 export const useTableProps = ({ tab }) => {
   const {
     view,
@@ -79,10 +75,11 @@ export const useTableProps = ({ tab }) => {
     checkedColumns,
     navigateToEditPage,
     isRelationView,
-    viewLoader,
   } = useViewContext();
 
   const { fieldsMap, fieldsForm, fields } = useFieldsContext();
+
+  const [viewsLoader, setViewsLoader] = useState(true);
 
   const {
     reset,
@@ -105,12 +102,10 @@ export const useTableProps = ({ tab }) => {
 
   const dispatch = useDispatch();
 
-  const workerRef = useRef(null);
-
   const [limit, setLimit] = useState(20);
   const [drawerStateField, setDrawerStateField] = useState(null);
 
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState(null);
 
   const [drawerState, setDrawerState] = useState(null);
 
@@ -127,7 +122,6 @@ export const useTableProps = ({ tab }) => {
       })
       .then(() => refetch());
   });
-  // const selectedTabIndex = isRelationView ? drawerTabIndex : mainTabIndex;
 
   const rowsMapRef = useRef(new Map());
   const cellMapRef = useRef(new Map());
@@ -139,6 +133,7 @@ export const useTableProps = ({ tab }) => {
     const key = rowId + ":" + name;
 
     const cell = cellMap.get(key);
+
     if (!cell) return;
 
     cell.value = value;
@@ -147,7 +142,7 @@ export const useTableProps = ({ tab }) => {
     rowsMap.set(rowId, updatedRow);
 
     setRows((prev) => {
-      const newRows = prev.map((row) =>
+      const newRows = prev?.map((row) =>
         row[0].guid === rowId ? updatedRow : row,
       );
       return newRows;
@@ -206,7 +201,7 @@ export const useTableProps = ({ tab }) => {
 
     return customSortArray(
       uniqueColumns,
-      result.map((el) => el.id),
+      result?.map((el) => el.id),
     )
       ?.map((el) => fieldsMap[el])
       ?.filter((el) => el);
@@ -283,24 +278,25 @@ export const useTableProps = ({ tab }) => {
       dataCount: 0,
     },
     refetch,
-    isLoading,
-    isFetching: tableFetching,
+    isSuccess,
   } = useQuery({
     queryKey: [
       QUERY_KEYS.TABLE_DATA_KEY,
+      isRelationView,
       {
-        tableSlug,
+        // tableSlug,
         searchText,
         sortedDatas,
         currentPage,
         limit,
-        filters: { ...filters, [tab?.slug]: tab?.value },
+        filters,
+        tabValue: tab?.value,
         pagination,
         orderBy,
-        viewId,
+        // viewId,
         computedSortColumns,
         checkedColumns,
-        menuId,
+        // menuId,
       },
     ],
     queryFn: () => {
@@ -325,7 +321,7 @@ export const useTableProps = ({ tab }) => {
         },
       });
     },
-    enabled: Boolean(tableSlug && menuId && viewId && columns?.length > 0),
+    enabled: false,
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
@@ -336,94 +332,28 @@ export const useTableProps = ({ tab }) => {
       };
     },
     onSuccess: (data) => {
-      if (!workerRef.current) return;
-
-      workerRef.current.postMessage({
-        tableData: data.tableData,
-        columns,
-      });
+      if (columns?.length > 0) {
+        setRows(combine(data.tableData ?? [], columns ?? []));
+        setViewsLoader(false);
+      } else {
+        setRows([]);
+        setViewsLoader(false);
+      }
     },
-    staleTime: 1000 * 60,
-    keepPreviousData: true,
+    onError: () => {
+      setRows([]);
+      setViewsLoader(false);
+    },
+    staleTime: 0,
+    cacheTime: 0,
+    keepPreviousData: false,
   });
-
-  // const {
-  //   data: { tableData, dataCount } = {
-  //     tableData: [],
-  //     pageCount: 1,
-  //     fieldView: [],
-  //     fiedlsarray: [],
-  //     dataCount: 0,
-  //   },
-  //   refetch,
-  //   isLoading,
-  //   isFetching: tableFetching,
-  // } = useQuery(
-  //   [
-  //     "GET_OBJECTS_LIST_DATA",
-  //     {
-  //       tableSlug,
-  //       filters: {
-  //         offset: pageToOffset(currentPage, pagination),
-  //         pagination,
-  //         ...filters,
-  //         searchText,
-  //         [tab?.slug]: tab?.value,
-  //       },
-  //     },
-  //   ],
-  //   () =>
-  //     constructorObjectService.getListV2(tableSlug, {
-  //       data: {
-  //         ...filters,
-  //         limit: pagination ?? limit,
-  //         search: tableSearch,
-  //         view_fields: checkedColumns,
-  //         [tab?.slug]: tab
-  //           ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
-  //               ?.type === "MULTISELECT"
-  //             ? [`${tab?.value}`]
-  //             : tab?.value
-  //           : "",
-  //         offset: pageToOffset(currentPage, pagination),
-  //       },
-  //     }),
-  //   {
-  //     enabled: !!tableSlug,
-  //     select: (res) => {
-  //       return {
-  //         tableData: res.data?.response ?? [],
-  //         pageCount: isNaN(res.data?.count)
-  //           ? 1
-  //           : Math.ceil(res.data?.count / (pagination ?? limit)),
-  //         dataCount: res?.data?.count,
-  //       };
-  //     },
-  //     onSuccess: (data) => {
-  //       if (!workerRef.current) return;
-
-  //       workerRef.current.postMessage({
-  //         tableData: data.tableData,
-  //         columns,
-  //       });
-
-  //       // setCount(data?.data?.count);
-  //       // setRowData([...(data?.data?.response ?? [])] ?? []);
-  //       // setLoadings(false);
-  //     },
-  //     onError: () => {
-  //       // setLoadings(false);
-  //     },
-  //   },
-  // );
-
-  const tableLoader = isLoading || (!tableData.length && tableFetching);
 
   const deleteHandler = async (rowId) => {
     // setDeleteLoader(true);
     try {
       await constructorObjectService.delete(tableSlug, rowId);
-      setRows((prev) => prev.filter((row) => row[0].guid !== rowId));
+      setRows((prev) => prev?.filter((row) => row?.[0]?.guid !== rowId));
     } catch (error) {
       console.error(error);
     }
@@ -449,13 +379,13 @@ export const useTableProps = ({ tab }) => {
   useEffect(() => {
     if (tableData?.length > 0) {
       reset({
-        multi: tableData.map((i) => i),
+        multi: tableData?.map((i) => i),
       });
     }
   }, [reset, tableData]);
 
   useEffect(() => {
-    if (tableSlug) {
+    if (tableSlug && menuId && viewId && columns?.length > 0) {
       refetch();
     }
     dispatch(
@@ -463,74 +393,48 @@ export const useTableProps = ({ tab }) => {
         view?.attributes?.quick_filters?.length ?? 0,
       ),
     );
-  }, [view?.attributes?.quick_filters?.length, refetch]);
+  }, [view?.attributes?.quick_filters?.length, filters, columns]);
 
-  const initWorkers = () => {
-    workerRef.current = new TableWorker();
+  const prevViewId = useRef(viewId);
 
-    workerRef.current.onmessage = (event) => {
-      const combinedTableData = event.data;
+  useEffect(() => {
+    if (rows == null && columns?.length) refetch();
+    else if (prevViewId.current !== viewId) {
+      prevViewId.current = viewId;
+      refetch();
+    }
+  }, [viewId, columns]);
 
-      rowsMap.clear();
-      cellMap.clear();
+  useEffect(() => {
+    if (!tableData || tableData.length === 0 || viewsLoader || !columns?.length)
+      return;
 
-      combinedTableData.forEach((row) => {
-        const rowId = row[0]?.guid;
-        rowsMap.set(rowId, row);
+    const newCombined = combine(tableData, columns);
 
-        row.forEach((cell) => {
-          cellMap.set(rowId + ":" + cell.slug, cell);
-        });
+    rowsMap.clear();
+    cellMap.clear();
+
+    newCombined.forEach((row) => {
+      const rowId = row?.[0]?.guid;
+      rowsMap.set(rowId, row);
+      row.forEach((cell) => {
+        cellMap.set(rowId + ":" + cell.slug, cell);
       });
-
-      setRows(combinedTableData);
-    };
-  };
-
-  const terminateWorkers = () => {
-    workerRef.current?.terminate();
-  };
-
-  const headLoader = viewLoader;
-  const dataLoader = tableLoader;
-
-  useEffect(() => {
-    initWorkers();
-
-    return () => {
-      terminateWorkers();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!tableData || tableData.length === 0) return;
-
-    workerRef.current.postMessage({
-      columns,
-      tableData,
     });
-  }, [columns]);
 
-  // useEffect(() => {
-  //   if (!tableData || tableData.length === 0 || isFirstRender.current) return;
+    setRows(newCombined);
+  }, [columns, tableData]);
 
-  //   isFirstRender.current = false;
+  useEffect(() => {
+    if (!viewsLoader) setViewsLoader(true);
+  }, [menuId]);
 
-  //   const newCombined = combine(columns, tableData);
-
-  //   rowsMap.clear();
-  //   cellMap.clear();
-
-  //   newCombined.forEach((row) => {
-  //     const rowId = row?.[0]?.guid;
-  //     rowsMap.set(rowId, row);
-  //     row.forEach((cell) => {
-  //       cellMap.set(rowId + ":" + cell.slug, cell);
-  //     });
-  //   });
-
-  //   setRows(newCombined);
-  // }, [columns]);
+  useEffect(() => {
+    if (viewsLoader && view.id && !view?.columns?.length) {
+      setRows([]);
+      setViewsLoader(false);
+    }
+  }, [view]);
 
   return {
     tableLan,
@@ -552,8 +456,7 @@ export const useTableProps = ({ tab }) => {
     setLimit,
     view,
     refetch,
-    headLoader,
-    dataLoader,
+    tableLoading: viewsLoader,
     setSortedDatas,
     sortedDatas,
     setFormValue,

@@ -1,4 +1,5 @@
 import { Checkbox } from "@mui/material";
+import { useState } from "react";
 
 const HFCheckbox = ({
   isBlackBg,
@@ -13,8 +14,10 @@ const HFCheckbox = ({
   ...props
 }) => {
   const value = row?.value;
+  const [checked, setChecked] = useState(value);
 
   const onChange = (value) => {
+    setChecked(value);
     handleChange({
       value,
       rowId: row?.guid,
@@ -48,7 +51,7 @@ const HFCheckbox = ({
           padding: "4px",
         }}
         checked={
-          typeof value === "string" ? value === "true" : (value ?? false)
+          typeof checked === "string" ? checked === "true" : (checked ?? false)
         }
         autoFocus={tabIndex === 1}
         onChange={(_, val) => {

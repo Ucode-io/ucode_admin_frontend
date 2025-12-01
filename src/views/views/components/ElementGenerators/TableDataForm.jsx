@@ -26,6 +26,9 @@ const TableDataForm = ({
   isNewRow,
   updateObject = () => {},
   handleChange = () => {},
+  rowData,
+  errors = {},
+  setErrors = () => {},
 }) => {
   const { i18n } = useTranslation();
 
@@ -108,6 +111,9 @@ const TableDataForm = ({
           setFormValue={setFormValue}
           newUi={newUi}
           handleChange={handleChange}
+          rowData={rowData}
+          errors={errors}
+          setErrors={setErrors}
         />
       )}
     </Box>
@@ -117,6 +123,7 @@ const TableDataForm = ({
 export default memo(TableDataForm, (prev, next) => {
   return (
     prev.row === next.row &&
+    prev.rowData === next.rowData &&
     prev.field?.id === next.field?.id &&
     prev.isNewRow === next.isNewRow &&
     prev.isWrap === next.isWrap &&

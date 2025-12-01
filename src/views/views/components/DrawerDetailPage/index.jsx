@@ -228,11 +228,9 @@ function DrawerDetailPage({
         refetchMainDataList();
 
         handleClose();
-      })
-      .catch((e) => console.log("ERROR: ", e))
-      .finally(() => {
         rootForm.reset({});
-      });
+      })
+      .catch((e) => console.log("ERROR: ", e));
   }
 
   const update = (data) => {

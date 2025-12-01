@@ -1,15 +1,15 @@
 import useFilters from "@/hooks/useFilters";
 import { useViewContext } from "@/providers/ViewProvider";
 import { filterActions } from "@/store/filter/filter.slice";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import { useFieldsContext } from "../../../../providers/FieldsProvider";
 import { useGetLang } from "@/hooks/useGetLang";
+import { mainActions } from "@/store/main/main.slice";
 
 export const useFiltersListProps = () => {
-
   const { view, viewId, tableSlug, visibleColumns, refetchViews } =
     useViewContext();
 
@@ -19,10 +19,14 @@ export const useFiltersListProps = () => {
   const [queryParameters] = useSearchParams();
   const { filters } = useFilters(tableSlug, viewId);
   const dispatch = useDispatch();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const filtersRef = useRef(null);
 
-  const tableLan = useGetLang("Table")
+  const filtersOpen = useSelector(
+    (state) => state.main.openedFiltersByView?.[view?.id]?.open,
+  );
+
+  const tableLan = useGetLang("Table");
 
   const computedFields = useMemo(() => {
     const filter = view?.attributes?.quick_filters ?? [];
@@ -35,8 +39,8 @@ export const useFiltersListProps = () => {
             (fast) =>
               fast.is_checked &&
               !view?.attributes?.quick_filters?.find(
-                (quick) => quick?.id === fast.id
-              )
+                (quick) => quick?.id === fast.id,
+              ),
           )
           ?.map((fast) => fast),
       ]
@@ -58,15 +62,41 @@ export const useFiltersListProps = () => {
         viewId: view.id,
         name: name,
         value,
-      })
+      }),
     );
   };
 
   useEffect(() => {
-    if (filtersRef.current) {
-      localStorage.setItem("filtersHeight", filtersRef.current.offsetHeight);
-    }
-  }, [computedFields]);
+    const node = filtersRef.current;
+    if (!node) return;
+
+    const observer = new ResizeObserver(() => {
+      dispatch(
+        mainActions.setViewFilter({
+          id: view?.id,
+          height: node.offsetHeight,
+          open: filtersOpen,
+        }),
+      );
+    });
+
+    observer.observe(node);
+
+    return () => observer.disconnect();
+  }, [filtersOpen, view?.id]);
+
+  // useLayoutEffect(() => {
+  //   if (filtersRef.current) {
+  //     console.log(filtersRef.current.offsetHeight);
+  //     dispatch(
+  //       mainActions.setViewFilter({
+  //         id: view?.id,
+  //         height: filtersRef.current.offsetHeight,
+  //         open: filtersOpen,
+  //       }),
+  //     );
+  //   }
+  // }, [computedFields, filtersOpen, view?.attributes?.quick_filters]);
 
   useEffect(() => {
     if (queryParameters.get("specialities")?.length) {
@@ -76,7 +106,7 @@ export const useFiltersListProps = () => {
           viewId: view?.id,
           name: "specialities_id",
           value: [`${queryParameters.get("specialities")}`],
-        })
+        }),
       );
     }
   }, [queryParameters]);
@@ -92,5 +122,5 @@ export const useFiltersListProps = () => {
     filters,
     view,
     tableLan,
-  }
-}
+  };
+};

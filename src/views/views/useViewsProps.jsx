@@ -1,7 +1,7 @@
 import { viewsActions } from "@/store/views/view.slice";
 import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -104,7 +104,7 @@ export const useViewsProps = ({ isRelationView }) => {
   const [relationViews, setRelationViews] = useState([]);
   // const [selectedView, setSelectedView] = useState(null);
 
-  // const [menuItem, setMenuItem] = useState(null);
+  // const [viewsLoader, setViewsLoader] = useState(!isRelationView);
   const [authInfo, setAuthInfo] = useState(null);
 
   const { selectedViewType } = useSelector((state) => state.main);
@@ -356,7 +356,6 @@ export const useViewsProps = ({ isRelationView }) => {
     refetch: refetchViewsList,
     isRefetching,
     isLoading: isLoadingViews,
-    isFetching: isFetchingViews,
   } = useGetViewsList(menuIdForViewsList, {
     enabled: Boolean(menuIdForViewsList),
     select: (res) => {
@@ -400,12 +399,34 @@ export const useViewsProps = ({ isRelationView }) => {
         if (state?.toDocsTab)
           dispatch(detailDrawerActions.setDrawerTabIndex(views?.length));
       }
+
+      if (
+        views?.[selectedTabIndex]?.type !== VIEW_TYPES_MAP.TABLE ||
+        !views?.[selectedTabIndex]?.columns
+      ) {
+        // setViewsLoader(false);
+      }
+    },
+    onError: () => {
+      // setViewsLoader(false);
     },
     slateTime: 0,
-    keepPreviousData: true,
+    keepPreviousData: false,
   });
 
-  const viewLoader = isLoadingViews || (!selectedView && isFetchingViews);
+  // useEffect(() => {
+  //   if (prevMenuId.current !== menuIdForViewsList) {
+  //     setViewsLoader(true);
+  //   } else {
+  //     if (isLoadingViews) {
+  //       setViewsLoader(true);
+  //     } else {
+  //       setViewsLoader(false);
+  //     }
+  //   }
+  // }, [menuIdForViewsList]);
+
+  // const viewLoader = isLoadingViews || (isMenuIdChanged && isFetchingViews);
 
   const {
     data: { layout } = {
@@ -496,8 +517,8 @@ export const useViewsProps = ({ isRelationView }) => {
           setOrderBy(data?.orderBy);
         }
       },
-      staleTime: 1000 * 60, // 1 min
-      cacheTime: 1000 * 60 * 10, // 10 min
+      // staleTime: 1000 * 60, // 1 min
+      // cacheTime: 1000 * 60 * 10, // 10 min
     },
     {
       menuId,
@@ -653,6 +674,10 @@ export const useViewsProps = ({ isRelationView }) => {
     }
   };
 
+  useEffect(() => {
+    // setViewsLoader(true);
+  }, [menuIdForViewsList]);
+
   return {
     viewsMap,
     viewId,
@@ -718,6 +743,8 @@ export const useViewsProps = ({ isRelationView }) => {
     selectedTabIndex,
     navigateToEditPage,
     refetchMainDataList,
-    viewLoader,
+    viewsLoader: false,
+    setViewsLoader: () => {},
+    isLoadingViews,
   };
 };

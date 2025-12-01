@@ -47,7 +47,6 @@ export const NavigateByType = ({
   navigate,
   navigateAndSaveHistory,
 }) => {
-  console.log({ element, menuId, navigate });
   const handler = typeHandlers[element?.type] || typeHandlers.default;
   return handler({element, menuId, navigate, navigateAndSaveHistory});
 };

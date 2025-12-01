@@ -26,7 +26,7 @@ const HFMultiImage = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <>
           <MultiImageUpload
             name={name}
@@ -41,11 +41,12 @@ const HFMultiImage = ({
             newUi={newUi}
             {...props}
           />
-          {!disabledHelperText && error?.message && (
+          {/* {!disabledHelperText && error?.message && (
             <FormHelperText error>{error?.message}</FormHelperText>
-          )}
+          )} */}
         </>
-      )}></Controller>
+      )}
+    ></Controller>
   );
 };
 

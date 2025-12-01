@@ -13,6 +13,9 @@ export default function MultiLineCellFormElement({
   isDisabled,
   row,
   handleChange,
+  required,
+  errors,
+  setErrors,
   ...props
 }) {
   const [innerValue, setInnerValue] = useState(row?.value);
@@ -30,11 +33,23 @@ export default function MultiLineCellFormElement({
   };
 
   const handleClose = () => {
-    handleChange({
-      value: innerValue,
-      name: row?.slug,
-      rowId: row?.guid,
-    });
+    if (!innerValue && required) {
+      setErrors((prev) => ({
+        ...prev,
+        [row?.slug]: {
+          message: "This field is required",
+        },
+      }));
+    } else {
+      const newErrors = { ...errors };
+      delete newErrors[row?.slug];
+      setErrors(newErrors);
+      handleChange({
+        value: innerValue,
+        name: row?.slug,
+        rowId: row?.guid,
+      });
+    }
     setAnchorEl(null);
   };
 

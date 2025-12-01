@@ -46,7 +46,7 @@ const HFFloatField = ({
       onChange={(e) => {
         const val = e.target.value;
         const valueWithoutSpaces = val.replaceAll(" ", "");
-        if (!valueWithoutSpaces) onChange("");
+        if (!valueWithoutSpaces) onChange(null);
         else {
           if (valueWithoutSpaces.at(-1) === ".")
             onChange(parseFloat(valueWithoutSpaces));

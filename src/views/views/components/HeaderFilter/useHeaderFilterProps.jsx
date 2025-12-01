@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { groupFieldActions } from "@/store/groupField/groupField.slice";
 import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
-import { viewsActions } from "@/store/views/view.slice";
 import { useGetLang } from "@/hooks/useGetLang";
 import { useUpdateTableMutation } from "@/services/tableService/table.service";
 import { useFieldsContext } from "../../providers/FieldsProvider";

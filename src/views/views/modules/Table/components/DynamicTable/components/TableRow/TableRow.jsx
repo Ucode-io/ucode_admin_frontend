@@ -1,6 +1,6 @@
 import { Delete } from "@mui/icons-material";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import { Button, Checkbox } from "@mui/material";
+import { Button, Checkbox, FormHelperText } from "@mui/material";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import { CTableCell, CTableRow } from "@/components/CTable";
 import CellElementGenerator from "@/components/ElementGenerators/CellElementGenerator";
@@ -56,6 +56,8 @@ export const TableRow = ({
     tableSlug,
     viewForm,
     view,
+    errors,
+    setErrors,
   } = useTableRowProps({
     selectedObjectsForDelete,
     setSelectedObjectsForDelete,
@@ -160,7 +162,7 @@ export const TableRow = ({
               </CTableCell>
             ))}
 
-            {/* {row.map(
+            {row?.map(
               (field) =>
                 field?.attributes?.field_permission?.view_permission && (
                   <CTableCell
@@ -220,6 +222,7 @@ export const TableRow = ({
                         getValues={getValues}
                         mainForm={viewForm}
                         row={field}
+                        rowData={row}
                         index={rowIndex}
                         control={control}
                         setFormValue={setFormValue}
@@ -233,10 +236,19 @@ export const TableRow = ({
                         newUi={true}
                         handleChange={handleChange}
                         updateObject={updateObject}
+                        setErrors={setErrors}
+                        errors={errors}
                       />
                     ) : (
                       <CellElementGenerator field={field} row={row} />
                     )}
+
+                    <FormHelperText
+                      sx={{ position: "absolute", bottom: "0", left: "10px" }}
+                      error
+                    >
+                      {errors[field?.slug]?.message}
+                    </FormHelperText>
                     <div
                       onClick={() => onRowClick(row, rowIndex)}
                       className="newUIi_first_button"
@@ -262,7 +274,7 @@ export const TableRow = ({
                     )}
                   </CTableCell>
                 ),
-            )} */}
+            )}
 
             <td
               style={{
@@ -370,7 +382,7 @@ export const TableRow = ({
             </div>
           </CTableCell>
 
-          {columns.map(
+          {columns?.map(
             (column) =>
               column?.attributes?.field_permission?.view_permission && (
                 <CTableCell
@@ -428,6 +440,8 @@ export const TableRow = ({
                       isTableView={isTableView}
                       view={view}
                       watch={watch}
+                      errors={errors}
+                      setErrors={setErrors}
                     />
                   ) : (
                     <CellElementGenerator field={column} row={row} />
@@ -474,7 +488,6 @@ export const TableRow = ({
                       if (row.guid) {
                         onDeleteClick(row, rowIndex);
                       }
-                      // row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
                     }}
                   >
                     <Delete color="error" />
@@ -536,7 +549,7 @@ export const TableRow = ({
             </div>
           </CTableCell>
 
-          {columns.map((column) => (
+          {columns?.map((column) => (
             <CTableCell
               key={column.id}
               className="overflow-ellipsis"
@@ -592,6 +605,8 @@ export const TableRow = ({
                 width={width}
                 view={view}
                 watch={watch}
+                errors={errors}
+                setErrors={setErrors}
               />
             </CTableCell>
           ))}

@@ -145,8 +145,8 @@ export const TableRow = ({
                   />
                 ) : (
                   <CellElementGeneratorForTableView
-                    row={row}
-                    field={row}
+                    row={field}
+                    field={field}
                     index={index}
                     fields={columns}
                     control={control}

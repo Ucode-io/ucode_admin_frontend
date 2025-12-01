@@ -1,7 +1,6 @@
 import MaterialUIProvider from "@/providers/MaterialUIProvider";
 // import FieldSettings from "@/views/Constructor/Tables/Form/Fields/FieldSettings";
 // import RelationSettings from "@/views/Constructor/Tables/Form/Relations/RelationSettings";
-import styles from "@/views/Objects/style.module.scss";
 // import {Drawer} from "@mui/material";
 // import DrawerDetailPage from "../Objects/DrawerDetailPage";
 // import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
@@ -44,8 +43,8 @@ export const Table = ({ tab, ...props }) => {
   } = useTableProps({ tab });
 
   return (
-    <MaterialUIProvider>
-      <div id="wrapper_drag" className={styles.wrapper}>
+    <MaterialUIProvider style={{ height: "100%" }}>
+      <div id="wrapper_drag" style={{ height: "100%" }}>
         <DynamicTable
           tableLan={tableLan}
           dataCount={dataCount}

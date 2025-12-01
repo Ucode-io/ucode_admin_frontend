@@ -2,7 +2,7 @@ import { Parser } from "hot-formula-parser";
 import { memo, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import useDebounce from "@/hooks/useDebounce";
+// import useDebounce from "@/hooks/useDebounce";
 import { getFieldByType } from "./getFieldByType";
 
 const parser = new Parser();
@@ -27,7 +27,7 @@ const CellElementGeneratorForTableView = ({
   const [objectIdFromJWT, setObjectIdFromJWT] = useState();
   const { i18n } = useTranslation();
 
-  const debouncedUpdateObject = useDebounce(updateObject, 1000);
+  // const debouncedUpdateObject = useDebounce(updateObject, 1000);
 
   let relationTableSlug = "";
 

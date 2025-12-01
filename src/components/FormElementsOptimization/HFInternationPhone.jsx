@@ -71,6 +71,7 @@ const HFInternationPhone = ({
           defaultValue={row?.value}
           className={classes.input}
           data-valid={inputProps.isValidPhoneNumber}
+          {...props}
         />
       )}
     />

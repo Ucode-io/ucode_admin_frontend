@@ -32,6 +32,7 @@ const HFTextField = ({
   row,
   handleBlur,
   error,
+  autoFocus,
   ...props
 }) => {
   const classes = useStyles();
@@ -56,9 +57,10 @@ const HFTextField = ({
       id={row?.slug ? `${row?.slug}_${name}` : `${name}`}
       fullWidth={fullWidth}
       placeholder={placeholder}
-      autoFocus={tabIndex === 1}
+      autoFocus={autoFocus || tabIndex === 1}
       InputProps={{
         readOnly: disabled,
+        autoFocus,
         startAdornment,
         inputProps: {
           tabIndex,

@@ -23,6 +23,8 @@ const CellElementGeneratorForTableView = ({
   handleChange = () => {},
   newUi = false,
   rowData = [],
+  errors = {},
+  setErrors = () => {},
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -132,6 +134,8 @@ const CellElementGeneratorForTableView = ({
     debouncedUpdateObject,
     handleChange,
     rowData,
+    errors,
+    setErrors,
   });
 };
 

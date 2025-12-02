@@ -24,6 +24,7 @@ const CellElementGeneratorForTableView = ({
   rowData = [],
   errors = {},
   setErrors = () => {},
+  handleOpenTextEditor = () => {},
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -141,6 +142,7 @@ const CellElementGeneratorForTableView = ({
     rowData,
     errors,
     setErrors,
+    handleOpenTextEditor,
   });
 };
 

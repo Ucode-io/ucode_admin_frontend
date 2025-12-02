@@ -1,0 +1,16 @@
+.multilineWrapper {
+  display: flex;
+  gap: 8px;
+}
+
+.slicedText {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-weight: 500;
+  font-size: 12px;
+  cursor: text;
+  min-height: 16px;
+  padding-left: 10px;
+}

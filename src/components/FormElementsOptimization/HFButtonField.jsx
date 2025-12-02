@@ -33,7 +33,17 @@ function HFButtonField({ row, isTableView = false, getValues = () => {} }) {
   return (
     <>
       {isTableView ? (
-        <Box sx={{ width: "100%", height: "100%", textAlign: "center" }}>
+        <Box
+          sx={{
+            width: "100%",
+            height: "100%",
+            textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <Button
             id="button_field"
             disabled={btnLoader}

@@ -198,7 +198,16 @@ export const useViewsProps = ({ isRelationView }) => {
       </MaterialUIProvider>
     ),
     [VIEW_TYPES_MAP.TREE]: () => <Tree />,
-    [VIEW_TYPES_MAP.GRID]: () => <Grid />,
+    // [VIEW_TYPES_MAP.GRID]: () => <Grid />,
+    [VIEW_TYPES_MAP.GRID]: (props) => (
+      <MaterialUIProvider style={{ height: "100%" }}>
+        {groupTable?.length > 0 ? (
+          <TableGroup {...props} />
+        ) : (
+          <Table {...props} />
+        )}
+      </MaterialUIProvider>
+    ),
     [VIEW_TYPES_MAP.BOARD]: () => <Board />,
     [VIEW_TYPES_MAP.TIMELINE]: () => <Timeline />,
     [VIEW_TYPES_MAP.CALENDAR]: () => <Calendar />,

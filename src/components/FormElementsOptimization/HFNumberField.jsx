@@ -13,6 +13,7 @@ const HFNumberField = ({
   newUi,
   row,
   handleChange = () => {},
+  onBlur: onBlurProp = () => {},
   ...props
 }) => {
   const [error] = useState({});
@@ -20,6 +21,9 @@ const HFNumberField = ({
   const onBlur = (event) => {
     const inputValue = event.target.value.replace(/\s+/g, "");
     const parsedValue = inputValue ? parseFloat(inputValue) : "";
+    onBlurProp();
+
+    if (row.value === parsedValue) return;
 
     if (parsedValue || parsedValue === 0) {
       handleChange({
@@ -29,7 +33,7 @@ const HFNumberField = ({
       });
     } else {
       handleChange({
-        value: "",
+        value: null,
         rowId: row?.guid,
         name: row?.slug,
       });
@@ -88,7 +92,6 @@ const HFNumberField = ({
               ? "1px solid red"
               : "1px solid #D4D2D2",
           borderRadius: "4px",
-          paddingLeft: "8px",
         }}
         {...props}
       />

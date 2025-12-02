@@ -3,7 +3,14 @@ import React from "react";
 import styles from "./style.module.scss";
 import { useTranslation } from "react-i18next";
 
-function HFStatusField({ newUi, disabled = false, handleChange, row }) {
+function HFStatusField({
+  newUi,
+  disabled = false,
+  handleChange,
+  row,
+  defaultOpen,
+  onClose = () => {},
+}) {
   const { i18n } = useTranslation();
 
   const onChange = (e) => {
@@ -22,6 +29,7 @@ function HFStatusField({ newUi, disabled = false, handleChange, row }) {
         disabled={disabled}
         id="statusField"
         className={styles.statusSelect}
+        defaultOpen={defaultOpen}
         sx={{
           height: newUi ? "25px" : "41px",
           border: "none",
@@ -29,13 +37,13 @@ function HFStatusField({ newUi, disabled = false, handleChange, row }) {
           "& .MuiSelect-select": {
             display: "flex",
             alignItems: "center",
-            padding: "4px",
+            padding: "0px",
             borderRadius: "4px",
           },
         }}
         value={row?.value || ""}
-        // value={row?.value}
         onChange={onChange}
+        onClose={onClose}
         fullWidth
         renderValue={(selected) => {
           const selectedOption =

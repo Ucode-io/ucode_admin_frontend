@@ -21,6 +21,7 @@ const HFInternationPhone = ({
   newUi,
   row,
   handleChange,
+  onBlur = () => {},
   ...props
 }) => {
   const classes = useStyles();
@@ -65,6 +66,13 @@ const HFInternationPhone = ({
       {...props}
       isValidPhoneNumber
       style={{ height: newUi ? "25px" : undefined }}
+      onBlur={(e) => {
+        const next = e.relatedTarget;
+        if (next?.attributes?.class?.value !== "PhoneInputCountrySelect") {
+          console.log(e.target.value);
+          onBlur(e);
+        }
+      }}
       renderInput={(inputProps) => (
         <input
           {...inputProps}

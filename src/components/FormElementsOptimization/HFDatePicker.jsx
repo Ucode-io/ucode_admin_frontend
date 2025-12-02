@@ -2,7 +2,7 @@ import {makeStyles} from "@mui/styles";
 import {Controller} from "react-hook-form";
 import CDatePicker from "../DatePickers/CDatePicker";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   input: {
     "&::placeholder": {
       color: "#fff",
@@ -17,12 +17,8 @@ const HFDatePicker = ({
   name,
   updateObject,
   isNewTableView = false,
-  label,
-  width,
   mask,
   tabIndex,
-  inputProps,
-  disabledHelperText,
   placeholder = "",
   isFormEdit = false,
   defaultValue = "",
@@ -30,7 +26,6 @@ const HFDatePicker = ({
   disabled,
   required,
   sectionModal,
-  ...props
 }) => {
   const classes = useStyles();
   return (
@@ -42,7 +37,7 @@ const HFDatePicker = ({
         required: required ? "This field is required" : false,
       }}
       defaultValue={defaultValue === "now()" ? new Date() : defaultValue}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <div className={className}>
           <CDatePicker
             isFormEdit={isFormEdit}

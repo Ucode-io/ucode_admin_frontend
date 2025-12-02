@@ -15,6 +15,7 @@ function HFPassword({
   handleBlur = () => {},
   error,
   rules,
+  autoFocus,
 }) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -36,6 +37,7 @@ function HFPassword({
       type={showPassword ? "text" : "password"}
       error={error}
       rules={rules}
+      autoFocus={autoFocus}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">

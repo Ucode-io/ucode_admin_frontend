@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import IconGenerator from "@/components/IconPicker/IconGenerator";
 import { useTranslation } from "react-i18next";
 
-export const MultiSelectView = ({row}) => {
+export const MultiSelectDisplay = ({ row, onClick = () => {} }) => {
 
   const { i18n } = useTranslation();
 
@@ -47,7 +47,7 @@ export const MultiSelectView = ({row}) => {
     }
   }, [value, options, isMultiSelect]);
 
-  return <div className={cls.valuesWrapper}>
+  return <div className={cls.valuesWrapper} onClick={onClick}>
     {computedValue?.map((el) => (
       <div
         key={el?.value}
@@ -66,12 +66,6 @@ export const MultiSelectView = ({row}) => {
           ))}
         <p
           className={cls.value}
-          style={{
-            maxWidth: "150px",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
         >
           {el?.[`label_${i18n?.language}`] ?? el?.label ?? el?.value}
         </p>

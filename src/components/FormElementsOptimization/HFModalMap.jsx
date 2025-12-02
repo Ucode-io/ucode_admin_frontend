@@ -27,12 +27,8 @@ function HFModalMap({
   };
 
   return (
-    <Box
-      sx={{
-        padding: drawerDetail ? "0 4.6px" : "0",
-      }}
-    >
-      <TextField
+    <Box>
+      {/* <TextField
         disabled={disabled}
         className="mapField"
         placeholder={placeholder}
@@ -68,8 +64,17 @@ function HFModalMap({
           disableUnderline: true,
         }}
         {...props}
-      />
-
+      /> */}
+      <div
+        onClick={() => {
+          if (disabled) return;
+          handleOpen();
+        }}
+      >
+        {value
+          ? generateLink(value?.split(",")?.[0], value?.split(",")?.[1])
+          : ""}
+      </div>
       <Dialog open={open} onClose={handleClose}>
         <div className={styles.mapField}>
           <HFMapField

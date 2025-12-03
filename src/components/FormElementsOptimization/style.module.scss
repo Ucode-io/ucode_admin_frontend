@@ -300,3 +300,19 @@
     display: none !important;
   }
 }
+
+.mapText {
+  max-width: 250px;
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+  position: relative;
+  padding-right: 26px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.linkBtn {
+  display: flex;
+}

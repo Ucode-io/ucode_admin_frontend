@@ -1,22 +1,25 @@
 import {Box, Popover, TextField} from "@mui/material";
 import {format, parse} from "date-fns";
-import React, {useEffect, useState} from "react";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import {HFDayPicker} from "./HFDayPicker";
+import React, { useEffect, useRef, useState } from "react";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import { HFDayPicker } from "./HFDayPicker";
 import HFMonthPicker from "./HFMonthPicker";
 import HFQuarterPicker from "./HFQuarterPicker";
 import HFYearPicker from "./HFYearPicker";
 import styles from "./style.module.scss";
 import InputMask from "react-input-mask";
-import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
 function HFDatePickerNew({
   withTime = false,
   disabled = false,
-  placeholder = "DD.MM.YYYY",
+  placeholder,
   handleChange = () => {},
+  onClose = () => {},
   row,
+  defaultOpen,
 }) {
+  const dateRef = useRef(null);
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -26,6 +29,19 @@ function HFDatePickerNew({
 
   const value = row?.value;
 
+  const onChange = (value) => {
+    handleChange({
+      value: value.toISOString(),
+      name: row?.slug,
+      rowId: row?.guid,
+    });
+  };
+
+  const handleClose = () => {
+    onClose();
+    setAnchorEl(null);
+  };
+
   useEffect(() => {
     if (value && !isNaN(Date.parse(value))) {
       setInputValue(format(new Date(value), formatString));
@@ -34,13 +50,11 @@ function HFDatePickerNew({
     }
   }, [value, formatString]);
 
-  const onChange = (value) => {
-    handleChange({
-      value: value.toISOString(),
-      name: row?.slug,
-      rowId: row?.guid,
-    });
-  };
+  useEffect(() => {
+    if (defaultOpen) {
+      setAnchorEl(dateRef.current);
+    }
+  }, [defaultOpen, dateRef]);
 
   return (
     <Box>
@@ -111,6 +125,7 @@ function HFDatePickerNew({
           )}
         </InputMask>
         <Box
+          ref={dateRef}
           sx={{ marginRight: "24px", cursor: "pointer" }}
           onClick={(e) => {
             !disabled && setAnchorEl(e.currentTarget);
@@ -123,7 +138,7 @@ function HFDatePickerNew({
       <Popover
         anchorEl={anchorEl}
         open={open}
-        onClose={() => setAnchorEl(null)}
+        onClose={handleClose}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",

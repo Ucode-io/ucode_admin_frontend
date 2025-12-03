@@ -1,7 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import LaunchIcon from "@mui/icons-material/Launch";
 import { Box, Popover } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import { get } from "@ngard/tiny-get";
 import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
@@ -27,61 +26,41 @@ import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
 import { groupFieldActions } from "@/store/groupField/groupField.slice";
 import { useViewContext } from "@/providers/ViewProvider";
 
-const useStyles = makeStyles(() => ({
-  input: {
-    "&::placeholder": {
-      color: "#fff",
-    },
-  },
-}));
-
 const CellRelationFormElementNew = ({
   relOptions,
-  tableView,
   isBlackBg,
-  isFormEdit,
   control,
   name,
   updateObject,
   disabled,
-  placeholder,
   field,
   isLayout,
-  disabledHelperText,
   setFormValue,
   index,
   defaultValue = null,
-  relationfields,
-  data,
   isTableView = false,
   row,
   newUi,
   objectIdFromJWT,
   relationView,
-  newColumn,
   handleChange = () => {},
+  defaultMenuIsOpen,
+  autoFocus,
+  handleOnClose = () => {},
 }) => {
-  const classes = useStyles();
-
   if (!isLayout)
     return (
       <Controller
         control={control}
         name={name}
         defaultValue={defaultValue}
-        render={({ field: { onChange, value }, fieldState: { error } }) => {
+        render={({ field: { onChange, value } }) => {
           return field?.attributes?.cascading_tree_table_slug ? (
             <RelationGroupCascading
               field={field}
               tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
               value={value ?? ""}
               setFormValue={setFormValue}
-              classes={classes}
-              name={name}
-              control={control}
-              index={index}
               setValue={(e) => {
                 onChange(e);
                 updateObject();
@@ -91,13 +70,9 @@ const CellRelationFormElementNew = ({
             <CascadingElement
               field={field}
               tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
               value={value ?? ""}
               setFormValue={setFormValue}
-              classes={classes}
               name={name}
-              control={control}
               index={index}
               setValue={(e) => {
                 onChange(e);
@@ -108,13 +83,9 @@ const CellRelationFormElementNew = ({
             <AutoCompleteElement
               row={row}
               relOptions={relOptions}
-              tableView={tableView}
               disabled={disabled}
-              isFormEdit={isFormEdit}
-              placeholder={placeholder}
               isBlackBg={isBlackBg}
               value={value}
-              classes={classes}
               name={name}
               setValue={(e) => {
                 onChange(e?.guid);
@@ -122,20 +93,16 @@ const CellRelationFormElementNew = ({
                   handleChange({ name: row?.slug, value: e, rowId: row?.guid });
               }}
               field={field}
-              isTableView={isTableView}
-              defaultValue={defaultValue}
               tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
               setFormValue={setFormValue}
               control={control}
               index={index}
-              relationfields={relationfields}
-              data={data}
               newUi={newUi}
               objectIdFromJWT={objectIdFromJWT}
               relationView={relationView}
-              newColumn={newColumn}
+              defaultMenuIsOpen={defaultMenuIsOpen}
+              handleOnClose={handleOnClose}
+              autoFocus={autoFocus}
             />
           );
         }}
@@ -161,30 +128,43 @@ const AutoCompleteElement = ({
   newUi,
   objectIdFromJWT,
   relationView,
+  defaultMenuIsOpen,
+  autoFocus,
+  handleOnClose = () => {},
 }) => {
   const { view } = useViewContext();
   const isNewRouter = localStorage.getItem("new_router") === "true";
   const { navigateToForm } = useTabRouter();
+
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
-  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
+
+  const [menuIsOpen, setMenuIsOpen] = useState(false);
+
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState();
+
   const [count, setCount] = useState(0);
   const [localValue, setLocalValue] = useState(
     row?.[`${field?.slug}_data`] ?? null,
   );
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
+
   const [tableSlugFromProps, setTableSlugFromProps] = useState("");
+
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
-  // const menuId = searchParams.get("menuId");
+
   const { menuId } = useParams();
   const { i18n } = useTranslation();
+
   const languages = useSelector((state) => state.languages.list)?.map(
     (el) => el.slug,
   );
+
+  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
 
   const customStyles = {
     control: (provided) => ({
@@ -241,8 +221,8 @@ const AutoCompleteElement = ({
     }),
     menu: (provided) => ({
       ...provided,
-      width: "calc(100% + 10px)",
-      left: "-5px",
+      width: "calc(100% + 16px)",
+      left: "-11px",
       top: "-3px",
       zIndex: 9999,
       borderRadius: "6px",
@@ -263,6 +243,11 @@ const AutoCompleteElement = ({
       cursor: "pointer",
       marginRight: "20px",
       padding: "0",
+    }),
+    valueContainer: (provided) => ({
+      ...provided,
+      padding: "0",
+      marginLeft: "0",
     }),
   };
 
@@ -332,7 +317,7 @@ const AutoCompleteElement = ({
       //   (!field?.attributes?.function_path && Boolean(page > 1)) ||
       //   (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
       //   newColumn,
-      enabled: false,
+      enabled: Boolean(debouncedValue),
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -460,6 +445,13 @@ const AutoCompleteElement = ({
   useEffect(() => {
     setLocalValue(row?.[`${field?.slug}_data`]);
   }, [row]);
+
+  useEffect(() => {
+    if (defaultMenuIsOpen) {
+      setMenuIsOpen(true);
+      refetch();
+    }
+  }, []);
 
   const dispatch = useDispatch();
 
@@ -601,9 +593,16 @@ const AutoCompleteElement = ({
         isDisabled={disabled}
         onMenuScrollToBottom={loadMoreItems}
         options={openedItemValue ?? computedOptions ?? []}
+        onMenuClose={() => {
+          handleOnClose();
+          setMenuIsOpen(false);
+        }}
+        menuIsOpen={menuIsOpen}
         value={localValue}
         menuPortalTarget={document.body}
+        defaultMenuIsOpen={defaultMenuIsOpen}
         onMenuOpen={() => {
+          setMenuIsOpen(true);
           refetch();
         }}
         isClearable={!openedItemValue}
@@ -639,6 +638,7 @@ const AutoCompleteElement = ({
         isOptionSelected={(option, value) =>
           value.some((val) => val.guid === option.guid)
         }
+        autoFocus={autoFocus}
         blurInputOnSelect
       />
     </div>

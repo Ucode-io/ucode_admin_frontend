@@ -103,11 +103,11 @@ export const useTableProps = ({ tab }) => {
   const dispatch = useDispatch();
 
   const [limit, setLimit] = useState(20);
-  const [drawerStateField, setDrawerStateField] = useState(null);
+  const [, setDrawerStateField] = useState(null);
 
   const [rows, setRows] = useState(null);
 
-  const [drawerState, setDrawerState] = useState(null);
+  const [, setDrawerState] = useState(null);
 
   const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
 
@@ -278,7 +278,6 @@ export const useTableProps = ({ tab }) => {
       dataCount: 0,
     },
     refetch,
-    isSuccess,
   } = useQuery({
     queryKey: [
       QUERY_KEYS.TABLE_DATA_KEY,
@@ -464,6 +463,7 @@ export const useTableProps = ({ tab }) => {
     watch,
     currentPage,
     rows,
+    // rows: [staticRow],
     handleChange: handleChangeInput,
     onRowClick,
     updateObject,

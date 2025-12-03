@@ -1,0 +1,35 @@
+.tableCell {
+  min-width: 220px;
+  height: 24px;
+  padding: 0 5px;
+  padding-left: 12px;
+  overflow: hidden;
+  color: #262626;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.rowDetailBtn {
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  display: none;
+  position: absolute;
+  z-index: 9999;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 4px;
+  align-items: center;
+  justify-content: center;
+  color: rgb(0, 122, 255);
+  background-color: #fff;
+  border: 1px solid rgba(0, 122, 255, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.tableCell:hover .rowDetailBtn {
+  display: flex;
+}

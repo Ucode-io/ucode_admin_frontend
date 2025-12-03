@@ -11,7 +11,6 @@ import DOMPurify from "dompurify";
 const ReactQuill = lazy(() => import("react-quill"));
 
 const HFTextEditor = ({
-  isNewTableView = false,
   isTransparent = false,
   tabIndex,
   label,
@@ -125,7 +124,7 @@ const HFTextEditor = ({
     <FRowMultiLine
       label={label}
       required={row?.attributes?.required}
-      extraClassName={isNewTableView ? "tableView" : ""}
+      extraClassName={"tableView"}
     >
       <Suspense fallback={<RingLoaderWithWrapper />}>
         <ReactQuill

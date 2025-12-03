@@ -31,6 +31,7 @@ const CellElementGeneratorForRelation = ({
   handleOnClose = () => {},
   defaultMenuIsOpen,
   autoFocus,
+  isDisabled,
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -61,11 +62,6 @@ const CellElementGeneratorForRelation = ({
       return `${field.slug}`;
     }
   }, [field, i18n?.language]);
-
-  const isDisabled =
-    (field.attributes?.disabled ||
-      !field.attributes?.field_permission?.edit_permission) &&
-    !isNewRow;
 
   const defaultValue = useMemo(() => {
     const defaultValue =

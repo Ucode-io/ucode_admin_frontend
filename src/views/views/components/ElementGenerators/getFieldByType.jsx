@@ -176,7 +176,11 @@ export const getFieldByType = ({
     }
   };
 
-  const handleClickField = () => setIsEditing(true);
+  const handleClickField = () => {
+    if (!isDisabled) {
+      setIsEditing(true);
+    }
+  };
 
   const FIELD_RENDERERS = useMemo(() => {
     return {

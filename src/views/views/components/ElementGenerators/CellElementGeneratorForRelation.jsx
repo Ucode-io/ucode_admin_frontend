@@ -19,7 +19,6 @@ const CellElementGeneratorForRelation = ({
   index,
   field,
   control,
-  relationfields,
   isNewRow = false,
   newColumn = false,
   isBlackBg = false,
@@ -29,6 +28,9 @@ const CellElementGeneratorForRelation = ({
   newUi,
   relationView,
   handleChange = () => {},
+  handleOnClose = () => {},
+  defaultMenuIsOpen,
+  autoFocus,
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -143,10 +145,12 @@ const CellElementGeneratorForRelation = ({
           updateObject={updateObject}
           handleChange={handleChange}
           defaultValue={defaultValue}
-          relationfields={relationfields}
           newUi={newUi}
           objectIdFromJWT={objectIdFromJWT}
           relationView={relationView}
+          defaultMenuIsOpen={defaultMenuIsOpen}
+          handleOnClose={handleOnClose}
+          autoFocus={autoFocus}
         />
       );
     },

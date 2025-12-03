@@ -1,19 +1,12 @@
 import React, {useState} from "react";
-import {Box, Button, Dialog, TextField} from "@mui/material";
+import { Box, Button, Dialog } from "@mui/material";
 import HFMapField from "./HFMapField";
 import styles from "./style.module.scss";
-import {generateLink} from "../../utils/generateYandexLink";
+import { generateLink } from "../../utils/generateYandexLink";
 
-function HFModalMap({
-  defaultValue,
-  isTransparent = false,
-  drawerDetail = false,
-  placeholder = "",
-  disabled = false,
-  handleChange,
-  row,
-  ...props
-}) {
+import LaunchIcon from "@mui/icons-material/Launch";
+
+function HFModalMap({ disabled = false, handleChange, row }) {
   const [open, setOpen] = useState(false);
 
   const value = row?.value;
@@ -26,54 +19,31 @@ function HFModalMap({
     setOpen(false);
   };
 
+  const generatedLink =
+    generateLink(value?.split(",")?.[0], value?.split(",")?.[1]) || "";
+
   return (
     <Box>
-      {/* <TextField
-        disabled={disabled}
-        className="mapField"
-        placeholder={placeholder}
-        id={`map_field`}
-        value={
-          value
-            ? generateLink(value?.split(",")?.[0], value?.split(",")?.[1])
-            : ""
-        }
-        defaultValue={defaultValue}
-        variant="standard"
-        width="small"
-        onClick={() => {
-          if (disabled) return;
-          handleOpen();
-        }}
-        sx={{
-          width: "330px",
-          paddingLeft: "5px",
-          "& input": {
-            cursor: disabled ? "not-allowed" : "pointer",
-          },
-        }}
-        InputProps={{
-          style: {
-            background: isTransparent ? "transparent" : "",
-            height: "100%",
-            padding: "0 0",
-          },
-          classes: {
-            notchedoutline: {},
-          },
-          disableUnderline: true,
-        }}
-        {...props}
-      /> */}
       <div
+        className={styles.mapText}
         onClick={() => {
           if (disabled) return;
           handleOpen();
         }}
       >
-        {value
-          ? generateLink(value?.split(",")?.[0], value?.split(",")?.[1])
-          : ""}
+        <span>{generatedLink}</span>
+        <a
+          href={generatedLink || "#"}
+          className={styles.linkBtn}
+          style={{ pointerEvents: Boolean(!generatedLink) ? "none" : "auto" }}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <LaunchIcon
+            htmlColor="rgb(99, 115, 129)"
+            style={{ fontSize: "20px" }}
+          />
+        </a>
       </div>
       <Dialog open={open} onClose={handleClose}>
         <div className={styles.mapField}>

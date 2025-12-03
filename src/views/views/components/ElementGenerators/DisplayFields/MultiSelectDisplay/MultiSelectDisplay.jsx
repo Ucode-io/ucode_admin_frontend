@@ -47,31 +47,34 @@ export const MultiSelectDisplay = ({ row, onClick = () => {} }) => {
     }
   }, [value, options, isMultiSelect]);
 
-  console.log({ value, options });
-
-  return <div className={cls.valuesWrapper} onClick={onClick}>
-    {computedValue?.map((el) => (
-      <div
-        key={el?.value}
-        className={cls.multipleAutocompleteTags}
-        style={
-          hasColor
-            ? { color: el?.color, background: `${el?.color}30` }
-            : {}
-        }
-      >
-        {hasIcon &&
-          (row?.attributes?.icon?.includes(":") ? (
-            <IconGeneratorIconjs icon={el?.icon} />
-          ) : (
-            <IconGenerator icon={el?.icon} />
-          ))}
-        <p
-          className={cls.value}
+  return (
+    <div className={cls.valuesWrapper} onClick={onClick}>
+      {computedValue?.map((el) => (
+        <div
+          key={el?.value}
+          className={cls.multipleAutocompleteTags}
+          style={
+            hasColor
+              ? {
+                  color: el?.color,
+                  background: `${el?.color}30`,
+                }
+              : {
+                  background: "rgba(192, 192, 192, 0.2)",
+                }
+          }
         >
-          {el?.[`label_${i18n?.language}`] ?? el?.label ?? el?.value}
-        </p>
-      </div>
-    ))}
-  </div>
+          {hasIcon &&
+            (row?.attributes?.icon?.includes(":") ? (
+              <IconGeneratorIconjs icon={el?.icon} />
+            ) : (
+              <IconGenerator icon={el?.icon} />
+            ))}
+          <p className={cls.value}>
+            {el?.[`label_${i18n?.language}`] ?? el?.label ?? el?.value}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
 }

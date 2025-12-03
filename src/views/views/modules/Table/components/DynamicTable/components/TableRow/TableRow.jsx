@@ -12,6 +12,8 @@ import TableDataForm from "@/views/views/components/ElementGenerators/TableDataF
 import CellElementGeneratorForRelation from "@/views/views/components/ElementGenerators/CellElementGeneratorForRelation";
 import CellElementGeneratorForTableView from "@/views/views/components/ElementGenerators/CellElementGeneratorForTableView";
 import clsx from "clsx";
+import { RelationElementContainer } from "../RelationElementContainer";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
 export const TableRow = ({
   relOptions,
@@ -132,8 +134,9 @@ export const TableRow = ({
                   firstRowWidth,
                 })}
               >
-                {field?.type === "LOOKUP" || field?.type === "LOOKUPS" ? (
-                  <CellElementGeneratorForRelation
+                {field?.type === FIELD_TYPES.LOOKUP ||
+                field?.type === FIELD_TYPES.LOOKUP ? (
+                  <RelationElementContainer
                     row={field}
                     field={field}
                     index={index}
@@ -141,7 +144,6 @@ export const TableRow = ({
                     isTableView={isTableView}
                     updateObject={updateObject}
                     setFormValue={setFormValue}
-                    relationfields={relationFields}
                     relationView={relationView}
                     newUi={true}
                     handleChange={handleChange}

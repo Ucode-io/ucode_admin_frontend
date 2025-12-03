@@ -38,13 +38,15 @@ const CellRelationFormElementNew = ({
   setFormValue,
   index,
   defaultValue = null,
-  relationfields,
   isTableView = false,
   row,
   newUi,
   objectIdFromJWT,
   relationView,
   handleChange = () => {},
+  defaultMenuIsOpen,
+  autoFocus,
+  handleOnClose = () => {},
 }) => {
   if (!isLayout)
     return (
@@ -95,10 +97,12 @@ const CellRelationFormElementNew = ({
               setFormValue={setFormValue}
               control={control}
               index={index}
-              relationfields={relationfields}
               newUi={newUi}
               objectIdFromJWT={objectIdFromJWT}
               relationView={relationView}
+              defaultMenuIsOpen={defaultMenuIsOpen}
+              handleOnClose={handleOnClose}
+              autoFocus={autoFocus}
             />
           );
         }}
@@ -124,30 +128,43 @@ const AutoCompleteElement = ({
   newUi,
   objectIdFromJWT,
   relationView,
+  defaultMenuIsOpen,
+  autoFocus,
+  handleOnClose = () => {},
 }) => {
   const { view } = useViewContext();
   const isNewRouter = localStorage.getItem("new_router") === "true";
   const { navigateToForm } = useTabRouter();
+
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
-  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
+
+  const [menuIsOpen, setMenuIsOpen] = useState(false);
+
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState();
+
   const [count, setCount] = useState(0);
   const [localValue, setLocalValue] = useState(
     row?.[`${field?.slug}_data`] ?? null,
   );
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
+
   const [tableSlugFromProps, setTableSlugFromProps] = useState("");
+
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
-  // const menuId = searchParams.get("menuId");
+
   const { menuId } = useParams();
   const { i18n } = useTranslation();
+
   const languages = useSelector((state) => state.languages.list)?.map(
     (el) => el.slug,
   );
+
+  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
 
   const customStyles = {
     control: (provided) => ({
@@ -204,8 +221,8 @@ const AutoCompleteElement = ({
     }),
     menu: (provided) => ({
       ...provided,
-      width: "calc(100% + 10px)",
-      left: "-5px",
+      width: "calc(100% + 16px)",
+      left: "-11px",
       top: "-3px",
       zIndex: 9999,
       borderRadius: "6px",
@@ -226,6 +243,11 @@ const AutoCompleteElement = ({
       cursor: "pointer",
       marginRight: "20px",
       padding: "0",
+    }),
+    valueContainer: (provided) => ({
+      ...provided,
+      padding: "0",
+      marginLeft: "0",
     }),
   };
 
@@ -295,7 +317,7 @@ const AutoCompleteElement = ({
       //   (!field?.attributes?.function_path && Boolean(page > 1)) ||
       //   (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
       //   newColumn,
-      enabled: false,
+      enabled: Boolean(debouncedValue),
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -423,6 +445,13 @@ const AutoCompleteElement = ({
   useEffect(() => {
     setLocalValue(row?.[`${field?.slug}_data`]);
   }, [row]);
+
+  useEffect(() => {
+    if (defaultMenuIsOpen) {
+      setMenuIsOpen(true);
+      refetch();
+    }
+  }, []);
 
   const dispatch = useDispatch();
 
@@ -564,9 +593,16 @@ const AutoCompleteElement = ({
         isDisabled={disabled}
         onMenuScrollToBottom={loadMoreItems}
         options={openedItemValue ?? computedOptions ?? []}
+        onMenuClose={() => {
+          handleOnClose();
+          setMenuIsOpen(false);
+        }}
+        menuIsOpen={menuIsOpen}
         value={localValue}
         menuPortalTarget={document.body}
+        defaultMenuIsOpen={defaultMenuIsOpen}
         onMenuOpen={() => {
+          setMenuIsOpen(true);
           refetch();
         }}
         isClearable={!openedItemValue}
@@ -602,6 +638,7 @@ const AutoCompleteElement = ({
         isOptionSelected={(option, value) =>
           value.some((val) => val.guid === option.guid)
         }
+        autoFocus={autoFocus}
         blurInputOnSelect
       />
     </div>

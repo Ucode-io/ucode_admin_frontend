@@ -43,26 +43,26 @@ const HFFloatField = ({
       allowNegative={true}
       fullWidth={fullWidth}
       value={value ?? ""}
-      onChange={(e) => {
-        const val = e.target.value;
-        const valueWithoutSpaces = val.replaceAll(" ", "");
-        if (!valueWithoutSpaces) onChange(null);
-        else {
-          if (valueWithoutSpaces.at(-1) === ".")
-            onChange(parseFloat(valueWithoutSpaces));
-          else
-            onChange(
-              !isNaN(valueWithoutSpaces)
-                ? parseFloat(valueWithoutSpaces)
-                : valueWithoutSpaces,
-            );
-        }
-      }}
+      // onChange={(e) => {
+      //   const val = e.target.value;
+      //   const valueWithoutSpaces = val.replaceAll(" ", "");
+      //   if (!valueWithoutSpaces) onChange(null);
+      //   else {
+      //     if (valueWithoutSpaces.at(-1) === ".")
+      //       onChange(parseFloat(valueWithoutSpaces));
+      //     else
+      //       onChange(
+      //         !isNaN(valueWithoutSpaces)
+      //           ? parseFloat(valueWithoutSpaces)
+      //           : valueWithoutSpaces,
+      //       );
+      //   }
+      // }}
       className={`${isFormEdit ? "custom_textfield" : ""} ${
         styles.numberField
       }`}
       readOnly={disabled}
-      style={{ ...style, padding: "4px" }}
+      style={{ ...style, padding: "4px", paddingLeft: "0", outline: "none" }}
       {...props}
     />
   );

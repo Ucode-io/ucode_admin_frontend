@@ -2,7 +2,7 @@ import { EyeOffIcon, EyeIcon } from "@/utils/constants/icons";
 import { memo, useState } from "react";
 import cls from "./styles.module.scss";
 
-export const PasswordDisplay = memo(({ value, onBlur = () => {}, }) => {
+export const ElementPassword = memo(({ value, onBlur = () => {}, }) => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [innerValue, setInnerValue] = useState(value);
@@ -31,4 +31,4 @@ export const PasswordDisplay = memo(({ value, onBlur = () => {}, }) => {
   </div>;
 })
 
-PasswordDisplay.displayName = "PasswordDisplay";
+ElementPassword.displayName = "ElementPassword";

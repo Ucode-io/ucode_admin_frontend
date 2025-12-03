@@ -16,7 +16,6 @@ const HFTextField = ({
   isFormEdit = false,
   isBlackBg,
   isNewTableView = false,
-  disabledHelperText = false,
   required = false,
   fullWidth = false,
   disabled,
@@ -31,7 +30,6 @@ const HFTextField = ({
   startAdornment = <></>,
   row,
   handleBlur,
-  error,
   autoFocus,
   ...props
 }) => {
@@ -49,6 +47,9 @@ const HFTextField = ({
         margin: "0px",
         border: exist ? "1px solid red" : "0px solid #000",
         borderRadius: "8px",
+        ".css-eih2dq-MuiInputBase-root-MuiOutlinedInput-root": {
+          padding: "0px",
+        },
         ...wrapperStyles,
       }}
       required={required}
@@ -73,7 +74,6 @@ const HFTextField = ({
           ? {
               background: isNewTableView ? "inherit" : "#c0c0c039",
               padding: "0px",
-              paddingLeft: "14px",
             }
           : isNewTableView
             ? {

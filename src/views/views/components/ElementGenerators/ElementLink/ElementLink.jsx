@@ -4,7 +4,7 @@ import cls from "./styles.module.scss";
 
 import { useState } from "react";
 
-export const LinkDisplay = ({
+export const ElementLink = ({
   value,
   disabled = true,
   required,
@@ -14,7 +14,7 @@ export const LinkDisplay = ({
 
   const [innerValue, setInnerValue] = useState(value);
 
-  return <label className={cls.linkDisplay}>
+  return <label className={cls.elementLink}>
     <input
       className={cls.linkInput}
       defaultValue={innerValue}

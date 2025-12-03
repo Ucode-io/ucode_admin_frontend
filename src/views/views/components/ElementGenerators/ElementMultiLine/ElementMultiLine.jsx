@@ -4,7 +4,7 @@ import { useCopyToClipboard } from "@/hooks/useCopyToClipboard"
 
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
-export const MultiLineDisplay = ({ row, handleOpenTextEditor }) => {
+export const ElementMultiLine = ({ row, onClick }) => {
   const value = row?.value;
 
   const handleCopy = useCopyToClipboard(value);
@@ -15,13 +15,7 @@ export const MultiLineDisplay = ({ row, handleOpenTextEditor }) => {
 
   return (
     <div className={cls.multilineWrapper}>
-      <p
-        id="textAreaInput"
-        className={cls.slicedText}
-        onClick={(e) => {
-          handleOpenTextEditor(e, row);
-        }}
-      >
+      <p id="textAreaInput" className={cls.slicedText} onClick={onClick}>
         {stripHtmlTags(
           value
             ? `${value?.slice(0, 36)}${value?.length > 200 ? "..." : ""}`
@@ -33,7 +27,7 @@ export const MultiLineDisplay = ({ row, handleOpenTextEditor }) => {
         onClick={() => handleCopy(value)}
       >
         <span>
-          <ContentCopyIcon style={{ width: "17px", height: "17px" }} />
+          <ContentCopyIcon style={{ width: "14px", height: "14px" }} />
         </span>
       </button>
     </div>

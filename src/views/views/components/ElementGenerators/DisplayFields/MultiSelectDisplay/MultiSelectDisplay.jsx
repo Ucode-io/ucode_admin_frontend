@@ -47,6 +47,8 @@ export const MultiSelectDisplay = ({ row, onClick = () => {} }) => {
     }
   }, [value, options, isMultiSelect]);
 
+  console.log({ value, options });
+
   return <div className={cls.valuesWrapper} onClick={onClick}>
     {computedValue?.map((el) => (
       <div

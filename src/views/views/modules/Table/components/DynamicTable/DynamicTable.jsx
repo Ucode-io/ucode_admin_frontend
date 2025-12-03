@@ -1,4 +1,4 @@
-import { ChakraProvider, Flex, Switch } from "@chakra-ui/react";
+import { ChakraProvider, Flex } from "@chakra-ui/react";
 import { Pagination, Button, Skeleton, Popover } from "@mui/material";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
@@ -387,7 +387,6 @@ export const DynamicTable = ({
       >
         <HFTextEditor
           row={activeFieldForTextEditor}
-          // tabIndex={field?.tabIndex}
           disabled={activeFieldForTextEditor?.attributes?.disabled}
           isTransparent={true}
           setInnerValue={setTextEditorInnerValue}

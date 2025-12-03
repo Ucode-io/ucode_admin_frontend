@@ -9,7 +9,7 @@ import cls from "./styles.module.scss"
 
 const parser = new Parser();
 
-export const FrontendFormula = ({ row, rowData, fieldsList }) => {
+export const ElementFrontendFormula = ({ row, rowData, fieldsList }) => {
   const [formulaIsVisible, setFormulaIsVisible] = useState(false);
 
   let formula = row?.attributes?.formula ?? "";

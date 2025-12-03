@@ -327,7 +327,13 @@ function DrawerDetailPage({
   }, [itemId, viewId, tableSlug, open]);
 
   return (
-    <Drawer isOpen={open} placement="right" onClose={handleClose} size={size}>
+    <Drawer
+      isOpen={open}
+      placement="right"
+      onClose={handleClose}
+      size={size}
+      returnFocusOnClose={false}
+    >
       {selectedViewType === DRAWER_VIEW_TYPES.CenterPeek && <DrawerOverlay />}
       <DrawerContent
         className={clsx(cls.drawerContent, {

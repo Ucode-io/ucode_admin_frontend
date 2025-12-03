@@ -15,33 +15,43 @@ export const RelationElementContainer = ({field, index, control, isTableView, up
   const { i18n } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
 
+  const isDisabled =
+    field.attributes?.disabled ||
+    !field.attributes?.field_permission?.edit_permission;
 
-  return isEditing 
-    ? <CellElementGeneratorForRelation
-        row={field}
-        field={field}
-        index={index}
-        control={control}
-        isTableView={isTableView}
-        updateObject={updateObject}
-        setFormValue={setFormValue}
-        relationView={relationView}
-        newUi={true}
-        handleChange={handleChange}
-        handleOnClose={() => setIsEditing(false)}
-        defaultMenuIsOpen
-        autoFocus
-      />
-    : <div className={cls.relationDisplay} onClick={() => setIsEditing(true)}>
-      {
-        field?.attributes?.enable_multi_language
+  return isEditing ? (
+    <CellElementGeneratorForRelation
+      row={field}
+      field={field}
+      index={index}
+      control={control}
+      isTableView={isTableView}
+      updateObject={updateObject}
+      setFormValue={setFormValue}
+      relationView={relationView}
+      newUi={true}
+      handleChange={handleChange}
+      handleOnClose={() => setIsEditing(false)}
+      defaultMenuIsOpen
+      autoFocus
+    />
+  ) : (
+    <div
+      className={cls.relationDisplay}
+      onClick={() => {
+        if (!isDisabled) {
+          setIsEditing(true);
+        }
+      }}
+    >
+      {field?.attributes?.enable_multi_language
         ? getRelationFieldTabsLabelLang(
             field,
             field?.[`${field?.slug}_data`],
             i18n?.language,
             languages,
           )
-        : `${getRelationFieldTabsLabel(field, field?.[`${field?.slug}_data`], i18n?.language)}`
-      }
+        : `${getRelationFieldTabsLabel(field, field?.[`${field?.slug}_data`], i18n?.language)}`}
     </div>
+  );
 }

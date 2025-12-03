@@ -83,6 +83,7 @@ export const DynamicTable = ({
     setTextEditorInnerValue,
     handleCloseTextEditor,
     handleOpenTextEditor,
+    scrollRef,
   } = useDynamicTableProps({
     columns,
     isResizable,
@@ -102,6 +103,7 @@ export const DynamicTable = ({
       }
     >
       <div
+        ref={scrollRef}
         className="table"
         style={{
           border: "none",

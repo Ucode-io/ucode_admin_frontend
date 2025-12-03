@@ -435,6 +435,10 @@ export const useTableProps = ({ tab }) => {
     }
   }, [view]);
 
+  useEffect(() => {
+    refetch();
+  }, [currentPage, pagination, limit, tableSearch]);
+
   return {
     tableLan,
     dataCount,

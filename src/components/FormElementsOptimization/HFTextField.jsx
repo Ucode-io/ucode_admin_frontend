@@ -47,7 +47,7 @@ const HFTextField = ({
         margin: "0px",
         border: exist ? "1px solid red" : "0px solid #000",
         borderRadius: "8px",
-        ".css-eih2dq-MuiInputBase-root-MuiOutlinedInput-root": {
+        ".MuiOutlinedInput-root": {
           padding: "0px",
         },
         ...wrapperStyles,

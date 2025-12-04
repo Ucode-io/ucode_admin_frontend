@@ -43,26 +43,28 @@ export const ElementFrontendFormula = ({ row, rowData, fieldsList }) => {
     updateValue();
   }, [rowData, row]);
 
-  return <div className={cls.frontendFormula}>
-    <span className={cls.formula}>
-      {
-        formulaIsVisible
+  return (
+    <div className={cls.frontendFormula}>
+      <span className={cls.formula}>
+        {formulaIsVisible
           ? formula
           : typeof innerValue === "number"
             ? numberWithSpaces(innerValue)
-            : innerValue
-      }
-    </span>
-    <Tooltip
-      title={formulaIsVisible ? "Hide formula" : "Show formula"}
-    >
-      <IconButton
-        edge="end"
-        color={formulaIsVisible ? "primary" : "default"}
-        onClick={() => setFormulaIsVisible((prev) => !prev)}
-      >
-        <FunctionsIcon />
-      </IconButton>
-    </Tooltip>
-  </div>
+            : innerValue}
+      </span>
+      <Tooltip title={formulaIsVisible ? "Hide formula" : "Show formula"}>
+        <IconButton
+          edge="end"
+          color={formulaIsVisible ? "primary" : "default"}
+          onClick={() => setFormulaIsVisible((prev) => !prev)}
+          style={{
+            width: "32px",
+            height: "32px",
+          }}
+        >
+          <FunctionsIcon />
+        </IconButton>
+      </Tooltip>
+    </div>
+  );
 }

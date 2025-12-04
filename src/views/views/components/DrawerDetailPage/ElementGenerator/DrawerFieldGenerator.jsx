@@ -134,9 +134,9 @@ function DrawerFieldGenerator({
     }
   );
 
-  switch (field?.relation_type ?? field?.type) {
-    case "Many2One":
-    case "Many2Many":
+  switch (field?.type) {
+    case "LOOKUP":
+    case "LOOKUPS":
     case "PERSON": {
       return (
         <Suspense

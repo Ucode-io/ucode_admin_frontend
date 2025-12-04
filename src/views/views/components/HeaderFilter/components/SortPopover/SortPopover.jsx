@@ -3,9 +3,9 @@ import cls from "./styles.module.scss";
 import { useTranslation } from "react-i18next";
 import MaterialUIProvider from "@/providers/MaterialUIProvider";
 import { useState } from "react";
-import { paginationActions } from "@/store/pagination/pagination.slice";
 import { useDispatch, useSelector } from "react-redux";
 import { NButton } from "@/components/NButton";
+import { tablePaginationActions } from "@/store/pagination/paginationV2.slice";
 
 export const SortPopover = ({
   open,
@@ -13,11 +13,9 @@ export const SortPopover = ({
   handleClose,
   fieldsMap,
   setSortedDatas,
-  sortedDatas,
   tableSlug,
   handleChangeOrder = () => {},
   orderBy,
-  setOrderBy = () => {},
 }) => {
   const fieldsIds = Object.keys(fieldsMap);
 
@@ -31,7 +29,7 @@ export const SortPopover = ({
   const { sortValues } = useSelector((state) => state.pagination);
 
   const firstSortValue = sortValues?.find(
-    (item) => item?.tableSlug === tableSlug
+    (item) => item?.tableSlug === tableSlug,
   );
 
   const fieldDefaultValue = {
@@ -57,7 +55,7 @@ export const SortPopover = ({
     }
 
     handleChangeOrder(!field);
-    dispatch(paginationActions.setSortValues({ tableSlug, field, order }));
+    dispatch(tablePaginationActions.setSortValues({ tableSlug, field, order }));
 
     setSortedDatas((prev) => {
       let newSortedDatas = [...prev];
@@ -79,7 +77,7 @@ export const SortPopover = ({
   };
 
   const handleClearSort = () => {
-    dispatch(paginationActions.clearSortValues({ tableSlug }));
+    dispatch(tablePaginationActions.clearSortValues({ tableSlug }));
     setSelectedField(null);
     setSortedDatas([]);
     handleChangeOrder();

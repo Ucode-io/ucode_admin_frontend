@@ -93,8 +93,6 @@ export const DynamicTable = ({
     handleChange,
   });
 
-  console.log({ data });
-
   return (
     <div
       className="CTableContainer"

@@ -75,6 +75,10 @@ export const useTableProps = ({ tab }) => {
     checkedColumns,
     navigateToEditPage,
     isRelationView,
+    limit,
+    setLimit,
+    setTotalCount,
+    totalCount,
   } = useViewContext();
 
   const { fieldsMap, fieldsForm, fields } = useFieldsContext();
@@ -102,7 +106,7 @@ export const useTableProps = ({ tab }) => {
 
   const dispatch = useDispatch();
 
-  const [limit, setLimit] = useState(20);
+  // const [limit, setLimit] = useState(20);
   const [, setDrawerStateField] = useState(null);
 
   const [rows, setRows] = useState(null);
@@ -111,9 +115,9 @@ export const useTableProps = ({ tab }) => {
 
   const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
 
-  const paginationInfo = useSelector(
-    (state) => state?.pagination?.paginationInfo,
-  );
+  // const paginationInfo = useSelector(
+  //   (state) => state?.pagination?.paginationInfo,
+  // );
 
   const { mutate: updateObject } = useMutation(({ data, rowId }) => {
     return constructorObjectService
@@ -153,11 +157,11 @@ export const useTableProps = ({ tab }) => {
     updateObject({ data, rowId });
   };
 
-  const pagination = useMemo(() => {
-    const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
+  // const pagination = useMemo(() => {
+  //   const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
 
-    return getObject?.pageLimit ?? limit;
-  }, [paginationInfo, tableSlug]);
+  //   return getObject?.pageLimit ?? limit;
+  // }, [paginationInfo, tableSlug]);
 
   function customSortArray(a, b) {
     const commonItems = a?.filter((item) => b.includes(item));
@@ -287,29 +291,28 @@ export const useTableProps = ({ tab }) => {
         searchText,
         sortedDatas,
         currentPage,
-        limit,
         filters,
         tabValue: tab?.value,
-        pagination,
+        limit,
         orderBy,
         // viewId,
         computedSortColumns,
         checkedColumns,
-        // menuId,
+        menuId,
       },
     ],
     queryFn: () => {
       return menuService.getFieldsTableData(menuId, viewId, tableSlug, {
         data: {
           row_view_id: view?.id,
-          offset: pageToOffset(currentPage, pagination),
+          offset: pageToOffset(currentPage, limit),
           order: computedSortColumns,
           view_fields: checkedColumns,
           search: tableSearch,
           [`${selectedV?.table_slug}_id`]: isRelationView
             ? selectedV?.detailId
             : undefined,
-          limit: pagination ?? limit,
+          limit: limit,
           ...filters,
           [tab?.slug]: tab
             ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
@@ -326,7 +329,7 @@ export const useTableProps = ({ tab }) => {
         tableData: res.data?.response ?? [],
         pageCount: isNaN(res.data?.count)
           ? 1
-          : Math.ceil(res.data?.count / (pagination ?? limit)),
+          : Math.ceil(res.data?.count / limit),
         dataCount: res?.data?.count,
       };
     },
@@ -338,6 +341,7 @@ export const useTableProps = ({ tab }) => {
         setRows([]);
         setViewsLoader(false);
       }
+      setTotalCount(data.dataCount ?? 0);
     },
     onError: () => {
       setRows([]);
@@ -371,9 +375,9 @@ export const useTableProps = ({ tab }) => {
   };
 
   useEffect(() => {
-    if (isNaN(parseInt(view?.default_limit))) setLimit(20);
+    if (isNaN(parseInt(view?.default_limit))) return;
     else setLimit(parseInt(view?.default_limit));
-  }, [view?.default_limit]);
+  }, [view?.default_limit, viewId]);
 
   useEffect(() => {
     if (tableData?.length > 0) {
@@ -392,7 +396,7 @@ export const useTableProps = ({ tab }) => {
         view?.attributes?.quick_filters?.length ?? 0,
       ),
     );
-  }, [view?.attributes?.quick_filters?.length, filters, columns]);
+  }, [view?.attributes?.quick_filters?.length, filters, columns, menuId]);
 
   const prevViewId = useRef(viewId);
 
@@ -437,11 +441,12 @@ export const useTableProps = ({ tab }) => {
 
   useEffect(() => {
     refetch();
-  }, [currentPage, pagination, limit, tableSearch]);
+  }, [currentPage, limit, tableSearch]);
 
   return {
     tableLan,
     dataCount,
+    totalCount,
     tableData,
     setDrawerState,
     setDrawerStateField,

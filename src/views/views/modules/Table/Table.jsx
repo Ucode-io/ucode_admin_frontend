@@ -1,18 +1,11 @@
 import MaterialUIProvider from "@/providers/MaterialUIProvider";
-// import FieldSettings from "@/views/Constructor/Tables/Form/Fields/FieldSettings";
-// import RelationSettings from "@/views/Constructor/Tables/Form/Relations/RelationSettings";
-// import {Drawer} from "@mui/material";
-// import DrawerDetailPage from "../Objects/DrawerDetailPage";
-// import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
-// import ModalDetailPage from "@/views/Objects/ModalDetailPage/ModalDetailPage";
 import { useTableProps } from "./useTableProps";
 import { DynamicTable } from "./components/DynamicTable";
-// import OldModalDetailPage from "../Objects/ModalDetailPage/OldModalDetailPage";
 
 export const Table = ({ tab, ...props }) => {
   const {
     tableLan,
-    dataCount,
+    totalCount,
     tableData,
     setDrawerState,
     setDrawerStateField,
@@ -46,7 +39,7 @@ export const Table = ({ tab, ...props }) => {
       <div id="wrapper_drag" style={{ height: "100%" }}>
         <DynamicTable
           tableLan={tableLan}
-          dataCount={dataCount}
+          dataCount={totalCount}
           data={tableData}
           setDrawerState={setDrawerState}
           setDrawerStateField={setDrawerStateField}

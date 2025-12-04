@@ -1,8 +1,6 @@
 import { useViewContext } from "@/providers/ViewProvider";
 import { showAlert } from "@/store/alert/alert.thunk";
-import { paginationActions } from "@/store/pagination/pagination.slice";
 import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
-import { disableAutoScrollOnFocus } from "@/utils/disableAutoScrollOnFocus";
 import { useFieldsContext } from "@/views/views/providers/FieldsProvider";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -10,13 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 
-export const useDynamicTableProps = ({
-  isResizable,
-  columns,
-  setLimit,
-  data,
-  handleChange,
-}) => {
+export const useDynamicTableProps = ({ isResizable, columns, data, handleChange }) => {
   const { i18n } = useTranslation();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -42,7 +34,7 @@ export const useDynamicTableProps = ({
     setTextEditorInnerValue(field.value);
   }, []);
 
-  const { isRelationView, tableSlug, projectInfo, view, menuItem } =
+  const { isRelationView, tableSlug, projectInfo, view, menuItem, setLimit } =
     useViewContext();
 
   const { fieldsMap } = useFieldsContext();
@@ -215,12 +207,12 @@ export const useDynamicTableProps = ({
 
   const getLimitValue = (item) => {
     setLimit(item);
-    dispatch(
-      paginationActions.setTablePages({
-        tableSlug: tableSlug,
-        pageLimit: item,
-      }),
-    );
+    // dispatch(
+    //   paginationActions.setTablePages({
+    //     tableSlug: tableSlug,
+    //     pageLimit: item,
+    //   }),
+    // );
   };
 
   const isWarning =
@@ -254,10 +246,6 @@ export const useDynamicTableProps = ({
     projectInfo,
     isWarningActive,
   ]);
-
-  useEffect(() => {
-    disableAutoScrollOnFocus();
-  }, []);
 
   return {
     i18n,

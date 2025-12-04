@@ -1,7 +1,7 @@
 import { viewsActions } from "@/store/views/view.slice";
 import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -14,7 +14,7 @@ import { useGetTableInfo } from "@/services/menuService/menu.service";
 import { groupFieldActions } from "@/store/groupField/groupField.slice";
 import { listToMap, listToMapWithoutRel } from "@/utils/listToMap";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
-import { openDB, saveOrUpdateSearchText } from "@/utils/indexedDb";
+// import { openDB, saveOrUpdateSearchText } from "@/utils/indexedDb";
 import { updateObject } from "@/services/objectService/object.service";
 import { useFieldArray, useForm } from "react-hook-form";
 import { addDays } from "date-fns";
@@ -43,6 +43,8 @@ import { Calendar } from "./modules/Calendar";
 import { Website } from "./modules/Website";
 import { projectInfoActions } from "@/store/projectInfo/projectInfo.slice";
 import { QUERY_KEYS } from "@/utils/constants/queryKeys";
+// import { paginationActions } from "@/store/pagination/pagination.slice";
+import { tablePaginationActions } from "@/store/pagination/paginationV2.slice";
 
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
@@ -75,9 +77,9 @@ export const useViewsProps = ({ isRelationView }) => {
   const lastPath = viewsPath?.[viewsPath?.length - 1];
   const selectedV = viewsList?.[viewsList?.length - 1];
 
-  const paginationCounts = useSelector(
-    (state) => state?.pagination?.paginationCount,
-  );
+  // const paginationCounts = useSelector(
+  //   (state) => state?.pagination?.paginationCount,
+  // );
 
   const setSelectedView = (view) => {
     if (isRelationView) dispatch(detailDrawerActions.setSelectedView(view));
@@ -145,15 +147,27 @@ export const useViewsProps = ({ isRelationView }) => {
 
   const { filters } = useFilters(tableSlug, viewId);
 
-  const paginationCount = useMemo(() => {
-    const getObject = paginationCounts.find(
-      (el) => el?.tableSlug === tableSlug,
+  const paginationInfo = useSelector(
+    (state) => state.tablePagination.paginationInfo?.[tableSlug],
+  );
+
+  const currentPage = paginationInfo?.currentPage ?? 1;
+  const limit = paginationInfo?.limit ?? 20;
+  const totalCount = paginationInfo?.totalCount ?? 0;
+
+  const setCurrentPage = (currentPage) => {
+    dispatch(tablePaginationActions.setCurrentPage({ tableSlug, currentPage }));
+  };
+
+  const setLimit = (limit) => {
+    dispatch(tablePaginationActions.setLimit({ tableSlug, limit }));
+  };
+
+  const setTotalCount = (count) => {
+    dispatch(
+      tablePaginationActions.setTotalCount({ tableSlug, totalCount: count }),
     );
-
-    return getObject?.pageCount ?? 1;
-  }, [paginationCounts, tableSlug]);
-
-  const [currentPage, setCurrentPage] = useState(paginationCount);
+  };
 
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug],
@@ -286,15 +300,15 @@ export const useViewsProps = ({ isRelationView }) => {
     });
   };
 
-  const saveSearchTextToDB = async (tableSlug, searchText) => {
-    const db = await openDB();
-    await saveOrUpdateSearchText(db, tableSlug, searchText);
-  };
+  // const saveSearchTextToDB = async (tableSlug, searchText) => {
+  //   const db = await openDB();
+  //   await saveOrUpdateSearchText(db, tableSlug, searchText);
+  // };
 
   const handleSearchOnChange = (value) => {
     setCurrentPage(1);
     setSearchText(value);
-    saveSearchTextToDB(tableSlug, value);
+    // saveSearchTextToDB(tableSlug, value);
   };
 
   const navigateCreatePage = (defaultValue) => {
@@ -674,10 +688,6 @@ export const useViewsProps = ({ isRelationView }) => {
     }
   };
 
-  useEffect(() => {
-    // setViewsLoader(true);
-  }, [menuIdForViewsList]);
-
   return {
     viewsMap,
     viewId,
@@ -721,9 +731,13 @@ export const useViewsProps = ({ isRelationView }) => {
     computedVisibleFields,
     projectInfo,
     menuItem,
-    paginationCount,
     currentPage,
     setCurrentPage,
+    setLimit,
+    setTotalCount,
+    limit,
+    totalCount,
+    setSearchText,
     customEvents,
     layoutType,
     setLayoutType,

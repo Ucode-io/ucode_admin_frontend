@@ -9,7 +9,6 @@ import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrappe
 import { useTableRowProps } from "./useTableRowProps";
 import GeneratePdfFromTable from "@/components/DataTable/GeneratePdfFromTable";
 import TableDataForm from "@/views/views/components/ElementGenerators/TableDataForm";
-import CellElementGeneratorForRelation from "@/views/views/components/ElementGenerators/CellElementGeneratorForRelation";
 import CellElementGeneratorForTableView from "@/views/views/components/ElementGenerators/CellElementGeneratorForTableView";
 import clsx from "clsx";
 import { RelationElementContainer } from "../RelationElementContainer";

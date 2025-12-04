@@ -29,6 +29,7 @@ import {tableReducer} from "./table/table.slice";
 import {settingsModalReducer} from "./settingsModal/settingsModal.slice";
 import {iconCategoryReducer} from "./IconCategory/iconCategory.slice";
 import { projectInfoReducer } from "./projectInfo/projectInfo.slice";
+import { tablePaginationReducer } from "./pagination/paginationV2.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -104,6 +105,11 @@ const tablePagination = {
   storage,
 };
 
+const tablePaginationV2 = {
+  key: "selectedPaginationV2",
+  storage,
+};
+
 const quickFiltersCount = {
   key: "quick_filters",
   storage,
@@ -159,6 +165,7 @@ const rootReducer = combineReducers({
   ),
   quick_filter: persistReducer(quickFiltersCount, quickFiltersReducer),
   pagination: persistReducer(tablePagination, paginationReducer),
+  tablePagination: persistReducer(tablePaginationV2, tablePaginationReducer),
   languages: persistReducer(languagesPersistConfig, languagesReducer),
   company: persistReducer(companyPersistConfig, companyReducer),
   tableColumn: persistReducer(

@@ -9,12 +9,12 @@ export const getRelationFieldLabel = (field, option, lang) => {
   field.attributes?.view_fields?.forEach((el) => {
     let result = "";
     if (el?.type === "DATE")
-      result = format(new Date(option[el?.slug]), "dd.MM.yyyy");
+      result = format(new Date(option?.[el?.slug]), "dd.MM.yyyy");
     else if (el?.type === "DATE_TIME")
-      result = format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm");
+      result = format(new Date(option?.[el?.slug]), "dd.MM.yyyy HH:mm");
     else if (el?.type === "NUMBER")
       result = numberWithSpaces(option?.[el?.slug]);
-    else result = option[el?.slug];
+    else result = option?.[el?.slug];
 
     label += `${result ?? ""} `;
   });
@@ -43,7 +43,7 @@ export const getRelationFieldTabsLabel = (field, option, lang) => {
     else if (el?.type === "NUMBER")
       result = numberWithSpaces(option?.[el?.slug]);
     else if (el?.type === "STATUS")
-      result = option?.[`name_${lang}`] || option?.name || option[el?.slug];
+      result = option?.[`name_${lang}`] || option?.name || option?.[el?.slug];
     else {
       const pattern = new RegExp(`_${lang}`);
 
@@ -64,7 +64,7 @@ export const getRelationFieldTabsLabelLang = (
   field,
   option,
   lang,
-  languages = []
+  languages = [],
 ) => {
   if (!Array.isArray(field?.view_fields ?? field?.attributes?.view_fields))
     return "";
@@ -86,19 +86,19 @@ export const getRelationFieldTabsLabelLang = (
 
     if (el?.type === "DATE") {
       result = isValid(new Date(option?.[el?.slug]))
-        ? format(new Date(option[el?.slug]), "dd.MM.yyyy")
+        ? format(new Date(option?.[el?.slug]), "dd.MM.yyyy")
         : "";
     } else if (el?.type === "DATE_TIME") {
-      result = isValid(format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm"))
-        ? format(new Date(option[el?.slug]), "dd.MM.yyyy HH:mm")
+      result = isValid(format(new Date(option?.[el?.slug]), "dd.MM.yyyy HH:mm"))
+        ? format(new Date(option?.[el?.slug]), "dd.MM.yyyy HH:mm")
         : "";
     } else if (el?.type === "NUMBER") {
-      result = numberWithSpaces(option[el?.slug]);
+      result = numberWithSpaces(option?.[el?.slug]);
     } else {
       if (el?.slug?.endsWith(`_${lang}`)) {
         langLabel = option?.[el?.slug] ?? " ";
       }
-      if(!el?.slug?.endsWith(`_id`)) {
+      if (!el?.slug?.endsWith(`_id`)) {
         result = option?.[el?.slug];
       }
     }

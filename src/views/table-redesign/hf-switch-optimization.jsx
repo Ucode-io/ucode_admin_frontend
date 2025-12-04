@@ -18,7 +18,8 @@ const HFSwitch = ({
   const value = row?.value;
   const [checked, setChecked] = useState(value);
 
-  const onChange = (value) => {
+  const onChange = (e) => {
+    const value = e.target.checked;
     setChecked(value);
     handleChange({
       value,
@@ -26,7 +27,6 @@ const HFSwitch = ({
       name: row?.slug,
     });
   };
-
 
   return (
     <div
@@ -36,7 +36,13 @@ const HFSwitch = ({
         paddingLeft: drawerDetail ? "10px" : "4px",
       }}
     >
-      <ChakraProvider>
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        id={`switch-${id}`}
+      />
+      {/* <ChakraProvider>
         <Switch
           id={`switch_${newColumn ? "new" : row?.slug}`}
           {...props}
@@ -47,7 +53,7 @@ const HFSwitch = ({
             onChange(e.target.checked);
           }}
         />
-      </ChakraProvider>
+      </ChakraProvider> */}
       {isShowLabel && (
         <label htmlFor={`switch-${id}`} {...labelProps}>
           {label}

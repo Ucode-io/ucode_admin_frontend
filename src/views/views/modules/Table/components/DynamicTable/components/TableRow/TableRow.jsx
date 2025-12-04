@@ -1,3 +1,4 @@
+import cls from "./styles.module.scss";
 import { Delete } from "@mui/icons-material";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import { Button, Checkbox } from "@mui/material";
@@ -5,11 +6,14 @@ import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import { CTableCell, CTableRow } from "@/components/CTable";
 import CellElementGenerator from "@/components/ElementGenerators/CellElementGenerator";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
-// import TableDataForm from "@/components/ElementGenerators/TableDataForm";
 import { useTableRowProps } from "./useTableRowProps";
 import GeneratePdfFromTable from "@/components/DataTable/GeneratePdfFromTable";
 import TableDataForm from "@/views/views/components/ElementGenerators/TableDataForm";
-// import TableDataForm from "@/components/ElementGenerators/TableDataForm";
+import CellElementGeneratorForRelation from "@/views/views/components/ElementGenerators/CellElementGeneratorForRelation";
+import CellElementGeneratorForTableView from "@/views/views/components/ElementGenerators/CellElementGeneratorForTableView";
+import clsx from "clsx";
+import { RelationElementContainer } from "../RelationElementContainer";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
 export const TableRow = ({
   relOptions,
@@ -43,6 +47,7 @@ export const TableRow = ({
   relationView,
   handleChange,
   updateObject,
+  handleOpenTextEditor,
 }) => {
   const {
     navigate,
@@ -54,6 +59,8 @@ export const TableRow = ({
     tableSlug,
     viewForm,
     view,
+    errors,
+    setErrors,
   } = useTableRowProps({
     selectedObjectsForDelete,
     setSelectedObjectsForDelete,
@@ -114,115 +121,60 @@ export const TableRow = ({
                 </PermissionWrapperV2>
               </div>
             </CTableCell>
-
-            {row?.map(
-              (field) =>
-                field?.attributes?.field_permission?.view_permission && (
-                  <CTableCell
-                    key={field.id}
-                    className="overflow-ellipsis"
-                    style={{
-                      minWidth: "220px",
-                      color: "#262626",
-                      fontSize: "13px",
-                      fontStyle: "normal",
-                      fontWeight: 400,
-                      lineHeight: "normal",
-                      padding: "0 5px",
-                      // height: "26px",
-                      position: `${
-                        tableSettings?.[pageName]?.find(
-                          (item) => item?.id === field?.id,
-                        )?.isStiky ||
-                        view?.attributes?.fixedColumns?.[field?.id]
-                          ? "sticky"
-                          : "relative"
-                      }`,
-                      left: view?.attributes?.fixedColumns?.[field?.id]
-                        ? `${
-                            calculateWidthFixedColumn(field.id) + firstRowWidth
-                          }px`
-                        : "0",
-                      backgroundColor: `${
-                        tableSettings?.[pageName]?.find(
-                          (item) => item?.id === field?.id,
-                        )?.isStiky ||
-                        view?.attributes?.fixedColumns?.[field?.id]
-                          ? "#F6F6F6"
-                          : field.attributes?.disabled ||
-                              !field.attributes?.field_permission
-                                ?.edit_permission
-                            ? "#f8f8f8"
-                            : "#fff"
-                      }`,
-                      zIndex: `${
-                        tableSettings?.[pageName]?.find(
-                          (item) => item?.id === field?.id,
-                        )?.isStiky ||
-                        view?.attributes?.fixedColumns?.[field?.id]
-                          ? "1"
-                          : "0"
-                      }`,
-                      height: "24px",
-                      overflow: "hidden",
-                    }}
-                  >
-                    {isTableView ? (
-                      <TableDataForm
-                        relOptions={relOptions}
-                        tableSlug={tableSlug}
-                        fields={columns}
-                        field={field}
-                        getValues={getValues}
-                        mainForm={viewForm}
-                        row={field}
-                        rowData={row}
-                        index={rowIndex}
-                        control={control}
-                        setFormValue={setFormValue}
-                        relationfields={relationFields}
-                        data={data}
-                        onRowClick={onRowClick}
-                        width={width}
-                        isTableView={isTableView}
-                        relationView={relationView}
-                        view={view}
-                        newUi={true}
-                        handleChange={handleChange}
-                        updateObject={updateObject}
-                      />
-                    ) : (
-                      <CellElementGenerator field={field} row={row} />
-                    )}
-
-                    {/* {index === 0 && ( */}
-                    <div
-                      onClick={() => onRowClick(row, rowIndex)}
-                      className="newUIi_first_button"
-                    >
-                      <OpenInFullIcon style={{ width: 14 }} fill="#007aff" />
-                    </div>
-                    {/* )} */}
-                    {(field.attributes?.disabled ||
-                      !field.attributes?.field_permission?.edit_permission) && (
-                      <div
-                        style={{
-                          position: "absolute",
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          right: 4,
-                          backgroundColor: "inherit",
-                          padding: 4,
-                          borderRadius: 6,
-                          zIndex: 1,
-                        }}
-                      >
-                        <img src="/table-icons/lock.svg" alt="lock" />
-                      </div>
-                    )}
-                  </CTableCell>
-                ),
-            )}
+            {row?.map((field, index) => (
+              <CTableCell
+                key={field.id}
+                className={clsx("overflow-ellipsis", cls.tableCell)}
+                style={getCellStyle({
+                  tableSettings,
+                  pageName,
+                  field,
+                  view,
+                  calculateWidthFixedColumn,
+                  firstRowWidth,
+                })}
+              >
+                {field?.type === FIELD_TYPES.LOOKUP ||
+                field?.type === FIELD_TYPES.LOOKUP ? (
+                  <RelationElementContainer
+                    row={field}
+                    field={field}
+                    index={index}
+                    control={control}
+                    isTableView={isTableView}
+                    updateObject={updateObject}
+                    setFormValue={setFormValue}
+                    relationView={relationView}
+                    newUi={true}
+                    handleChange={handleChange}
+                  />
+                ) : (
+                  <CellElementGeneratorForTableView
+                    row={field}
+                    field={field}
+                    index={index}
+                    fields={columns}
+                    control={control}
+                    isTableView={isTableView}
+                    updateObject={updateObject}
+                    setFormValue={setFormValue}
+                    newUi={true}
+                    handleChange={handleChange}
+                    setErrors={setErrors}
+                    errors={errors}
+                    handleOpenTextEditor={handleOpenTextEditor}
+                  />
+                )}
+                <Button
+                  className={cls.rowDetailBtn}
+                  onClick={() => {
+                    onRowClick(row, rowIndex);
+                  }}
+                >
+                  <OpenInFullIcon fontSize="16px" />
+                </Button>
+              </CTableCell>
+            ))}
             <td
               style={{
                 width: 50,
@@ -382,12 +334,13 @@ export const TableRow = ({
                       control={control}
                       setFormValue={setFormValue}
                       relationfields={relationFields}
-                      data={data}
                       onRowClick={onRowClick}
                       width={width}
                       isTableView={isTableView}
                       view={view}
                       watch={watch}
+                      errors={errors}
+                      setErrors={setErrors}
                     />
                   ) : (
                     <CellElementGenerator field={column} row={row} />
@@ -430,9 +383,11 @@ export const TableRow = ({
                 <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
                   <RectangleIconButton
                     color="error"
-                    onClick={() =>
-                      row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-                    }
+                    onClick={() => {
+                      if (row.guid) {
+                        onDeleteClick(row, rowIndex);
+                      }
+                    }}
                   >
                     <Delete color="error" />
                   </RectangleIconButton>
@@ -549,6 +504,8 @@ export const TableRow = ({
                 width={width}
                 view={view}
                 watch={watch}
+                errors={errors}
+                setErrors={setErrors}
               />
             </CTableCell>
           ))}
@@ -557,7 +514,7 @@ export const TableRow = ({
               color="error"
               onClick={() => {
                 onDeleteClick(row, rowIndex);
-                remove(rowIndex);
+                // remove(rowIndex);
                 navigate("/reloadRelations", {
                   state: {
                     redirectUrl: window.location.pathname,
@@ -573,3 +530,39 @@ export const TableRow = ({
     </>
   );
 };
+
+function getCellStyle({
+  tableSettings,
+  pageName,
+  field,
+  view,
+  calculateWidthFixedColumn,
+  firstRowWidth,
+}) {
+  return {
+    position: `${
+      tableSettings?.[pageName]?.find((item) => item?.id === field?.id)
+        ?.isStiky || view?.attributes?.fixedColumns?.[field?.id]
+        ? "sticky"
+        : "relative"
+    }`,
+    left: view?.attributes?.fixedColumns?.[field?.id]
+      ? `${calculateWidthFixedColumn(field.id) + firstRowWidth}px`
+      : "0",
+    backgroundColor: `${
+      tableSettings?.[pageName]?.find((item) => item?.id === field?.id)
+        ?.isStiky || view?.attributes?.fixedColumns?.[field?.id]
+        ? "#F6F6F6"
+        : field.attributes?.disabled ||
+            !field.attributes?.field_permission?.edit_permission
+          ? "#f8f8f8"
+          : "#fff"
+    }`,
+    zIndex: `${
+      tableSettings?.[pageName]?.find((item) => item?.id === field?.id)
+        ?.isStiky || view?.attributes?.fixedColumns?.[field?.id]
+        ? "1"
+        : "0"
+    }`,
+  };
+}

@@ -55,7 +55,7 @@ export const HFVideoUpload = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <>
           <VideoUpload
             name={name}
@@ -68,11 +68,12 @@ export const HFVideoUpload = ({
             disabled={disabled}
             {...props}
           />
-          {!disabledHelperText && error?.message && (
+          {/* {!disabledHelperText && error?.message && (
             <FormHelperText error>{error?.message}</FormHelperText>
-          )}
+          )} */}
         </>
-      )}></Controller>
+      )}
+    ></Controller>
   );
 };
 

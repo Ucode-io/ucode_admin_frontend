@@ -24,10 +24,9 @@ import ModalDetailPage from "@/views/Objects/ModalDetailPage/ModalDetailPage";
 import CascadingElement from "./CascadingElement";
 import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
-import zIndex from "@mui/material/styles/zIndex";
 import { useViewContext } from "@/providers/ViewProvider";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   input: {
     "&::placeholder": {
       color: "#fff",
@@ -36,27 +35,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CellRelationFormElementForNewColumn = ({
-  tableView,
   isBlackBg,
-  isFormEdit,
   control,
   name,
   updateObject,
   disabled,
-  placeholder,
   field,
   isLayout,
   disabledHelperText,
   setFormValue,
   index,
   defaultValue = null,
-  relationfields,
-  data,
   isNewRow,
-  mainForm,
   objectIdFromJWT,
   relationView,
-  fieldsMap,
 }) => {
   const classes = useStyles();
 
@@ -77,14 +69,9 @@ const CellRelationFormElementForNewColumn = ({
             <RelationGroupCascading
               field={field}
               tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
               value={value ?? ""}
               setFormValue={setFormValue}
-              classes={classes}
-              name={name}
               control={control}
-              index={index}
               setValue={(e) => {
                 onChange(e);
                 updateObject();
@@ -109,33 +96,21 @@ const CellRelationFormElementForNewColumn = ({
             />
           ) : (
             <AutoCompleteElement
-              isNewRow={isNewRow}
-              tableView={tableView}
               disabled={disabled}
-              isFormEdit={isFormEdit}
-              placeholder={placeholder}
               isBlackBg={isBlackBg}
               value={value}
-              classes={classes}
               name={name}
               setValue={(e) => {
                 onChange(e);
                 !isNewRow && updateObject();
               }}
               field={field}
-              defaultValue={defaultValue}
               tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
               setFormValue={setFormValue}
               control={control}
-              mainForm={mainForm}
               index={index}
-              relationfields={relationfields}
-              data={data}
               objectIdFromJWT={objectIdFromJWT}
               relationView={relationView}
-              fieldsMap={fieldsMap}
             />
           );
         }}
@@ -146,7 +121,6 @@ const CellRelationFormElementForNewColumn = ({
 // ============== AUTOCOMPLETE ELEMENT =====================
 
 const AutoCompleteElement = ({
-  tableView,
   field,
   value,
   tableSlug,
@@ -156,8 +130,6 @@ const AutoCompleteElement = ({
   setValue,
   index,
   control,
-  isNewRow,
-  mainForm,
   setFormValue = () => {},
   objectIdFromJWT,
   relationView,
@@ -186,7 +158,7 @@ const AutoCompleteElement = ({
   const menuId = searchParams.get("menuId");
 
   const customStyles = {
-    control: (provided, state) => ({
+    control: (provided) => ({
       ...provided,
       background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "transparent",
       color: isBlackBg ? "#fff" : "",
@@ -255,7 +227,7 @@ const AutoCompleteElement = ({
     }
   }, [relationView, allOptions]);
 
-  const { data: optionsFromFunctions } = useQuery(
+  useQuery(
     ["GET_OPENFAAS_LIST", autoFiltersValue, debouncedValue, page],
     () => {
       return request.post(
@@ -301,7 +273,7 @@ const AutoCompleteElement = ({
     },
   );
 
-  const { data: optionsFromLocale } = useQuery(
+  useQuery(
     [
       "GET_OBJECT_LIST",
       debouncedValue,
@@ -617,7 +589,7 @@ const AutoCompleteElement = ({
           SingleValue: CustomSingleValue,
           DropdownIndicator: null,
         }}
-        onChange={(newValue, { action }) => {
+        onChange={(newValue) => {
           changeHandler(newValue);
         }}
         noOptionsMessage={() => (

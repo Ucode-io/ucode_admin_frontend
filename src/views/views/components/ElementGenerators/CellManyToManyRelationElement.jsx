@@ -7,7 +7,7 @@ import { useMemo, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
-import { useLocation, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import useDebounce from "@/hooks/useDebounce";
 import useTabRouter from "@/hooks/useTabRouter";
 import constructorObjectService from "@/services/constructorObjectService";
@@ -17,7 +17,7 @@ import CascadingElement from "./CascadingElement";
 import styles from "./style.module.scss";
 import { pageToOffset } from "@/utils/pageToOffset";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   input: {
     "&::placeholder": {
       color: "#fff",
@@ -27,9 +27,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CellManyToManyRelationElement = ({
-  relOptions,
   isBlackBg,
-  isFormEdit,
   control,
   name,
   updateObject,
@@ -43,7 +41,6 @@ const CellManyToManyRelationElement = ({
   index,
   defaultValue,
   row,
-  newUi = false,
 }) => {
   const classes = useStyles();
   if (!isLayout)
@@ -71,14 +68,11 @@ const CellManyToManyRelationElement = ({
             />
           ) : (
             <AutoCompleteElement
-              relOptions={relOptions}
               disabled={disabled}
-              isFormEdit={isFormEdit}
               placeholder={placeholder}
               isBlackBg={isBlackBg}
               value={value}
               classes={classes}
-              name={name}
               defaultValue={defaultValue}
               setValue={(value) => {
                 onChange(value);
@@ -86,12 +80,8 @@ const CellManyToManyRelationElement = ({
               }}
               field={field}
               tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
-              setFormValue={setFormValue}
               control={control}
               index={index}
-              newUi={newUi}
             />
           );
         }}
@@ -102,10 +92,8 @@ const CellManyToManyRelationElement = ({
 // ============== AUTOCOMPLETE ELEMENT =====================
 
 const AutoCompleteElement = ({
-  relOptions,
   field,
   value,
-  isFormEdit,
   placeholder,
   tableSlug,
   disabled,
@@ -115,32 +103,28 @@ const AutoCompleteElement = ({
   setValue = () => {},
   index,
   control,
-  newUi,
-  setFormValue = () => {},
 }) => {
   const { navigateToForm } = useTabRouter();
-  const [debouncedValue, setDebouncedValue] = useState("");
-  const { i18n, t } = useTranslation();
+  const [debouncedValue] = useState("");
+  const { i18n } = useTranslation();
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
   const [searchParams] = useSearchParams();
   const menuId = searchParams.get("menuId");
-  const { state } = useLocation();
 
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option, i18n.language);
   };
-  function findMatchingProperty(obj, desiredLanguage) {
-    const matchingProperty = Object.keys(obj).reduce((result, key) => {
-      if (!result && key.includes(`_${desiredLanguage}`)) {
-        result = obj[key];
-      }
-      return result;
-    }, null);
-    return matchingProperty;
-  }
+  // function findMatchingProperty(obj, desiredLanguage) {
+  //   const matchingProperty = Object.keys(obj).reduce((result, key) => {
+  //     if (!result && key.includes(`_${desiredLanguage}`)) {
+  //       result = obj[key];
+  //     }
+  //     return result;
+  //   }, null);
+  //   return matchingProperty;
+  // }
   const { id } = useParams();
-  const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
 
   const autoFilters = field?.attributes?.auto_filters;
 
@@ -413,7 +397,7 @@ const AutoCompleteElement = ({
         isOptionEqualToValue={(option, value) => option.guid === value.guid}
         renderInput={(params) => (
           <TextField
-            className={`${isFormEdit ? "custom_textfield" : ""}`}
+            className={"custom_textfield"}
             placeholder={!computedValue.length ? placeholder : ""}
             {...params}
             InputProps={{

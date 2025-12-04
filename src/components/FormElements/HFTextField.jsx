@@ -3,8 +3,8 @@ import {makeStyles} from "@mui/styles";
 import {Controller} from "react-hook-form";
 import {numberWithSpaces} from "@/utils/formatNumbers";
 import {Lock} from "@mui/icons-material";
-import {useEffect, useRef, useState} from "react";
-import {useLocation} from "react-router-dom";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import clsx from "clsx";
 
 const useStyles = makeStyles(() => ({
@@ -135,7 +135,7 @@ const HFTextField = ({
                 endAdornment
               ),
             }}
-            helperText={!disabledHelperText && error?.message}
+            // helperText={!disabledHelperText && error?.message}
             className={clsx(className, { custom_textfield: isFormEdit })}
             {...props}
           />

@@ -52,7 +52,6 @@ const ImageUpload = ({
   onChange,
   className = "",
   disabled,
-  isNewTableView = false,
   tabIndex,
   field,
   drawerDetail = false,

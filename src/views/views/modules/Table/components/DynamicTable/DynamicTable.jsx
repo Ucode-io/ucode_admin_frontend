@@ -1,5 +1,5 @@
 import { ChakraProvider, Flex } from "@chakra-ui/react";
-import { Pagination, Button, Skeleton } from "@mui/material";
+import { Pagination, Button, Skeleton, Popover } from "@mui/material";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import SummaryRow from "@/components/DataTable/SummaryRow";
@@ -13,6 +13,7 @@ import { TableRow } from "./components/TableRow";
 import { AddNewData } from "./components/AddNewData";
 import { IndexTh } from "./components/IndexTh";
 import { FieldButton } from "./components/FieldButton";
+import HFTextEditor from "@/components/FormElements/HFTextEditorOptimization";
 
 export const DynamicTable = ({
   tableLan,
@@ -76,12 +77,20 @@ export const DynamicTable = ({
     tableSlug,
     menuItem,
     isRelationView,
+    textEditorAnchorEl,
+    activeFieldForTextEditor,
+    textEditorInnerValue,
+    setTextEditorInnerValue,
+    handleCloseTextEditor,
+    handleOpenTextEditor,
+    scrollRef,
   } = useDynamicTableProps({
     columns,
     isResizable,
     setLimit,
     data,
     fields,
+    handleChange,
   });
 
   console.log({ data });
@@ -96,6 +105,7 @@ export const DynamicTable = ({
       }
     >
       <div
+        ref={scrollRef}
         className="table"
         style={{
           border: "none",
@@ -226,6 +236,7 @@ export const DynamicTable = ({
                     firstRowWidth={45}
                     handleChange={handleChange}
                     updateObject={updateObject}
+                    handleOpenTextEditor={handleOpenTextEditor}
                   />
                 );
               })
@@ -364,6 +375,28 @@ export const DynamicTable = ({
           </RectangleIconButton>
         )}
       </Flex>
+      <Popover
+        id={"simple-popover"}
+        open={Boolean(textEditorAnchorEl)}
+        anchorEl={textEditorAnchorEl}
+        onClose={handleCloseTextEditor}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+      >
+        <HFTextEditor
+          row={activeFieldForTextEditor}
+          disabled={activeFieldForTextEditor?.attributes?.disabled}
+          isTransparent={true}
+          setInnerValue={setTextEditorInnerValue}
+          innerValue={textEditorInnerValue}
+        />
+      </Popover>
     </div>
   );
 };

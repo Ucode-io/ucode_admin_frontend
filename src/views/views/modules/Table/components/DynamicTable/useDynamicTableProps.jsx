@@ -1,9 +1,11 @@
 import { useViewContext } from "@/providers/ViewProvider";
+import { showAlert } from "@/store/alert/alert.thunk";
 import { paginationActions } from "@/store/pagination/pagination.slice";
 import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
+import { disableAutoScrollOnFocus } from "@/utils/disableAutoScrollOnFocus";
 import { useFieldsContext } from "@/views/views/providers/FieldsProvider";
 import { differenceInCalendarDays, parseISO } from "date-fns";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
@@ -13,17 +15,32 @@ export const useDynamicTableProps = ({
   columns,
   setLimit,
   data,
+  handleChange,
 }) => {
   const { i18n } = useTranslation();
   const location = useLocation();
   const dispatch = useDispatch();
   const tableSize = useSelector((state) => state.tableSize.tableSize);
   const tableSettings = useSelector((state) => state.tableSize.tableSettings);
-  // const tableHeight = useSelector((state) => state.tableSize.tableHeight);
+
   const [fieldCreateAnchor, setFieldCreateAnchor] = useState(null);
   const [fieldData, setFieldData] = useState(null);
+
   const [addNewRow, setAddNewRow] = useState(false);
   const [formType, setFormType] = useState("CREATE");
+
+  const [textEditorAnchorEl, setTextEditorAnchorEl] = useState(null);
+  const [activeFieldForTextEditor, setActiveFieldForTextEditor] = useState({});
+
+  const [textEditorInnerValue, setTextEditorInnerValue] = useState("");
+
+  const scrollRef = useRef(null);
+
+  const handleOpenTextEditor = useCallback((event, field) => {
+    setTextEditorAnchorEl(event.currentTarget);
+    setActiveFieldForTextEditor(field);
+    setTextEditorInnerValue(field.value);
+  }, []);
 
   const { isRelationView, tableSlug, projectInfo, view, menuItem } =
     useViewContext();
@@ -63,6 +80,19 @@ export const useDynamicTableProps = ({
 
   const pageName =
     location?.pathname.split("/")[location.pathname.split("/").length - 1];
+
+  const handleCloseTextEditor = () => {
+    if (!textEditorInnerValue.trim() && activeFieldForTextEditor?.required) {
+      dispatch(showAlert("This field is required", "error"));
+    } else {
+      handleChange({
+        value: textEditorInnerValue,
+        name: activeFieldForTextEditor?.slug,
+        rowId: activeFieldForTextEditor?.guid,
+      });
+      setTextEditorAnchorEl(null);
+    }
+  };
 
   useEffect(() => {
     if (!isResizable) return;
@@ -225,6 +255,10 @@ export const useDynamicTableProps = ({
     isWarningActive,
   ]);
 
+  useEffect(() => {
+    disableAutoScrollOnFocus();
+  }, []);
+
   return {
     i18n,
     tableSize,
@@ -250,5 +284,14 @@ export const useDynamicTableProps = ({
     menuItem,
     isRelationView,
     fieldsMap,
+    textEditorAnchorEl,
+    scrollRef,
+    activeFieldForTextEditor,
+    setActiveFieldForTextEditor,
+    textEditorInnerValue,
+    setTextEditorInnerValue,
+    setTextEditorAnchorEl,
+    handleCloseTextEditor,
+    handleOpenTextEditor,
   };
 };

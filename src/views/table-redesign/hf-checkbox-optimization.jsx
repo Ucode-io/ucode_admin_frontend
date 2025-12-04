@@ -59,6 +59,7 @@ const HFCheckbox = ({
         }}
         {...props}
         inputProps={tabIndex}
+        disableRipple
       />
       {isShowLabel && (
         <label htmlFor={`checkbox-${id}`} className={`label ${labelClassName}`}>

@@ -9,7 +9,6 @@ import { useTranslation } from "react-i18next";
 
 const TableDataForm = ({
   row,
-  data,
   view,
   index,
   field,
@@ -28,6 +27,8 @@ const TableDataForm = ({
   updateObject = () => {},
   handleChange = () => {},
   rowData,
+  errors = {},
+  setErrors = () => {},
 }) => {
   const { i18n } = useTranslation();
 
@@ -78,7 +79,6 @@ const TableDataForm = ({
         field?.type === FIELD_TYPES.LOOKUPS ? (
         <CellElementGeneratorForRelation
           row={row}
-          data={data}
           field={field}
           index={index}
           key={field?.id}
@@ -100,7 +100,6 @@ const TableDataForm = ({
       ) : (
         <CellElementGeneratorForTableView
           row={row}
-          data={data}
           field={field}
           index={index}
           key={field?.id}
@@ -113,6 +112,8 @@ const TableDataForm = ({
           newUi={newUi}
           handleChange={handleChange}
           rowData={rowData}
+          errors={errors}
+          setErrors={setErrors}
         />
       )}
     </Box>

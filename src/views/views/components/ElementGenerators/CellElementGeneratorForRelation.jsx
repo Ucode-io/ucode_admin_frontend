@@ -16,13 +16,9 @@ const parser = new Parser();
 
 const CellElementGeneratorForRelation = ({
   row,
-  data,
   index,
   field,
   control,
-  mainForm,
-  tableView,
-  relationfields,
   isNewRow = false,
   newColumn = false,
   isBlackBg = false,
@@ -31,8 +27,11 @@ const CellElementGeneratorForRelation = ({
   setFormValue = () => {},
   newUi,
   relationView,
-  fieldsMap,
   handleChange = () => {},
+  handleOnClose = () => {},
+  defaultMenuIsOpen,
+  autoFocus,
+  isDisabled,
 }) => {
   const userId = useSelector((state) => state.auth.userId);
   const tables = useSelector((state) => state.auth.tables);
@@ -63,11 +62,6 @@ const CellElementGeneratorForRelation = ({
       return `${field.slug}`;
     }
   }, [field, i18n?.language]);
-
-  const isDisabled =
-    (field.attributes?.disabled ||
-      !field.attributes?.field_permission?.edit_permission) &&
-    !isNewRow;
 
   const defaultValue = useMemo(() => {
     const defaultValue =
@@ -119,53 +113,40 @@ const CellElementGeneratorForRelation = ({
           }
         >
           <CellRelationFormElementForNewColumn
-            isFormEdit
-            row={row}
-            data={data}
             field={field}
             index={index}
             control={control}
             name={computedSlug}
-            mainForm={mainForm}
             isNewRow={isNewRow}
-            tableView={tableView}
             disabled={isDisabled}
             isBlackBg={isBlackBg}
-            isNewTableView={true}
             updateObject={updateObject}
             setFormValue={setFormValue}
             defaultValue={defaultValue}
-            relationfields={relationfields}
-            placeholder={field.attributes?.placeholder}
             objectIdFromJWT={objectIdFromJWT}
             relationView={relationView}
-            fieldsMap={fieldsMap}
-            newColumn={true}
           />
         </Suspense>
       ) : (
         <CellRelationFormElementNew
           row={row}
-          isFormEdit
-          data={data}
           index={index}
           field={field}
           control={control}
           isTableView={isTableView}
           name={computedSlug}
-          tableView={tableView}
           disabled={isDisabled}
           isBlackBg={isBlackBg}
-          isNewTableView={true}
           setFormValue={setFormValue}
           updateObject={updateObject}
           handleChange={handleChange}
           defaultValue={defaultValue}
-          relationfields={relationfields}
-          placeholder={field.attributes?.placeholder}
           newUi={newUi}
           objectIdFromJWT={objectIdFromJWT}
           relationView={relationView}
+          defaultMenuIsOpen={defaultMenuIsOpen}
+          handleOnClose={handleOnClose}
+          autoFocus={autoFocus}
         />
       );
     },
@@ -181,9 +162,7 @@ const CellElementGeneratorForRelation = ({
         }
       >
         <CellManyToManyRelationElement
-          newUi={newUi}
           row={row}
-          isFormEdit
           field={field}
           index={index}
           control={control}

@@ -152,22 +152,34 @@ export const HFTimePicker = ({
   );
 };
 
-export const HFTimePickerNew = ({ disabled, handleChange, row }) => {
+export const HFTimePickerNew = ({
+  disabled,
+  handleChange,
+  row,
+  onBlur = () => {},
+  autoFocus,
+}) => {
   const value = row?.value;
   return (
     <TimeInput
       id="timeField"
       value={value}
-      rightSection={<img src="/table-icons/time.svg" alt="" />}
-      onChange={(value) => {
+      rightSection={
+        <img src="/table-icons/time.svg" alt="" width={16} height={16} />
+      }
+      onBlur={onBlur}
+      onChange={(e) => {
         handleChange({
-          value: value.toISOString(),
+          value: e.target.value,
           name: row?.slug,
           rowId: row?.guid,
         });
       }}
-      styles={{ input: { background: "inherit", border: "none" } }}
+      styles={{
+        input: { background: "inherit", border: "none", padding: "0" },
+      }}
       disabled={disabled}
+      autoFocus={autoFocus}
     />
   );
 };

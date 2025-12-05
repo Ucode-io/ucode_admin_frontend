@@ -332,15 +332,7 @@ const AutoCompleteElement = ({
     setValue(val ?? null);
   };
 
-  // useEffect(() => {
-  //   const matchingOption = relOptions?.find(
-  //     (item) => item?.table_slug === field?.table_slug
-  //   );
-
-  //   if (matchingOption) {
-  //     setAllOptions(matchingOption.response);
-  //   }
-  // }, [relOptions, field]);
+  // eslint-disable-next-line
   let lastScrollTop = 0;
 
   const handleListOnScroll = (e) => {

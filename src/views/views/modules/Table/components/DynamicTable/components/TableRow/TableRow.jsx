@@ -146,6 +146,7 @@ export const TableRow = ({
                     relationView={relationView}
                     newUi={true}
                     handleChange={handleChange}
+                    rowData={row}
                   />
                 ) : (
                   <CellElementGeneratorForTableView
@@ -162,6 +163,7 @@ export const TableRow = ({
                     setErrors={setErrors}
                     errors={errors}
                     handleOpenTextEditor={handleOpenTextEditor}
+                    rowData={row}
                   />
                 )}
                 <Button

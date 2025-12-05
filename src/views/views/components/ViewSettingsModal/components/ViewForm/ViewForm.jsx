@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import CancelButton from "@/components/Buttons/CancelButton";
 import HFTextField from "@/components/FormElements/HFTextField";
@@ -13,6 +12,8 @@ import { quickFiltersActions } from "@/store/filter/quick_filter";
 import cls from "./styles.module.scss";
 import TextFieldWithMultiLanguage from "@/components/NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
 import { NavigateSettings } from "../NavigateSettings";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
+import { useViewContext } from "@/providers/ViewProvider";
 
 export const ViewForm = ({
   initialValues,
@@ -26,7 +27,8 @@ export const ViewForm = ({
   views,
   viewData,
 }) => {
-  const { tableSlug, appId } = useParams();
+  // const { tableSlug, appId } = useParams();
+  const { tableSlug, menuId } = useViewContext();
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);
   const [deleteBtnLoader, setDeleteBtnLoader] = useState(false);
@@ -154,7 +156,9 @@ export const ViewForm = ({
     const computedValues = {
       ...values,
       columns:
-        values.columns?.filter((el) => el.is_checked).map((el) => el.id) ?? [],
+        values.columns.map((el) =>
+          el.type === FIELD_TYPES.LOOKUP ? el.relation_id : el.id,
+        ) ?? [],
       attributes: {
         ...attributes,
         ...computeFinancialAcc(
@@ -174,7 +178,7 @@ export const ViewForm = ({
         Object.values(values?.attributes).find(
           (item) => typeof item === "string",
         ),
-      app_id: appId,
+      app_id: menuId,
       order: views?.length ?? 0,
     };
 

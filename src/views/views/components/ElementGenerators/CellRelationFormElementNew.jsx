@@ -25,6 +25,7 @@ import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
 import { groupFieldActions } from "@/store/groupField/groupField.slice";
 import { useViewContext } from "@/providers/ViewProvider";
+import ClearIcon from "@mui/icons-material/Clear";
 
 const CellRelationFormElementNew = ({
   relOptions,
@@ -609,7 +610,11 @@ const AutoCompleteElement = ({
         components={{
           SingleValue: CustomSingleValue,
           DropdownIndicator: null,
-          ClearIndicator: null,
+          ClearIndicator: (props) => (
+            <components.ClearIndicator {...props}>
+              <ClearIcon />
+            </components.ClearIndicator>
+          ),
         }}
         onChange={(newValue) => {
           changeHandler(newValue);

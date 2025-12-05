@@ -31,10 +31,10 @@ import VariableResourceForm from "../components/LayoutSidebar/Components/Resourc
 import Scenarios from "../components/LayoutSidebar/Components/Scenario";
 import PageFallback from "../components/PageFallback";
 import ReloadPage from "../components/ReloadComponent/index";
-// import ReloadWrapper from "../components/ReloadWrapper";
+import ReloadWrapper from "../components/ReloadWrapper";
 import LoginMicrofrontend from "../layouts/AuthLayout/LoginMicrofrontend";
 import MainLayout from "../layouts/MainLayout";
-import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
+import { useLoginMicrofrontendQuery } from "../services/loginMicrofrontendService";
 import ApiKeysForm from "../views/ApiKeys/ApiKeysForm.jsx";
 import ApiKeyPage from "../views/ApiKeys/index.jsx";
 import Invite from "../views/Auth/Invite";
@@ -81,9 +81,9 @@ import LanguageControl from "../components/LayoutSidebar/Components/LanguageCont
 import LayoutSettings from "../views/Objects/LayoutSettings";
 import ChartDb from "../views/ChartDb";
 import NewObjectsFormPage from "../views/Objects/NewObjectsFormPage";
-// import NewObjectsPage from "../views/Objects/NewObjectsPage";
+import NewObjectsPage from "../views/Objects/NewObjectsPage";
 import DocView from "../views/Objects/DocView";
-import { Views } from "@/views/views";
+// import { Views } from "@/views/views";
 
 const AuthLayoutDesign = lazy(
   () => import("../layouts/AuthLayout/AuthLayoutDesign"),
@@ -400,11 +400,11 @@ const NewRouter = ({ resetQueryClient }) => {
             </Route>
           </Route>
 
-          <Route path=":menuId" element={<Views />} />
-          {/* <Route
+          {/* <Route path=":menuId" element={<Views />} /> */}
+          <Route
             path=":menuId"
             element={<ReloadWrapper component={NewObjectsPage} />}
-          /> */}
+          />
           <Route path=":menuId/templates" element={<DocumentTemplates />} />
 
           <Route path=":menuId/object/:tableSlug/docs" element={<DocView />} />

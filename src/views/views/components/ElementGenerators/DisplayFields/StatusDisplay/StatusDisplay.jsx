@@ -2,10 +2,8 @@ import { useTranslation } from "react-i18next";
 import { Box } from "@mui/material";
 
 import cls from "./styles.module.scss";
-import { ChevronDownIcon } from "@chakra-ui/icons";
 
 export const StatusDisplay = ({ row, onClick = () => {} }) => {
-
   const { i18n } = useTranslation();
 
   const selected = row?.value;
@@ -22,11 +20,8 @@ export const StatusDisplay = ({ row, onClick = () => {} }) => {
     );
 
   return (
-    <Box
-      className={cls.statusDisplay}
-      onClick={onClick}
-    >
-      <span 
+    <Box className={cls.statusDisplay} onClick={onClick}>
+      <span
         className={cls.statusBadge}
         style={{
           background: selectedOption
@@ -39,7 +34,6 @@ export const StatusDisplay = ({ row, onClick = () => {} }) => {
           selectedOption?.label ||
           selected}
       </span>
-      <ChevronDownIcon fontSize="19px" color="rgb(99, 115, 129)" />
     </Box>
   );
-}
+};

@@ -3,7 +3,7 @@ import LaunchIcon from "@mui/icons-material/Launch";
 import { Box, Popover } from "@mui/material";
 import { get } from "@ngard/tiny-get";
 import React, { useEffect, useMemo, useState } from "react";
-import { Controller, useWatch } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
@@ -47,6 +47,7 @@ const CellRelationFormElementNew = ({
   defaultMenuIsOpen,
   autoFocus,
   handleOnClose = () => {},
+  rowData = [],
 }) => {
   if (!isLayout)
     return (
@@ -103,6 +104,7 @@ const CellRelationFormElementNew = ({
               defaultMenuIsOpen={defaultMenuIsOpen}
               handleOnClose={handleOnClose}
               autoFocus={autoFocus}
+              rowData={rowData}
             />
           );
         }}
@@ -121,8 +123,6 @@ const AutoCompleteElement = ({
   disabled,
   isBlackBg,
   setValue,
-  index,
-  control,
   setFormValue = () => {},
   row,
   newUi,
@@ -131,6 +131,7 @@ const AutoCompleteElement = ({
   defaultMenuIsOpen,
   autoFocus,
   handleOnClose = () => {},
+  rowData,
 }) => {
   const { view } = useViewContext();
   const isNewRouter = localStorage.getItem("new_router") === "true";
@@ -155,7 +156,6 @@ const AutoCompleteElement = ({
   const [tableSlugFromProps, setTableSlugFromProps] = useState("");
 
   const openPopover = Boolean(anchorEl);
-  const autoFilters = field?.attributes?.auto_filters;
 
   const { menuId } = useParams();
   const { i18n } = useTranslation();
@@ -208,13 +208,19 @@ const AutoCompleteElement = ({
       fontSize: "12px",
       lineHeigh: "20px",
       fontWeight: "400",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
+      // display: "flex",
+      // flexDirection: "column",
+      // justifyContent: "center",
+      display: "block",
       padding: "0",
       paddingLeft: "8px",
       paddingRight: "8px",
+      paddingTop: "6px",
       borderRadius: "6px",
+      maxWidth: "calc(100% + 16px)",
+      overflow: "hidden",
+      whiteSpace: "nowrap",
+      textOverflow: "ellipsis",
       "&:hover": {
         backgroundColor: "rgba(242, 241, 238, 0.6)",
       },
@@ -251,23 +257,22 @@ const AutoCompleteElement = ({
     }),
   };
 
-  const autoFiltersFieldFroms = useMemo(() => {
-    return autoFilters?.map((el) => `multi.${index}.${el.field_from}`) ?? [];
-  }, [autoFilters, index]);
-
-  const filtersHandler = useWatch({
-    control,
-    name: autoFiltersFieldFroms,
-  });
+  const autoFilters = field?.attributes?.auto_filters;
 
   const autoFiltersValue = useMemo(() => {
     const result = {};
-    filtersHandler?.forEach((value, index) => {
-      const key = autoFilters?.[index]?.field_to;
-      if (key) result[key] = value;
+    autoFilters?.forEach((item) => {
+      const autoFilterFromCellValue = rowData?.find(
+        (rowItem) => rowItem?.slug === item?.field_from,
+      )?.value;
+
+      console.log({ autoFilterFromCellValue });
+
+      const key = item?.field_to;
+      if (key) result[key] = autoFilterFromCellValue;
     });
     return result;
-  }, [autoFilters, filtersHandler, value]);
+  }, [autoFilters, rowData, value]);
 
   const queryClient = useQueryClient();
 
@@ -356,9 +361,8 @@ const AutoCompleteElement = ({
         return item?.guid === objectIdFromJWT;
       });
     }
-
     return uniqueObjects ?? [];
-  }, [allOptions]);
+  }, [allOptions, autoFilters]);
 
   const computedValue = useMemo(() => {
     const findedOption = allOptions?.find((el) => el?.guid === value);

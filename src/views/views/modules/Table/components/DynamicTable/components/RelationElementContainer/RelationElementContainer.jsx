@@ -6,8 +6,17 @@ import cls from "./styles.module.scss"
 import { getRelationFieldTabsLabel, getRelationFieldTabsLabelLang } from "@/utils/getRelationFieldLabel";
 import { useSelector } from "react-redux";
 
-export const RelationElementContainer = ({field, index, control, isTableView, updateObject, setFormValue, relationView, handleChange}) => {
-
+export const RelationElementContainer = ({
+  field,
+  index,
+  control,
+  isTableView,
+  updateObject,
+  setFormValue,
+  relationView,
+  handleChange,
+  rowData,
+}) => {
   const languages = useSelector((state) => state.languages.list)?.map(
     (el) => el.slug,
   );
@@ -32,6 +41,7 @@ export const RelationElementContainer = ({field, index, control, isTableView, up
       newUi={true}
       handleChange={handleChange}
       handleOnClose={() => setIsEditing(false)}
+      rowData={rowData}
       defaultMenuIsOpen
       autoFocus
     />
@@ -54,4 +64,4 @@ export const RelationElementContainer = ({field, index, control, isTableView, up
         : `${getRelationFieldTabsLabel(field, field?.[`${field?.slug}_data`], i18n?.language)}`}
     </div>
   );
-}
+};

@@ -12,7 +12,6 @@ import { quickFiltersActions } from "@/store/filter/quick_filter";
 import cls from "./styles.module.scss";
 import TextFieldWithMultiLanguage from "@/components/NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
 import { NavigateSettings } from "../NavigateSettings";
-import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import { useViewContext } from "@/providers/ViewProvider";
 
 export const ViewForm = ({
@@ -28,7 +27,7 @@ export const ViewForm = ({
   viewData,
 }) => {
   // const { tableSlug, appId } = useParams();
-  const { tableSlug, menuId } = useViewContext();
+  const { tableSlug, menuId, view } = useViewContext();
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);
   const [deleteBtnLoader, setDeleteBtnLoader] = useState(false);
@@ -155,10 +154,7 @@ export const ViewForm = ({
     setBtnLoader(true);
     const computedValues = {
       ...values,
-      columns:
-        values.columns.map((el) =>
-          el.type === FIELD_TYPES.LOOKUP ? el.relation_id : el.id,
-        ) ?? [],
+      columns: view.columns ?? [],
       attributes: {
         ...attributes,
         ...computeFinancialAcc(

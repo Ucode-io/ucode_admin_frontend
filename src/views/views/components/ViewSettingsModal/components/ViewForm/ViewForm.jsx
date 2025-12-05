@@ -12,7 +12,6 @@ import { quickFiltersActions } from "@/store/filter/quick_filter";
 import cls from "./styles.module.scss";
 import TextFieldWithMultiLanguage from "@/components/NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
 import { NavigateSettings } from "../NavigateSettings";
-import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import { useViewContext } from "@/providers/ViewProvider";
 
 export const ViewForm = ({
@@ -22,33 +21,18 @@ export const ViewForm = ({
   defaultViewTab,
   refetchViews,
   setIsChanged,
-  columns,
-  relationColumns,
-  views,
   viewData,
 }) => {
   // const { tableSlug, appId } = useParams();
-  const { tableSlug, menuId } = useViewContext();
+  const { tableSlug, view } = useViewContext();
+
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);
   const [deleteBtnLoader, setDeleteBtnLoader] = useState(false);
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
-  const financialValues = initialValues?.attributes?.chart_of_accounts;
-  const financialTypee = initialValues?.attributes?.percent?.type;
-  const group_by_columns = initialValues?.attributes?.group_by_columns;
   const nameMulti = initialValues?.attributes?.[`name_${i18n?.language}`];
-  const navigate = initialValues?.attributes?.navigate;
-  const relationObjValue =
-    initialValues?.attributes?.balance?.table_slug +
-    "#" +
-    initialValues?.attributes?.balance?.table_id;
-  const numberFieldValue =
-    initialValues?.attributes?.balance?.field_slug +
-    "#" +
-    initialValues?.attributes?.balance?.field_id;
 
-  const financialFiledId = initialValues?.attributes?.percent?.field_id;
   const attributes = initialValues?.attributes;
 
   const languages = useSelector((state) => state.languages.list);
@@ -128,21 +112,7 @@ export const ViewForm = ({
 
   useEffect(() => {
     form.reset({
-      ...getInitialValues(
-        initialValues,
-        tableSlug,
-        columns,
-        typeNewView,
-        relationColumns,
-        financialValues,
-        financialTypee,
-        financialFiledId,
-        relationObjValue,
-        numberFieldValue,
-        navigate,
-        group_by_columns,
-        nameMulti,
-      ),
+      ...view,
       filters: [],
     });
   }, [initialValues, tableSlug, form, typeNewView]);
@@ -154,13 +124,10 @@ export const ViewForm = ({
   const onSubmit = (values) => {
     setBtnLoader(true);
     const computedValues = {
-      ...values,
-      columns:
-        values.columns.map((el) =>
-          el.type === FIELD_TYPES.LOOKUP ? el.relation_id : el.id,
-        ) ?? [],
+      ...view,
+      columns: view.columns,
       attributes: {
-        ...attributes,
+        ...view.attributes,
         ...computeFinancialAcc(
           values.chartOfAccounts,
           values?.group_by_field_selected?.slug,
@@ -178,8 +145,6 @@ export const ViewForm = ({
         Object.values(values?.attributes).find(
           (item) => typeof item === "string",
         ),
-      app_id: menuId,
-      order: views?.length ?? 0,
     };
 
     if (initialValues === "NEW") {
@@ -304,170 +269,5 @@ export const ViewForm = ({
         </Button>
       </div>
     </div>
-  );
-};
-
-const getInitialValues = (
-  initialValues,
-  tableSlug,
-  columns,
-  typeNewView,
-  relationColumns,
-  financialValues,
-  financialTypee,
-  financialFiledId,
-  relationObjValue,
-  numberFieldValue,
-  navigate,
-  group_by_columns
-) => {
-  if (initialValues === "NEW")
-    return {
-      type: typeNewView,
-      users: [],
-      name: "",
-      default_limit: "",
-      main_field: "",
-      time_interval: 60,
-      status_field_slug: "",
-      disable_dates: {
-        day_slug: "",
-        table_slug: "",
-        time_from_slug: "",
-        time_to_slug: "",
-      },
-      columns: columns?.map((el) => ({...el, is_checked: true})) ?? [],
-      group_fields: [],
-      navigate: {
-        params: [],
-        url: "",
-        headers: [],
-        cookies: [],
-      },
-      table_slug: tableSlug,
-      updated_fields: [],
-      multiple_insert: false,
-      multiple_insert_field: "",
-      chartOfAccounts: [{}],
-      attributes: {
-        group_by_columns:
-          columns?.map((el) => ({...el, is_checked: false})) ?? [],
-        summaries: [],
-        navigate: {
-          params: [],
-          url: "",
-          headers: [],
-          cookies: [],
-        },
-      },
-    };
-  return {
-    type: initialValues?.type ?? "TABLE",
-    users: initialValues?.users ?? [],
-    name: initialValues?.name ?? "",
-    // attributes: initialValues?.attributes ?? {},
-    default_limit: initialValues?.default_limit ?? "",
-    main_field: initialValues?.main_field ?? "",
-    status_field_slug: initialValues?.status_field_slug ?? "",
-    disable_dates: {
-      day_slug: initialValues?.disable_dates?.day_slug ?? "",
-      table_slug: initialValues?.disable_dates?.table_slug ?? "",
-      time_from_slug: initialValues?.disable_dates?.time_from_slug ?? "",
-      time_to_slug: initialValues?.disable_dates?.time_to_slug ?? "",
-    },
-    columns: computeColumns(initialValues?.columns, columns),
-    attributes: {
-      ...initialValues?.attributes,
-      group_by_columns: computeGroups(group_by_columns, columns),
-      summaries: initialValues?.attributes?.summaries ?? [],
-      navigate: {
-        params: initialValues?.attributes?.navigate?.params,
-        url: initialValues?.attributes?.navigate?.url,
-        headers: [],
-        cookies: [],
-      },
-    },
-    group_fields: computeGroupFields(
-      initialValues?.group_fields,
-      initialValues?.type === "CALENDAR" || initialValues?.type === "GANTT"
-        ? [...columns, ...relationColumns]
-        : columns
-    ),
-    navigate: {
-      params: navigate?.params,
-      url: navigate?.url,
-      headers: [],
-      cookies: [],
-    },
-    table_slug: tableSlug,
-    id: initialValues?.id,
-    calendar_from_slug: initialValues?.calendar_from_slug ?? "",
-    calendar_to_slug: initialValues?.calendar_to_slug ?? "",
-    time_interval: initialValues?.time_interval ?? 60,
-    updated_fields: initialValues?.updated_fields ?? [],
-    multiple_insert: initialValues?.multiple_insert ?? false,
-    multiple_insert_field: initialValues?.multiple_insert_field ?? "",
-    chartOfAccounts: computeFinancialColumns(financialValues),
-    typee: financialTypee ?? "",
-    relation_obj: relationObjValue ?? "",
-    number_field: numberFieldValue ?? "",
-    filed_idss: financialFiledId ?? "",
-  };
-};
-
-const computeColumns = (checkedColumnsIds = [], columns) => {
-  const selectedColumns =
-    checkedColumnsIds
-      ?.filter((id) => columns.find((el) => el.id === id))
-      ?.map((id) => ({
-        ...columns.find((el) => el.id === id),
-        is_checked: true,
-      })) ?? [];
-  const unselectedColumns =
-    columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
-  return [...selectedColumns, ...unselectedColumns];
-};
-const computeGroups = (checkedColumnsIds = [], columns) => {
-  const selectedColumns =
-    checkedColumnsIds
-      ?.filter((id) => columns.find((el) => el?.id === id))
-      ?.map((id) => ({
-        ...columns.find((el) => el.id === id),
-        is_checked: true,
-      })) ?? [];
-  const unselectedColumns =
-    columns?.filter((el) => !checkedColumnsIds?.includes(el.id)) ?? [];
-  return [...selectedColumns, ...unselectedColumns];
-};
-
-const computeFinancialColumns = (financialValues) => {
-  return financialValues?.map((row) => {
-    const computedRow = {group_by: row.group_by};
-
-    row.chart_of_account?.forEach((chart) => {
-      computedRow[chart.object_id] = [];
-
-      chart.options?.forEach((option) => {
-        const filters = {};
-        const filterFields = [];
-
-        option.filters?.forEach((filter) => {
-          filters[filter.field_id] = filter.value;
-          filterFields.push({field_id: filter.field_id});
-        });
-        const computedObj = {...option, filters, filterFields};
-        computedRow[chart.object_id].push(computedObj);
-      });
-    });
-
-    return computedRow;
-  });
-};
-
-const computeGroupFields = (groupFields = [], columns) => {
-  return (
-    groupFields?.filter((groupFieldID) =>
-      columns?.some((column) => column.id === groupFieldID)
-    ) ?? []
   );
 };

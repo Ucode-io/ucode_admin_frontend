@@ -49,7 +49,7 @@ export const ViewSettings = ({
         return {
           fields: data?.fields ?? [],
           views: data?.views ?? [],
-          columns: data?.fields ?? [],
+          columns: data?.columns ?? [],
           relationColumns:
             data?.relation_fields?.map((el) => ({
               ...el,
@@ -57,7 +57,7 @@ export const ViewSettings = ({
             })) ?? [],
         };
       },
-    }
+    },
   );
 
   useEffect(() => {

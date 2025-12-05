@@ -14,11 +14,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const useViewOptionsProps = ({ settingsForm }) => {
   const navigate = useNavigate();
-  const { menuId, appId, tableSlug: tableSlugFromProps } = useParams();
 
   const dispatch = useDispatch();
 
@@ -26,17 +25,17 @@ export const useViewOptionsProps = ({ settingsForm }) => {
   const projectId = useSelector((state) => state.company.projectId);
   const roleInfo = useSelector((state) => state.auth?.roleInfo?.name);
   const viewsList = useSelector((state) => state.groupField.viewsList);
-  const new_router = Boolean(localStorage.getItem("new_router") === "true");
 
   const {
     views,
     view,
-    tableSlug: tableSlugFromContext,
+    tableSlug,
     isRelationView,
     refetchViews,
     searchText,
     checkedColumns,
     computedVisibleFields,
+    menuId,
   } = useViewContext();
 
   const { fieldsMap } = useFieldsContext();
@@ -48,12 +47,12 @@ export const useViewOptionsProps = ({ settingsForm }) => {
     ? view?.attributes?.[`name_${i18n?.language}`] || view?.table_label
     : view?.attributes?.[`name_${i18n?.language}`] || view?.name || view?.type;
 
-  const tableSlug = isRelationView
-    ? view?.relation_table_slug
-    : (tableSlugFromProps ?? tableSlugFromContext);
+  // const tableSlug = isRelationView
+  //   ? view?.relation_table_slug
+  //   : (tableSlugFromProps ?? tableSlugFromContext);
 
   const permissions = useSelector(
-    (state) => state.permissions.permissions?.[tableSlug]
+    (state) => state.permissions.permissions?.[tableSlug],
   );
 
   const queryClient = useQueryClient();
@@ -70,11 +69,7 @@ export const useViewOptionsProps = ({ settingsForm }) => {
 
   const onDocsClick = () => {
     dispatch(detailDrawerActions.setDrawerTabIndex(views?.length));
-    if (new_router) {
-      navigate(`/${menuId}/templates?tableSlug=${tableSlug}`);
-    } else {
-      navigate(`/main/${appId}/object/${tableSlug}/templates`);
-    }
+    navigate(`/${menuId}/templates?tableSlug=${tableSlug}`);
   };
 
   useEffect(() => {
@@ -86,11 +81,11 @@ export const useViewOptionsProps = ({ settingsForm }) => {
   useEffect(() => {
     settingsForm.setValue(
       "calendar_from_slug",
-      view?.attributes?.calendar_from_slug
+      view?.attributes?.calendar_from_slug,
     );
     settingsForm.setValue(
       "calendar_to_slug",
-      view?.attributes?.calendar_to_slug
+      view?.attributes?.calendar_to_slug,
     );
     settingsForm.setValue("group_fields", view?.group_fields);
   }, [view]);
@@ -134,7 +129,7 @@ export const useViewOptionsProps = ({ settingsForm }) => {
   }, 500);
 
   const fixedColumnsCount = Object.values(
-    view?.attributes?.fixedColumns || {}
+    view?.attributes?.fixedColumns || {},
   ).length;
   const groupByColumnsCount = view?.attributes?.group_by_columns?.length;
   const visibleColumnsCount = view?.columns?.length ?? 0;
@@ -176,12 +171,12 @@ export const useViewOptionsProps = ({ settingsForm }) => {
             })) ?? [],
         };
       },
-    }
+    },
   );
 
   const computedColumns = useMemo(() => {
     const filteredFields = fields?.filter(
-      (el) => el?.type === "DATE" || el?.type === "DATE_TIME"
+      (el) => el?.type === "DATE" || el?.type === "DATE_TIME",
     );
     return listToOptions(filteredFields, "label", "slug");
   }, [fields]);
@@ -218,11 +213,7 @@ export const useViewOptionsProps = ({ settingsForm }) => {
   });
 
   const navigateToOldTemplate = () => {
-    if (localStorage.getItem("new_router") === "true") {
-      navigate(`/${menuId}/object/${tableSlug}/docs`);
-    } else {
-      navigate(`/main/${appId}/object/${tableSlug}/docs`);
-    }
+    navigate(`/${menuId}/object/${tableSlug}/docs`);
   };
 
   const [isOpen, setIsOpen] = useState(false);

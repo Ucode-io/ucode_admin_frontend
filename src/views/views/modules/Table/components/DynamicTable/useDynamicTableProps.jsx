@@ -1,6 +1,7 @@
 import { useViewContext } from "@/providers/ViewProvider";
 import { showAlert } from "@/store/alert/alert.thunk";
 import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
+import { DRAWER_VIEW_TYPES } from "@/utils/constants/drawerConstants";
 import { useFieldsContext } from "@/views/views/providers/FieldsProvider";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -8,7 +9,12 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 
-export const useDynamicTableProps = ({ isResizable, columns, data, handleChange }) => {
+export const useDynamicTableProps = ({
+  isResizable,
+  columns,
+  data,
+  handleChange,
+}) => {
   const { i18n } = useTranslation();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -34,19 +40,29 @@ export const useDynamicTableProps = ({ isResizable, columns, data, handleChange 
     setTextEditorInnerValue(field.value);
   }, []);
 
-  const { isRelationView, tableSlug, projectInfo, view, menuItem, setLimit } =
-    useViewContext();
+  const {
+    isRelationView,
+    tableSlug,
+    projectInfo,
+    view,
+    menuItem,
+    setLimit,
+    tabs,
+    selectedViewType,
+  } = useViewContext();
 
   const { fieldsMap } = useFieldsContext();
 
   const isModal =
-    isRelationView && localStorage.getItem("detailPage") === "CenterPeek";
+    isRelationView && selectedViewType === DRAWER_VIEW_TYPES.CenterPeek;
 
   const tableViewFiltersOpen = useSelector(
     (state) => state.main.openedFiltersByView?.[view?.id]?.open,
   );
 
-  const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
+  const tabHeight = tabs
+    ? document.querySelector("#tabsHeight")?.offsetHeight
+    : 0;
   const filterHeight = useSelector(
     (state) => state.main.openedFiltersByView?.[view?.id]?.height,
   );
@@ -147,28 +163,6 @@ export const useDynamicTableProps = ({ isResizable, columns, data, handleChange 
     createResizableTable(document.getElementById("resizeMe"));
   }, [data, isResizable, pageName, dispatch]);
 
-  // const calculateWidth = (colId, index) => {
-  //   const colIdx = tableSettings?.[pageName]
-  //     ?.filter((item) => item?.isStiky === true)
-  //     ?.findIndex((item) => item?.id === colId);
-
-  //   if (index === 0) {
-  //     return 0;
-  //   } else if (colIdx === 0) {
-  //     return 0;
-  //   } else if (
-  //     tableSettings?.[pageName]?.filter((item) => item?.isStiky === true)
-  //       .length === 1
-  //   ) {
-  //     return 0;
-  //   } else {
-  //     return tableSettings?.[pageName]
-  //       ?.filter((item) => item?.isStiky === true)
-  //       ?.slice(0, colIdx)
-  //       ?.reduce((acc, item) => acc + item?.colWidth, 0);
-  //   }
-  // };
-
   const calculateWidthFixedColumn = (colId) => {
     const prevElementIndex = columns?.findIndex((item) => item.id === colId);
 
@@ -207,12 +201,6 @@ export const useDynamicTableProps = ({ isResizable, columns, data, handleChange 
 
   const getLimitValue = (item) => {
     setLimit(item);
-    // dispatch(
-    //   paginationActions.setTablePages({
-    //     tableSlug: tableSlug,
-    //     pageLimit: item,
-    //   }),
-    // );
   };
 
   const isWarning =
@@ -230,7 +218,10 @@ export const useDynamicTableProps = ({ isResizable, columns, data, handleChange 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
 
-    if (isWarningActive || projectInfo?.status === "inactive") {
+    if (
+      (isWarningActive || projectInfo?.status === "inactive") &&
+      !isRelationView
+    ) {
       warningHeight = 32;
     }
 

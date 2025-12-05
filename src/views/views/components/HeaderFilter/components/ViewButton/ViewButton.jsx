@@ -29,6 +29,7 @@ export const ViewButton = ({
       key={view?.id}
       variant="ghost"
       colorScheme="grey"
+      textTransform="uppercase"
       mx={"4px"}
       leftIcon={
         isLastAndMoreViewButton ? (

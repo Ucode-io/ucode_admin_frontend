@@ -12,20 +12,16 @@ import {useTranslation} from "react-i18next";
 import {listToMap} from "@/utils/listToMap";
 import {generateGUID} from "@/utils/generateID";
 import Layout from "@/views/Constructor/Tables/Form/Layout";
+import { useViewContext } from "@/providers/ViewProvider";
 
-const LayoutModal = ({
-  closeModal = () => {},
-  selectedView,
-  tableInfo = {},
-  tableLan = {},
-}) => {
-  const {i18n} = useTranslation();
+const LayoutModal = ({ selectedView, tableInfo = {}, tableLan = {} }) => {
+  const { i18n } = useTranslation();
   const [loader, setLoader] = useState(true);
   const [btnLoader, setBtnLoader] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
-  const {tableSlug: tableSlugFromParams, appId, menuId, id} = useParams();
-  const tableSlug = tableSlugFromParams ?? selectedView?.table_slug;
   const [selectedLayout, setSelectedLayout] = useState({});
+
+  const { tableSlug, menuId: appId } = useViewContext();
 
   const mainForm = useForm({
     defaultValues: {
@@ -56,16 +52,16 @@ const LayoutModal = ({
     setLoader(true);
 
     try {
-      const [tableData, {custom_events: actions = []}] = await Promise.all([
-        await constructorViewRelationService.getList({table_slug: tableSlug}),
+      const [tableData, { custom_events: actions = [] }] = await Promise.all([
+        await constructorViewRelationService.getList({ table_slug: tableSlug }),
         await constructorCustomEventService.getList(
-          {table_slug: tableSlug},
-          tableSlug
+          { table_slug: tableSlug },
+          tableSlug,
         ),
         await layoutService
           .getList(
-            {"table-slug": tableSlug, language_setting: i18n?.language},
-            tableSlug
+            { "table-slug": tableSlug, language_setting: i18n?.language },
+            tableSlug,
           )
           .then((res) => {
             setSelectedLayout(res?.layouts?.[0]);
@@ -96,7 +92,6 @@ const LayoutModal = ({
   };
 
   const getRelationFields = async () => {
-
     return new Promise(async (resolve) => {
       const getFieldsData = constructorFieldService.getList(
         {

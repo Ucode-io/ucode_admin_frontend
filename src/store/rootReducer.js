@@ -30,6 +30,7 @@ import {settingsModalReducer} from "./settingsModal/settingsModal.slice";
 import {iconCategoryReducer} from "./IconCategory/iconCategory.slice";
 import { projectInfoReducer } from "./projectInfo/projectInfo.slice";
 import { tablePaginationReducer } from "./pagination/paginationV2.slice";
+import { drawerBreadcrumbReducer } from "./drawerBreadcrumb/drawerBreadcrumb.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -145,10 +146,15 @@ const iconCategoriesPersistConfig = {
   storage,
 };
 
-const detailDrawerConfig = {
-  key: "detailDrawer",
-  storage,
-};
+// const detailDrawerConfig = {
+//   key: "detailDrawer",
+//   storage,
+// };
+
+// const drawerBreadcrumbConfig = {
+//   key: "drawerBreadcrumb",
+//   sessionStorage,
+// };
 
 const rootReducer = combineReducers({
   main: persistReducer(mainPersistConfig, mainReducer),
@@ -187,6 +193,7 @@ const rootReducer = combineReducers({
   alert: alertReducer,
   isOnline: persistReducer(isOnline, isOnlineReducer),
   drawer: detailDrawerReducer,
+  drawerBreadcrumb: drawerBreadcrumbReducer,
   permissions: persistReducer(permissions, permissionsReducer),
   settingsModal: persistReducer(settingsModal, settingsModalReducer),
   table: tableReducer,

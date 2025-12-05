@@ -14,6 +14,7 @@ export const useHeaderProps = ({ data }) => {
   const { tableSlug, isRelationView, handleCloseDrawer, menuId, tableInfo } =
     useViewContext();
 
+  // const viewsPath = useSelector((state) => state.groupField.viewsPath);
   const viewsList = useSelector((state) => state.groupField.viewsList);
 
   const tableLan = useGetLang("Table");
@@ -37,12 +38,12 @@ export const useHeaderProps = ({ data }) => {
     if (index === 0) {
       dispatch(detailDrawerActions.setDrawerTabIndex(0));
       dispatch(groupFieldActions.trimViewsUntil(viewsList[0]));
-      dispatch(groupFieldActions.trimViewsDataUntil(viewsList[0]));
+      // dispatch(groupFieldActions.trimViewsDataUntil(viewsPath[0]));
       updateQueryWithoutRerender("p", viewsList[0]?.detailId);
     } else {
       dispatch(detailDrawerActions.setDrawerTabIndex(0));
       dispatch(groupFieldActions.trimViewsUntil(item));
-      dispatch(groupFieldActions.trimViewsDataUntil(item));
+      // dispatch(groupFieldActions.trimViewsDataUntil(viewsPath[0]));
       updateQueryWithoutRerender("p", item?.detailId);
     }
   };

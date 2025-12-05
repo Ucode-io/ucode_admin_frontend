@@ -1,14 +1,47 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-export const {actions: groupFieldActions, reducer: groupFieldReducer} =
+export const {actions: drawerBreadcrumbActions, reducer: drawerBreadcrumbReducer} =
   createSlice({
-    name: "groupField",
+    name: "drawerBreadcrumb",
     initialState: {
+      tables: [],
+      tableViews: [],
+      activeTable: {},
+
+
       viewsList: [],
       viewsPath: [],
       groupByFieldSlug: "",
     },
     reducers: {
+      addTable: (state, {payload}) => {
+        if(!payload) return;
+        state.tables.push(payload);
+        state.activeTable = payload;
+      },
+      // addTableView: (state, {payload}) => {
+      //   const { id } = payload
+      //   state.tableViews[id] = payload
+      // },
+      goToTable: (state, {payload}) => {
+
+        if(payload.index === state.tables.length - 1) return;
+
+        if(payload.index === 0) {
+          state.tables = [payload];
+          return;
+        }
+
+        state.activeTable = payload
+        state.tables = state.tables.slice(0, payload.index + 1)
+      },
+
+      clearTable: (state) => {
+        state.tables = [];
+        state.activeTable = {};
+      },
+
+
       addViewPath: (state, {payload}) => {
         const {table_slug, relation_table_slug} = payload;
         const isRelation = !!relation_table_slug;

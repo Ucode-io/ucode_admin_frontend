@@ -47,7 +47,6 @@ export const DynamicTable = ({
   relationAction,
   onChecked,
   refetch = () => {},
-  isPaginationPositionSticky,
   getAllData = () => {},
   handleChange = () => {},
   updateObject = () => {},
@@ -96,11 +95,7 @@ export const DynamicTable = ({
   return (
     <div
       className="CTableContainer"
-      style={
-        isPaginationPositionSticky
-          ? { display: "flex", flexDirection: "column", height: "100%" }
-          : {}
-      }
+      style={{ display: "flex", flexDirection: "column", height: "100%" }}
     >
       <div
         ref={scrollRef}
@@ -108,7 +103,7 @@ export const DynamicTable = ({
         style={{
           border: "none",
           borderRadius: 0,
-          flexGrow: 1,
+          // flexGrow: 1,
           backgroundColor: "#fff",
           height: `calc(100vh - ${calculatedHeight + (isModal ? 230 : 130)}px)`,
         }}

@@ -157,12 +157,6 @@ export const useTableProps = ({ tab }) => {
     updateObject({ data, rowId });
   };
 
-  // const pagination = useMemo(() => {
-  //   const getObject = paginationInfo.find((el) => el?.tableSlug === tableSlug);
-
-  //   return getObject?.pageLimit ?? limit;
-  // }, [paginationInfo, tableSlug]);
-
   function customSortArray(a, b) {
     const commonItems = a?.filter((item) => b.includes(item));
     commonItems?.sort();
@@ -302,26 +296,30 @@ export const useTableProps = ({ tab }) => {
       },
     ],
     queryFn: () => {
-      return menuService.getFieldsTableData(menuId, viewId, tableSlug, {
-        data: {
-          row_view_id: view?.id,
-          offset: pageToOffset(currentPage, limit),
-          order: computedSortColumns,
-          view_fields: checkedColumns,
-          search: tableSearch,
-          [`${selectedV?.table_slug}_id`]: isRelationView
-            ? selectedV?.detailId
-            : undefined,
-          limit: limit,
-          ...filters,
-          [tab?.slug]: tab
-            ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
-                ?.type === "MULTISELECT"
-              ? [`${tab?.value}`]
-              : tab?.value
-            : "",
+      return menuService.getFieldsTableData(
+        menuId,
+        viewId,
+        isRelationView ? view?.relation_table_slug : tableSlug,
+        {
+          data: {
+            row_view_id: view?.id,
+            offset: pageToOffset(currentPage, limit),
+            order: computedSortColumns,
+            view_fields: checkedColumns,
+            search: tableSearch,
+            [`${selectedV?.relation_table_slug || selectedV?.table_slug}_id`]:
+              isRelationView ? selectedV?.detailId : undefined,
+            limit: limit,
+            ...filters,
+            [tab?.slug]: tab
+              ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
+                  ?.type === "MULTISELECT"
+                ? [`${tab?.value}`]
+                : tab?.value
+              : "",
+          },
         },
-      });
+      );
     },
     enabled: false,
     select: (res) => {

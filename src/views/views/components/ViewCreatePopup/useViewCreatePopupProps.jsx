@@ -16,6 +16,7 @@ import constructorTableService from "../../../../services/constructorTableServic
 import { useTranslation } from "react-i18next";
 import menuService from "../../../../services/menuService";
 import { listToMapWithoutRel } from "../../../../utils/listToMap";
+import { useViewContext } from "@/providers/ViewProvider";
 
 export const useViewCreatePopupProps = ({
   relationFields = [],
@@ -30,14 +31,14 @@ export const useViewCreatePopupProps = ({
   handleClosePop = () => {},
   refetchViews = () => {},
 }) => {
+  const { view } = useViewContext();
+
   const [selectedViewTab, setSelectedViewTab] = useState(VIEW_TYPES_MAP.TABLE);
 
   const queryClient = useQueryClient();
   const [selectedViewAnchor, setSelectedViewAnchor] = useState(null);
 
   const viewsList = useSelector((state) => state.groupField.viewsList);
-  const viewsPath = useSelector((state) => state?.groupField?.viewsPath);
-  const lastPath = viewsPath?.[viewsPath?.length - 1];
 
   const groupByTableSlug = useSelector(
     (state) => state?.groupField?.groupByFieldSlug,
@@ -269,7 +270,7 @@ export const useViewCreatePopupProps = ({
 
   const { data } = useQuery(
     ["GET_VIEW_FIELDS_CREATE", i18n?.language, tableSlug],
-    () => menuService.getFieldsListMenu(menuId, lastPath?.id, tableSlug, {}),
+    () => menuService.getFieldsListMenu(menuId, view?.id, tableSlug, {}),
     {
       enabled: Boolean(tableSlug && relationView),
       select: ({ data }) => ({

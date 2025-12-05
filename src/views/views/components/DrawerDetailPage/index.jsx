@@ -29,6 +29,7 @@ import { useViewContext } from "@/providers/ViewProvider";
 import clsx from "clsx";
 import { menuService } from "@/services/menuService/menu.service";
 import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
+import { drawerBreadcrumbActions } from "@/store/drawerBreadcrumb/drawerBreadcrumb.slice";
 
 const Views = lazy(() => import("../.."));
 
@@ -103,8 +104,9 @@ function DrawerDetailPage({
     rootForm.reset({});
     updateQueryWithoutRerender("p", null);
     updateQueryWithoutRerender("dv", null);
-    dispatch(groupFieldActions.trimViewsUntil(viewsPath?.[0]));
-    dispatch(groupFieldActions.trimViewsDataUntil(viewsPath?.[0]));
+
+    dispatch(groupFieldActions.clearViews());
+    dispatch(groupFieldActions.clearViewsPath());
     dispatch(detailDrawerActions.setDrawerTabIndex(0));
     dispatch(detailDrawerActions.closeDrawer());
     dispatch(detailDrawerActions.setSelectedView({}));

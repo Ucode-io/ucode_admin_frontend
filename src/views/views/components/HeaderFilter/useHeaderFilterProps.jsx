@@ -86,8 +86,8 @@ export const useHeaderFilterProps = () => {
   const getViewName = (view) => {
     return view?.is_relation_view
       ? view?.attributes?.[`name_${i18n?.language}`] ||
-          view?.type ||
-          view?.table_label
+          view?.table_label ||
+          view?.type
       : view?.attributes?.[`name_${i18n?.language}`] ||
           view?.name ||
           view?.type;
@@ -112,11 +112,11 @@ export const useHeaderFilterProps = () => {
 
         return;
       } else {
-        dispatch(
-          groupFieldActions.addViewPath({
-            ...view,
-          }),
-        );
+        // dispatch(
+        //   groupFieldActions.addViewPath({
+        //     ...view,
+        //   }),
+        // );
       }
     } else {
       updateQueryWithoutRerender("v", view?.id);

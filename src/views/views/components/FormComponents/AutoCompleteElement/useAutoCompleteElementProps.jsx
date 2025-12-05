@@ -320,15 +320,15 @@ export const useAutoCompleteElementProps = ({
                     relation_table_slug: data?.table_slug,
                   }),
                 );
-                dispatch(
-                  groupFieldActions.addViewPath({
-                    id: data?.table_id,
-                    detailId: data?.guid,
-                    is_relation_view: true,
-                    table_slug: data?.table_slug,
-                    label: field?.attributes?.[`label_${i18n?.language}`] || "",
-                  }),
-                );
+                // dispatch(
+                //   groupFieldActions.addViewPath({
+                //     id: data?.table_id,
+                //     detailId: data?.guid,
+                //     is_relation_view: true,
+                //     table_slug: data?.table_slug,
+                //     label: field?.attributes?.[`label_${i18n?.language}`] || "",
+                //   }),
+                // );
                 updateQueryWithoutRerender("p", props?.data?.guid);
                 updateQueryWithoutRerender("field_slug", field?.table_slug);
               } else {

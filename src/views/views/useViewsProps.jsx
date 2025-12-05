@@ -43,7 +43,6 @@ import { Calendar } from "./modules/Calendar";
 import { Website } from "./modules/Website";
 import { projectInfoActions } from "@/store/projectInfo/projectInfo.slice";
 import { QUERY_KEYS } from "@/utils/constants/queryKeys";
-// import { paginationActions } from "@/store/pagination/pagination.slice";
 import { tablePaginationActions } from "@/store/pagination/paginationV2.slice";
 
 export const useViewsProps = ({ isRelationView }) => {
@@ -69,12 +68,12 @@ export const useViewsProps = ({ isRelationView }) => {
   const projectInfo = useSelector((state) => state.projectInfo.projectInfo);
   const menuItem = useSelector((state) => state.projectInfo.menuItem);
 
-  const viewsPath = useSelector((state) => state.groupField.viewsPath);
+  // const viewsPath = useSelector((state) => state.groupField.viewsPath);
   const viewsList = useSelector((state) => state.groupField.viewsList);
 
   const initialTableInfo = useSelector((state) => state.drawer.tableInfo);
 
-  const lastPath = viewsPath?.[viewsPath?.length - 1];
+  // const lastPath = viewsPath?.[viewsPath?.length - 1];
   const selectedV = viewsList?.[viewsList?.length - 1];
 
   // const paginationCounts = useSelector(
@@ -496,7 +495,7 @@ export const useViewsProps = ({ isRelationView }) => {
       keepPreviousData: !isRelationView,
       enabled: isRelationView
         ? Boolean(
-            (lastPath?.relation_table_slug || lastPath?.table_slug) &&
+            (selectedView?.relation_table_slug || selectedView?.table_slug) &&
               selectedV?.id,
           )
         : Boolean(tableSlug && viewType !== VIEW_TYPES_MAP.SECTION),
@@ -518,15 +517,15 @@ export const useViewsProps = ({ isRelationView }) => {
       },
       onSuccess: (data) => {
         if (!isRelationView) {
-          dispatch(
-            groupFieldActions.addViewPath({
-              id: data?.tableInfo.id,
-              label: data?.tableInfo.label,
-              table_slug: data?.tableInfo.slug,
-              relation_table_slug: data?.tableInfo.relation_table_slug,
-              is_relation_view: data?.tableInfo?.is_relation_view ?? false,
-            }),
-          );
+          // dispatch(
+          //   groupFieldActions.addViewPath({
+          //     id: data?.tableInfo.id,
+          //     label: data?.tableInfo.label,
+          //     table_slug: data?.tableInfo.slug,
+          //     relation_table_slug: data?.tableInfo.relation_table_slug,
+          //     is_relation_view: data?.tableInfo?.is_relation_view ?? false,
+          //   }),
+          // );
           dispatch(detailDrawerActions.setInitialTableInfo(data?.tableInfo));
           setOrderBy(data?.orderBy);
         }
@@ -538,7 +537,7 @@ export const useViewsProps = ({ isRelationView }) => {
       menuId,
       viewId: isRelationView ? selectedV?.id : selectedView?.id,
       tableSlug: isRelationView
-        ? lastPath?.relation_table_slug || lastPath?.table_slug
+        ? selectedView?.relation_table_slug || selectedView?.table_slug
         : selectedView?.table_slug,
     },
   );

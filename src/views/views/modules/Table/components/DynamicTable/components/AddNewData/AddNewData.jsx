@@ -10,6 +10,7 @@ import { constructorObjectService } from "@/services/objectService/object.servic
 import useDebounce from "@/hooks/useDebounce";
 import { useViewContext } from "@/providers/ViewProvider";
 import { useFieldsContext } from "@/views/views/providers/FieldsProvider";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
 export const AddNewData = memo(
   ({
@@ -22,44 +23,40 @@ export const AddNewData = memo(
     rows,
     setAddNewRow,
     refetch,
-    // view,
-    // isRelationTable,
     pageName,
     tableSettings,
-    // relatedTableSlug,
     calculateWidthFixedColumn,
     firstRowWidth = 45,
-    // isTableView = false,
-    // tableSlug,
-    // relationView,
-    // fieldsMap = {},
   }) => {
     const { viewForm, view, isRelationView, tableSlug } = useViewContext();
     const { fieldsMap } = useFieldsContext();
 
     const rowRef = useRef();
     const dispatch = useDispatch();
-    // const { id } = useParams();
-    // const computedSlug = isRelationView ? `${relatedTableSlug}_id` : tableSlug;
     const [isLoading, setIsLoading] = useState();
-    // const computedTableSlug = isRelationView ? relatedTableSlug : tableSlug;
 
     const {
       handleSubmit,
       control,
       setValue: setFormValue,
       formState: { errors },
+      setError,
+      clearErrors,
     } = useForm({});
 
-    const onSubmit = (values) => {
-      const data = {
-        // [isRelationView && computedSlug]: Boolean(
-        //   values?.[computedSlug]?.length,
-        // )
-        //   ? values?.[computedSlug]
-        //   : (id ?? view?.id),
-        ...values,
-      };
+    const onSubmit = (data) => {
+      columns.forEach((item) => {
+        if (
+          item.type === FIELD_TYPES.MULTI_LINE &&
+          item.required &&
+          !data[item.slug]?.trim()
+        ) {
+          setError(item.slug, { message: "Field is required" });
+          return;
+        } else {
+          clearErrors(item.slug);
+        }
+      });
 
       setIsLoading(true);
       constructorObjectService
@@ -80,23 +77,7 @@ export const AddNewData = memo(
     };
 
     const handleKeyDown = useDebounce((event) => {
-      // const activeEl = document.activeElement;
-
-      // const isTextInput =
-      //   activeEl?.tagName === "INPUT" || activeEl?.tagName === "TEXTAREA";
-      // const isContentEditable = activeEl?.isContentEditable;
-
-      // const isInMantineDateField = activeEl?.closest(
-      //   ".mantine-DatePickerInput-root, .mantine-DateTimePicker-root, .mantine-TimeInput-root",
-      // );
-
-      if (
-        event.key === "Enter" &&
-        // !event.shiftKey &&
-        // (isTextInput || isContentEditable) &&
-        // !isInMantineDateField &&
-        !isLoading
-      ) {
+      if (event.key === "Enter" && !isLoading) {
         event.preventDefault();
         handleSubmit(onSubmit)();
       }
@@ -108,34 +89,6 @@ export const AddNewData = memo(
         window.removeEventListener("keydown", handleKeyDown);
       };
     }, []);
-
-    // useEffect(() => {
-    //   const handleClickOutside = (event) => {
-    //     const clickedInsideRow = rowRef.current?.contains(event.target);
-
-    //     const isInDropdown = event.target.closest(
-    //       [
-    //         ".MuiPopover-root",
-    //         ".MuiMenu-paper",
-    //         ".MuiAutocomplete-popper",
-    //         ".dropdown-menu",
-    //         "[role='listbox']",
-    //         ".mantine-Popover-root",
-    //         ".mantine-Popover-dropdown",
-    //         "[data-mantine-portal]",
-    //       ].join(", "),
-    //     );
-
-    //     if (!clickedInsideRow && !isInDropdown) {
-    //       handleSubmit(onSubmit)();
-    //     }
-    //   };
-
-    //   document.addEventListener("mousedown", handleClickOutside);
-    //   return () => {
-    //     document.removeEventListener("mousedown", handleClickOutside);
-    //   };
-    // }, []);
 
     return (
       <CTableRow

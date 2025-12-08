@@ -11,12 +11,11 @@ import {
   Box,
   IconButton,
   InputAdornment,
-  Popover,
   Skeleton,
   TextField,
   Tooltip,
 } from "@mui/material";
-import {Parser} from "hot-formula-parser";
+import { Parser } from "hot-formula-parser";
 import React, {
   Suspense,
   lazy,
@@ -25,11 +24,10 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {Controller, useWatch} from "react-hook-form";
-import {NumericFormat} from "react-number-format";
-import {useQuery} from "react-query";
+import { Controller, useWatch } from "react-hook-form";
+import { NumericFormat } from "react-number-format";
+import { useQuery } from "react-query";
 import PolygonFieldTable from "@/components/ElementGenerators/PolygonFieldTable";
-import HFCodeField from "@/components/FormElements/HFCodeField";
 import HFFileUpload from "@/components/FormElements/HFFileUpload";
 import HFLinkField from "@/components/FormElements/HFLinkField";
 import HFModalMap from "@/components/FormElements/HFModalMap";
@@ -649,7 +647,6 @@ const InputField = ({
 const NumberField = ({
   control,
   name,
-  field,
   disabled = false,
   placeholder = "",
   updateObject = () => {},
@@ -733,14 +730,12 @@ const NumberField = ({
 const FormulaField = ({
   control,
   name,
-  isTableView = false,
   tabIndex,
   rules = {},
   setFormValue = () => {},
   required,
   disabledHelperText,
   fieldsList,
-  isNewTableView = false,
   disabled,
   defaultValue,
   field,
@@ -770,7 +765,7 @@ const FormulaField = ({
       computedFormula = computedFormula.replaceAll(`${field.slug}`, value);
     });
 
-    const {error, result} = parser.parse(computedFormula);
+    const { error, result } = parser.parse(computedFormula);
 
     let newValue = error ?? result;
     const prevValue = values[name];
@@ -792,7 +787,7 @@ const FormulaField = ({
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({ field: { onChange, value }, fieldState: { error } }) => (
         <TextField
           className="formulaField"
           placeholder={placeholder}
@@ -816,7 +811,7 @@ const FormulaField = ({
               onChange(
                 !isNaN(Number(valueWithoutSpaces))
                   ? Number(valueWithoutSpaces)
-                  : ""
+                  : "",
               );
             }
           }}
@@ -826,26 +821,29 @@ const FormulaField = ({
           autoFocus={tabIndex === 1}
           helperText={!disabledHelperText && error?.message}
           InputProps={{
-            inputProps: {tabIndex},
+            inputProps: { tabIndex },
             readOnly: disabled,
 
             endAdornment: (
               <InputAdornment position="end">
                 <Box
-                  style={{display: "flex", alignItems: "center", gap: "10px"}}>
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
                   <Tooltip
-                    title={formulaIsVisible ? "Hide formula" : "Show formula"}>
+                    title={formulaIsVisible ? "Hide formula" : "Show formula"}
+                  >
                     <IconButton
                       edge="end"
                       color={formulaIsVisible ? "primary" : "default"}
-                      onClick={() => setFormulaIsVisible((prev) => !prev)}>
+                      onClick={() => setFormulaIsVisible((prev) => !prev)}
+                    >
                       <FunctionsIcon />
                     </IconButton>
                   </Tooltip>
                   {disabled && (
                     <Tooltip title="This field is disabled for this role!">
                       <InputAdornment position="start">
-                        <Lock style={{fontSize: "20px"}} />
+                        <Lock style={{ fontSize: "20px" }} />
                       </InputAdornment>
                     </Tooltip>
                   )}
@@ -855,7 +853,8 @@ const FormulaField = ({
           }}
           {...props}
         />
-      )}></Controller>
+      )}
+    ></Controller>
   );
 };
 

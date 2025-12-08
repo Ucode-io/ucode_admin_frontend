@@ -177,13 +177,13 @@ export const useViewsProps = ({ isRelationView }) => {
   const refetchMainDataList = () => {
     switch (selectedViewMain?.type) {
       case VIEW_TYPES_MAP.TABLE:
-        queryClient.invalidateQueries([QUERY_KEYS.TABLE_DATA_KEY]);
+        queryClient.refetchQueries([QUERY_KEYS.TABLE_DATA_KEY]);
         break;
       case VIEW_TYPES_MAP.TIMELINE:
-        queryClient.invalidateQueries([QUERY_KEYS.TIMELINE_DATA_KEY]);
+        queryClient.refetchQueries([QUERY_KEYS.TIMELINE_DATA_KEY]);
         break;
       case VIEW_TYPES_MAP.CALENDAR:
-        queryClient.invalidateQueries([QUERY_KEYS.CALENDAR_DATA_KEY]);
+        queryClient.refetchQueries([QUERY_KEYS.CALENDAR_DATA_KEY]);
         break;
       default:
         break;

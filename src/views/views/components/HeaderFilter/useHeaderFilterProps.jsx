@@ -18,6 +18,9 @@ export const useHeaderFilterProps = () => {
   const { i18n } = useTranslation();
   const tableLan = useGetLang("Table");
 
+  const query = new URLSearchParams(window.location.search);
+  const itemId = query.get("p");
+
   const {
     view,
     views,
@@ -266,5 +269,6 @@ export const useHeaderFilterProps = () => {
     selectedView,
     handleCloseViews,
     selectedTabIndex,
+    itemId,
   };
 };

@@ -77,6 +77,7 @@ export const HeaderFilter = ({
     selectedView,
     handleCloseViews,
     selectedTabIndex,
+    itemId,
   } = useHeaderFilterProps();
 
   return (
@@ -113,7 +114,7 @@ export const HeaderFilter = ({
                 />
               ))}
             </Flex>
-          ) : (
+          ) : Boolean(!isRelationView || (isRelationView && itemId)) ? (
             <>
               {(visibleViews ?? []).map((view, index) => (
                 <ViewButton
@@ -145,6 +146,17 @@ export const HeaderFilter = ({
                 />
               )}
             </>
+          ) : (
+            <ViewButton
+              key={visibleViews[0]?.id}
+              view={visibleViews[0]}
+              viewId={viewId}
+              getViewName={getViewName}
+              handleClick={handleClick}
+              handleViewClick={handleViewClick}
+              overflowedViews={overflowedViews}
+              visibleViews={visibleViews}
+            />
           )}
         </Flex>
 

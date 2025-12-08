@@ -66,8 +66,6 @@ function DrawerDetailPage({
 
   const size = selectedViewType === DRAWER_VIEW_TYPES.FullPage ? "full" : "xs";
 
-  const viewsPath = useSelector((state) => state.groupField.viewsList);
-
   // const [tabRelations, setTableRelations] = useState();
   // const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 

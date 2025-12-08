@@ -100,6 +100,7 @@ export const ViewOptions = ({
     searchText,
     checkedColumns,
     computedVisibleFields,
+    filters,
   } = useViewOptionsProps({ settingsForm });
 
   return (
@@ -383,6 +384,7 @@ export const ViewOptions = ({
                   checkedColumns={checkedColumns}
                   computedVisibleFields={computedVisibleFields}
                   tableSlug={tableSlug}
+                  filters={filters}
                 />
               </Box>
               <PermissionWrapperV2 tableSlug={tableSlug} type="settings">

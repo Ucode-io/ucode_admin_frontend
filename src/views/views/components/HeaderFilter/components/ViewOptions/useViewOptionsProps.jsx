@@ -1,4 +1,5 @@
 import useDebounce from "@/hooks/useDebounce";
+import useFilters from "@/hooks/useFilters";
 import { useGetLang } from "@/hooks/useGetLang";
 import { useViewContext } from "@/providers/ViewProvider";
 import { useGetTableInfo } from "@/services/tableService/table.service";
@@ -53,8 +54,10 @@ export const useViewOptionsProps = ({ settingsForm }) => {
     : (tableSlugFromProps ?? tableSlugFromContext);
 
   const permissions = useSelector(
-    (state) => state.permissions.permissions?.[tableSlug]
+    (state) => state.permissions.permissions?.[tableSlug],
   );
+
+  const { filters } = useFilters(tableSlug, view?.id);
 
   const queryClient = useQueryClient();
 
@@ -86,11 +89,11 @@ export const useViewOptionsProps = ({ settingsForm }) => {
   useEffect(() => {
     settingsForm.setValue(
       "calendar_from_slug",
-      view?.attributes?.calendar_from_slug
+      view?.attributes?.calendar_from_slug,
     );
     settingsForm.setValue(
       "calendar_to_slug",
-      view?.attributes?.calendar_to_slug
+      view?.attributes?.calendar_to_slug,
     );
     settingsForm.setValue("group_fields", view?.group_fields);
   }, [view]);
@@ -134,7 +137,7 @@ export const useViewOptionsProps = ({ settingsForm }) => {
   }, 500);
 
   const fixedColumnsCount = Object.values(
-    view?.attributes?.fixedColumns || {}
+    view?.attributes?.fixedColumns || {},
   ).length;
   const groupByColumnsCount = view?.attributes?.group_by_columns?.length;
   const visibleColumnsCount = view?.columns?.length ?? 0;
@@ -176,12 +179,12 @@ export const useViewOptionsProps = ({ settingsForm }) => {
             })) ?? [],
         };
       },
-    }
+    },
   );
 
   const computedColumns = useMemo(() => {
     const filteredFields = fields?.filter(
-      (el) => el?.type === "DATE" || el?.type === "DATE_TIME"
+      (el) => el?.type === "DATE" || el?.type === "DATE_TIME",
     );
     return listToOptions(filteredFields, "label", "slug");
   }, [fields]);
@@ -291,5 +294,6 @@ export const useViewOptionsProps = ({ settingsForm }) => {
     searchText,
     checkedColumns,
     computedVisibleFields,
+    filters,
   };
 };

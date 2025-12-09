@@ -221,301 +221,59 @@ const RecursiveBlock = ({
       return false;
     }
   }
-
+  if (level > 1) console.log({ child, element });
   return (
-    <Draggable key={index}>
-      <Box
-        sx={{ padding: `0 0 0 ${level * 10}px` }}
-        style={{ marginBottom: 5 }}
-      >
-        <div
-          className="parent-block column-drag-handle"
-          key={element.id}
-          style={{ marginBottom: 5 }}
-        >
-          {permission && (
-            <Button
-              id="more-button"
-              data-cy="three-dots-button"
-              key={element.id}
-              style={{
-                marginTop: "2px",
-                marginBottom: "2px",
-                borderRadius: "8px",
-                height: "30px",
-                background: activeMenu ? "#F0F0EF" : menuStyles?.background,
-                color: activeMenu ? "#32302B" : "#5F5E5A",
-              }}
-              className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : "childRegularBtn"}`}
-              onClick={(e) => {
-                setSelectedFolder(element);
-                customFunc(e);
-                clickHandler(e);
-              }}
-            >
-              <div className="label">
-                {element?.type === "USER" && (
-                  <PersonIcon
-                    style={{
-                      color:
-                        menuItem?.id === element?.id
-                          ? "#fff"
-                          : "rgb(45, 108, 229)",
-                    }}
-                  />
-                )}
-                {element?.type === "FOLDER" && (
-                  <Box>
-                    <div className="childMenuFolderArrow">
-                      {MenuFolderArrows({ element, childBlockVisible })}
-                    </div>
+    <Box
+      sx={{ padding: `0 0 0 ${level * 10}px` }}
+      style={{ marginBottom: 5 }}
+      onMouseEnter={() => console.log("LEVEL: ", level)}
+    >
+      <BlockItem
+        permission={permission}
+        menuStyles={menuStyles}
+        activeMenu={activeMenu}
+        setSelectedFolder={setSelectedFolder}
+        customFunc={customFunc}
+        clickHandler={clickHandler}
+        isValidUrl={isValidUrl}
+        level={level}
+        getMenuLabel={getMenuLabel}
+        settingsButtonPermission={settingsButtonPermission}
+        userType={userType}
+        folderSettings={folderSettings}
+        menuItem={menuItem}
+        menuStyle={menuStyle}
+        addButtonPermission={addButtonPermission}
+        element={element}
+        menuAddClick={menuAddClick}
+        childBlockVisible={childBlockVisible}
+      />
+      <Collapse in={childBlockVisible} unmountOnExit>
+        {child?.map((childElement) => (
+          <RecursiveBlock
+            customFunc={customFunc}
+            key={childElement.id}
+            level={level + 1}
+            element={childElement}
+            openFolderCreateModal={openFolderCreateModal}
+            environment={environment}
+            setFolderModalType={setFolderModalType}
+            sidebarIsOpen={sidebarIsOpen}
+            setTableModal={setTableModal}
+            handleOpenNotify={handleOpenNotify}
+            setElement={setElement}
+            setSubMenuIsOpen={setSubMenuIsOpen}
+            menuStyle={menuStyle}
+            menuItem={menuItem}
+            index={index}
+            selectedApp={selectedApp}
+            buttonProps={buttonProps}
+            setSelectedFolder={setSelectedFolder}
+            setSelectedApp={setSelectedApp}
+          />
+        ))}
 
-                    <div className="childMenuIcon">
-                      {element?.icon ||
-                      element?.data?.microfrontend?.icon ||
-                      element?.data?.webpage?.icon ? (
-                        isValidUrl(element?.icon) ? (
-                          <img
-                            width={"24px"}
-                            height={"24px"}
-                            src={element?.icon}
-                          />
-                        ) : (
-                            element?.icon ||
-                            element?.data?.microfrontend?.icon ||
-                            element?.data?.webpage?.icon
-                          )?.includes(":") ? (
-                          <IconGeneratorIconjs
-                            icon={
-                              element?.icon ||
-                              element?.data?.microfrontend?.icon ||
-                              element?.data?.webpage?.icon
-                            }
-                            size={20}
-                          />
-                        ) : (
-                          <IconGenerator
-                            icon={
-                              element?.icon ||
-                              element?.data?.microfrontend?.icon ||
-                              element?.data?.webpage?.icon
-                            }
-                            size={20}
-                          />
-                        )
-                      ) : (
-                        // <IconGenerator
-                        //   icon={
-                        //     element?.icon ||
-                        //     element?.data?.microfrontend?.icon ||
-                        //     element?.data?.webpage?.icon
-                        //   }
-                        //   size={20}
-                        // />
-                        <Box
-                          sx={{
-                            width: "20px",
-                            height: "20px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              width: "5px",
-                              height: "5px",
-                              background: "#787774",
-                              borderRadius: "50%",
-                            }}
-                          ></Box>
-                        </Box>
-                      )}
-                    </div>
-                  </Box>
-                )}
-
-                {(element?.type !== "FOLDER" && element?.icon) ||
-                element?.data?.microfrontend?.icon ||
-                element?.data?.webpage?.icon ? (
-                  <div
-                    style={{
-                      marginRight: "4px",
-                    }}
-                    className="childMenuIcon"
-                  >
-                    {
-                      isValidUrl(element?.icon) ? (
-                        <img
-                          width={"24px"}
-                          height={"24px"}
-                          src={element?.icon}
-                        />
-                      ) : (
-                          element?.icon ||
-                          element?.data?.microfrontend?.icon ||
-                          element?.data?.webpage?.icon
-                        )?.includes(":") ? (
-                        <IconGeneratorIconjs
-                          icon={
-                            element?.icon ||
-                            element?.data?.microfrontend?.icon ||
-                            element?.data?.webpage?.icon
-                          }
-                          size={18}
-                        />
-                      ) : (
-                        <IconGenerator
-                          icon={
-                            element?.icon ||
-                            element?.data?.microfrontend?.icon ||
-                            element?.data?.webpage?.icon
-                          }
-                          size={18}
-                        />
-                      )
-                      // <IconGenerator
-                      //   icon={
-                      //     element?.icon ||
-                      //     element?.data?.microfrontend?.icon ||
-                      //     element?.data?.webpage?.icon
-                      //   }
-                      //   size={18}
-                      // />
-                    }
-                  </div>
-                ) : element?.type !== "FOLDER" ? (
-                  <Box
-                    sx={{
-                      width: "12px",
-                      height: "12px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        width: "5px",
-                        height: "5px",
-                        background: "#787774",
-                        borderRadius: "50%",
-                      }}
-                    ></Box>
-                  </Box>
-                ) : (
-                  ""
-                )}
-
-                <Tooltip
-                  title={
-                    Boolean(level > 2 && getMenuLabel(element)?.length > 14) &&
-                    getMenuLabel(element)
-                  }
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      width: "100%",
-                      position: "relative",
-                      color: "#465766",
-                    }}
-                  >
-                    <Box>
-                      <p>
-                        {level > 2
-                          ? getMenuLabel(element)?.length > 14
-                            ? `${getMenuLabel(element)?.slice(0, 12)}...`
-                            : getMenuLabel(element)
-                          : getMenuLabel(element)}
-                      </p>
-                    </Box>
-                    {settingsButtonPermission && !userType && (
-                      <Box
-                        id="moreicon"
-                        className="icon_group"
-                        style={{
-                          position: "absolute",
-                          right: 0,
-                          // backgroundColor: "#EAECF0",
-                          padding: "2px 4px",
-                          borderRadius: 4,
-                        }}
-                      >
-                        {(element?.data?.permission?.delete ||
-                          element?.data?.permission?.update ||
-                          element?.data?.permission?.write) && (
-                          <Tooltip title="Settings" placement="top">
-                            <Box className="extra_icon" data-cy={"three-dots"}>
-                              <BsThreeDots
-                                size={13}
-                                onClick={(e) => {
-                                  folderSettings(e);
-                                }}
-                                style={{
-                                  color:
-                                    menuItem?.id === element?.id
-                                      ? menuStyle?.active_text
-                                      : menuStyle?.text || "",
-                                }}
-                              />
-                            </Box>
-                          </Tooltip>
-                        )}
-                      </Box>
-                    )}
-                  </Box>
-                </Tooltip>
-              </div>
-              {addButtonPermission && element?.data?.permission?.write ? (
-                <Box className="icon_group">
-                  <Tooltip title="Create folder" placement="top">
-                    <Box className="extra_icon">
-                      <AddIcon
-                        size={13}
-                        onClick={(e) => {
-                          menuAddClick(e);
-                        }}
-                        style={{
-                          color: "#475767",
-                        }}
-                      />
-                    </Box>
-                  </Tooltip>
-                </Box>
-              ) : null}
-            </Button>
-          )}
-        </div>
-
-        <Collapse in={childBlockVisible} unmountOnExit>
-          {child?.map((childElement) => (
-            <RecursiveBlock
-              customFunc={customFunc}
-              key={childElement.id}
-              level={level + 1}
-              element={childElement}
-              openFolderCreateModal={openFolderCreateModal}
-              environment={environment}
-              setFolderModalType={setFolderModalType}
-              sidebarIsOpen={sidebarIsOpen}
-              setTableModal={setTableModal}
-              handleOpenNotify={handleOpenNotify}
-              setElement={setElement}
-              setSubMenuIsOpen={setSubMenuIsOpen}
-              menuStyle={menuStyle}
-              menuItem={menuItem}
-              index={index}
-              selectedApp={selectedApp}
-              buttonProps={buttonProps}
-              setSelectedFolder={setSelectedFolder}
-              setSelectedApp={setSelectedApp}
-            />
-          ))}
-
-          {/* {Boolean(defaultAdmin) && (
+        {/* {Boolean(defaultAdmin) && (
             <Permissions
               projectSettingLan={projectSettingLan}
               menuStyle={{
@@ -526,45 +284,319 @@ const RecursiveBlock = ({
             />
           )} */}
 
-          {element.id === folderIds.data_base_folder_id && (
-            <>
-              <TableSettingSidebar
-                projectSettingLan={projectSettingLan}
-                menuStyle={menuStyle}
-                menuItem={menuItem}
-                level={2}
+        {element.id === folderIds.data_base_folder_id && (
+          <>
+            <TableSettingSidebar
+              projectSettingLan={projectSettingLan}
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              level={2}
+            />
+          </>
+        )}
+        {element.id === folderIds.code_folder_id && (
+          <>
+            <FunctionSidebar
+              projectSettingLan={projectSettingLan}
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              level={2}
+              integrated={false}
+            />
+            <MicrofrontendSettingSidebar
+              projectSettingLan={projectSettingLan}
+              menuStyle={menuStyle}
+              menuItem={menuItem}
+              element={element}
+              level={2}
+            />
+            <FileUploadMenu
+              projectSettingLan={projectSettingLan}
+              menuStyle={menuStyle}
+              setSubMenuIsOpen={setSubMenuIsOpen}
+              menuItem={menuItem}
+              element={element}
+              level={2}
+            />
+          </>
+        )}
+      </Collapse>
+    </Box>
+  );
+};
+
+const BlockItem = ({
+  permission,
+  menuStyles,
+  activeMenu,
+  setSelectedFolder,
+  customFunc,
+  clickHandler,
+  isValidUrl,
+  level,
+  getMenuLabel,
+  settingsButtonPermission,
+  userType,
+  folderSettings,
+  menuItem,
+  menuStyle,
+  addButtonPermission,
+  element,
+  menuAddClick,
+  childBlockVisible,
+}) => {
+  return (
+    <div
+      className="parent-block column-drag-handle"
+      key={element.id}
+      style={{ marginBottom: 5 }}
+    >
+      {permission && (
+        <Button
+          id="more-button"
+          data-cy="three-dots-button"
+          key={element.id}
+          style={{
+            marginTop: "2px",
+            marginBottom: "2px",
+            borderRadius: "8px",
+            height: "30px",
+            background: activeMenu ? "#F0F0EF" : menuStyles?.background,
+            color: activeMenu ? "#32302B" : "#5F5E5A",
+          }}
+          className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : "childRegularBtn"}`}
+          onClick={(e) => {
+            setSelectedFolder(element);
+            customFunc(e);
+            clickHandler(e);
+          }}
+        >
+          <div className="label">
+            {element?.type === "USER" && (
+              <PersonIcon
+                style={{
+                  color:
+                    menuItem?.id === element?.id ? "#fff" : "rgb(45, 108, 229)",
+                }}
               />
-            </>
-          )}
-          {element.id === folderIds.code_folder_id && (
-            <>
-              <FunctionSidebar
-                projectSettingLan={projectSettingLan}
-                menuStyle={menuStyle}
-                menuItem={menuItem}
-                level={2}
-                integrated={false}
-              />
-              <MicrofrontendSettingSidebar
-                projectSettingLan={projectSettingLan}
-                menuStyle={menuStyle}
-                menuItem={menuItem}
-                element={element}
-                level={2}
-              />
-              <FileUploadMenu
-                projectSettingLan={projectSettingLan}
-                menuStyle={menuStyle}
-                setSubMenuIsOpen={setSubMenuIsOpen}
-                menuItem={menuItem}
-                element={element}
-                level={2}
-              />
-            </>
-          )}
-        </Collapse>
-      </Box>
-    </Draggable>
+            )}
+            {element?.type === "FOLDER" && (
+              <Box>
+                <div className="childMenuFolderArrow">
+                  {MenuFolderArrows({ element, childBlockVisible })}
+                </div>
+
+                <div className="childMenuIcon">
+                  {element?.icon ||
+                  element?.data?.microfrontend?.icon ||
+                  element?.data?.webpage?.icon ? (
+                    isValidUrl(element?.icon) ? (
+                      <img width={"24px"} height={"24px"} src={element?.icon} />
+                    ) : (
+                        element?.icon ||
+                        element?.data?.microfrontend?.icon ||
+                        element?.data?.webpage?.icon
+                      )?.includes(":") ? (
+                      <IconGeneratorIconjs
+                        icon={
+                          element?.icon ||
+                          element?.data?.microfrontend?.icon ||
+                          element?.data?.webpage?.icon
+                        }
+                        size={20}
+                      />
+                    ) : (
+                      <IconGenerator
+                        icon={
+                          element?.icon ||
+                          element?.data?.microfrontend?.icon ||
+                          element?.data?.webpage?.icon
+                        }
+                        size={20}
+                      />
+                    )
+                  ) : (
+                    // <IconGenerator
+                    //   icon={
+                    //     element?.icon ||
+                    //     element?.data?.microfrontend?.icon ||
+                    //     element?.data?.webpage?.icon
+                    //   }
+                    //   size={20}
+                    // />
+                    <Box
+                      sx={{
+                        width: "20px",
+                        height: "20px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: "5px",
+                          height: "5px",
+                          background: "#787774",
+                          borderRadius: "50%",
+                        }}
+                      ></Box>
+                    </Box>
+                  )}
+                </div>
+              </Box>
+            )}
+
+            {(element?.type !== "FOLDER" && element?.icon) ||
+            element?.data?.microfrontend?.icon ||
+            element?.data?.webpage?.icon ? (
+              <div
+                style={{
+                  marginRight: "4px",
+                }}
+                className="childMenuIcon"
+              >
+                {
+                  isValidUrl(element?.icon) ? (
+                    <img width={"24px"} height={"24px"} src={element?.icon} />
+                  ) : (
+                      element?.icon ||
+                      element?.data?.microfrontend?.icon ||
+                      element?.data?.webpage?.icon
+                    )?.includes(":") ? (
+                    <IconGeneratorIconjs
+                      icon={
+                        element?.icon ||
+                        element?.data?.microfrontend?.icon ||
+                        element?.data?.webpage?.icon
+                      }
+                      size={18}
+                    />
+                  ) : (
+                    <IconGenerator
+                      icon={
+                        element?.icon ||
+                        element?.data?.microfrontend?.icon ||
+                        element?.data?.webpage?.icon
+                      }
+                      size={18}
+                    />
+                  )
+                  // <IconGenerator
+                  //   icon={
+                  //     element?.icon ||
+                  //     element?.data?.microfrontend?.icon ||
+                  //     element?.data?.webpage?.icon
+                  //   }
+                  //   size={18}
+                  // />
+                }
+              </div>
+            ) : element?.type !== "FOLDER" ? (
+              <Box
+                sx={{
+                  width: "12px",
+                  height: "12px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: "5px",
+                    height: "5px",
+                    background: "#787774",
+                    borderRadius: "50%",
+                  }}
+                ></Box>
+              </Box>
+            ) : (
+              ""
+            )}
+
+            <Tooltip
+              title={
+                Boolean(level > 2 && getMenuLabel(element)?.length > 14) &&
+                getMenuLabel(element)
+              }
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                  position: "relative",
+                  color: "#465766",
+                }}
+              >
+                <Box>
+                  <p>
+                    {level > 2
+                      ? getMenuLabel(element)?.length > 14
+                        ? `${getMenuLabel(element)?.slice(0, 12)}...`
+                        : getMenuLabel(element)
+                      : getMenuLabel(element)}
+                  </p>
+                </Box>
+                {settingsButtonPermission && !userType && (
+                  <Box
+                    id="moreicon"
+                    className="icon_group"
+                    style={{
+                      position: "absolute",
+                      right: 0,
+                      // backgroundColor: "#EAECF0",
+                      padding: "2px 4px",
+                      borderRadius: 4,
+                    }}
+                  >
+                    {(element?.data?.permission?.delete ||
+                      element?.data?.permission?.update ||
+                      element?.data?.permission?.write) && (
+                      <Tooltip title="Settings" placement="top">
+                        <Box className="extra_icon" data-cy={"three-dots"}>
+                          <BsThreeDots
+                            size={13}
+                            onClick={(e) => {
+                              folderSettings(e);
+                            }}
+                            style={{
+                              color:
+                                menuItem?.id === element?.id
+                                  ? menuStyle?.active_text
+                                  : menuStyle?.text || "",
+                            }}
+                          />
+                        </Box>
+                      </Tooltip>
+                    )}
+                  </Box>
+                )}
+              </Box>
+            </Tooltip>
+          </div>
+          {addButtonPermission && element?.data?.permission?.write ? (
+            <Box className="icon_group">
+              <Tooltip title="Create folder" placement="top">
+                <Box className="extra_icon">
+                  <AddIcon
+                    size={13}
+                    onClick={(e) => {
+                      menuAddClick(e);
+                    }}
+                    style={{
+                      color: "#475767",
+                    }}
+                  />
+                </Box>
+              </Tooltip>
+            </Box>
+          ) : null}
+        </Button>
+      )}
+    </div>
   );
 };
 

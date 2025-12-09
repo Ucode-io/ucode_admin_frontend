@@ -2,7 +2,7 @@ import {Box, Skeleton} from "@mui/material";
 import React from "react";
 import {useQueryClient} from "react-query";
 import {useSelector} from "react-redux";
-import {Container} from "react-smooth-dnd";
+import { Container, Draggable } from "react-smooth-dnd";
 import menuService from "../../../services/menuService";
 import {applyDrag} from "../../../utils/applyDrag";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
@@ -100,34 +100,40 @@ function NewSubMenu({
                   <Container
                     dragHandleSelector=".column-drag-handle"
                     groupName="main-menu"
-                    getChildPayload={(index) =>
-                      menuChilds?.[element?.id]?.children[index]
-                    }
+                    getChildPayload={(index) => {
+                      console.log(
+                        "LL",
+                        menuChilds?.[element?.id]?.children[index],
+                      );
+                      return menuChilds?.[element?.id]?.children[index];
+                    }}
                     onDrop={onDrop}
                   >
                     {menuChilds?.[element?.id]?.children?.length ? (
                       menuChilds?.[element?.id]?.children?.map(
                         (childElement, index) => (
-                          <RecursiveBlock
-                            menuStyles={menuStyles}
-                            projectSettingLan={projectSettingLan}
-                            key={childElement.id}
-                            element={childElement}
-                            openFolderCreateModal={openFolderCreateModal}
-                            setFolderModalType={setFolderModalType}
-                            sidebarIsOpen={subMenuIsOpen}
-                            setTableModal={setTableModal}
-                            setLinkedTableModal={setLinkedTableModal}
-                            handleOpenNotify={handleOpenNotify}
-                            setElement={setElement}
-                            setSubMenuIsOpen={setSubMenuIsOpen}
-                            menuStyle={menuStyleNew}
-                            index={index}
-                            selectedApp={selectedApp}
-                            setSelectedFolder={setSelectedFolder}
-                            buttonProps={{ className: "highlight-on-hover" }}
-                            setSelectedApp={setSelectedApp}
-                          />
+                          <Draggable key={childElement.id} index={index}>
+                            <RecursiveBlock
+                              menuStyles={menuStyles}
+                              projectSettingLan={projectSettingLan}
+                              key={childElement.id}
+                              element={childElement}
+                              openFolderCreateModal={openFolderCreateModal}
+                              setFolderModalType={setFolderModalType}
+                              sidebarIsOpen={subMenuIsOpen}
+                              setTableModal={setTableModal}
+                              setLinkedTableModal={setLinkedTableModal}
+                              handleOpenNotify={handleOpenNotify}
+                              setElement={setElement}
+                              setSubMenuIsOpen={setSubMenuIsOpen}
+                              menuStyle={menuStyleNew}
+                              index={index}
+                              selectedApp={selectedApp}
+                              setSelectedFolder={setSelectedFolder}
+                              buttonProps={{ className: "highlight-on-hover" }}
+                              setSelectedApp={setSelectedApp}
+                            />
+                          </Draggable>
                         ),
                       )
                     ) : (

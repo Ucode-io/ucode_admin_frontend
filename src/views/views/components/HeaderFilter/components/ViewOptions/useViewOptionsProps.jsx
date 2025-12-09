@@ -1,4 +1,5 @@
 import useDebounce from "@/hooks/useDebounce";
+import useFilters from "@/hooks/useFilters";
 import { useGetLang } from "@/hooks/useGetLang";
 import { useViewContext } from "@/providers/ViewProvider";
 import { useGetTableInfo } from "@/services/tableService/table.service";
@@ -54,6 +55,8 @@ export const useViewOptionsProps = ({ settingsForm }) => {
   const permissions = useSelector(
     (state) => state.permissions.permissions?.[tableSlug],
   );
+
+  const { filters } = useFilters(tableSlug, view?.id);
 
   const queryClient = useQueryClient();
 
@@ -282,5 +285,6 @@ export const useViewOptionsProps = ({ settingsForm }) => {
     searchText,
     checkedColumns,
     computedVisibleFields,
+    filters,
   };
 };

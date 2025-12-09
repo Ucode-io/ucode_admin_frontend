@@ -50,7 +50,7 @@ export const getFieldByType = ({
   control,
   updateObject,
   computedSlug,
-  defaultValue,
+  defaultValue = "",
   row,
   newUi,
   newColumn,
@@ -182,6 +182,23 @@ export const getFieldByType = ({
     }
   };
 
+  const autofillValue = useMemo(() => {
+    const showField = row?.attributes?.autofill_field;
+
+    const dependentField = rowData?.find(
+      (item) => item?.slug === row?.attributes?.autofill_table?.split("#")[1],
+    );
+
+    const defaultValue =
+      dependentField?.[`${dependentField?.slug}_data`]?.[showField];
+
+    if (row?.value && row?.value !== defaultValue) {
+      return row?.value;
+    }
+
+    return defaultValue;
+  }, [row, rowData]);
+
   const FIELD_RENDERERS = useMemo(() => {
     return {
       SINGLE_LINE: isEditing ? (
@@ -196,10 +213,11 @@ export const getFieldByType = ({
           placeholder={row.attributes?.placeholder}
           row={row}
           handleBlur={handleBlur}
+          defaultValue={row?.value || autofillValue || defaultValue}
           autoFocus
         />
       ) : (
-        <SingleLineDisplay value={row?.value} onClick={handleClickField} />
+        <SingleLineDisplay value={autofillValue} onClick={handleClickField} />
       ),
       LINK: (
         <ElementLink
@@ -209,7 +227,7 @@ export const getFieldByType = ({
           onBlur={handleBlur}
         />
       ),
-      TEXT: <ElementText row={row} />,
+      TEXT: <ElementText row={row} value={autofillValue} />,
       BUTTON: <HFButtonField row={row} isTableView={true} />,
       STATUS: isEditing ? (
         <HFStatusField
@@ -328,10 +346,11 @@ export const getFieldByType = ({
           row={row}
           handleChange={handleChange}
           onBlur={backDisplay}
+          defaultValue={row?.value || autofillValue || defaultValue}
           autoFocus
         />
       ) : (
-        <NumberDisplay value={row?.value} onClick={handleClickField} />
+        <NumberDisplay value={autofillValue} onClick={handleClickField} />
       ),
       FLOAT: isEditing ? (
         <HFFloatField
@@ -342,10 +361,11 @@ export const getFieldByType = ({
           row={row}
           handleChange={handleChange}
           onBlur={handleBlur}
+          defaultValue={row?.value || autofillValue || defaultValue}
           autoFocus
         />
       ) : (
-        <FloatDisplay value={row?.value} onClick={handleClickField} />
+        <FloatDisplay value={autofillValue} onClick={handleClickField} />
       ),
       CHECKBOX: (
         <HFCheckbox
@@ -366,7 +386,7 @@ export const getFieldByType = ({
           fullWidth
           required={required}
           placeholder={row.attributes?.placeholder}
-          defaultValue={defaultValue}
+          defaultValue={row?.value || autofillValue || defaultValue}
           row={row}
         />
       ),
@@ -533,7 +553,7 @@ export const getFieldByType = ({
         </div>
       ),
     };
-  }, [row?.value, isDisabled, isEditing]);
+  }, [row?.value, isDisabled, isEditing, autofillValue]);
 
   return FIELD_RENDERERS[type] || FIELD_RENDERERS.default;
 };

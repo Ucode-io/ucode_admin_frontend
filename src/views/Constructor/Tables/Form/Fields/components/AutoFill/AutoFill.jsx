@@ -14,31 +14,38 @@ export const AutoFill = ({
 
   const { computedRelationFields, computedRelationTables } = useAutoFillProps({ control, mainForm })
 
-  return <Box>
-    <Box display="flex" flexDirection="column" rowGap="8px" marginBottom="8px">
-      <HFSelect
-        disabledHelperText
-        name="autofill_table"
-        control={control}
-        options={computedRelationTables}
-        placeholder="Autofill table"
-        className={cls.input}
-      />
-      <HFSelect
-        disabledHelperText
-        name="autofill_field"
-        control={control}
-        options={computedRelationFields}
-        placeholder="Type"
-        className={cls.input}
+  return (
+    <Box>
+      <Box
+        display="flex"
+        flexDirection="column"
+        rowGap="8px"
+        marginBottom="8px"
+      >
+        <HFSelect
+          disabledHelperText
+          name="attributes.autofill_table"
+          control={control}
+          options={computedRelationTables}
+          placeholder="Autofill table"
+          className={cls.input}
+        />
+        <HFSelect
+          disabledHelperText
+          name="attributes.autofill_field"
+          control={control}
+          options={computedRelationFields}
+          placeholder="Type"
+          className={cls.input}
+        />
+      </Box>
+      <FieldCheckbox
+        register={register}
+        label="Automatic"
+        name="automatic"
+        watch={watch}
+        setValue={setValue}
       />
     </Box>
-    <FieldCheckbox
-      register={register}
-      label="Automatic"
-      name="automatic"
-      watch={watch}
-      setValue={setValue}
-    />
-  </Box>
+  );
 }

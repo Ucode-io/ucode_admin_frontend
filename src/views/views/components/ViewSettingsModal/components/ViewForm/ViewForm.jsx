@@ -24,8 +24,7 @@ export const ViewForm = ({
   viewData,
 }) => {
   // const { tableSlug, appId } = useParams();
-  const { tableSlug, view } = useViewContext();
-
+  const { tableSlug, menuId, view } = useViewContext();
   const [btnLoader, setBtnLoader] = useState(false);
   const [isBalanceExist, setIsBalanceExist] = useState(false);
   const [deleteBtnLoader, setDeleteBtnLoader] = useState(false);
@@ -124,8 +123,8 @@ export const ViewForm = ({
   const onSubmit = (values) => {
     setBtnLoader(true);
     const computedValues = {
-      ...view,
-      columns: view.columns,
+      ...values,
+      columns: view.columns ?? [],
       attributes: {
         ...view.attributes,
         ...computeFinancialAcc(

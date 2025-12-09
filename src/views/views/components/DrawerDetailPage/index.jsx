@@ -6,7 +6,14 @@ import {
   DrawerContent,
   DrawerOverlay,
 } from "@chakra-ui/react";
-import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
+import React, {
+  lazy,
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,7 +36,7 @@ import { useViewContext } from "@/providers/ViewProvider";
 import clsx from "clsx";
 import { menuService } from "@/services/menuService/menu.service";
 import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
-import { drawerBreadcrumbActions } from "@/store/drawerBreadcrumb/drawerBreadcrumb.slice";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
 const Views = lazy(() => import("../.."));
 
@@ -88,6 +95,18 @@ function DrawerDetailPage({
     const savedWidth = localStorage.getItem("drawerWidth");
     return savedWidth ? parseInt(savedWidth, 10) : 1050;
   });
+
+  const fieldsList = useMemo(() => {
+    const fieldsList = [];
+
+    layout?.tabs?.[selectedTabIndex]?.sections?.forEach((section) => {
+      section?.fields?.forEach((field) => {
+        fieldsList.push(field);
+      });
+    });
+
+    return fieldsList;
+  }, [layout]);
 
   const rootForm = useForm({
     ...state,
@@ -219,20 +238,37 @@ function DrawerDetailPage({
   }
 
   function create(data) {
-    constructorObjectService
-      .create(tableSlug, { data })
-      .then(() => {
-        updateLayout();
+    const specialRequiredFields = [];
+    fieldsList?.forEach((field) => {
+      if (
+        field?.type === FIELD_TYPES.MULTI_LINE &&
+        field?.required &&
+        !data?.[field?.slug]?.trim()
+      ) {
+        specialRequiredFields.push(field);
+      }
+    });
 
-        dispatch(detailDrawerActions.closeDrawer());
-        dispatch(showAlert("Successfully updated!", "success"));
+    if (specialRequiredFields.length) {
+      specialRequiredFields.forEach((field) => {
+        dispatch(showAlert(`Field ${field?.label} is required`, "error"));
+      });
+    } else {
+      constructorObjectService
+        .create(tableSlug, { data })
+        .then(() => {
+          updateLayout();
 
-        refetchMainDataList();
+          dispatch(detailDrawerActions.closeDrawer());
+          dispatch(showAlert("Successfully updated!", "success"));
 
-        handleClose();
-        rootForm.reset({});
-      })
-      .catch((e) => console.log("ERROR: ", e));
+          refetchMainDataList();
+
+          handleClose();
+          rootForm.reset({});
+        })
+        .catch((e) => console.log("ERROR: ", e));
+    }
   }
 
   const update = (data) => {
@@ -370,28 +406,6 @@ function DrawerDetailPage({
               handleMouseDown={handleMouseDown}
             />
           </Suspense>
-          {/* <DrawerObjectsPage
-            open={open}
-            onSubmit={onSubmit}
-            projectInfo={projectInfo}
-            handleMouseDown={handleMouseDown}
-            layout={layout}
-            selectedTab={layout?.tabs?.[0]}
-            menuItem={menuItem}
-            layoutData={layoutData}
-            selectedRow={selectedRow}
-            handleClose={handleClose}
-            modal={true}
-            dateInfo={dateInfo}
-            setFullScreen={setFullScreen}
-            fullScreen={fullScreen}
-            view={view}
-            rootForm={rootForm}
-            updateLayout={updateLayout}
-            selectedViewType={selectedViewType}
-            setSelectedViewType={setSelectedViewType}
-            setSelectedView={setSelectedView}
-          /> */}
         </Box>
         {selectedViewType === DRAWER_VIEW_TYPES.SidePeek && (
           <Box onMouseDown={handleMouseDown} className={cls.resizer} />

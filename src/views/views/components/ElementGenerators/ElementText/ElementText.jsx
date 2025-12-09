@@ -2,9 +2,11 @@ import {Box} from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-export const ElementText = ({ row = {} }) => {
+export const ElementText = ({ row = {}, value }) => {
   const { i18n } = useTranslation();
   return (
-    <Box>{row?.attributes?.[`label_${i18n?.language}`] ?? row?.label}</Box>
+    <Box>
+      {value ?? row?.attributes?.[`label_${i18n?.language}`] ?? row?.label}
+    </Box>
   );
-}
+};

@@ -579,7 +579,7 @@ export const useViewsProps = ({ isRelationView }) => {
   useMenuGetByIdQuery({
     menuId: menuId,
     queryParams: {
-      enabled: Boolean(menuId && menuId !== "login" && !menuItem?.id),
+      enabled: Boolean(menuId && menuId !== "login" && menuItem?.id !== menuId),
       onSuccess: (res) => {
         dispatch(projectInfoActions.setMenuItem(res));
       },

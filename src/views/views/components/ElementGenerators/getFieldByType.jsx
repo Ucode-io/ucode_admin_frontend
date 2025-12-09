@@ -151,6 +151,12 @@ export const getFieldByType = ({
       }
     }
 
+    if (row?.type === FIELD_TYPES.INTERNATION_PHONE) {
+      const cleaned = value.replace(/\s+/g, "");
+      if (cleaned === row?.value) return;
+      data.value = cleaned;
+    }
+
     handleChange(data);
   };
 

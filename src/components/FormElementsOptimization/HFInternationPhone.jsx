@@ -37,8 +37,9 @@ const HFInternationPhone = ({
         name: row?.slug,
       });
     } else {
+      const cleaned = value.replace(/\s+/g, "");
       handleChange({
-        value,
+        value: cleaned,
         rowId: row?.guid,
         name: row?.slug,
       });

@@ -135,6 +135,7 @@ function DrawerFieldGenerator({
   switch (field?.type) {
     case "LOOKUP":
     case "LOOKUPS":
+    case "Many2One":
     case "PERSON": {
       return (
         <Suspense

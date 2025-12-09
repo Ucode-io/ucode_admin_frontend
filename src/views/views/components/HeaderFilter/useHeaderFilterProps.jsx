@@ -11,6 +11,8 @@ import { useFieldsContext } from "../../providers/FieldsProvider";
 import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import { useRelationsListQuery } from "@/services/relationService";
+import { QUERY_KEYS } from "@/utils/constants/queryKeys";
+import { useQueryClient } from "react-query";
 
 export const useHeaderFilterProps = () => {
   const dispatch = useDispatch();
@@ -20,6 +22,8 @@ export const useHeaderFilterProps = () => {
 
   const query = new URLSearchParams(window.location.search);
   const itemId = query.get("p");
+
+  const queryClient = useQueryClient();
 
   const {
     view,
@@ -147,7 +151,11 @@ export const useHeaderFilterProps = () => {
   const handleOpenPopup = () => setPopupOpen(true);
   const handleClosePopup = () => setPopupOpen(false);
 
-  const tableUpdateMutation = useUpdateTableMutation();
+  const tableUpdateMutation = useUpdateTableMutation({
+    onSuccess: () => {
+      queryClient.refetchQueries([QUERY_KEYS.TABLE_DATA_KEY]);
+    },
+  });
 
   const handleChangeOrder = (order) => {
     const isGivenFromProps = typeof order === "boolean";

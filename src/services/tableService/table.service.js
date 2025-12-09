@@ -24,7 +24,8 @@ const constructorTableService = {
   deleteFolder: (id) => requestV2.delete(`/table-folder/${id}`),
 };
 
-export const useUpdateTableMutation = () => useMutation((data) => constructorTableService.update(data));
+export const useUpdateTableMutation = (mutationSettings) =>
+  useMutation((data) => constructorTableService.update(data), mutationSettings);
 export const useGetTableInfoMutation = (tableSlug, params) =>
   useMutation((data) =>
     constructorTableService.getTableInfo(tableSlug, data, params)

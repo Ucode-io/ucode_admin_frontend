@@ -193,7 +193,9 @@ export const useViewsProps = ({ isRelationView }) => {
   useProjectGetByIdQuery({
     projectId,
     queryParams: {
-      enabled: !Boolean(projectId && projectInfo),
+      enabled:
+        !Boolean(projectId && projectInfo) ||
+        projectInfo?.project_id !== projectId,
       onSuccess(data) {
         dispatch(projectInfoActions.setProjectInfo(data));
       },

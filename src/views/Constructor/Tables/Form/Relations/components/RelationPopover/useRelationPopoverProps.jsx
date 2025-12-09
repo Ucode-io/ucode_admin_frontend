@@ -14,9 +14,13 @@ export const useRelationPopoverProps = ({
   closeSettingsBlock,
   submitCallback,
 }) => {
-  const { view } = useViewContext();
+  const {
+    view,
+    tableSlug: tableSlugFromContext,
+    refetchTableInfo,
+  } = useViewContext();
   const { tableSlug: tableSlugParam } = useParams();
-  const tableSlug = tableSlugParam || view?.table_slug;
+  const tableSlug = tableSlugFromContext || tableSlugParam || view?.table_slug;
 
   const [formLoader, setFormLoader] = useState(false);
   const [loader, setLoader] = useState(false);
@@ -113,6 +117,7 @@ export const useRelationPopoverProps = ({
           reset({});
         });
     }
+    if (refetchTableInfo) refetchTableInfo();
     submitCallback();
   };
 

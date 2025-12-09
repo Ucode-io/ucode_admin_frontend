@@ -196,7 +196,6 @@ export const useTableProps = ({ tab }) => {
       }
       return false;
     });
-    console.log({ result, uniqueColumns });
 
     return customSortArray(
       uniqueColumns,

@@ -1,22 +1,14 @@
-import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { useViewContext } from "@/providers/ViewProvider";
-import { useParams } from "react-router-dom";
 import { useEffect, useMemo } from "react";
 import { useQuery } from "react-query";
 import constructorTableService from "../../../../../../../services/constructorTableService";
 import { relationTyes as relationTypes } from "../../../../../../../utils/constants/relationTypes";
 import constructorObjectService from "../../../../../../../services/constructorObjectService";
 
-export const useRelationFieldParamsProps = ({ watch, register, control, setValue }) => {
-
+export const useRelationFieldParamsProps = ({ watch, setValue }) => {
   const languages = useSelector((state) => state.languages.list);
   const { i18n } = useTranslation();
-
-  const { view } = useViewContext();
-  const { tableSlug: tableSlugParam } = useParams();
-  const tableSlug = tableSlugParam || view?.table_slug;
 
   const params = {
     language_setting: i18n?.language,
@@ -38,7 +30,7 @@ export const useRelationFieldParamsProps = ({ watch, register, control, setValue
         {
           data: { limit: 0, offset: 0 },
         },
-        params
+        params,
       );
     },
     {
@@ -61,14 +53,14 @@ export const useRelationFieldParamsProps = ({ watch, register, control, setValue
             })
             .filter((field) => field) ?? [];
         const unCheckedColumns = fields.filter(
-          (field) => !values.columns?.includes(field.id)
+          (field) => !values.columns?.includes(field.id),
         );
 
         const checkedFilters =
           values.quick_filters
             ?.map((filter) => {
               const field = fields.find(
-                (field) => field.id === filter.field_id
+                (field) => field.id === filter.field_id,
               );
               if (field)
                 return {
@@ -82,13 +74,13 @@ export const useRelationFieldParamsProps = ({ watch, register, control, setValue
         const unCheckedFilters = fields.filter(
           (field) =>
             !values.quick_filters?.some(
-              (filter) => filter.field_id === field.id
-            )
+              (filter) => filter.field_id === field.id,
+            ),
         );
         setValue("filtersList", [...checkedFilters, ...unCheckedFilters]);
         setValue("columnsList", [...checkedColumns, ...unCheckedColumns]);
       },
-    }
+    },
   );
 
   const computedTablesList = useMemo(() => {
@@ -130,6 +122,5 @@ export const useRelationFieldParamsProps = ({ watch, register, control, setValue
     isRecursiveRelation,
     computedRelationsTypesList,
     computedFieldsListOptions,
-  }
-
-}
+  };
+};

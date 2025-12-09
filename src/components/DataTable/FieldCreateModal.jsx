@@ -60,6 +60,7 @@ import { getColumnIconPath } from "../../views/table-redesign/icons";
 import SVG from "react-inlinesvg";
 import FormElementButton from "../NewFormElements/FormElementButton";
 import deleteField from "../../utils/deleteField";
+import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 
 const formulaTypes = [
   { label: "Сумма", value: "SUMM" },
@@ -95,9 +96,14 @@ export default function FieldCreateModal({
   renderColumns = [],
 }) {
   const { id, tableSlug: tableSlugParam } = useParams();
-  const { view: viewFromContext } = useViewContext();
+  const { view: viewFromContext, tableSlug: tableSlugFromContext } =
+    useViewContext();
   const tableSlug =
-    tableSlugParam || view?.table_slug || viewFromContext?.table_slug;
+    tableSlugFromContext ||
+    tableSlugParam ||
+    view?.table_slug ||
+    viewFromContext?.table_slug;
+
   const tableRelations = useWatch({
     control: mainForm.control,
     name: "tableRelations",
@@ -345,21 +351,21 @@ export default function FieldCreateModal({
     language_setting: i18n?.language,
   };
 
-  const { data: functions = [] } = useQuery(
-    ["GET_FUNCTIONS_LIST"],
-    () => {
-      return constructorFunctionService.getListV2({});
-    },
-    {
-      enabled: format === FIELD_TYPES.BUTTON,
-      onError: (err) => {
-        console.log("ERR =>", err);
-      },
-      select: (res) => {
-        return listToOptions(res.functions, "name", "id");
-      },
-    },
-  );
+  // const { data: functions = [] } = useQuery(
+  //   ["GET_FUNCTIONS_LIST"],
+  //   () => {
+  //     return constructorFunctionService.getListV2({});
+  //   },
+  //   {
+  //     enabled: format === FIELD_TYPES.BUTTON,
+  //     onError: (err) => {
+  //       console.log("ERR =>", err);
+  //     },
+  //     select: (res) => {
+  //       return listToOptions(res.functions, "name", "id");
+  //     },
+  //   },
+  // );
 
   const { isLoading: fieldsLoading } = useQuery(
     ["GET_VIEWS_AND_FIELDS", relatedTableSlug, i18n?.language],
@@ -674,8 +680,9 @@ export default function FieldCreateModal({
       },
     };
 
-    constructorViewService.update(tableSlug, computedData).then((res) => {
-      queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+    constructorViewService.update(tableSlug, computedData).then(() => {
+      queryClient.refetchQueries([QUERY_KEYS.VIEWS_DATA_KEY]);
+      setAnchorEl(null);
     });
   };
 
@@ -686,8 +693,9 @@ export default function FieldCreateModal({
         columns: view?.columns?.filter((item) => item !== column),
       })
       .then(() => {
-        queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-        queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
+        queryClient.refetchQueries([QUERY_KEYS.VIEWS_DATA_KEY]);
+        // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
+        // queryClient.refetchQueries("GET_VIEWS_AND_FIELDS", { tableSlug });
         setAnchorEl(null);
       });
   };

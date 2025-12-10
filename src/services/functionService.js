@@ -6,8 +6,10 @@ const functionService = {
     httpsRequestV2.get("/function", {
       params,
     }),
+  getActivityFunctionLogs: (params) =>
+    httpsRequestV2.get("/functions/log", { params }),
   getFunctionList: (params) =>
-    httpsRequestV2.get("/grafana/function", {params}),
+    httpsRequestV2.get("/grafana/function", { params }),
   getFunctionLogs: (data) => httpsRequestV2.post("/grafana/loki", data),
   getById: (functionId) => httpsRequestV2.get(`/function/${functionId}`),
   update: (data) => httpsRequestV2.put("/function", data, {}),
@@ -32,6 +34,16 @@ export const useFunctionByIdQuery = ({functionId, queryParams} = {}) => {
       return functionService.getById(functionId);
     },
     queryParams
+  );
+};
+
+export const useGetActivityFunctionLogs = ({ params, queryParams } = {}) => {
+  return useQuery(
+    ["FUNCTION_LOGS", params],
+    () => {
+      return functionService.getActivityFunctionLogs(params);
+    },
+    queryParams,
   );
 };
 

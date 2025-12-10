@@ -1,0 +1,1 @@
+export { FunctionLogsDetail } from "./FunctionLogsDetail"

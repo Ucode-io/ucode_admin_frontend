@@ -5,13 +5,13 @@ export const ContentTitle = ({
   children,
   subtitle,
   withBackBtn,
-  onBackClick = () => {},
+  onBackClick,
   ...props
 }) => {
   if (subtitle) {
     return (
       <div className={cls.wrapper} {...props}>
-        {withBackBtn && (
+        {(withBackBtn || onBackClick) && (
           <button className={cls.btn} type="button" onClick={onBackClick}>
             <ArrowBackIcon />
           </button>
@@ -26,7 +26,7 @@ export const ContentTitle = ({
 
   return (
     <div className={cls.wrapper} {...props}>
-      {withBackBtn && (
+      {(withBackBtn || onBackClick) && (
         <button className={cls.btn} type="button" onClick={onBackClick}>
           <ArrowBackIcon />
         </button>

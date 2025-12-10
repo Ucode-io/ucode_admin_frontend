@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 
 import styles from "./styles.module.scss";
-import { FunctionsLog } from "./components/FunctionsLog";
+import { FunctionLogs } from "./components/FunctionLogs";
 
 export const ActivityLogs = () => {
   const {
@@ -77,7 +77,7 @@ export const ActivityLogs = () => {
           </Box>
         </TabPanel>
         <TabPanel>
-          <FunctionsLog />
+          <FunctionLogs />
         </TabPanel>
       </TabPanels>
     </Tabs>

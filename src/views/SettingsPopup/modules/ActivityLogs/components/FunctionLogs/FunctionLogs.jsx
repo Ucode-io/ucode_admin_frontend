@@ -10,10 +10,9 @@ import { Box } from "@mui/material";
 import EmptyDataComponent from "@/components/EmptyDataComponent";
 import {ContentTitle} from "../../../../components/ContentTitle"
 import TableCard from "@/components/TableCard";
-import { useFunctionsLogProps } from "./useFunctionsLogProps";
+import { useFunctionLogsProps } from "./useFunctionLogsProps";
 import cls from "../../styles/styles.module.scss";
 import { TableDataSkeleton } from "@/components/TableDataSkeleton";
-import { format } from "date-fns";
 
 const selectStyles = {
   control: (provided) => ({
@@ -59,27 +58,30 @@ const selectStyles = {
 };
 
 
-export const FunctionsLog = () => {
+export const FunctionLogs = () => {
 
   const {
     inputValue,
     setInputValue,
     functionValue,
     pageCount,
-    setPageCount,
     currentPage,
     setCurrentPage,
     changeHandler,
-    count,
+    totalCount,
     functionOptions,
-    data,
+    functionLogs,
     onRowClick,
-    isLoading
-  } = useFunctionsLogProps();
+    isLoading,
+    statusOptions,
+    changeStatusHandler,
+    selectedStatus,
+    onMenuScrollToBottom,
+  } = useFunctionLogsProps();
 
   return  <Box marginTop="20px" height="100%">
-    <ContentTitle subtitle={`${count} items`}>
-      <Box height="28.8px">Functions Log</Box>
+    <ContentTitle subtitle={`${totalCount} items`}>
+      <Box height="28.8px">Function Logs</Box>
     </ContentTitle>
     <TableCard cardStyles={{ padding: "1px", height: "100%" }}>
       <CTable
@@ -88,20 +90,21 @@ export const FunctionsLog = () => {
         count={pageCount}
         page={currentPage}
         setCurrentPage={setCurrentPage}
-        dataCount={count}
+        dataCount={totalCount}
         wrapperStyle={{height: "100%" }}
+        disablePagination={!functionLogs?.length}
       >
         <CTableHead>
           <CTableCell className={cls.tableHeadCell} width={10}>
             №
           </CTableCell>
           <CTableCell className={cls.tableHeadCell} width={130}>
-            {/* Action */}
             <Select
               inputValue={inputValue}
               onInputChange={(newInputValue) => {
                 setInputValue(newInputValue);
               }}
+              onMenuScrollToBottom={onMenuScrollToBottom}
               options={functionOptions}
               isClearable
               isSearchable
@@ -117,37 +120,62 @@ export const FunctionsLog = () => {
               isOptionSelected={(option, value) =>
                 value.some((val) => val.guid === value)
               }
-              placeholder={"Functions"}
+              placeholder={"Function"}
               blurInputOnSelect
             />
           </CTableCell>
           <CTableCell
             className={cls.tableHeadCell}
-            id="collection"
+            id="status"
+            style={{ position: "relative" }}
+          >
+            <Select
+              options={statusOptions}
+              isClearable
+              isSearchable
+              onChange={(newValue, { action }) => {
+                if (action === "clear") {
+                  changeStatusHandler(null);
+                } else {
+                  changeStatusHandler(newValue);
+                }
+              }}
+              value={selectedStatus?.label ? selectedStatus : null}
+              menuShouldScrollIntoView
+              styles={selectStyles}
+              isOptionSelected={(option, value) =>
+                value.some((val) => val.guid === value)
+              }
+              placeholder={"Status"}
+              blurInputOnSelect
+            />
+          </CTableCell>
+          <CTableCell
+            className={cls.tableHeadCell}
+            id="table_slug"
             style={{ position: "relative" }}
           >
             <Box>
-              <span>Collection</span>
+              <span>Table slug</span>
             </Box>
           </CTableCell>
-          <CTableCell className={cls.tableHeadCell}>Action On</CTableCell>
         </CTableHead>
         <CTableBody
-          loader={false}
+          loader={isLoading}
           columnsCount={5}
-          dataLength={10}
+          dataLength={functionLogs?.length}
           style={{height: "100%" }}
         >
           {isLoading ? (
             <TableDataSkeleton colLength={5} rowLength={10} height={33} />
           ) : (
-            data?.map((element, index) => {
+            functionLogs?.map((element, index) => {
               return (
                 <CTableRow
                   className={cls.row}
                   key={element.id}
                   onClick={() => {
-                    onRowClick(element?.id);
+                    onRowClick(element);
                   }}
                   style={{
                     width: "80px",
@@ -156,22 +184,38 @@ export const FunctionsLog = () => {
                   <CTableCell className={cls.tBodyCell}>
                     {(currentPage - 1) * 10 + index + 1}
                   </CTableCell>
+                  <CTableCell className={cls.tBodyCell}>{element?.function_name}</CTableCell>
                   <CTableCell className={cls.tBodyCell}>
-                    Cell
+                    <Box display="flex" alignItems="baseline" gap="6px">
+                      {/* <Tag
+                        shape="subtle"
+                        size="large"
+                        style={{
+                          backgroundColor: `${statusColors(element?.status)}`,
+                        }}
+                        className={cls.tag}
+                      >
+                      </Tag> */}
+                      <span>{element?.status?.toLowerCase()}</span>
+                      <span style={{fontSize: "10px"}}>{element?.duration}ms</span>
+                    </Box>
                   </CTableCell>
                   <CTableCell className={cls.tBodyCell}>
                     {element?.table_slug}
                   </CTableCell>
-                  <CTableCell className={cls.tBodyCell}>
-                    {format(new Date(element?.date), "yyyy-MM-dd HH:mm:ss")}
-                  </CTableCell>
+                  {/* <CTableCell className={cls.tBodyCell}>
+                    {format(
+                      new Date(element?.completed_at),
+                      "yyyy-MM-dd HH:mm:ss",
+                    )}
+                  </CTableCell> */}
                 </CTableRow>
               );
             })
           )}
           <EmptyDataComponent
-            columnsCount={5}
-            isVisible={false}
+            columnsCount={4}
+            isVisible={!functionLogs?.length}
           />
         </CTableBody>
       </CTable>

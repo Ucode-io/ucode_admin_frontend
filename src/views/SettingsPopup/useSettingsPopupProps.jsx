@@ -48,6 +48,7 @@ import { useMenuListQuery } from "../../services/menuService";
 import MinioPage from "../../components/LayoutSidebar/Components/Minio";
 import FilesSinglePage from "./Files/FilesSinglePage";
 import { settingsModalActions } from "../../store/settingsModal/settingsModal.slice";
+import { FunctionLogsDetail } from "./modules/FunctionLogsDetail";
 
 const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -342,12 +343,6 @@ export const useSettingsPopupProps = ({ onClose }) => {
       files: <MinioPage modal={true} />,
       filesDetail: <FilesSinglePage />,
     },
-    // permissions: {
-    //   permissions: <Permissions />,
-    //   // permissionsDetail: <PermissionsDetail />,
-    //   permissionsDetail: <PermissionsRoleDetail />,
-    //   permissionsRoleDetail: <PermissionsRoleDetail />,
-    // },
     resources: {
       resources: <Resources handleClose={handleClose} />,
       resourcesDetail: <NewResourceDetail handleClose={handleClose} />,
@@ -363,6 +358,7 @@ export const useSettingsPopupProps = ({ onClose }) => {
     activityLogs: {
       activityLogs: <ActivityLogs />,
       activityLogsDetail: <ActivityLogsDetail />,
+      functionLogsDetail: <FunctionLogsDetail />,
     },
     models: {
       models: <Models />,

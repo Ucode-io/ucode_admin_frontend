@@ -35,6 +35,7 @@ export const TAB_COMPONENTS = {
   ACTIVITY_LOGS: {
     ACTIVITY_LOGS: "activityLogs",
     ACTIVITY_LOGS_DETAIL: "activityLogsDetail",
+    FUNCTION_LOGS_DETAIL: "functionLogsDetail",
   },
   FUNCTIONS: {
     FUNCTIONS: "functions",

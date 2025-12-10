@@ -1,1 +1,0 @@
-export { FunctionsLog } from "./FunctionsLog";

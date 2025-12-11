@@ -1,6 +1,7 @@
 import { useFunctionsListQuery, useGetActivityFunctionLogs } from "@/services/functionService";
 import { settingsModalActions } from "@/store/settingsModal/settingsModal.slice";
 import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
+import { pageToOffset } from "@/utils/pageToOffset";
 // import { pageToOffset } from "@/utils/pageToOffset";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -20,7 +21,7 @@ export const useFunctionLogsProps = () => {
   // const [limitFunctionList] = useState(10);
   // const [offsetFunctionList, setOffsetFunctionList] = useState(1);
 
-  const [functionOptions, setFunctionOptions] = useState([])
+  const [functionOptions, setFunctionOptions] = useState([]);
 
   const statusOptions = [
     {
@@ -31,7 +32,7 @@ export const useFunctionLogsProps = () => {
       label: "Error",
       value: "error",
     },
-  ]
+  ];
 
   const changeHandler = (newValue) => {
     setFunctionValue(newValue);
@@ -45,25 +46,24 @@ export const useFunctionLogsProps = () => {
     dispatch(
       settingsModalActions.setTab(
         TAB_COMPONENTS.ACTIVITY_LOGS.FUNCTION_LOGS_DETAIL,
-      )
+      ),
     );
-    dispatch(settingsModalActions.setFunctionLogsData(element))
+    dispatch(settingsModalActions.setFunctionLogsData(element));
   };
 
-
-  const {data, isLoading} = useGetActivityFunctionLogs(
-    {
-      queryParams: {
-        onSuccess(data){
-          setPageCount(Math.ceil(data?.total_count / 10));
-        }
+  const { data, isLoading } = useGetActivityFunctionLogs({
+    queryParams: {
+      onSuccess(data) {
+        setPageCount(Math.ceil(data?.total_count / 10));
       },
-      params: {
-        function_id: functionValue?.value || null,
-      }
-
-    }
-  )
+    },
+    params: {
+      function_id: functionValue?.value || null,
+      status: selectedStatus?.value || null,
+      limit: 10,
+      offset: pageToOffset(currentPage, 10),
+    },
+  });
 
   useFunctionsListQuery({
     params: {
@@ -72,20 +72,27 @@ export const useFunctionLogsProps = () => {
       // offset: pageToOffset(offsetFunctionList, limitFunctionList),
     },
     queryParams: {
-      onSuccess(data){
-        setFunctionOptions(data?.functions?.map((item) => ({value: item?.id, label: item?.name})));
-      }
-    }
+      onSuccess(data) {
+        setFunctionOptions(
+          data?.functions?.map((item) => ({
+            value: item?.id,
+            label: item?.name,
+          })),
+        );
+      },
+    },
   });
 
   const onMenuScrollToBottom = () => {
     // setOffsetFunctionList((prev) => prev + 1);
   };
 
-  const functionLogs = selectedStatus 
-    ? data?.function_logs?.filter((item) => item?.status === selectedStatus?.value) 
+  const functionLogs = selectedStatus
+    ? data?.function_logs?.filter(
+        (item) => item?.status === selectedStatus?.value,
+      )
     : data?.function_logs;
-  
+
   const totalCount = data?.total_count;
 
   return {

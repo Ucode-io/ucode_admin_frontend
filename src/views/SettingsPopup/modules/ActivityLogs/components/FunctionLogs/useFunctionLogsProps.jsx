@@ -34,6 +34,17 @@ export const useFunctionLogsProps = () => {
     },
   ];
 
+  const getStatusColors = (status) => {
+    switch (status) {
+      case "success":
+        return "rgb(73, 204, 144)";
+      case "error":
+        return "#F56565";
+      default:
+        return "#A0AEC0";
+    }
+  };
+
   const changeHandler = (newValue) => {
     setFunctionValue(newValue);
   };
@@ -112,5 +123,6 @@ export const useFunctionLogsProps = () => {
     changeStatusHandler,
     selectedStatus,
     onMenuScrollToBottom,
+    getStatusColors,
   };
 };

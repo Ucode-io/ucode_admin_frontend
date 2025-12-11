@@ -27,8 +27,8 @@ export const DataList = ({ items }) => {
           <div
             style={{
               fontSize: 14,
-              color: "#111827",
-              fontWeight: 500,
+              color: "#6b7280",
+              fontWeight: 600,
               wordBreak: "break-all",
               marginLeft: "auto",
               textAlign: "left",

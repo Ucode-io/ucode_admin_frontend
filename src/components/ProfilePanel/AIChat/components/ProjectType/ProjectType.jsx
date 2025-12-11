@@ -3,6 +3,7 @@ import cls from "./styles.module.scss";
 import { Box } from "@mui/material";
 import { useProjectTypeProps } from "./useProjectTypeProps";
 import { ChatBox } from "../ChatBox";
+import MaterialUIProvider from "@/providers/MaterialUIProvider";
 
 export const ProjectType = ({ control, errors, setValue = () => {}, disabled }) => {
   const { getManagementOptions, projectTypeOptions } = useProjectTypeProps();
@@ -28,39 +29,41 @@ export const ProjectType = ({ control, errors, setValue = () => {}, disabled }) 
               rowGap: "6px",
             }}
           >
-            <HFSelect
-              control={control}
-              name="project_type"
-              // label="Project Type"
-              placeholder="Select project type"
-              options={projectTypeOptions}
-              error={errors.type}
-              helperText={errors.type?.message}
-              onChange={(value) => {
-                setValue(
-                  "management_system",
-                  getManagementOptions(value)?.map((item) => ({
-                    ...item,
-                    is_checked: false,
-                  })) || []
-                );
-              }}
-              isClearable={false}
-              displayEmpty={false}
-              isSearchable
-              autoFocus
-              disabled={disabled}
-              fieldProps={{
-                sx: {
-                  "& .MuiInputBase-root.Mui-disabled, & .MuiInputBase-root, & .MuiOutlinedInput-input":
-                    {
-                      backgroundColor: "#F5F6FA",
-                      color: "#1B1B1B",
-                      "-webkit-text-fill-color": "#1B1B1B",
-                    },
-                },
-              }}
-            />
+            <MaterialUIProvider>
+              <HFSelect
+                control={control}
+                name="project_type"
+                // label="Project Type"
+                placeholder="Select project type"
+                options={projectTypeOptions}
+                error={errors.type}
+                helperText={errors.type?.message}
+                onChange={(value) => {
+                  setValue(
+                    "management_system",
+                    getManagementOptions(value)?.map((item) => ({
+                      ...item,
+                      is_checked: false,
+                    })) || [],
+                  );
+                }}
+                isClearable={false}
+                displayEmpty={false}
+                isSearchable
+                autoFocus
+                disabled={disabled}
+                fieldProps={{
+                  sx: {
+                    "& .MuiInputBase-root.Mui-disabled, & .MuiInputBase-root, & .MuiOutlinedInput-input":
+                      {
+                        backgroundColor: "#F5F6FA",
+                        color: "#1B1B1B",
+                        "-webkit-text-fill-color": "#1B1B1B",
+                      },
+                  },
+                }}
+              />
+            </MaterialUIProvider>
           </Box>
           {/* {!disabled && (
               <Box className={cls.buttonBox}>

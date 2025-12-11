@@ -4,6 +4,7 @@ import { Box } from "@mui/material";
 import { useTablesProps } from "./useTablesProps";
 import listToOptions from "@/utils/listToOptions";
 import { ChatBox } from "../ChatBox";
+import MaterialUIProvider from "@/providers/MaterialUIProvider";
 
 export const Tables = ({
   control,
@@ -34,34 +35,36 @@ export const Tables = ({
               rowGap: "6px",
             }}
           >
-            <HFSelect
-              control={control}
-              name="table"
-              // label="Project Type"
-              placeholder="Select table"
-              options={listToOptions(tables?.tables, "label", "slug")}
-              error={errors.type}
-              helperText={errors.type?.message}
-              isClearable={false}
-              displayEmpty={false}
-              isSearchable
-              autoFocus
-              disabled={disabled}
-              onChange={() => {
-                setChatInputValue("");
-              }}
-              fieldProps={{
-                onChange: handleOnChange,
-                sx: {
-                  "& .MuiInputBase-root.Mui-disabled, & .MuiInputBase-root, & .MuiOutlinedInput-input":
-                    {
-                      backgroundColor: "#F5F6FA",
-                      color: "#1B1B1B",
-                      "-webkit-text-fill-color": "#1B1B1B",
-                    },
-                },
-              }}
-            />
+            <MaterialUIProvider>
+              <HFSelect
+                control={control}
+                name="table"
+                // label="Project Type"
+                placeholder="Select table"
+                options={listToOptions(tables?.tables, "label", "slug")}
+                error={errors.type}
+                helperText={errors.type?.message}
+                isClearable={false}
+                displayEmpty={false}
+                isSearchable
+                autoFocus
+                disabled={disabled}
+                onChange={() => {
+                  setChatInputValue("");
+                }}
+                fieldProps={{
+                  onChange: handleOnChange,
+                  sx: {
+                    "& .MuiInputBase-root.Mui-disabled, & .MuiInputBase-root, & .MuiOutlinedInput-input":
+                      {
+                        backgroundColor: "#F5F6FA",
+                        color: "#1B1B1B",
+                        "-webkit-text-fill-color": "#1B1B1B",
+                      },
+                  },
+                }}
+              />
+            </MaterialUIProvider>
           </Box>
           {/* {!disabled && (
             <Box className={cls.buttonBox}>

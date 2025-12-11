@@ -72,7 +72,7 @@ const ButtonsMenu = ({
                 generateLangaugeText(
                   menuLanguages,
                   i18n?.language,
-                  "Edit folder"
+                  "Edit folder",
                 ) || "Edit folder"
               }
               onClick={(e) => {
@@ -95,7 +95,7 @@ const ButtonsMenu = ({
                 generateLangaugeText(
                   menuLanguages,
                   i18n?.language,
-                  "Make Template"
+                  "Make Template",
                 ) || "Make Template"
               }
               onClick={(e) => {
@@ -122,7 +122,7 @@ const ButtonsMenu = ({
                   generateLangaugeText(
                     menuLanguages,
                     i18n?.language,
-                    "Delete folder"
+                    "Delete folder",
                   ) || "Delete folder"
                 }
                 onClick={(e) => {
@@ -151,7 +151,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Create table"
+                "Create table",
               ) || "Create table"
             }
             onClick={(e) => {
@@ -173,7 +173,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Add table"
+                "Add table",
               ) || "Add table"
             }
             onClick={(e) => {
@@ -190,7 +190,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Add microfrontend"
+                "Add microfrontend",
               ) || "Add microfrontend"
             }
             onClick={(e) => {
@@ -213,7 +213,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Add Website"
+                "Add Website",
               ) || "Add Website"
             }
             onClick={(e) => {
@@ -241,7 +241,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Add folder"
+                "Add folder",
               ) || "Add folder"
             }
             onClick={(e) => {
@@ -262,7 +262,7 @@ const ButtonsMenu = ({
                   generateLangaugeText(
                     menuLanguages,
                     i18n?.language,
-                    "Move table"
+                    "Move table",
                   ) || "Move table"
                 }
                 onClick={(e) => {
@@ -277,7 +277,7 @@ const ButtonsMenu = ({
                   generateLangaugeText(
                     menuLanguages,
                     i18n?.language,
-                    "Edit table"
+                    "Edit table",
                   ) || "Edit table"
                 }
                 onClick={(e) => {
@@ -298,7 +298,7 @@ const ButtonsMenu = ({
                 generateLangaugeText(
                   menuLanguages,
                   i18n?.language,
-                  "Edit tables"
+                  "Edit tables",
                 ) || "Edit tables"
               }
               onClick={(e) => {
@@ -316,7 +316,7 @@ const ButtonsMenu = ({
                 generateLangaugeText(
                   menuLanguages,
                   i18n?.language,
-                  "Make Template"
+                  "Make Template",
                 ) || "Make Template"
               }
               onClick={(e) => {
@@ -343,7 +343,7 @@ const ButtonsMenu = ({
                   generateLangaugeText(
                     menuLanguages,
                     i18n?.language,
-                    "Delete table"
+                    "Delete table",
                   ) || "Delete table"
                 }
                 onClick={(e) => {
@@ -365,7 +365,7 @@ const ButtonsMenu = ({
                 generateLangaugeText(
                   menuLanguages,
                   i18n?.language,
-                  "Move table"
+                  "Move table",
                 ) || "Move table"
               }
               onClick={(e) => {
@@ -382,7 +382,7 @@ const ButtonsMenu = ({
                 generateLangaugeText(
                   menuLanguages,
                   i18n?.language,
-                  "Edit Website"
+                  "Edit Website",
                 ) || "Edit Website"
               }
               onClick={(e) => {
@@ -405,7 +405,7 @@ const ButtonsMenu = ({
                 generateLangaugeText(
                   menuLanguages,
                   i18n?.language,
-                  "Delete Website"
+                  "Delete Website",
                 ) || "Delete Website"
               }
               onClick={(e) => {
@@ -419,14 +419,15 @@ const ButtonsMenu = ({
       )}
       {menuType === "MICROFRONTEND" && (
         <Box className="menu">
-          {element?.data?.permission?.menu_settings && (
+          {(element?.data?.permission?.menu_settings ||
+            userRoleName === DEFAULT_ADMIN) && (
             <MenuItemComponent
               icon={<RiPencilFill size={13} />}
               title={
                 generateLangaugeText(
                   menuLanguages,
                   i18n?.language,
-                  "Move microfrontend"
+                  "Move microfrontend",
                 ) || "Move microfrontend"
               }
               onClick={(e) => {
@@ -436,7 +437,9 @@ const ButtonsMenu = ({
               }}
             />
           )}
-          {element?.data?.permission?.menu_settings || permissionButton ? (
+          {element?.data?.permission?.menu_settings ||
+          userRoleName === DEFAULT_ADMIN ||
+          permissionButton ? (
             <>
               <MenuItemComponent
                 icon={<RiPencilFill size={13} />}
@@ -444,7 +447,7 @@ const ButtonsMenu = ({
                   generateLangaugeText(
                     menuLanguages,
                     i18n?.language,
-                    "Edit microfrontend"
+                    "Edit microfrontend",
                   ) || "Edit microfrontend"
                 }
                 onClick={(e) => {
@@ -469,7 +472,7 @@ const ButtonsMenu = ({
                 generateLangaugeText(
                   menuLanguages,
                   i18n?.language,
-                  "Delete microfrontend"
+                  "Delete microfrontend",
                 ) || "Delete microfrontend"
               }
               onClick={(e) => {
@@ -489,7 +492,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Add folder"
+                "Add folder",
               ) || "Add folder"
             }
             onClick={(e) => {
@@ -511,7 +514,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Create table"
+                "Create table",
               ) || "Create table"
             }
             onClick={(e) => {
@@ -526,7 +529,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Add table"
+                "Add table",
               ) || "Add table"
             }
             onClick={(e) => {
@@ -547,7 +550,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Add micrfrontend"
+                "Add micrfrontend",
               ) || "Add microfrontend"
             }
             onClick={(e) => {
@@ -568,7 +571,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Add folder"
+                "Add folder",
               ) || "Add folder"
             }
             onClick={(e) => {
@@ -588,7 +591,7 @@ const ButtonsMenu = ({
                 generateLangaugeText(
                   menuLanguages,
                   i18n?.language,
-                  "Delete folder"
+                  "Delete folder",
                 ) || "Delete folder"
               }
               onClick={(e) => {
@@ -615,7 +618,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Create table"
+                "Create table",
               ) || "Create table"
             }
             onClick={(e) => {
@@ -637,7 +640,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Add table"
+                "Add table",
               ) || "Add table"
             }
             onClick={(e) => {
@@ -660,7 +663,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Add microfrontend"
+                "Add microfrontend",
               ) || "Add microfrontend"
             }
             onClick={(e) => {
@@ -684,7 +687,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Add Website"
+                "Add Website",
               ) || "Add Website"
             }
             onClick={(e) => {
@@ -709,7 +712,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Add folder"
+                "Add folder",
               ) || "Add folder"
             }
             onClick={(e) => {
@@ -753,7 +756,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Add folder"
+                "Add folder",
               ) || "Add folder"
             }
             onClick={(e) => {
@@ -771,7 +774,7 @@ const ButtonsMenu = ({
             onClick={(e) => {
               e.stopPropagation();
               navigate(
-                `/main/744d63e6-0ab7-4f16-a588-d9129cf959d1/docs/note/${element?.id}/create`
+                `/main/744d63e6-0ab7-4f16-a588-d9129cf959d1/docs/note/${element?.id}/create`,
               );
               handleCloseNotify();
             }}
@@ -786,7 +789,7 @@ const ButtonsMenu = ({
               generateLangaugeText(
                 menuLanguages,
                 i18n?.language,
-                "Create table"
+                "Create table",
               ) || "Create table"
             }
             onClick={(e) => {
@@ -806,7 +809,7 @@ const ButtonsMenu = ({
                 generateLangaugeText(
                   menuLanguages,
                   i18n?.language,
-                  "Delete Wiki"
+                  "Delete Wiki",
                 ) || "Delete Wiki"
               }
               onClick={(e) => {
@@ -823,7 +826,7 @@ const ButtonsMenu = ({
                 generateLangaugeText(
                   menuLanguages,
                   i18n?.language,
-                  "Edit Wiki"
+                  "Edit Wiki",
                 ) || "Edit Wiki"
               }
               onClick={(e) => {

@@ -1,1 +1,1 @@
-export { DataList } from "./Datalist"
+export { DataList } from "./DataList";

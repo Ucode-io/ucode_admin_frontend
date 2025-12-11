@@ -14,6 +14,7 @@ import { useFunctionLogsProps } from "./useFunctionLogsProps";
 import cls from "../../styles/styles.module.scss";
 import { TableDataSkeleton } from "@/components/TableDataSkeleton";
 import { format } from "date-fns";
+import Tag from "@/components/Tag";
 
 const selectStyles = {
   control: (provided) => ({
@@ -76,6 +77,7 @@ export const FunctionLogs = () => {
     changeStatusHandler,
     selectedStatus,
     onMenuScrollToBottom,
+    getStatusColors,
   } = useFunctionLogsProps();
 
   return (
@@ -159,6 +161,13 @@ export const FunctionLogs = () => {
             </CTableCell>
             <CTableCell
               className={cls.tableHeadCell}
+              id="duration"
+              style={{ position: "relative" }}
+            >
+              <span>Duration</span>
+            </CTableCell>
+            <CTableCell
+              className={cls.tableHeadCell}
               id="table_slug"
               style={{ position: "relative" }}
             >
@@ -202,19 +211,21 @@ export const FunctionLogs = () => {
                     </CTableCell>
                     <CTableCell className={cls.tBodyCell}>
                       <Box display="flex" alignItems="baseline" gap="6px">
-                        {/* <Tag
-                        shape="subtle"
-                        size="large"
-                        style={{
-                          backgroundColor: `${statusColors(element?.status)}`,
-                        }}
-                        className={cls.tag}
-                      >
-                      </Tag> */}
-                        <span>{element?.status?.toLowerCase()}</span>
-                        <span style={{ fontSize: "10px" }}>
-                          {element?.duration}ms
-                        </span>
+                        <Tag
+                          shape="subtle"
+                          size="large"
+                          style={{
+                            backgroundColor: `${getStatusColors(element?.status)}`,
+                          }}
+                          className={cls.tag}
+                        >
+                          {element?.status?.toUpperCase()}
+                        </Tag>
+                      </Box>
+                    </CTableCell>
+                    <CTableCell className={cls.tBodyCell}>
+                      <Box display="flex" alignItems="baseline" gap="6px">
+                        {element?.duration} ms
                       </Box>
                     </CTableCell>
                     <CTableCell className={cls.tBodyCell}>

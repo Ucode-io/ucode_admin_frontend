@@ -14,8 +14,12 @@ import useDebounce from "@/hooks/useDebounce";
 import Select from "react-select";
 import { Box, Tooltip } from "@mui/material";
 import IconGenerator from "@/components/IconPicker/IconGenerator";
-import { getRelationFieldTabsLabel } from "@/utils/getRelationFieldLabel";
+import {
+  getRelationFieldTabsLabel,
+  getRelationFieldTabsLabelLang,
+} from "@/utils/getRelationFieldLabel";
 import { showAlert } from "@/store/alert/alert.thunk";
+import { useViewContext } from "@/providers/ViewProvider";
 
 const RelationField = ({
   control,
@@ -35,7 +39,12 @@ const RelationField = ({
 }) => {
   const tableSlug = useMemo(() => {
     if (field?.relation_type === "Recursive") return formTableSlug;
-    return field?.id.split("#")?.[0] ?? "";
+
+    if (field?.id.includes("#")) {
+      return field?.id.split("#")?.[0];
+    } else {
+      return field?.table_slug;
+    }
   }, [field?.id, formTableSlug, field.relation_type]);
 
   const required = useMemo(() => {
@@ -112,6 +121,8 @@ const AutoCompleteElement = ({
   const { state } = useLocation();
   const languages = useSelector((state) => state.languages.list);
   const isSettings = window.location.pathname?.includes("settings/constructor");
+
+  const { tableSlug: viewTableSlug } = useViewContext();
 
   const customStyles = {
     control: (provided) => ({
@@ -395,6 +406,24 @@ const AutoCompleteElement = ({
     const uniqueObjects = Array.from(
       new Set(allOptions?.map(JSON.stringify)),
     ).map(JSON.parse);
+
+    if (field?.table_slug === "client_type") {
+      return (
+        uniqueObjects
+          ?.filter((item) => item?.table_slug === viewTableSlug)
+          .map((option) => ({
+            label: option?.attributes?.enable_multi_language
+              ? getRelationFieldTabsLabelLang(field, option)
+              : getRelationFieldTabsLabel(
+                  field,
+                  option,
+                  i18n?.language,
+                  languages,
+                ),
+            value: option?.guid,
+          })) ?? []
+      );
+    }
 
     return uniqueObjects ?? [];
   }, [allOptions]);

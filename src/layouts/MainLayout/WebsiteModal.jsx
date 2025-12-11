@@ -121,8 +121,8 @@ const WebsiteModal = ({
                   style={{ width: "100%", height: "36px" }}
                   watch={watch}
                 />
-                {/* <HFIconPicker name="icon" control={control} />
-                {languages?.map((item, index) => (
+                <HFIconPicker name="icon" control={control} />
+                {/* {languages?.map((item, index) => (
                   <>
                     <HFTextField
                       autoFocus

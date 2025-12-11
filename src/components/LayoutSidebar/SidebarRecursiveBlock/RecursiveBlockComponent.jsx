@@ -223,11 +223,7 @@ const RecursiveBlock = ({
   }
   if (level > 1) console.log({ child, element });
   return (
-    <Box
-      sx={{ padding: `0 0 0 ${level * 10}px` }}
-      style={{ marginBottom: 5 }}
-      onMouseEnter={() => console.log("LEVEL: ", level)}
-    >
+    <Box sx={{ padding: `0 0 0 ${level * 10}px` }} style={{ marginBottom: 5 }}>
       <BlockItem
         permission={permission}
         menuStyles={menuStyles}
@@ -456,6 +452,7 @@ const BlockItem = ({
                 }}
                 className="childMenuIcon"
               >
+                {console.log({ element })}
                 {
                   isValidUrl(element?.icon) ? (
                     <img width={"24px"} height={"24px"} src={element?.icon} />

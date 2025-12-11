@@ -8,16 +8,14 @@ import { useMicrofrontendCreateWebhookMutation } from "@/services/microfrontendS
 import {
   useGithubBranchesQuery,
   useGithubRepositoriesQuery,
+  useGitlabBranchesQuery,
+  useGitlabRepositoriesQuery,
 } from "@/services/githubService";
 import functionService, {
   useFunctionByIdQuery,
   useFunctionCreateMutation,
   useFunctionUpdateMutation,
 } from "@/services/functionService";
-import {
-  useGitlabBranchesQuery,
-  useGitlabRepositoriesQuery,
-} from "@/services/githubService";
 import { useTranslation } from "react-i18next";
 
 import { showAlert } from "@/store/alert/alert.thunk";
@@ -34,7 +32,7 @@ export const useFunctionsDetailProps = () => {
 
   const [loader, setLoader] = useState(false);
   const [logsList, setLogsList] = useState(null);
-  const [btnLoader, setBtnLoader] = useState();
+  const [btnLoader] = useState();
   const [formerScale, setFormerScale] = useState();
 
   const dispatch = useDispatch();
@@ -113,7 +111,7 @@ export const useFunctionsDetailProps = () => {
   });
 
   const gitlabRepoId = repositoriesGitlab?.find(
-    (item) => item?.name === selectedRepo
+    (item) => item?.name === selectedRepo,
   )?.id;
 
   const { data: branchesGitlab } = useGitlabBranchesQuery({
@@ -165,7 +163,7 @@ export const useFunctionsDetailProps = () => {
             ? "openfass-fn"
             : res?.type === "KNATIVE"
               ? "knative-fn"
-              : ""
+              : "",
         );
 
         knativeForm.setValue("path", res?.path);
@@ -216,7 +214,7 @@ export const useFunctionsDetailProps = () => {
         setLogsList(res);
         setLoader(false);
       })
-      .catch((err) => setLoader(false));
+      .catch(() => setLoader(false));
   };
 
   useEffect(() => {

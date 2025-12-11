@@ -1,21 +1,15 @@
 import PageFallback from "@/components/PageFallback";
-import HeaderSettings from "@/components/HeaderSettings";
-import SecondaryButton from "@/components/Buttons/SecondaryButton";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
-import {Save} from "@mui/icons-material";
-import PrimaryButton from "@/components/Buttons/PrimaryButton";
-import Footer from "@/components/Footer";
-import {Box} from "@mui/material";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-// import KnativeLogs from "./KnativeLogs";
-import {generateLangaugeText} from "@/utils/generateLanguageText";
-import {useFunctionsDetailProps} from "./useFunctionsDetailProps";
-import {CodeForm} from "./components/CodeForm";
-import {ContentTitle} from "../../components/ContentTitle";
-import {KnativeLogs} from "./components/KnativeLogs";
-import {SaveCancelBtns} from "../../components/SaveCancelBtns";
+import { Box } from "@mui/material";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import { generateLangaugeText } from "@/utils/generateLanguageText";
+import { useFunctionsDetailProps } from "./useFunctionsDetailProps";
+import { CodeForm } from "./components/CodeForm";
+import { ContentTitle } from "../../components/ContentTitle";
+import { KnativeLogs } from "./components/KnativeLogs";
+import { SaveCancelBtns } from "../../components/SaveCancelBtns";
 
-export const FunctionsDetail = ({create}) => {
+export const FunctionsDetail = () => {
   const {
     functionId,
     navigate,
@@ -24,7 +18,6 @@ export const FunctionsDetail = ({create}) => {
     logsList,
     functionLan,
     i18n,
-    microfrontendListPageLink,
     mainForm,
     knativeForm,
     resourceId,
@@ -84,7 +77,8 @@ export const FunctionsDetail = ({create}) => {
           <Box
             sx={{
               background: "#fff",
-            }}>
+            }}
+          >
             <form onSubmit={knativeForm.handleSubmit(onSubmitKnative)}>
               <KnativeLogs
                 onSubmitKnative={onSubmitKnative}

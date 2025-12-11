@@ -13,7 +13,7 @@ import {
 } from "@/components/CTable";
 import {ActivityFeedColors} from "@/components/Status";
 import {TableDataSkeleton} from "@/components/TableDataSkeleton/TableDataSkeleton";
-import {Box, Fade, Paper, Popper} from "@mui/material";
+import { Box } from "@mui/material";
 import {Image, Input} from "@chakra-ui/react";
 import {generateLangaugeText} from "@/utils/generateLanguageText";
 import Select from "react-select";
@@ -63,7 +63,6 @@ const selectStyles = {
 
 export const ActivityFeedTable = ({
   setHistories,
-  type = "withoutPadding",
   requestType = "GLOBAL",
   apiKey,
   actionByVisible = true,
@@ -108,14 +107,15 @@ export const ActivityFeedTable = ({
 
   return (
     <>
-      <TableCard cardStyles={{padding: "1px"}}>
+      <TableCard cardStyles={{ padding: "1px" }}>
         <CTable
           loader={false}
           removableHeight={false}
           count={pageCount}
           page={currentPage}
           setCurrentPage={setCurrentPage}
-          dataCount={histories?.count}>
+          dataCount={histories?.count}
+        >
           <CTableHead>
             <CTableCell className={cls.tableHeadCell} width={10}>
               №
@@ -124,13 +124,13 @@ export const ActivityFeedTable = ({
               {/* Action */}
               <Select
                 inputValue={inputValue}
-                onInputChange={(newInputValue, {action}) => {
+                onInputChange={(newInputValue, { action }) => {
                   setInputValue(newInputValue);
                 }}
                 options={actionOptions}
                 isClearable
                 isSearchable
-                onChange={(newValue, {action}) => {
+                onChange={(newValue, { action }) => {
                   if (action === "clear") {
                     setInputValue("");
                   }
@@ -156,13 +156,15 @@ export const ActivityFeedTable = ({
                 onCollectionClick();
                 e.stopPropagation();
               }}
-              style={{position: "relative"}}>
+              style={{ position: "relative" }}
+            >
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                }}>
+                }}
+              >
                 {isCollectionOpen && (
                   <Input
                     ref={collectionRef}
@@ -176,7 +178,7 @@ export const ActivityFeedTable = ({
                       generateLangaugeText(
                         tableLan,
                         i18n?.language,
-                        "Search"
+                        "Search",
                       ) || "Search"
                     }
                     onChange={onCollectionChange}
@@ -199,13 +201,15 @@ export const ActivityFeedTable = ({
                   onUserInfoClick();
                   e.stopPropagation();
                 }}
-                style={{position: "relative"}}>
+                style={{ position: "relative" }}
+              >
                 <Box
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                  }}>
+                  }}
+                >
                   {isUserInfoOpen && (
                     <Input
                       ref={userInfoRef}
@@ -219,7 +223,7 @@ export const ActivityFeedTable = ({
                         generateLangaugeText(
                           tableLan,
                           i18n?.language,
-                          "Search"
+                          "Search",
                         ) || "Search"
                       }
                       onChange={onUserInfoChange}
@@ -239,7 +243,8 @@ export const ActivityFeedTable = ({
           <CTableBody
             loader={false}
             columnsCount={5}
-            dataLength={histories?.histories?.length}>
+            dataLength={histories?.histories?.length}
+          >
             {versionHistoryLoader ? (
               <TableDataSkeleton colLength={5} rowLength={10} height={33} />
             ) : (
@@ -253,7 +258,8 @@ export const ActivityFeedTable = ({
                     }}
                     style={{
                       width: "80px",
-                    }}>
+                    }}
+                  >
                     <CTableCell className={cls.tBodyCell}>
                       {(currentPage - 1) * 10 + index + 1}
                     </CTableCell>
@@ -265,7 +271,8 @@ export const ActivityFeedTable = ({
                         style={{
                           background: `${ActivityFeedColors(element?.action_type)}`,
                         }}
-                        className={cls.tag}>
+                        className={cls.tag}
+                      >
                         {element?.action_type?.charAt(0).toUpperCase() +
                           element?.action_type.slice(1).toLowerCase()}
                       </Tag>

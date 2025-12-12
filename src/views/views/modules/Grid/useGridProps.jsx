@@ -334,7 +334,6 @@ export const useGridProps = () => {
   }
 
   function removeRow(params, guid) {
-
     const node = params.node;
     if (!node || !node.data) return;
 
@@ -702,6 +701,49 @@ export const useGridProps = () => {
     return acc;
   }, {});
 
+  // const createServerSideDatasource = (paramsApi, updatedFilters) => {
+  //   return {
+  //     getRows: async (params) => {
+  //       const { startRow, endRow } = params.request;
+  //       const limit = endRow - startRow;
+  //       const offset = startRow;
+
+  //       const route = params.request.groupKeys || [];
+
+  //       const parentGuid = route.length ? route[route.length - 1] : null;
+
+  //       try {
+  //         const resp = await constructorObjectService.getListTreeData(
+  //           tableSlug,
+  //           {
+  //             fields: [...visibleFields, "guid"],
+  //             [recursiveField.slug]: parentGuid,
+  //             limit,
+  //             offset,
+  //             ...updatedFilters,
+  //           },
+  //         );
+
+  //         const items = resp?.data?.response || [];
+
+  //         const rowData = items.map((item) => ({
+  //           ...item,
+  //           path: [...route, item.guid],
+  //           group: item.has_child,
+  //         }));
+
+  //         params.success({
+  //           rowData,
+  //           rowCount: undefined,
+  //         });
+  //       } catch (error) {
+  //         console.error("Error loading tree data:", error);
+  //         params.fail();
+  //       }
+  //     },
+  //   };
+  // };
+
   const createServerSideDatasource = (parentId, updatedFilters) => {
     return {
       getRows: async (params) => {
@@ -711,6 +753,7 @@ export const useGridProps = () => {
         const offset = startRow;
 
         const parentGuid = [params?.parentNode?.data?.guid] ?? parentId;
+        const route = params.request.groupKeys || [];
 
         try {
           const resp = await constructorObjectService.getListTreeData(
@@ -729,6 +772,7 @@ export const useGridProps = () => {
           const rowData = items.map((item) => ({
             ...item,
             group: item.has_child,
+            path: [...route, item.guid],
           }));
 
           params.success({
@@ -742,6 +786,14 @@ export const useGridProps = () => {
       },
     };
   };
+
+  // const onGridReady = useCallback(
+  //   (params) => {
+  //     const datasource = createServerSideDatasource(params.api, cleanedFilters);
+  //     params.api.setGridOption("serverSideDatasource", datasource);
+  //   },
+  //   [tableSlug, cleanedFilters],
+  // );
 
   const onGridReady = useCallback(
     (params) => {

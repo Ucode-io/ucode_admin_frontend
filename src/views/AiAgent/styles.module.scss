@@ -1,0 +1,28 @@
+.aiAgent {
+  position: relative;
+  min-height: 100vh;
+  background-color: #09090b;
+  display: flex;
+  flex-direction: column;
+  background-image: linear-gradient(to bottom right in oklab, lab(96.4459% 4.53997 -1.49434) 0%, lab(97.1627% 2.99937 -4.13398) 50%, lab(97.1083% 4.46233 -4.09334) 100%), linear-gradient(rgba(168, 85, 247, .03) 1px, rgba(0, 0, 0, 0) 1px);
+  // background-image: linear-gradient(rgba(168, 85, 247, .03) 1px, rgba(0, 0, 0, 0) 1px), linear-gradient(90deg, rgba(168, 85, 247, .03) 1px, rgba(0, 0, 0, 0) 1px);
+  // background-image: linear-gradient(90deg,rgba(10, 10, 10, 1) 0%, rgba(18, 46, 67, 1) 22%, rgba(19, 53, 78, 1) 38%, rgba(20, 58, 86, 1) 48%, rgba(24, 76, 113, 1) 61%, rgba(27, 91, 137, 1) 76%, rgba(31, 108, 164, 1) 89%, rgba(38, 144, 220, 1) 100%);
+}
+
+.gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(168, 85, 247, .03) 1px, rgba(0, 0, 0, 0) 1px), linear-gradient(90deg, rgba(168, 85, 247, .03) 1px, rgba(0, 0, 0, 0) 1px);
+  background-size: 50px 50px;
+}
+
+.promptInputWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+  margin-bottom: auto;
+}

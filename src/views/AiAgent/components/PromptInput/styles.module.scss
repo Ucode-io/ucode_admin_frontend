@@ -77,21 +77,3 @@
     cursor: not-allowed;
   }
 }
-
-.recommendedPrompts {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.recommendedPrompt {
-  padding: 4px 6px;
-  border: 1px dashed #e9d4ff;
-  border-radius: 12px;
-  font-size: 10px;
-  color: #4a5565;
-  background-color: #faf5ff;
-  white-space: nowrap;
-  cursor: pointer;
-}

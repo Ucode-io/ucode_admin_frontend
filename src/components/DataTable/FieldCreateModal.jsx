@@ -246,6 +246,11 @@ export default function FieldCreateModal({
     name: "attributes.table_from",
   });
 
+  const fieldType = useWatch({
+    control,
+    name: "type",
+  });
+
   const [colorEl, setColorEl] = useState(null);
   const [mathEl, setMathEl] = useState(null);
   const [idx, setIdx] = useState(null);
@@ -330,13 +335,15 @@ export default function FieldCreateModal({
 
   const { isLoading: fieldLoading } = useFieldsListQuery({
     params: {
-      table_id: menuItem?.table_id,
-      tableSlug: tableSlug,
-      table_slug: tableSlug,
+      // table_id: menuItem?.table_id,
+      table_slug:
+        fieldType === FIELD_TYPES.FORMULA
+          ? selectedTableSlug?.split("#")[0]
+          : tableSlug,
     },
-    tableSlug,
     queryParams: {
-      enabled: Boolean(menuItem?.table_id),
+      // enabled: Boolean(menuItem?.table_id),
+      enabled: Boolean(tableSlug),
       onSuccess: (res) => {
         setFields(
           res?.fields?.map((item) => {

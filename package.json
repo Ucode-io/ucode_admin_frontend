@@ -136,7 +136,7 @@
     "pdfjs-dist": "2.16.105",
     "print-js": "^1.6.0",
     "prismjs": "^1.28.0",
-    "react": "^18.0.0",
+    "react": "18.0.0",
     "react-ace": "^11.0.1",
     "react-activation": "^0.11.2",
     "react-barcode": "^1.4.5",

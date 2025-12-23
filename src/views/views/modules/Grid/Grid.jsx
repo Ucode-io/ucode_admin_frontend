@@ -54,6 +54,7 @@ import getColumnEditorParams from "./valueOptionGenerator";
 import { getColumnIcon } from "@/utils/constants/tableIcons";
 import { useViewContext } from "@/providers/ViewProvider";
 import { useFieldsContext } from "../../providers/FieldsProvider";
+import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -150,7 +151,7 @@ export const Grid = () => {
 
   const { refetch } = useQuery(
     [
-      "GET_OBJECTS_LIST_DATA",
+      QUERY_KEYS.GRID_DATA_KEY,
       {
         tableSlug,
         filters: {

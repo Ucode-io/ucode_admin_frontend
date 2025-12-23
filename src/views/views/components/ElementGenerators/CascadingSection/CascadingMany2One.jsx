@@ -7,7 +7,7 @@ import FolderIcon from "@mui/icons-material/Folder";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { numberWithSpaces } from "../../../utils/formatNumbers";
 import SearchInput from "../../SearchInput";
-import useDebounce from "../../../hooks/useDebounce";
+import useDebounce from "../../../modules/Grid/hooks/useDebounce";
 
 function CascadingMany2One({
   currentLevel,

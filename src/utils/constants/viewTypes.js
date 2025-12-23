@@ -6,6 +6,7 @@ export const viewTypes = [
   "TREE",
   "WEBSITE",
   "GRID",
+  "PIVOT",
 ];
 
 export const VIEW_TYPES_MAP = {
@@ -17,6 +18,7 @@ export const VIEW_TYPES_MAP = {
   GRID: "GRID",
   BOARD: "BOARD",
   SECTION: "SECTION",
+  PIVOT: "PIVOT",
 };
 
 export const viewIcons = {
@@ -24,6 +26,7 @@ export const viewIcons = {
   CALENDAR: "calendar.svg",
   BOARD: "rows.svg",
   GRID: "grid.svg",
+  PIVOT: "pivot.svg",
   TIMELINE: "line-chart-up.svg",
   WEBSITE: "globe.svg",
   TREE: "tree.svg",

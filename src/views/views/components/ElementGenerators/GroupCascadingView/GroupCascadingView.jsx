@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useMemo } from "react";
 
 import RectangleIconButton from "../../Buttons/RectangleIconButton";
-import useTabRouter from "../../../hooks/useTabRouter";
+import useTabRouter from "../../../modules/Grid/hooks/useTabRouter";
 import constructorObjectService from "../../../services/constructorObjectService";
 import style from "./style.module.scss";
 import FolderIcon from "@mui/icons-material/Folder";

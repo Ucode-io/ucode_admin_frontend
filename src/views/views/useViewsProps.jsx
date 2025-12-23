@@ -44,6 +44,7 @@ import { Website } from "./modules/Website";
 import { projectInfoActions } from "@/store/projectInfo/projectInfo.slice";
 import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 import { tablePaginationActions } from "@/store/pagination/paginationV2.slice";
+import { Pivot } from "./modules/Grid/Pivot";
 
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
@@ -214,6 +215,7 @@ export const useViewsProps = ({ isRelationView }) => {
     ),
     [VIEW_TYPES_MAP.TREE]: () => <Tree />,
     [VIEW_TYPES_MAP.GRID]: () => <Grid />,
+    [VIEW_TYPES_MAP.PIVOT]: () => <Pivot />,
     [VIEW_TYPES_MAP.BOARD]: () => <Board />,
     [VIEW_TYPES_MAP.TIMELINE]: () => <Timeline />,
     [VIEW_TYPES_MAP.CALENDAR]: () => <Calendar />,

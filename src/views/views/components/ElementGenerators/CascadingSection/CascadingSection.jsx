@@ -4,7 +4,7 @@ import {Autocomplete, InputAdornment, Menu, TextField} from "@mui/material";
 import CascadingSectionItem from "./CascadingSectionItem";
 import constructorObjectService from "../../../services/constructorObjectService";
 import IconGenerator from "../../IconPicker/IconGenerator";
-import useTabRouter from "../../../hooks/useTabRouter";
+import useTabRouter from "../../../modules/Grid/hooks/useTabRouter";
 import CloseIcon from "@mui/icons-material/Close";
 import {getRelationFieldLabel} from "../../../utils/getRelationFieldLabel";
 import {useQuery} from "react-query";

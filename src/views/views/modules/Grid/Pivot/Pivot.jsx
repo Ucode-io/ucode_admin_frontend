@@ -1,4 +1,9 @@
-import { ModuleRegistry , ClientSideRowModelModule, themeQuartz } from "ag-grid-community";
+import "./styles.scss";
+import {
+  ModuleRegistry,
+  ClientSideRowModelModule,
+  themeQuartz,
+} from "ag-grid-community";
 import {
   RowGroupingModule,
   PivotModule,
@@ -16,6 +21,7 @@ ModuleRegistry.registerModules([
 
 import { usePivotProps } from "./usePivotProps";
 import { AgGridReact } from "ag-grid-react";
+import AggridFooter from "../AggridFooter";
 
 const myTheme = themeQuartz.withParams({
   columnBorder: true,
@@ -25,7 +31,6 @@ const myTheme = themeQuartz.withParams({
 });
 
 export const Pivot = () => {
-
   const {
     rowData,
     columns,
@@ -36,32 +41,76 @@ export const Pivot = () => {
     cellSelection,
     gridApi,
     onColumnStateChanged,
+    limit,
+    setLimit,
+    setOffset,
+    count,
+    refetch,
+    view,
+    loadings,
+    setLoadings,
+    tableSlug,
+    pagination,
+    selectedRows,
+    setSelectedRows,
+    createChild,
+    updateObject,
+    settingsPermission,
   } = usePivotProps();
 
-  return  <div style={{ width: "100%", height: "100%" }}>
-    <AgGridReact
-      columnDefs={columns}
-      autoGroupColumnDef={autoGroupColumnDef}
-      onColumnPivotModeChanged={onColumnStateChanged}
-      ref={gridApi}
-      theme={myTheme}
-      onGridReady={onGridReady}
-      rowData={rowData}
-      rowModelType="clientSide"
-      rowSelection={rowSelection}
-      cellSelection={cellSelection}
-      sideBar={{
-        toolPanels: ["columns"],
-        defaultToolPanel: "columns",
-      }}
-      defaultColDef={{
-        ...defaultColDef,
-        flex: 1,
-        enableRowGroup: true,
-        enablePivot: true,
-        enableValue: true,
-        resizable: true,
-      }}
-    />
-  </div>
-}
+  return (
+    <div style={{ width: "100%", height: "100%" }}>
+      <div style={{ width: "100%", height: "100%" }}>
+        <AgGridReact
+          columnDefs={columns}
+          onColumnVisible={onColumnStateChanged}
+          onColumnPinned={onColumnStateChanged}
+          onColumnMoved={onColumnStateChanged}
+          onColumnResized={onColumnStateChanged}
+          onColumnRowGroupChanged={onColumnStateChanged}
+          onColumnPivotChanged={onColumnStateChanged}
+          onColumnValueChanged={onColumnStateChanged}
+          onSelectionChanged={(e) => {
+            setSelectedRows(e.api.getSelectedRows());
+          }}
+          paginationPageSize={pagination ?? limit}
+          autoGroupColumnDef={autoGroupColumnDef}
+          groupDisplayType="single"
+          onCellValueChanged={(e) => {
+            updateObject(e.data);
+          }}
+          ref={gridApi}
+          theme={myTheme}
+          onGridReady={onGridReady}
+          rowData={rowData}
+          rowModelType="clientSide"
+          rowSelection={rowSelection}
+          cellSelection={cellSelection}
+          loading={loadings}
+          sideBar={settingsPermission}
+          defaultColDef={{
+            ...defaultColDef,
+            flex: 1,
+            enableRowGroup: true,
+            enablePivot: true,
+            enableValue: true,
+            resizable: true,
+          }}
+        />
+      </div>
+      <AggridFooter
+        view={view}
+        limit={pagination ?? limit}
+        count={count}
+        rowData={rowData}
+        refetch={refetch}
+        setLimit={setLimit}
+        setOffset={setOffset}
+        setLoading={setLoadings}
+        createChild={createChild}
+        selectedRows={selectedRows}
+        tableSlug={tableSlug}
+      />
+    </div>
+  );
+};

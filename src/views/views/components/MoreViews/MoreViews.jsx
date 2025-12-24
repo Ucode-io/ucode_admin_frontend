@@ -4,18 +4,8 @@ import React, {useState, useMemo} from "react";
 import {useTranslation} from "react-i18next";
 import {default as SVG} from "react-inlinesvg";
 import AddIcon from "@mui/icons-material/Add";
+import { viewIcons } from "@/utils/constants/viewTypes";
 // import { ViewSettingsModal } from "../ViewSettingsModal";
-
-const viewIcons = {
-  TABLE: "layout-alt-01.svg",
-  CALENDAR: "calendar.svg",
-  BOARD: "rows.svg",
-  GRID: "grid.svg",
-  TIMELINE: "line-chart-up.svg",
-  WEBSITE: "globe.svg",
-  TREE: "tree.svg",
-  SECTION: "layout.svg",
-};
 
 export const MoreViews = ({
   anchorEl = null,

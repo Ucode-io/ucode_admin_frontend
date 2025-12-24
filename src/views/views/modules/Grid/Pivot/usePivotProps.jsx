@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { useSelector } from "react-redux";
 import useFilters from "@/hooks/useFilters";
@@ -9,32 +9,77 @@ import { pageToOffset } from "@/utils/pageToOffset";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 import { useFieldsContext } from "../../../providers/FieldsProvider";
-import { ActionsColumn, IndexColumn, useGridParams } from "../hooks/useGridParams";
+import { useGridParams } from "../hooks/useGridParams";
 import { generateGUID } from "@/utils/generateID";
 import getColumnEditorParams from "../valueOptionGenerator";
 import { HeaderComponent } from "../components/HeaderComponent";
 import { useTranslation } from "react-i18next";
+import constructorFieldService from "@/services/constructorFieldService";
+import useDebounce from "@/hooks/useDebounce";
+import { useGetPermission } from "@/components/PermissionWrapper/useGetPermission";
+
+const COLUMN_KEYS = ["aggFunc", "hide", "pinned", "pivot", "rowGroup", "width"];
+
+function getUpdatedColumns(prevState, nextState) {
+  const prevMap = new Map();
+
+  for (const col of prevState) {
+    prevMap.set(col.colId, col);
+  }
+
+  const updated = [];
+
+  for (const nextCol of nextState) {
+    const prevCol = prevMap.get(nextCol.colId);
+
+    // если колонки не было раньше — пропускаем
+    if (!prevCol) continue;
+
+    let changed = false;
+
+    for (const key of COLUMN_KEYS) {
+      if (prevCol[key] !== nextCol[key]) {
+        changed = true;
+        break;
+      }
+    }
+
+    if (changed) {
+      updated.push(nextCol);
+    }
+  }
+
+  return updated;
+}
+
+const getCleanColumnState = (api) => {
+  return api.getColumnState().filter((col) => !col.colId.startsWith("pivot_"));
+};
 
 export const usePivotProps = () => {
-
   const {
     tableSlug,
     view,
     searchText,
     checkedColumns,
     visibleColumns,
-    menuItem,
     navigateToEditPage,
-    selectedTabIndex,
+    refetchTableInfo,
+    tabs,
   } = useViewContext();
 
-  const {
-    fieldsMap,
-  } = useFieldsContext();
+  const settingsPermission = useGetPermission({
+    tableSlug,
+    type: "settings",
+  })
+
+  const { fieldsMap } = useFieldsContext();
 
   const { i18n } = useTranslation();
 
   const gridApi = useRef(null);
+  const pivotUpdatedRef = useRef(false);
+  const prevStateRef = useRef(null);
 
   const [rowData, setRowData] = useState([]);
   const [loadings, setLoadings] = useState(true);
@@ -44,6 +89,8 @@ export const usePivotProps = () => {
 
   const [count, setCount] = useState(0);
   const [groupTab, setGroupTab] = useState(null);
+
+  const [selectedRows, setSelectedRows] = useState([]);
 
   const { filters } = useFilters(tableSlug, view.id);
   const { defaultColDef, autoGroupColumnDef, rowSelection, cellSelection } =
@@ -61,41 +108,61 @@ export const usePivotProps = () => {
       ? parseInt(searchText)
       : searchText;
 
-  function addRow(data) {
-    setLoadings(true);
-    constructorObjectService
-      .create(tableSlug, {
-        data: data,
-      })
-      .then(() => {
-        refetch();
-        delete data?.new_field;
-        setLoadings(false);
-      })
-      .catch(() => setLoadings(false));
-  }
+  // function addRow(data) {
+  //   setLoadings(true);
+  //   constructorObjectService
+  //     .create(tableSlug, {
+  //       data: data,
+  //     })
+  //     .then(() => {
+  //       refetch();
+  //       delete data?.new_field;
+  //       setLoadings(false);
+  //     })
+  //     .catch(() => setLoadings(false));
+  // }
 
-  function appendNewRow() {
-    const newRow = { new_field: true, guid: generateGUID() };
-    gridApi.current.api.applyTransaction({
-      add: [newRow],
-      addIndex: 0,
-    });
-  }
+  // function appendNewRow() {
+  //   const newRow = { new_field: true, guid: generateGUID() };
+  //   gridApi.current.api.applyTransaction({
+  //     add: [newRow],
+  //     addIndex: 0,
+  //   });
+  // }
 
-  function removeRow(guid) {
-    const allRows = [];
-    gridApi.current.api.forEachNode((node) => allRows.push(node.data));
-    const rowToRemove = allRows.find((row) => row.guid === guid);
-
-    if (rowToRemove) {
-      gridApi.current.api.applyTransaction({
-        remove: [rowToRemove],
-      });
-    } else {
-      console.error("Row not found for removal");
+  const createChild = () => {
+    if (!selectedRows?.length) {
+      return;
     }
-  }
+
+    const parentRow = selectedRows[0];
+    const newChild = {
+      guid: generateGUID(),
+      [`${tableSlug}_id`]: parentRow.guid,
+      path: [...parentRow.path, generateGUID()],
+    };
+    gridApi.current.api.applyTransaction({
+      add: [newChild],
+    });
+
+    constructorObjectService.create(tableSlug, {
+      data: newChild,
+    });
+  };
+
+  // function removeRow(guid) {
+  //   const allRows = [];
+  //   gridApi.current.api.forEachNode((node) => allRows.push(node.data));
+  //   const rowToRemove = allRows.find((row) => row.guid === guid);
+
+  //   if (rowToRemove) {
+  //     gridApi.current.api.applyTransaction({
+  //       remove: [rowToRemove],
+  //     });
+  //   } else {
+  //     console.error("Row not found for removal");
+  //   }
+  // }
 
   const fieldsArray = useMemo(() => {
     return visibleColumns?.map((item) => {
@@ -127,25 +194,19 @@ export const usePivotProps = () => {
     });
   }, [visibleColumns]);
 
-  function deleteHandler(rowToDelete) {
-    const allRows = [];
-    gridApi.current.api.forEachNode((node) => allRows.push(node.data));
-    const rowToRemove = allRows.find((row) => row.guid === rowToDelete?.guid);
+  // function deleteHandler(rowToDelete) {
+  //   const allRows = [];
+  //   gridApi.current.api.forEachNode((node) => allRows.push(node.data));
+  //   const rowToRemove = allRows.find((row) => row.guid === rowToDelete?.guid);
 
-    gridApi.current.api.applyTransaction({
-      remove: [rowToRemove],
-    });
+  //   gridApi.current.api.applyTransaction({
+  //     remove: [rowToRemove],
+  //   });
 
-    constructorObjectService.delete(tableSlug, rowToDelete.guid).then(() => {
-      refetch();
-    });
-  }
-
-  const columnDefs = [
-    { field: "country", rowGroup: true, hide: true },
-    { field: "year", pivot: true, hide: true },
-    { field: "sales", enableValue: true, aggFunc: "sum" },
-  ];
+  //   constructorObjectService.delete(tableSlug, rowToDelete.guid).then(() => {
+  //     refetch();
+  //   });
+  // }
 
   const columns = useMemo(() => {
     if (
@@ -155,25 +216,6 @@ export const usePivotProps = () => {
       )
     ) {
       return [
-        {
-          ...IndexColumn,
-          colId: "__index__",
-          enableRowGroup: false,
-          enablePivot: false,
-          enableValue: false,
-          suppressColumnsToolPanel: true,
-          menuItem,
-          view,
-          addRow,
-          appendNewRow,
-          valueGetter: (params) => {
-            return (
-              (Boolean(limitPage > 0) ? limitPage : 0) +
-              params.node.rowIndex +
-              1
-            );
-          },
-        },
         ...(view.columns ?? [])
           .map((columnID, index) => {
             const field = fieldsArray.find(
@@ -184,29 +226,24 @@ export const usePivotProps = () => {
                 ...field,
                 colIndex: index,
                 colId: field.columnID,
-                onRowClick: (e) => {
-                  navigateToEditPage(e);
+                ...field?.cellRendererParams?.field?.attributes?.pivotParams,
+                onRowClick: () => {},
+                onCellClicked: (params) => {
+                  if (!params.node || !params.node.group) return;
+
+                  const rows = params.node.allLeafChildren?.map(
+                    (child) => child.data,
+                  );
+
+                  if (!!params.event.target.closest(".rowClickButton")) {
+                    navigateToEditPage(rows[params.rowIndex]);
+                  }
                 },
               };
             }
             return null;
           })
           .filter(Boolean),
-        {
-          ...ActionsColumn,
-          colId: "__actions__",
-          enableRowGroup: false,
-          enablePivot: false,
-          enableValue: false,
-          suppressColumnsToolPanel: true,
-          view,
-          selectedTabIndex,
-          menuItem,
-          removeRow,
-          addRow,
-          deleteFunction: deleteHandler,
-          cellClass: view.columns.length ? "actionBtn" : "actionBtnNoBorder",
-        },
       ];
     }
     return [];
@@ -271,24 +308,69 @@ export const usePivotProps = () => {
     },
   );
 
-  const saveGridState = (api) => {
-    const columnState = api.getColumnState();
-  
-    const pivotMode = api.isPivotMode();
-  
-    const payload = {
-      pivotMode,
-      columnState,
+  const updateObject = (data) => {
+    if (!data?.new_field) {
+      constructorObjectService.update(tableSlug, { data: { ...data } });
+    }
+  };
+
+  const saveGridState = (changes = []) => {
+    if (!prevStateRef.current) {
+      prevStateRef.current = changes;
+    }
+
+    const result = getUpdatedColumns(prevStateRef.current, changes);
+
+    const updatedFields = [];
+
+    result.forEach((change) => {
+      const foundColumn = visibleColumns?.find(
+        (col) => col.id === change.colId,
+      );
+      updatedFields.push({
+        ...foundColumn,
+        attributes: {
+          ...foundColumn?.attributes,
+          pivotParams: {
+            ...foundColumn?.attributes?.pivotParams,
+            ...change,
+          },
+        },
+      });
+    });
+
+    updatedFields.forEach((field) => {
+      if (field.id) {
+        constructorFieldService.update({ data: field, tableSlug }).then(() => {
+          pivotUpdatedRef.current = true;
+        });
+      }
+    });
+
+    prevStateRef.current = changes;
+  };
+
+  const onColumnStateChanged = useDebounce((params) => {
+    const cols = getCleanColumnState(params.api);
+
+    saveGridState(cols);
+  }, 300);
+
+  useEffect(() => {
+    return () => {
+      if (pivotUpdatedRef.current) {
+        refetchTableInfo();
+      }
     };
-  
-    console.log("SAVE TO BACKEND:", payload);
+  }, []);
 
-  };
-
-  const onColumnStateChanged = (params) => {
-    console.log("onColumnStateChanged");
-    saveGridState(params.api);
-  };
+  useEffect(() => {
+    if (Boolean(tabs?.length)) {
+      setGroupTab(tabs?.[0]);
+    } else {
+      setGroupTab(null);
+    }
+  }, [tabs?.length]);
 
   return {
     rowData,
@@ -300,5 +382,20 @@ export const usePivotProps = () => {
     cellSelection,
     gridApi,
     onColumnStateChanged,
-  }
-}
+    limit,
+    setLimit,
+    setOffset,
+    count,
+    refetch,
+    view,
+    loadings,
+    setLoadings,
+    tableSlug,
+    pagination,
+    selectedRows,
+    setSelectedRows,
+    createChild,
+    updateObject,
+    settingsPermission,
+  };
+};

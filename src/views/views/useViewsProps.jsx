@@ -186,6 +186,9 @@ export const useViewsProps = ({ isRelationView }) => {
       case VIEW_TYPES_MAP.CALENDAR:
         queryClient.refetchQueries([QUERY_KEYS.CALENDAR_DATA_KEY]);
         break;
+      case VIEW_TYPES_MAP.PIVOT:
+        queryClient.refetchQueries([QUERY_KEYS.GRID_DATA_KEY]);
+        break;
       default:
         break;
     }

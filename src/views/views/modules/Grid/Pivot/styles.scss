@@ -1,7 +1,7 @@
-.ag-theme-quartz .ag-pivot-group {
-  border-right: none !important;
+.ag-side-bar {
+  height: calc(100vh - 130px);
 }
 
-.ag-theme-quartz .ag-header-group-cell {
-  border-right: none !important;
+.ag-header-row {
+  max-height: 100%;
 }

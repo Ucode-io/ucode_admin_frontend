@@ -10,7 +10,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import FolderIcon from "@mui/icons-material/Folder";
 import RectangleIconButton from "../../../components/Buttons/RectangleIconButton";
 import {Add, Delete} from "@mui/icons-material";
-import useTabRouter from "../../../hooks/useTabRouter";
+import useTabRouter from "../../../modules/Grid/hooks/useTabRouter";
 import GroupCascadingView from "./GroupCascadingView";
 import FastFilter from "../../../views/Objects/components/FastFilter";
 import {Menu, TextField, InputAdornment} from "@mui/material";

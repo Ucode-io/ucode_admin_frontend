@@ -25,6 +25,7 @@ import { LayoutPopup } from "./components/LayoutPopup";
 import MaterialUIProvider from "@/providers/MaterialUIProvider";
 import { ViewButton } from "./components/ViewButton";
 import { Skeleton } from "@mui/material";
+import PivotTableChartIcon from "@mui/icons-material/PivotTableChart";
 
 export const HeaderFilter = ({
   noDates,

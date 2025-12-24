@@ -42,17 +42,7 @@ import { ExcelImport } from "../ExcelImport";
 import { ExcelExport } from "../ExcelExport";
 import { DeleteView } from "../DeleteView";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
-
-const viewIcons = {
-  TABLE: "layout-alt-01.svg",
-  CALENDAR: "calendar.svg",
-  BOARD: "rows.svg",
-  GRID: "grid.svg",
-  TIMELINE: "line-chart-up.svg",
-  WEBSITE: "globe.svg",
-  TREE: "tree.svg",
-  SECTION: "layout.svg",
-};
+import { viewIcons } from "@/utils/constants/viewTypes";
 
 export const ViewOptions = ({
   handleOpenPopup,

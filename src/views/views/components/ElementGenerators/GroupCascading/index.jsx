@@ -4,7 +4,7 @@ import PageFallback from "../../../components/PageFallback";
 import constructorObjectService from "../../../services/constructorObjectService";
 import styles from "./style.module.scss";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import useTabRouter from "../../../hooks/useTabRouter";
+import useTabRouter from "../../../modules/Grid/hooks/useTabRouter";
 import GroupCascadingLink from "./GroupCascadingLink";
 import { Menu, TextField, InputAdornment } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";

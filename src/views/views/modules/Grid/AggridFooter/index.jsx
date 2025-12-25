@@ -90,6 +90,7 @@ function AggridFooter({
           variant="outlined"
           shape="rounded"
           onChange={(e, val) => {
+            if (val === page) return;
             setLoading(true);
             setOffset(val);
             onChange({

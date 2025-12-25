@@ -318,7 +318,7 @@ const AutoCompleteElement = ({
     );
   };
 
-  const { data: optionsFromLocale, refetch } = useQuery(
+  const { refetch } = useQuery(
     [
       "GET_OBJECT_LIST",
       page,
@@ -333,7 +333,7 @@ const AutoCompleteElement = ({
       //   (!field?.attributes?.function_path && Boolean(page > 1)) ||
       //   (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
       //   newColumn,
-      enabled: false,
+      enabled: Boolean(debouncedValue),
       select: (res) => {
         const options = res?.data?.response ?? [];
 

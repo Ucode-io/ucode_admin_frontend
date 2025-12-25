@@ -1,0 +1,1 @@
+export { IndexHeaderComponent } from "./IndexHeaderComponent";

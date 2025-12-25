@@ -44,6 +44,7 @@ import { Website } from "./modules/Website";
 import { projectInfoActions } from "@/store/projectInfo/projectInfo.slice";
 import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 import { tablePaginationActions } from "@/store/pagination/paginationV2.slice";
+import { Pivot } from "./modules/Grid/Pivot";
 
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
@@ -185,6 +186,9 @@ export const useViewsProps = ({ isRelationView }) => {
       case VIEW_TYPES_MAP.CALENDAR:
         queryClient.refetchQueries([QUERY_KEYS.CALENDAR_DATA_KEY]);
         break;
+      case VIEW_TYPES_MAP.PIVOT:
+        queryClient.refetchQueries([QUERY_KEYS.GRID_DATA_KEY]);
+        break;
       default:
         break;
     }
@@ -203,26 +207,16 @@ export const useViewsProps = ({ isRelationView }) => {
   });
 
   const viewsMap = {
-    [VIEW_TYPES_MAP.TABLE]: (props) => (
-      <MaterialUIProvider style={{ height: "100%" }}>
-        {groupTable?.length > 0 ? (
-          <TableGroup {...props} />
-        ) : (
-          <Table {...props} />
-        )}
-      </MaterialUIProvider>
-    ),
+    [VIEW_TYPES_MAP.TABLE]: (props) =>
+      groupTable?.length > 0 ? <TableGroup {...props} /> : <Table {...props} />,
     [VIEW_TYPES_MAP.TREE]: () => <Tree />,
     [VIEW_TYPES_MAP.GRID]: () => <Grid />,
+    [VIEW_TYPES_MAP.PIVOT]: () => <Pivot />,
     [VIEW_TYPES_MAP.BOARD]: () => <Board />,
     [VIEW_TYPES_MAP.TIMELINE]: () => <Timeline />,
     [VIEW_TYPES_MAP.CALENDAR]: () => <Calendar />,
     [VIEW_TYPES_MAP.WEBSITE]: () => <Website view={view} />,
-    [VIEW_TYPES_MAP.SECTION]: (props) => (
-      <MaterialUIProvider>
-        <Section {...props} />
-      </MaterialUIProvider>
-    ),
+    [VIEW_TYPES_MAP.SECTION]: (props) => <Section {...props} />,
   };
 
   const viewsWithoutTabs = [
@@ -236,22 +230,13 @@ export const useViewsProps = ({ isRelationView }) => {
     if (!viewsMap[viewType]) return <></>;
 
     if (viewsWithoutTabs.includes(viewType) || !tabs?.length) {
-      return viewsMap[viewType]();
-    } else {
       return (
-        <ViewTabs view={view} tabs={tabs} element={viewsMap[viewType]} />
-        // <Tabs
-        //   direction={"ltr"}
-        //   defaultIndex={0}
-        //   style={{
-        //     height: "100%",
-        //   }}
-        // >
-        //   {tabs?.map((tab) => (
-        //     <TabPanel key={tab?.value}>{viewsMap[viewType]({ tab })}</TabPanel>
-        //   ))}
-        // </Tabs>
+        <MaterialUIProvider style={{ height: "100%" }}>
+          {viewsMap[viewType]()}
+        </MaterialUIProvider>
       );
+    } else {
+      return <ViewTabs view={view} tabs={tabs} element={viewsMap[viewType]} />;
     }
   };
 

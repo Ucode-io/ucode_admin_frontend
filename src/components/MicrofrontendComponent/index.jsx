@@ -3,6 +3,8 @@ import { Suspense, lazy } from "react";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import SafeComponent from "../SafeComponent";
 import { useTranslation } from "react-i18next";
+import httpsRequest from "@/utils/httpsRequest";
+import httpsRequestV2 from "@/utils/httpsRequestV2";
 
 // const empty = lazy(() => import("remote_empty_app/empty"));
 
@@ -28,7 +30,12 @@ const MicrofrontendComponent = ({ link, loginAction }) => {
       <Suspense
         fallback={<RingLoaderWithWrapper style={{ height: "100vh" }} />}
       >
-        <RemoteButton i18n={i18n} loginAction={loginAction} />
+        <RemoteButton
+          i18n={i18n}
+          loginAction={loginAction}
+          sharedHttpRequest={httpsRequest}
+          sharedHttpRequestV2={httpsRequestV2}
+        />
       </Suspense>
     </SafeComponent>
   );

@@ -76,15 +76,17 @@ const getColumnEditorParams = (item, columnDef) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-          }}>
+          }}
+        >
           <Skeleton
             variant="rectangular"
-            style={{borderRadius: "6px"}}
+            style={{ borderRadius: "6px" }}
             width={"100%"}
             height={20}
           />
         </div>
-      }>
+      }
+    >
       <Renderer {...props} />
     </React.Suspense>
   );

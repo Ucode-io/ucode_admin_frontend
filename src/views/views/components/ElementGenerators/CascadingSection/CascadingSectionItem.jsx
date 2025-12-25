@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useQuery } from "react-query";
-import useDebounce from "../../../hooks/useDebounce";
+import useDebounce from "../../../modules/Grid/hooks/useDebounce";
 import constructorObjectService from "../../../services/constructorObjectService";
 import CascadingMany2Many from "./CascadingMany2Many";
 import CascadingMany2One from "./CascadingMany2One";

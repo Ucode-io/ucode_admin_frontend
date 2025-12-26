@@ -83,6 +83,7 @@ function LayoutSettings() {
     const currentUpdatedLayout = {
       ...layout,
       tabs: updatedTabs,
+      menu_id: menuId,
     };
 
     layoutService

@@ -1,0 +1,34 @@
+.inputToggler {
+  width: 16px;
+  height: 40px;
+  position: absolute;
+  bottom: calc(100% - 1px);
+  right: 16px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: none;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #fff;
+  // background-color: rgb(218 178 255);
+  background-color: #9dcdef;
+  transition: all 0.4s ease-in-out;
+  // background-color: rgb(43 166 255 / 1);
+  // background-image: linear-gradient(to bottom right in oklab, lab(96.4459% 4.53997 -1.49434) 0%, lab(97.1627% 2.99937 -4.13398) 50%, lab(97.1083% 4.46233 -4.09334) 100%), linear-gradient(rgba(168, 85, 247, 0.03) 1px, rgba(0, 0, 0, 0) 1px);
+}
+
+.inputToggler.active {
+  // width: 40px;
+  // height: 16px;
+  width: 16px;
+  height: 40px;
+  padding: 0;
+  border-radius: 0;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}

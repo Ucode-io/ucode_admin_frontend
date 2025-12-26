@@ -1,0 +1,127 @@
+.aiChat {
+  width: 0;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e5e9eb;
+  overflow: hidden;
+  background-color: #fff;
+  transition: width 0.3s ease-in-out;
+}
+
+.aiChat.visible {
+  width: 520px;
+}
+
+.aiChatHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #e5e9eb;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  border: none;
+  color: #ccc;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.inspectButton {
+  display: flex;
+  align-items: center;
+  border: none;
+  color: #fff;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.inspectButton.active {
+  color: #67C0FF;
+}
+
+.aiChatBody {
+  opacity: 0;
+  flex-grow: 1;
+  overflow: auto;
+  background-color: rgba(237, 237, 237, 0.2);
+  scroll-behavior: smooth;
+}
+
+.aiChat.visible .aiChatBody {
+  opacity: 1;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px;
+}
+
+.aiChatFooter {
+  height: 200px;
+  padding: 12px;
+  border-top: 1px solid #e5e9eb;
+}
+
+.promptInputWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #e5e9eb;
+  border-radius: 6px;
+}
+
+.textArea {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  border: none;
+  resize: none;
+  outline: none;
+  padding: 12px;
+  font-size: 16px;
+}
+
+.textAreaPlaceholder {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  color: #ccc;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.textArea [data-badge="true"] {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+  color: #fff;
+  background-color: rgba(116, 199, 255, 0.6);
+}
+
+.sendButton {
+  width: 38px;
+  height: 38px;
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background-color: #62c0ff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sendIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

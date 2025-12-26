@@ -205,6 +205,7 @@ const NewRouter = ({ resetQueryClient }) => {
   return (
     <Routes>
       <Route path="ai-agent" element={<AiAgent />} />
+      <Route path="ai-agent/:tableSlug" element={<AiAgent />} />
       <Route
         path="/"
         element={

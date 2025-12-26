@@ -32,7 +32,6 @@ const TabTitle = ({tab, children, ...props}) => {
 export const SettingsPopup = ({open, onClose}) => {
   const {
     handleClose,
-    t,
     tabs,
     activeTab,
     handleChangeTab,
@@ -48,7 +47,7 @@ export const SettingsPopup = ({open, onClose}) => {
     isClientTypeModalOpen,
     permissionChild,
     tab,
-  } = useSettingsPopupProps({onClose});
+  } = useSettingsPopupProps({ onClose });
 
   return (
     <SettingsPopupProvider

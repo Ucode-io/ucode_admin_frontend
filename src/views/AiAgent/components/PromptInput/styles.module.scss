@@ -20,7 +20,8 @@
   padding: 16px;
   outline: none;
   resize: none;
-  border: 2px solid #e9d4ff80;
+  // border: 2px solid #e9d4ff80;
+  border: 2px solid #9dcdef;
   border-radius: 16px;
   background-color: #fff;
   font-weight: normal;
@@ -30,8 +31,8 @@
   transition: border-color .2s ease-in-out, box-shadow .2s ease-in-out;
   
   &:focus {
-    border-color: rgb(218 178 255);
-    box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 20px 25px -5px color-mix(in oklab, color-mix(in oklab, lab(78.3298% 26.2195 -34.9499) 30%, transparent) 100%, transparent), 0 8px 10px -6px color-mix(in oklab, color-mix(in oklab, lab(78.3298% 26.2195 -34.9499) 30%, transparent) 100%, transparent);
+    border-color: #bce3ff;
+    box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 20px 25px -5px color-mix(in oklab, color-mix(in oklab,  #9dcdef 30%, transparent) 100%, transparent), 0 8px 10px -6px color-mix(in oklab, color-mix(in oklab, lab(78.3298% 26.2195 -34.9499) 30%, transparent) 100%, transparent);
   }
 }
 
@@ -68,7 +69,7 @@
   border: none;
   border-radius: 12px;
   color: #fff;
-  background-image: linear-gradient(#f6339a, #ad46ff);
+  background-image: linear-gradient(#67c0ff, #98d4ff);
   box-shadow: 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 0 rgba(0, 0, 0, 0), 0 10px 15px -3px color-mix(in oklab, color-mix(in oklab, lab(63.6946% 47.6127 -59.2066) 40%, transparent) 100%, transparent), 0 4px 6px -4px color-mix(in oklab, color-mix(in oklab, lab(63.6946% 47.6127 -59.2066) 40%, transparent) 100%, transparent);
   cursor: pointer;
 

@@ -35,8 +35,13 @@ export const useAiChatProps = ({
   }
 
   const onElementSelect = (el) => {
-    
-    const nodeInfo = extractNodeInfo({el, target: generatedUiRef.current, getPathBy: "id"});
+    setIsEmpty(false);
+
+    const nodeInfo = extractNodeInfo({
+      el,
+      target: generatedUiRef.current,
+      getPathBy: "id",
+    });
 
     const badge = document.createElement("span");
     badge.dataset.badge = "true";
@@ -44,60 +49,50 @@ export const useAiChatProps = ({
     badge.textContent = `<${nodeInfo.tag} />` + `(${nodeInfo.id})`;
     badge.contentEditable = false;
 
+    if (textAreaRef.current.innerHTML === "<br>") {
+      textAreaRef.current.innerHTML = "";
+    }
+
     textAreaRef.current.appendChild(badge);
 
-    selectedElements.current.push(nodeInfo.id)
+    selectedElements.current.push(nodeInfo.id);
 
-    setInputFocus()
+    setInputFocus();
     setIsInspectEnabled(false);
-    updateEmptyState()
-  }
+  };
 
   const handleInspect = () => {
     setIsInspectEnabled(true);
     enableInspectMode(onElementSelect, generatedUiRef.current);
-  }
+  };
 
   const handleSend = (e) => {
     e.preventDefault();
     const text = textAreaRef.current.innerHTML;
-    if(!text.trim()) return;
-    
-    setMessages(prev => [...prev, { from: "user", text }]);
+    if (!text.trim()) return;
+
+    setMessages((prev) => [...prev, { from: "user", text }]);
     setInputFocus();
     textAreaRef.current.innerHTML = "";
 
     setTimeout(() => {
-      setMessages(prev => [...prev, { from: "ai", text: "Generating..." }])
-    }, 1000)
-  }
+      setMessages((prev) => [...prev, { from: "ai", text: "Generating..." }]);
+    }, 1000);
+  };
 
   const updateEmptyState = () => {
     const el = textAreaRef.current;
     if (!el) return;
-  
+
     const hasText = el.innerText.trim().length > 0 || el.innerHTML !== "<br>";
     const hasBadges = el.querySelector("[data-badge]") !== null;
-  
+
     setIsEmpty(!hasText && !hasBadges);
-  }
+  };
 
   const handleInput = () => {
-
-    const el = textAreaRef.current;
-
-    if (!el) return;
-  
-    // const text = Array.from(el.childNodes)
-    //   .map((node) => {
-    //     if (node.nodeType === Node.TEXT_NODE) return node.textContent;
-    //     if (node.dataset?.badge) return `[[${node.textContent}]]`;
-    //     return "";
-    //   })
-    //   .join("");
-  
-    updateEmptyState()
-  }
+    updateEmptyState();
+  };
 
   const handleKeyDown = (e) => {
     if (e.key !== "Backspace") return;

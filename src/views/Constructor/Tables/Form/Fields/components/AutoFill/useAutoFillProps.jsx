@@ -7,7 +7,7 @@ export const useAutoFillProps = ({ control, mainForm }) => {
 
   const selectedAutofillTableSlug = useWatch({
     control,
-    name: "autofill_table",
+    name: "attributes.autofill_table",
   });
 
   const layoutRelations = useWatch({

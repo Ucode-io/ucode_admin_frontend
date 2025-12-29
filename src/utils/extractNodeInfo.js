@@ -9,12 +9,12 @@ export function highlight(el, type) {
     overlay.style.pointerEvents = "none";
     overlay.style.zIndex = "999999";
 
-    if(type === "filled") {
-      overlay.style.border = "2px solid #62c0ff";
-      overlay.style.background = "rgba(69, 125, 255, 0.45)";
+    if (type === "filled") {
+      overlay.style.border = "1px solid #62c0ff";
+      overlay.style.background = "rgba(69, 125, 255, 0.2)";
     } else {
-      overlay.style.border = "2px dashed #62c0ff";
-      overlay.style.background = "rgba(99,102,241,0.09)";
+      overlay.style.border = "1px dashed #62c0ff";
+      // overlay.style.background = "rgba(99,102,241,0.09)";
     }
     document.body.appendChild(overlay);
   }

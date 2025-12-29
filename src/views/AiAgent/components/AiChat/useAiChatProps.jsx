@@ -1,24 +1,36 @@
-import { enableInspectMode, extractNodeInfo, highlight, removeHighlight } from "@/utils/enableInspectMode";
+import { useInspectMode } from "@/hooks/useInspectMode";
+import cls from "./styles.module.scss";
+import {
+  extractNodeInfo,
+  // highlight,
+  // removeHighlight,
+} from "@/utils/extractNodeInfo";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useHighlight } from "@/hooks/useHighlight";
 
-export const useAiChatProps = ({
-  setMessages,
-  messages,
-  generatedUiRef,
-}) => {
+export const useAiChatProps = ({ setMessages, messages, generatedUiRef }) => {
   const navigate = useNavigate();
 
   const chatBodyRef = useRef(null);
   const textAreaRef = useRef(null);
-  const selectedElements = useRef([])
+  const selectedElements = useRef([]);
 
-  const [isEmpty, setIsEmpty] = useState(!textAreaRef.current || textAreaRef.current?.innerText.trim().length === 0 || textAreaRef.current?.innerHTML === "<br>");
-  const [isInspectEnabled, setIsInspectEnabled] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(
+    !textAreaRef.current ||
+      textAreaRef.current?.innerText.trim().length === 0 ||
+      textAreaRef.current?.innerHTML === "<br>",
+  );
 
+  const { enableInspectMode, disableInspectMode, inspectEnabled } =
+    useInspectMode({
+      onSelect: onElementSelect,
+      target: generatedUiRef.current,
+    });
+
+  const { addHighlight, removeHighlight } = useHighlight("filled");
 
   const setInputFocus = () => {
-
     const el = textAreaRef.current;
 
     const range = document.createRange();
@@ -32,9 +44,9 @@ export const useAiChatProps = ({
     selection.addRange(range);
 
     el.focus();
-  }
+  };
 
-  const onElementSelect = (el) => {
+  function onElementSelect(el) {
     setIsEmpty(false);
 
     const nodeInfo = extractNodeInfo({
@@ -43,33 +55,43 @@ export const useAiChatProps = ({
       getPathBy: "id",
     });
 
+    const clearBadge = document.createElement("span");
+    clearBadge.className = cls.badgeClearBtn;
+    clearBadge.dataset.clearBtn = "true";
+
     const badge = document.createElement("span");
+    badge.className = cls.badge;
     badge.dataset.badge = "true";
-    badge.id = nodeInfo.id;
+    badge.id = nodeInfo.id || "";
     badge.textContent = `<${nodeInfo.tag} />` + `(${nodeInfo.id})`;
     badge.contentEditable = false;
+
+    badge.appendChild(clearBadge);
 
     if (textAreaRef.current.innerHTML === "<br>") {
       textAreaRef.current.innerHTML = "";
     }
 
     textAreaRef.current.appendChild(badge);
+    textAreaRef.current.appendChild(document.createTextNode("\u00A0"));
 
     selectedElements.current.push(nodeInfo.id);
 
     setInputFocus();
-    setIsInspectEnabled(false);
-  };
+  }
 
   const handleInspect = () => {
-    setIsInspectEnabled(true);
-    enableInspectMode(onElementSelect, generatedUiRef.current);
+    if (inspectEnabled) {
+      disableInspectMode();
+    } else {
+      enableInspectMode();
+    }
   };
 
   const handleSend = (e) => {
     e.preventDefault();
-    const text = textAreaRef.current.innerHTML;
-    if (!text.trim()) return;
+    const text = textAreaRef.current.innerHTML.trim();
+    if (!text) return;
 
     setMessages((prev) => [...prev, { from: "user", text }]);
     setInputFocus();
@@ -94,14 +116,20 @@ export const useAiChatProps = ({
     updateEmptyState();
   };
 
+  const handleClick = (e) => {
+    if (e.target.dataset.clearBtn) {
+      textAreaRef.current.removeChild(e.target.parentElement);
+    }
+  };
+
   const handleKeyDown = (e) => {
     if (e.key !== "Backspace") return;
-  
+
     const sel = window.getSelection();
     if (!sel || !sel.rangeCount) return;
-  
+
     const range = sel.getRangeAt(0);
-  
+
     if (!range.collapsed) {
       const contents = range.cloneContents();
       const badge = contents.querySelector?.("[data-badge]");
@@ -112,9 +140,9 @@ export const useAiChatProps = ({
         return;
       }
     }
-  
+
     let node = range.startContainer;
-  
+
     if (node.nodeType === 1 && node.dataset?.badge) {
       e.preventDefault();
       const badge = node;
@@ -122,15 +150,12 @@ export const useAiChatProps = ({
       updateEmptyState();
       return;
     }
-  
+
     if (node.nodeType === 3) {
-      let prev =
-        range.startOffset === 0
-          ? node.previousSibling
-          : null;
+      let prev = range.startOffset === 0 ? node.previousSibling : null;
 
       if (!prev && range.startOffset > 0) return;
-  
+
       if (prev?.dataset?.badge) {
         e.preventDefault();
         prev.remove();
@@ -141,31 +166,30 @@ export const useAiChatProps = ({
   };
 
   const handleMouseMove = (e) => {
-
     removeHighlight();
 
     const badge = e.target;
-  
-    if(badge.dataset.badge) {
+
+    if (badge.dataset.badge && badge.id) {
       const selectedNode = generatedUiRef.current.querySelector(`#${badge.id}`);
 
-      if(!selectedNode) return;
+      if (!selectedNode) return;
 
-      highlight(selectedNode, "filled");
+      addHighlight(selectedNode);
     }
-  }
+  };
 
   const handleMouseLeave = () => {
     removeHighlight();
-  }
+  };
 
-  const onBackClick = () => navigate("/")
+  const onBackClick = () => navigate("/");
 
   useEffect(() => {
     if (chatBodyRef.current) {
       chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
     }
-  }, [messages])
+  }, [messages]);
 
   return {
     handleSend,
@@ -176,8 +200,9 @@ export const useAiChatProps = ({
     isEmpty,
     handleInput,
     handleKeyDown,
-    isInspectEnabled,
+    isInspectEnabled: inspectEnabled,
     handleMouseMove,
     handleMouseLeave,
-  }
-}
+    handleClick,
+  };
+};

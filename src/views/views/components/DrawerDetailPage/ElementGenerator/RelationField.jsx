@@ -16,6 +16,7 @@ import { Box, Tooltip } from "@mui/material";
 import IconGenerator from "@/components/IconPicker/IconGenerator";
 import { getRelationFieldTabsLabel } from "@/utils/getRelationFieldLabel";
 import { showAlert } from "@/store/alert/alert.thunk";
+import { useViewContext } from "@/providers/ViewProvider";
 
 const RelationField = ({
   control,
@@ -95,6 +96,19 @@ const AutoCompleteElement = ({
   isMulti,
   updateObject = () => {},
 }) => {
+  const { view } = useViewContext();
+
+  const tables = useSelector((state) => state.auth.tables);
+
+  let relationTableSlug = "";
+
+  if (field?.id.includes("#")) {
+    relationTableSlug = field?.id.split("#")[0];
+  } else if (field?.type === "LOOKUP") {
+    relationTableSlug = field?.table_slug;
+  }
+
+  const [objectIdFromJWT, setObjectIdFromJWT] = useState();
   const [inputValue, setInputValue] = useState("");
   const [localValue, setLocalValue] = useState([]);
 
@@ -396,8 +410,19 @@ const AutoCompleteElement = ({
       new Set(allOptions?.map(JSON.stringify)),
     ).map(JSON.parse);
 
+    if (relationTableSlug === "client_type") {
+      return uniqueObjects?.filter(
+        (item) => item?.table_slug === view?.table_slug,
+      );
+    }
+
+    if (field?.attributes?.object_id_from_jwt && objectIdFromJWT) {
+      return uniqueObjects?.filter((item) => {
+        return item?.guid === objectIdFromJWT;
+      });
+    }
     return uniqueObjects ?? [];
-  }, [allOptions]);
+  }, [allOptions, autoFilters]);
 
   const computedValueMulti = useMemo(() => {
     if (!value) return [];
@@ -538,6 +563,14 @@ const AutoCompleteElement = ({
     setValue((prev) => prev.filter((el) => el !== row.guid));
   };
 
+  useEffect(() => {
+    tables?.forEach((table) => {
+      if (table.table_slug === relationTableSlug) {
+        setObjectIdFromJWT(table?.object_id);
+      }
+    });
+  }, [tables, relationTableSlug, field]);
+
   const dispatch = useDispatch();
 
   const onMenuOpen = () => setEnabled(true);
@@ -593,6 +626,7 @@ const AutoCompleteElement = ({
           required={required}
           defaultValue={value ?? ""}
           className=""
+          defaultInputValue=""
           isMulti={isMulti}
           onChange={(e) => {
             if (e === null && required) {

@@ -452,7 +452,6 @@ const BlockItem = ({
                 }}
                 className="childMenuIcon"
               >
-                {console.log({ element })}
                 {
                   isValidUrl(element?.icon) ? (
                     <img width={"24px"} height={"24px"} src={element?.icon} />

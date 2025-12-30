@@ -267,8 +267,6 @@ const AutoCompleteElement = ({
         (rowItem) => rowItem?.slug === item?.field_from,
       )?.value;
 
-      console.log({ autoFilterFromCellValue });
-
       const key = item?.field_to;
       if (key) result[key] = autoFilterFromCellValue;
     });

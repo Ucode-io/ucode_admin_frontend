@@ -1,4 +1,3 @@
-import { useUiSpecFromAi } from "@/hooks/useUiSpecFromAi";
 import { useRef, useState } from "react";
 
 const customMessages = [
@@ -38,52 +37,27 @@ const customMessages = [
 
 export const useAiAgentProps = () => {
   const generatedUiRef = useRef(null);
-  const inputRef = useRef(null);
-
-  const [prompt, setPrompt] = useState("");
-  const [showInput, setShowInput] = useState(true);
-
-  const [hasChatHistory] = useState(true);
   const [messages, setMessages] = useState(customMessages);
 
   const [isChatVisible, setChatVisible] = useState(true);
 
-  const recommendedPrompts = [
-    "Create a modern dashboard design",
-    "Generate a landing page for SaaS",
-    "Design a mobile app interface",
-    "Build an e-commerce product card",
-  ];
+  // const recommendedPrompts = [
+  //   "Create a modern dashboard design",
+  //   "Generate a landing page for SaaS",
+  //   "Design a mobile app interface",
+  //   "Build an e-commerce product card",
+  // ];
 
-  const { status, uiSpec, run } = useUiSpecFromAi({
-    endpoint: "https://admin-api.ucode.run/v1/ai/ui",
-    payload: {
-      prompt,
-      // если нужно — добавь management_system / project_type
-    },
-  });
-
-  const sendPrompt = () => {
-    run();
-  };
+  const isLoading = false;
 
   const handleFullScreen = () => setChatVisible(!isChatVisible);
 
   return {
-    status,
-    showInput,
-    setShowInput,
-    recommendedPrompts,
-    prompt,
-    setPrompt,
-    inputRef,
-    sendPrompt,
-    uiSpec,
     handleFullScreen,
-    hasChatHistory,
     messages,
     setMessages,
     generatedUiRef,
     isChatVisible,
+    isLoading,
   };
 };

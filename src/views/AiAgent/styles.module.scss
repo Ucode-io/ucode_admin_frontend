@@ -21,14 +21,8 @@
 
 .container {
   height: 100vh;
-}
-
-.container.hasChatHistory {
+  position: relative;
   display: flex;
-}
-
-.generatedUi {
-  flex-grow: 1;
 }
 
 .fullScreenBtn {

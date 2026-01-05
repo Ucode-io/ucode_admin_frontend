@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Preview</title>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <script type="module">
+      let currentScriptUrl = null;
+
+      window.addEventListener("message", (event) => {
+        if (!event.data || event.data.type !== "EXECUTE") return;
+
+        // cleanup старого кода
+        if (currentScriptUrl) {
+          URL.revokeObjectURL(currentScriptUrl);
+          currentScriptUrl = null;
+        }
+
+        const blob = new Blob([event.data.code], {
+          type: "text/javascript",
+        });
+
+        const script = document.createElement("script");
+        script.type = "module";
+        currentScriptUrl = URL.createObjectURL(blob);
+        script.src = currentScriptUrl;
+
+        document.body.appendChild(script);
+      });
+
+      // сообщаем родителю, что iframe готов
+      window.parent.postMessage({ type: "READY" }, "*");
+    </script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+.fileTree {
+  width: 220px;
+  border-right: 1px solid #e5e9eb;
+  background: #fff;
+  color: #1e1e1e;
+}
+
+.file {
+  padding: 4px 12px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f6f8f9;
+  }
+}

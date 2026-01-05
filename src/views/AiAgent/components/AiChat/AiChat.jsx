@@ -10,9 +10,6 @@ import clsx from "clsx";
 export const AiChat = ({
   messages = [],
   setMessages = () => {},
-  setPrompt = () => {},
-  sendPrompt = () => {},
-  prompt,
   generatedUiRef,
   visible,
 }) => {
@@ -29,14 +26,7 @@ export const AiChat = ({
     handleMouseMove,
     handleMouseLeave,
     handleClick,
-  } = useAiChatProps({
-    setMessages,
-    messages,
-    setPrompt,
-    sendPrompt,
-    prompt,
-    generatedUiRef,
-  });
+  } = useAiChatProps({ setMessages, messages, generatedUiRef });
 
   return (
     <div className={clsx(cls.aiChat, { [cls.visible]: visible })}>

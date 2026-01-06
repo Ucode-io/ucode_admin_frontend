@@ -81,9 +81,9 @@ import LanguageControl from "../components/LayoutSidebar/Components/LanguageCont
 import LayoutSettings from "../views/Objects/LayoutSettings";
 import ChartDb from "../views/ChartDb";
 import NewObjectsFormPage from "../views/Objects/NewObjectsFormPage";
-import NewObjectsPage from "../views/Objects/NewObjectsPage";
+// import NewObjectsPage from "../views/Objects/NewObjectsPage";
 import DocView from "../views/Objects/DocView";
-// import { Views } from "@/views/views";
+import { Views } from "@/views/views";
 import { AiAgent } from "@/views/AiAgent";
 
 const AuthLayoutDesign = lazy(
@@ -403,11 +403,11 @@ const NewRouter = ({ resetQueryClient }) => {
             </Route>
           </Route>
 
-          {/* <Route path=":menuId" element={<Views />} /> */}
-          <Route
+          <Route path=":menuId" element={<Views />} />
+          {/* <Route
             path=":menuId"
             element={<ReloadWrapper component={NewObjectsPage} />}
-          />
+          /> */}
           <Route path=":menuId/templates" element={<DocumentTemplates />} />
 
           <Route path=":menuId/object/:tableSlug/docs" element={<DocView />} />

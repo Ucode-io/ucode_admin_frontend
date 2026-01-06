@@ -30,12 +30,15 @@ export const useAiResultProps = ({ generatedUiRef }) => {
   }
 
   const tabContent = {
-    app: <ResultApp ref={generatedUiRef} />,
-    code: <ResultCode 
-      editor={editorRef.current}
-      monaco={monacoRef.current}
-      handleEditorMount={handleEditorMount}
-    />,
+    app: <ResultApp />,
+    code: (
+      <ResultCode
+        editor={editorRef.current}
+        monaco={monacoRef.current}
+        handleEditorMount={handleEditorMount}
+        ref={generatedUiRef}
+      />
+    ),
   };
 
   // const runCode = async () => {

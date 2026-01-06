@@ -191,6 +191,17 @@ export const useAiChatProps = ({ setMessages, messages, generatedUiRef }) => {
     }
   }, [messages]);
 
+  useEffect(() => {
+    const onMessage = (e) => {
+      if (e.data?.type === "INSPECT_SELECT") {
+        console.log("Selected:", e.data);
+      }
+    };
+
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
+
   return {
     handleSend,
     chatBodyRef,

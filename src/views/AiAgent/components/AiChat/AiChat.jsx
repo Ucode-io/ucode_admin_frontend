@@ -28,6 +28,20 @@ export const AiChat = ({
     handleClick,
   } = useAiChatProps({ setMessages, messages, generatedUiRef });
 
+  const enableInspect = () => {
+    generatedUiRef.current.contentWindow?.postMessage(
+      { type: "INSPECT_ON" },
+      "*",
+    );
+  };
+
+  const disableInspect = () => {
+    generatedUiRef.current.contentWindow?.postMessage(
+      { type: "INSPECT_OFF" },
+      "*",
+    );
+  };
+
   return (
     <div className={clsx(cls.aiChat, { [cls.visible]: visible })}>
       <div className={cls.aiChatHeader}>
@@ -66,7 +80,8 @@ export const AiChat = ({
                 [cls.active]: isInspectEnabled,
               })}
               type="button"
-              onClick={handleInspect}
+              // onClick={handleInspect}
+              onClick={enableInspect}
             >
               <HighlightAltIcon />
             </button>

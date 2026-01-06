@@ -552,12 +552,15 @@ export const useViewsProps = ({ isRelationView }) => {
     updateViewMutation.mutate(data);
   };
 
+  const [defaultFiltersMap, setDefaultFiltersMap] = useState({});
+
   const { isLoading: isLoadingTable } = useTableByIdQuery({
     id: menuItem?.table_id,
     queryParams: {
       enabled: !!menuItem?.table_id,
       onSuccess: (res) => {
         setAuthInfo(res?.attributes?.auth_info);
+        setDefaultFiltersMap(res?.attributes?.default_filters);
         viewForm.reset(res);
       },
     },
@@ -746,5 +749,7 @@ export const useViewsProps = ({ isRelationView }) => {
     viewsLoader: false,
     setViewsLoader: () => {},
     isLoadingViews,
+    defaultFiltersMap,
+    setDefaultFiltersMap,
   };
 };

@@ -8,6 +8,7 @@ import HFQuarterPicker from "./HFQuarterPicker";
 import HFYearPicker from "./HFYearPicker";
 import styles from "./style.module.scss";
 import InputMask from "react-input-mask";
+import { CloseIcon } from "@/assets/icons/icon";
 
 function HFDatePickerNew({
   withTime = false,
@@ -17,6 +18,9 @@ function HFDatePickerNew({
   onClose = () => {},
   row,
   defaultOpen,
+  value: valueProp,
+  clearable = false,
+  ...props
 }) {
   const dateRef = useRef(null);
 
@@ -27,11 +31,11 @@ function HFDatePickerNew({
 
   const [inputValue, setInputValue] = useState("");
 
-  const value = row?.value;
+  const value = row?.value || valueProp;
 
   const onChange = (value) => {
     handleChange({
-      value: value.toISOString(),
+      value: value ? value.toISOString() : null,
       name: row?.slug,
       rowId: row?.guid,
     });
@@ -67,7 +71,9 @@ function HFDatePickerNew({
           gap: "8px",
           fontSize: "12px",
           height: "30px",
+          position: "relative",
         }}
+        {...props}
       >
         <InputMask
           mask={withTime ? "99.99.9999 99:99" : "99.99.9999"}
@@ -92,6 +98,11 @@ function HFDatePickerNew({
             }
 
             setInputValue(raw);
+
+            if (raw === "") {
+              onChange(null);
+              return;
+            }
 
             try {
               const parsed = parse(raw, formatString, new Date());
@@ -126,13 +137,33 @@ function HFDatePickerNew({
         </InputMask>
         <Box
           ref={dateRef}
-          sx={{ marginRight: "24px", cursor: "pointer" }}
+          sx={{
+            marginRight: "24px",
+            cursor: "pointer",
+          }}
           onClick={(e) => {
             !disabled && setAnchorEl(e.currentTarget);
           }}
         >
           <img src="/table-icons/date-time.svg" alt="" />
         </Box>
+        {clearable && inputValue ? (
+          <Box
+            sx={{
+              position: "absolute",
+              right: "8px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              cursor: "pointer",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onChange(null);
+            }}
+          >
+            <CloseIcon />
+          </Box>
+        ) : null}
       </Box>
 
       <Popover

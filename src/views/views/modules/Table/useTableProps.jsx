@@ -93,7 +93,8 @@ export const useTableProps = ({ tab }) => {
     getValues,
   } = fieldsForm;
 
-  const { orderBy, setSortedDatas, sortedDatas } = useFilterContext();
+  const { orderBy, setSortedDatas, sortedDatas, defaultFiltersMap } =
+    useFilterContext();
 
   const tableLan = useGetLang("Table");
 
@@ -293,6 +294,7 @@ export const useTableProps = ({ tab }) => {
         computedSortColumns,
         checkedColumns,
         menuId,
+        defaultFiltersMap,
       },
     ],
     queryFn: () => {
@@ -306,6 +308,7 @@ export const useTableProps = ({ tab }) => {
             offset: pageToOffset(currentPage, limit),
             order: computedSortColumns,
             view_fields: checkedColumns,
+            ...defaultFiltersMap,
             search: tableSearch,
             [`${selectedV?.relation_table_slug || selectedV?.table_slug}_id`]:
               isRelationView ? selectedV?.detailId : undefined,

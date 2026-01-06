@@ -36,7 +36,6 @@ export const useColumnsVisibilityProps = () => {
     onSuccess: (data) => {
       if (isRelationView && viewsList?.length > 1) {
         refetchRelationViews();
-        // return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
       } else if (!isRelationView) {
         dispatch(viewsActions.updateView({ view: data, id: view?.id }));
       } else {
@@ -44,24 +43,6 @@ export const useColumnsVisibilityProps = () => {
       }
     },
   });
-
-  // const mutation = useMutation({
-  //   mutationFn: async (data) => {
-  //     await constructorViewService.update(tableSlug, data);
-
-  //     if (isRelationView && viewsList?.length > 1) {
-  //       refetchRelationViews();
-  //       // return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
-  //     } else if (!isRelationView) {
-  //       dispatch(viewsActions.updateView({ view: data, id: view?.id }));
-  //     } else {
-  //       return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST"]);
-  //     }
-  //   },
-  //   onSuccess: (data) => {
-  //     // refetchViews();
-  //   },
-  // });
 
   const visibleFields =
     view?.columns
@@ -77,7 +58,7 @@ export const useColumnsVisibilityProps = () => {
       return !view?.columns?.includes(
         field?.type === "LOOKUP" || field?.type === "LOOKUPS"
           ? field.relation_id
-          : field.id
+          : field.id,
       );
     }) ?? [];
 
@@ -88,7 +69,7 @@ export const useColumnsVisibilityProps = () => {
   const renderFields = visibleFields?.filter((column) =>
     search === ""
       ? true
-      : getLabel(column)?.toLowerCase().includes(search.toLowerCase())
+      : getLabel(column)?.toLowerCase().includes(search.toLowerCase()),
   );
 
   const onChange = (column, checked) => {
@@ -118,22 +99,11 @@ export const useColumnsVisibilityProps = () => {
           visible_field: visible_field,
         },
       });
-      // updateViewMutation.mutate({
-      //   ...view,
-      //   attributes: {
-      //     ...view?.attributes,
-      //     visible_field: visible_field,
-      //   },
-      // });
     } else {
       handleUpdateView({
         ...view,
         columns: checked ? [...columns, id] : columns.filter((c) => c !== id),
       });
-      // updateViewMutation.mutate({
-      //   ...view,
-      //   columns: checked ? [...columns, id] : columns.filter((c) => c !== id),
-      // });
     }
   };
 

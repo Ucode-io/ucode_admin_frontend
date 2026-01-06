@@ -87,6 +87,8 @@ export const Views = ({
     viewsLoader,
     setViewsLoader,
     isLoadingViews,
+    defaultFiltersMap,
+    setDefaultFiltersMap,
   } = useViewsProps({ isRelationView });
 
   return (
@@ -164,6 +166,8 @@ export const Views = ({
             setOrderBy,
             setSortedDatas,
             sortedDatas,
+            defaultFiltersMap,
+            setDefaultFiltersMap,
           }}
         >
           <FieldsProvider

@@ -140,19 +140,13 @@ export const useDefaultFiltersProps = ({ handleClosePopover }) => {
       case FIELD_TYPES.DATE:
       case FIELD_TYPES.DATE_TIME:
       case FIELD_TYPES.DATE_TIME_WITHOUT_TIME_ZONE:
-        return <DefaultFilterDate 
-          field={field}
-          value={defaultFiltersMap[field.slug]}
-          handleChange={(value) => handleChange(value, field.slug)}
-        />
-        // return <HFDatePickerNew
-        //   border="1px solid #EAECF0"
-        //   borderRadius="6px"
-        //   paddingLeft="10px"
-        //   value={defaultFiltersMap[field.slug] ? new Date(defaultFiltersMap[field.slug]) : null}
-        //   handleChange={(value) => handleChange(value.value, field.slug)}
-        //   clearable
-        // />
+        return (
+          <DefaultFilterDate
+            field={field}
+            value={defaultFiltersMap[field.slug]}
+            handleChange={(value) => handleChange(value, field.slug)}
+          />
+        );
       case FIELD_TYPES.NUMBER:
         return <input 
           defaultValue={defaultFiltersMap[field.slug]}

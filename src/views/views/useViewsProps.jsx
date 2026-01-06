@@ -560,7 +560,7 @@ export const useViewsProps = ({ isRelationView }) => {
       enabled: !!menuItem?.table_id,
       onSuccess: (res) => {
         setAuthInfo(res?.attributes?.auth_info);
-        setDefaultFiltersMap(res?.attributes?.default_filters);
+        setDefaultFiltersMap(res?.attributes?.default_filters || {});
         viewForm.reset(res);
       },
     },

@@ -16,11 +16,10 @@ dist-ssr
 
 yarn.lock
 *.local
-env.development
-env.dev
-env.staging
-env.production
 .env.demo
+.env.development
+.env.staging
+.env.production
 
 
 # Editor directories and files

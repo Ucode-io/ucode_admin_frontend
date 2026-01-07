@@ -35,6 +35,22 @@ export function virtualFsPlugin(fs) {
           }
         }
 
+        if (args.path === "react") {
+          return { path: "/shims/react.js", namespace: "virtual" };
+        }
+
+        if (args.path === "react-dom") {
+          return { path: "/shims/react-dom.js", namespace: "virtual" };
+        }
+
+        if (args.path === "react-dom/client") {
+          return { path: "/shims/react-dom-client.js", namespace: "virtual" };
+        }
+
+        if (args.path === "axios") {
+          return { path: "/shims/axios.js", namespace: "virtual" };
+        }                
+
         // 4️⃣ 🚨 BARE IMPORTS (react, react-dom, etc)
         // НЕ трогаем — пусть esbuild сам обработает + external
         return null

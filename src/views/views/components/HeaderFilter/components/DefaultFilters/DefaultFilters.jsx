@@ -18,7 +18,7 @@ export const DefaultFilters = ({ onBackClick, handleClosePopover }) => {
           variant="ghost"
           w="fit-content"
           onClick={() => {
-            onBackClick()
+            onBackClick();
           }}
         >
           <Box color="#475467" fontSize={16} fontWeight={600}>
@@ -26,21 +26,25 @@ export const DefaultFilters = ({ onBackClick, handleClosePopover }) => {
           </Box>
         </Button>
       </Box>
-      <Box 
-        maxHeight="300px"
-        overflow="auto"
-        marginTop="10px"
-      >
+      <Box maxHeight="300px" overflow="auto" marginTop="10px">
         {allFields.map((item, index) => (
           <Box className={cls.item} key={index}>
             <Box className={cls.label}>
-              {item.attributes?.[`label_${i18n.language}`] || item.attributes?.label || ""}
+              {item.attributes?.[`label_${i18n.language}`] ||
+                item.attributes?.label ||
+                item.label ||
+                ""}
             </Box>
             <Box className={cls.value}>{filterGenerator(item)}</Box>
           </Box>
         ))}
       </Box>
-      <Box display="flex" justifyContent="flex-end" paddingTop="6px" borderTop="1px solid #E2E8F0">
+      <Box
+        display="flex"
+        justifyContent="flex-end"
+        paddingTop="6px"
+        borderTop="1px solid #E2E8F0"
+      >
         <PrimaryButton onClick={updateTable}>Save</PrimaryButton>
       </Box>
     </Box>

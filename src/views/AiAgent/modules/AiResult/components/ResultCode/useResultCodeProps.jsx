@@ -36,6 +36,86 @@ const project = {
     },
   ],
 };
+const projectV2 = {
+  files: [
+    {
+      content:
+        '{\n  "name": "enterprise-crm-admin-panel",\n  "version": "1.0.0",\n  "scripts": {\n    "dev": "vite",\n    "build": "vite build",\n    "serve": "vite preview"\n  },\n  "dependencies": {\n    "react": "^18.0.0",\n    "react-dom": "^18.0.0",\n    "axios": "^0.21.1"\n  },\n  "devDependencies": {\n    "vite": "^4.0.0",\n    "@vitejs/plugin-react": "^3.0.0",\n    "tailwindcss": "^3.0.0",\n    "postcss": "^8.0.0",\n    "autoprefixer": "^10.0.0"\n  }\n}',
+      path: "package.json",
+    },
+    {
+      content:
+        '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>Enterprise CRM Admin Panel</title>\n  <link rel="stylesheet" href="/src/index.css">\n</head>\n<body class="font-sans bg-gray-100">\n  <div id="root"></div>\n  <script type="module" src="/src/main.jsx"></script>\n</body>\n</html>',
+      path: "index.html",
+    },
+    {
+      content:
+        "import { defineConfig } from 'vite';\nimport react from '@vitejs/plugin-react';\n\nexport default defineConfig({\n  plugins: [react()]\n});",
+      path: "vite.config.js",
+    },
+    {
+      content:
+        "module.exports = {\n  content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],\n  theme: {\n    extend: {\n      fontFamily: {\n        sans: ['Inter', 'system-ui', 'sans-serif']\n      }\n    }\n  },\n  plugins: []\n};",
+      path: "tailwind.config.cjs",
+    },
+    {
+      content:
+        "module.exports = {\n  plugins: {\n    tailwindcss: {},\n    autoprefixer: {}\n  }\n};",
+      path: "postcss.config.cjs",
+    },
+    {
+      content:
+        "VITE_API_URL=https://api.admin.u-code.io\nVITE_PROJECT_ID=f1c4ae97-ee0f-4868-b4fc-1b26869ebc69\nVITE_MAIN_MENU_ID=c57eedc3-a954-4262-a0af-376c65b5a284\nVITE_X_API_KEY=P-wkLyW3aBURDx6oSwtlhk33WQn8Q3VhIc",
+      path: ".env.example",
+    },
+    {
+      content:
+        "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\nbody {\n  @apply bg-gray-100 text-gray-900;\n}\n\n.sidebar {\n  @apply fixed top-0 left-0 h-full w-72 bg-white shadow-md;\n}\n\n.content {\n  @apply ml-72 p-4;\n}",
+      path: "src/index.css",
+    },
+    {
+      content:
+        "import React from 'react';\nimport ReactDOM from 'react-dom/client';\nimport App from './App';\nimport './index.css';\n\nReactDOM.createRoot(document.getElementById('root')).render(\n  <React.StrictMode>\n    <App />\n  </React.StrictMode>\n);",
+      path: "src/main.jsx",
+    },
+    {
+      content:
+        "import React from 'react';\nimport Sidebar from './components/Sidebar';\nimport ContentArea from './components/ContentArea';\n\nfunction App() {\n  return (\n    <div className=\"flex\">\n      <Sidebar />\n      <ContentArea />\n    </div>\n  );\n}\n\nexport default App;",
+      path: "src/App.jsx",
+    },
+    {
+      content:
+        "import axios from 'axios';\n\nconst apiClient = axios.create({\n  baseURL: import.meta.env.VITE_API_URL,\n  headers: {\n    'Authorization': 'API-KEY',\n    'X-API-KEY': import.meta.env.VITE_X_API_KEY\n  }\n});\n\nexport const fetchSidebarMenus = () => {\n  return apiClient.get(`/v3/menus`, {\n    params: {\n      'parent_id': import.meta.env.VITE_MAIN_MENU_ID,\n      'project-id': import.meta.env.VITE_PROJECT_ID\n    }\n  });\n};\n\nexport const fetchTableDetails = (menuId) => {\n  return apiClient.get(`/v3/table_details`, {\n    params: {\n      'menu_id': menuId,\n      'project-id': import.meta.env.VITE_PROJECT_ID\n    }\n  });\n};",
+      path: "src/api.js",
+    },
+    {
+      content:
+        "import React, { useEffect, useState } from 'react';\nimport { fetchSidebarMenus } from '../api';\n\nfunction Sidebar() {\n  const [menus, setMenus] = useState([]);\n\n  useEffect(() => {\n    fetchSidebarMenus().then(response => {\n      setMenus(response.data.menus);\n    });\n  }, []);\n\n  return (\n    <div className=\"sidebar\">\n      <ul>\n        {menus.map(menu => (\n          <li key={menu.id} className=\"p-4 border-b\">\n            {menu.label}\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n}\n\nexport default Sidebar;",
+      path: "src/components/Sidebar.jsx",
+    },
+    {
+      content:
+        "import React, { useState } from 'react';\nimport GeneratedForm from './GeneratedForm';\nimport DataTable from './DataTable';\n\nfunction ContentArea() {\n  const [selectedMenu, setSelectedMenu] = useState(null);\n\n  return (\n    <div className=\"content\">\n      {selectedMenu ? (\n        <>\n          <GeneratedForm menuId={selectedMenu.id} />\n          <DataTable menuId={selectedMenu.id} />\n        </>\n      ) : (\n        <p>Select a menu item to view details.</p>\n      )}\n    </div>\n  );\n}\n\nexport default ContentArea;",
+      path: "src/components/ContentArea.jsx",
+    },
+    {
+      content:
+        'import React, { useEffect, useState } from \'react\';\nimport { fetchTableDetails } from \'../api\';\n\nfunction GeneratedForm({ menuId }) {\n  const [fields, setFields] = useState([]);\n\n  useEffect(() => {\n    fetchTableDetails(menuId).then(response => {\n      setFields(response.data.fields);\n    });\n  }, [menuId]);\n\n  return (\n    <form className="space-y-4">\n      {fields.map(field => {\n        switch (field.type) {\n          case \'SINGLE_LINE\':\n            return <input key={field.id} type="text" placeholder={field.label} className="w-full p-2 border" />;\n          case \'NUMBER\':\n            return <input key={field.id} type="number" placeholder={field.label} className="w-full p-2 border" />;\n          case \'TEXT\':\n            return <textarea key={field.id} placeholder={field.label} className="w-full p-2 border"></textarea>;\n          case \'BOOLEAN\':\n            return <label key={field.id} className="flex items-center">\n              <input type="checkbox" className="mr-2" /> {field.label}\n            </label>;\n          case \'DATE\':\n            return <input key={field.id} type="date" className="w-full p-2 border" />;\n          case \'ENUM\':\n            return (\n              <select key={field.id} className="w-full p-2 border">\n                {field.options.map(option => (\n                  <option key={option.value} value={option.value}>{option.label}</option>\n                ))}\n              </select>\n            );\n          default:\n            return null;\n        }\n      })}\n    </form>\n  );\n}\n\nexport default GeneratedForm;',
+      path: "src/components/GeneratedForm.jsx",
+    },
+    {
+      content:
+        'import React, { useEffect, useState } from \'react\';\nimport { fetchTableDetails } from \'../api\';\n\nfunction DataTable({ menuId }) {\n  const [data, setData] = useState([]);\n\n  useEffect(() => {\n    fetchTableDetails(menuId).then(response => {\n      setData(response.data.rows);\n    });\n  }, [menuId]);\n\n  return (\n    <table className="min-w-full bg-white">\n      <thead>\n        <tr>\n          {data.length > 0 && Object.keys(data[0]).map(key => (\n            <th key={key} className="py-2 px-4 border-b">{key}</th>\n          ))}\n        </tr>\n      </thead>\n      <tbody>\n        {data.map((row, index) => (\n          <tr key={index} className="hover:bg-gray-100">\n            {Object.values(row).map((value, i) => (\n              <td key={i} className="py-2 px-4 border-b">{value}</td>\n            ))}\n          </tr>\n        ))}\n      </tbody>\n    </table>\n  );\n}\n\nexport default DataTable;',
+      path: "src/components/DataTable.jsx",
+    },
+    {
+      content:
+        "# Enterprise CRM Admin Panel\n\nThis project is a frontend-only application built with React 18, Vite, and Tailwind CSS. It is designed to provide a light and professional ERP UI with a fixed left sidebar and content area to the right.\n\n## Setup\n\n1. Clone the repository.\n2. Install dependencies:\n   ```bash\n   npm install\n   ```\n3. Create a `.env` file based on `.env.example` and fill in the necessary environment variables.\n4. Run the development server:\n   ```bash\n   npm run dev\n   ```\n\n## Build\n\nTo build the project for production, run:\n```bash\nnpm run build\n```\n\n## Preview\n\nTo preview the production build, run:\n```bash\nnpm run serve\n```\n\n## Features\n\n- Light and professional ERP UI\n- Fixed left sidebar with dynamic menu fetching\n- Dynamic form and data table generation based on API responses\n\n## Technologies Used\n\n- React 18\n- Vite\n- Tailwind CSS\n- Axios\n",
+      path: "README.md",
+    },
+  ],
+  project_name: "enterprise-crm-admin-panel",
+};
 
 const fileTypeToLanguage = {
   html: "html",
@@ -46,7 +126,7 @@ const fileTypeToLanguage = {
   tsx: "typescript",
 };
 
-const files = project.files.reduce((acc, file) => {
+const files = projectV2.files.reduce((acc, file) => {
   acc[file.path] = {
     path: file.path,
     language:

@@ -66,6 +66,12 @@ export async function buildProject(monaco) {
 
     define: {
       "process.env.NODE_ENV": '"development"',
+      "import.meta.env": JSON.stringify({
+        VITE_API_URL: "https://admin-api.ucode.run",
+        VITE_PROJECT_ID: "f1c4ae97-ee0f-4868-b4fc-1b26869ebc69",
+        VITE_MAIN_MENU_ID: "c57eedc3-a954-4262-a0af-376c65b5a284",
+        VITE_X_API_KEY: "P-wkLyW3aBURDx6oSwtlhk33WQn8Q3VhIc",
+      }),
     },
   });
    

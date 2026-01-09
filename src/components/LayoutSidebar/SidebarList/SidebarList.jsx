@@ -1,8 +1,17 @@
-import { DndContext, DragOverlay, MouseSensor, pointerWithin, TouchSensor, useSensor, useSensors } from "@dnd-kit/core"
+import {
+  DndContext,
+  DragOverlay,
+  MouseSensor,
+  pointerWithin,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { useSidebarListProps } from "./useSidebarListProps";
 import { SidebarTree } from "./temp/SidebarTree";
 
 import cls from "./styles.module.scss";
+import SortableSidebarTree from "./temp/Temp";
 
 export const SidebarList = ({
   sidebarIsOpen,
@@ -15,7 +24,6 @@ export const SidebarList = ({
   setMenuList,
   getMenuList,
 }) => {
-
   const {
     handleDragEnd,
     activeId,
@@ -25,44 +33,50 @@ export const SidebarList = ({
     menuChilds,
     rootDropId,
   } = useSidebarListProps({ menuList, setMenuList, getMenuList });
-  
-  const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor)
-  );
+
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
   const activeItem = activeId
-  ? findItemEverywhere(activeId, { menuList, menuChilds })
-  : null;
-  
-  return <DndContext
-    sensors={sensors}
-    collisionDetection={pointerWithin}
-    onDragStart={({ active }) => setActiveId(active.id)}
-    onDragEnd={handleDragEnd}
-  >
+    ? findItemEverywhere(activeId, { menuList, menuChilds })
+    : null;
 
-    <SidebarTree
+  return (
+    <SortableSidebarTree
       menuList={menuList}
       setMenuList={setMenuList}
-      depth={0}
-      sidebarIsOpen={sidebarIsOpen}
-      setSubMenuIsOpen={setSubMenuIsOpen}
-      handleOpenNotify={handleOpenNotify}
-      selectedApp={selectedApp}
-      setSelectedFolder={setSelectedFolder}
-      setSelectedApp={setSelectedApp}
-      getMenuList={getMenuList}
-      menuStyle={{}}
-      rootDropId={rootDropId}
+      menuChilds={menuChilds}
+      activeItem={activeItem}
+      getMenuLabel={getMenuLabel}
     />
+  );
+  // <DndContext
+  //   sensors={sensors}
+  //   collisionDetection={pointerWithin}
+  //   onDragStart={({ active }) => setActiveId(active.id)}
+  //   onDragEnd={handleDragEnd}
+  // >
 
-    <DragOverlay dropAnimation={{ duration: 180, easing: 'cubic-bezier(0.2,0,0,1)' }}>
-      {activeItem && (
-        <div className={cls.dragOverlay}>
-          {getMenuLabel(activeItem)}
-        </div>
-      )}
-    </DragOverlay>
-  </DndContext>
-}
+  //   <SidebarTree
+  //     menuList={menuList}
+  //     setMenuList={setMenuList}
+  //     depth={0}
+  //     sidebarIsOpen={sidebarIsOpen}
+  //     setSubMenuIsOpen={setSubMenuIsOpen}
+  //     handleOpenNotify={handleOpenNotify}
+  //     selectedApp={selectedApp}
+  //     setSelectedFolder={setSelectedFolder}
+  //     setSelectedApp={setSelectedApp}
+  //     getMenuList={getMenuList}
+  //     menuStyle={{}}
+  //     rootDropId={rootDropId}
+  //   />
+
+  //   <DragOverlay dropAnimation={{ duration: 180, easing: 'cubic-bezier(0.2,0,0,1)' }}>
+  //     {activeItem && (
+  //       <div className={cls.dragOverlay}>
+  //         {getMenuLabel(activeItem)}
+  //       </div>
+  //     )}
+  //   </DragOverlay>
+  // </DndContext>
+};

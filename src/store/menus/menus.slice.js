@@ -13,8 +13,8 @@ export const { actions: menuAccordionActions, reducer: menuAccordionReducer } =
       toggleMenuOpen: (state, { payload }) => {
         const id = payload.id;
         state.menuChilds[id] = {
-          ...state.menuChilds[id],
-          open: !state.menuChilds[id].open,
+          ...state.menuChilds?.[id],
+          open: !state.menuChilds?.[id]?.open,
         };
       },
     },

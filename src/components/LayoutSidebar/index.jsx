@@ -528,7 +528,7 @@ const LayoutSidebar = ({
                 dispatch(mainActions.setSidebarHighlightedMenu(null))
               }
             >
-              <ChakraBaseProvider theme={theme}>
+              {/* <ChakraBaseProvider theme={theme}>
                 <SidebarList
                   handleOpenNotify={handleOpenNotify}
                   sidebarIsOpen={sidebarIsOpen}
@@ -540,8 +540,8 @@ const LayoutSidebar = ({
                   setSelectedApp={setSelectedApp}
                   getMenuList={getMenuList}
                 />
-              </ChakraBaseProvider>
-              {/* <Container
+              </ChakraBaseProvider> */}
+              <Container
                 dragHandleSelector=".column-drag-handle"
                 groupName="main-menu"
                 onDrop={onDrop}
@@ -581,7 +581,7 @@ const LayoutSidebar = ({
                     getMenuList={getMenuList}
                   />
                 ))}
-              </Container> */}
+              </Container>
 
               {Boolean(permissions?.menu_button) && (
                 <SidebarAppTooltip id="create" title="Create">

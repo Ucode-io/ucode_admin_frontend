@@ -2,39 +2,83 @@ import { useEffect, useRef } from "react";
 import { buildProject, initEsbuild } from "../../../../bundler/build";
 
 const project = {
-  project_name: "Enterprise CRM Admin Panel",
   files: [
     {
+      content:
+        '{\n  "name": "ucode-admin-panel",\n  "version": "1.0.0",\n  "private": true,\n  "scripts": {\n    "dev": "vite",\n    "build": "vite build",\n    "serve": "vite preview"\n  },\n  "dependencies": {\n    "axios": "^0.21.1",\n    "react": "^18.0.0",\n    "react-dom": "^18.0.0",\n    "react-icons": "^4.2.0"\n  },\n  "devDependencies": {\n    "@vitejs/plugin-react": "^1.0.0",\n    "autoprefixer": "^10.2.5",\n    "postcss": "^8.2.15",\n    "tailwindcss": "2.2.19",\n    "vite": "^2.4.4"\n  }\n}',
+      path: "package.json",
+    },
+    {
+      content:
+        "import { defineConfig } from 'vite';\nimport react from '@vitejs/plugin-react';\n\nexport default defineConfig({\n  plugins: [react()],\n  server: {\n    port: 3000\n  }\n});",
+      path: "vite.config.js",
+    },
+    {
+      content:
+        "module.exports = {\n  purge: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],\n  darkMode: 'class',\n  theme: {\n    extend: {},\n  },\n  variants: {\n    extend: {},\n  },\n  plugins: [],\n};",
+      path: "tailwind.config.cjs",
+    },
+    {
+      content:
+        "module.exports = {\n  plugins: {\n    tailwindcss: {},\n    autoprefixer: {},\n  },\n};",
+      path: "postcss.config.cjs",
+    },
+    {
+      content: "VITE_ADMIN_BASE_URL=https://admin-api.ucode.run",
+      path: ".env.example",
+    },
+    {
+      content:
+        "import React from 'react';\nimport ReactDOM from 'react-dom/client';\nimport './index.css';\nimport App from './App';\n\nconst root = ReactDOM.createRoot(document.getElementById('root'));\nroot.render(<App />);",
+      path: "src/main.jsx",
+    },
+    {
+      content:
+        "import React from 'react';\nimport DashboardLayout from './layouts/DashboardLayout';\nimport { BrowserRouter as Router, Routes, Route } from 'react-router-dom';\nimport DashboardHome from './pages/DashboardHome';\nimport DynamicTablePage from './pages/DynamicTablePage';\n\nfunction App() {\n  return (\n    <Router>\n      <DashboardLayout>\n        <Routes>\n          <Route path=\"/\" element={<DashboardHome />} />\n          <Route path=\"/table/:slug\" element={<DynamicTablePage />} />\n        </Routes>\n      </DashboardLayout>\n    </Router>\n  );\n}\n\nexport default App;",
       path: "src/App.jsx",
-      content:
-        "import React, { useState, useEffect } from 'react';\nimport axios from 'axios';\nimport Sidebar from './components/Sidebar';\nimport Header from './components/Header';\nimport ContentArea from './components/ContentArea';\n\nconst API_URL = 'https://api.admin.u-code.io/v3/menus?parent_id=96ae1665-19fb-40c9-b5c6-e6fef7f538db&project-id=7380859b-8dac-4fe3-b7aa-1fdfcdb4f5c1';\nconst API_KEY = 'P-oyMjPNZutmtcfQSnv1Lf3K55J80CkqyP';\n\nexport default function App() {\n  const [menus, setMenus] = useState([]);\n  const [activeLabel, setActiveLabel] = useState('Dashboard');\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    const fetchMenus = async () => {\n      try {\n        const response = await axios.get(API_URL, {\n          headers: {\n            'Authorization': 'API-KEY',\n            'X-API-KEY': API_KEY\n          }\n        });\n        setMenus(response.data.menus || []);\n      } catch (error) {\n        console.error('Error fetching menu:', error);\n      } finally {\n        setLoading(false);\n      }\n    };\n    fetchMenus();\n  }, []);\n\n  return (\n    <div className=\"flex h-screen bg-[#0a0a0a] text-zinc-300 font-sans\">\n      <Sidebar \n        menus={menus} \n        activeLabel={activeLabel} \n        setActiveLabel={setActiveLabel} \n        loading={loading} \n      />\n      <div className=\"flex-1 flex flex-col min-w-0 overflow-hidden\">\n        <Header activeLabel={activeLabel} />\n        <ContentArea activeLabel={activeLabel} />\n      </div>\n    </div>\n  );\n}",
     },
     {
-      path: "src/components/Sidebar.jsx",
       content:
-        'import React from \'react\';\n\nexport default function Sidebar({ menus, activeLabel, setActiveLabel, loading }) {\n  return (\n    <aside className="w-64 border-r border-zinc-800 bg-[#0f0f0f] flex flex-col">\n      <div className="p-6 border-b border-zinc-800">\n        <h1 className="text-white font-bold tracking-tight text-xl">CRM <span className="text-zinc-500 font-light">ADMIN</span></h1>\n      </div>\n      \n      <nav className="flex-1 overflow-y-auto p-4 space-y-1">\n        {loading ? (\n          <div className="animate-pulse space-y-4 px-2">\n            {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-4 bg-zinc-800 rounded w-full"></div>)}\n          </div>\n        ) : (\n          menus.map((menu) => (\n            <button\n              key={menu.id}\n              onClick={() => setActiveLabel(menu.label)}\n              className={`w-full text-left px-4 py-2.5 rounded-md text-sm transition-colors ${\n                activeLabel === menu.label \n                ? \'bg-zinc-800 text-white font-medium\' \n                : \'hover:bg-zinc-900 text-zinc-400 hover:text-zinc-200\'\n              }`}\n            >\n              {menu.label}\n            </button>\n          ))\n        )}\n      </nav>\n\n      <div className="p-4 border-t border-zinc-800">\n        <div className="flex items-center gap-3 px-2">\n          <div className="w-8 h-8 rounded-full bg-zinc-700"></div>\n          <div className="text-xs">\n            <p className="text-white font-medium">Admin User</p>\n            <p className="text-zinc-500">Enterprise Tier</p>\n          </div>\n        </div>\n      </div>\n    </aside>\n  );\n}',
-    },
-    {
-      path: "src/components/Header.jsx",
-      content:
-        'import React from \'react\';\n\nexport default function Header({ activeLabel }) {\n  return (\n    <header className="h-16 border-b border-zinc-800 bg-[#0a0a0a] flex items-center justify-between px-8">\n      <h2 className="text-sm font-medium text-zinc-400 uppercase tracking-widest">/ {activeLabel}</h2>\n      <div className="flex gap-4">\n        <div className="h-8 w-8 rounded bg-zinc-900 border border-zinc-800"></div>\n        <div className="h-8 w-8 rounded bg-zinc-900 border border-zinc-800"></div>\n      </div>\n    </header>\n  );\n}',
-    },
-    {
-      path: "src/components/ContentArea.jsx",
-      content:
-        'import React from \'react\';\n\nexport default function ContentArea({ activeLabel }) {\n  return (\n    <main className="flex-1 overflow-auto p-8 bg-[#0a0a0a]">\n      <div className="max-w-6xl mx-auto">\n        <div className="mb-8">\n          <h1 className="text-3xl font-semibold text-white">{activeLabel}</h1>\n          <p className="text-zinc-500 mt-2">Manage and overview your {activeLabel.toLowerCase()} data in real-time.</p>\n        </div>\n\n        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">\n          <div className="h-32 rounded-lg border border-zinc-800 bg-[#0f0f0f] p-6">\n            <p className="text-xs text-zinc-500 uppercase">Metric A</p>\n            <p className="text-2xl font-bold text-white mt-1">0.00</p>\n          </div>\n          <div className="h-32 rounded-lg border border-zinc-800 bg-[#0f0f0f] p-6">\n            <p className="text-xs text-zinc-500 uppercase">Metric B</p>\n            <p className="text-2xl font-bold text-white mt-1">0.00</p>\n          </div>\n          <div className="h-32 rounded-lg border border-zinc-800 bg-[#0f0f0f] p-6">\n            <p className="text-xs text-zinc-500 uppercase">Metric C</p>\n            <p className="text-2xl font-bold text-white mt-1">0.00</p>\n          </div>\n        </div>\n        \n        <div className="mt-8 h-96 rounded-lg border border-zinc-800 bg-[#0f0f0f] flex items-center justify-center border-dashed">\n           <p className="text-zinc-600 italic font-mono text-sm">Displaying view for: {activeLabel}</p>\n        </div>\n      </div>\n    </main>\n  );\n}',
-    },
-    {
-      path: "tailwind.config.js",
-      content:
-        "/** @type {import('tailwindcss').Config} */\nexport default {\n  content: [\n    \"./index.html\",\n    \"./src/**/*.{js,ts,jsx,tsx}\",\n  ],\n  theme: {\n    extend: {\n      fontFamily: {\n        sans: ['Inter', 'system-ui', 'sans-serif'],\n      },\n    },\n  },\n  plugins: [],\n}",
-    },
-    {
+        "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\nbody {\n  font-family: 'Inter', sans-serif;\n}\n\n.dark-mode {\n  background-color: #1a202c;\n  color: #cbd5e0;\n}",
       path: "src/index.css",
+    },
+    {
       content:
-        "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\nbody {\n  margin: 0;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n  background-color: #0a0a0a;\n}",
+        'import React, { useEffect, useState } from \'react\';\nimport Sidebar from \'../components/Sidebar\';\n\nconst DashboardLayout = ({ children }) => {\n  return (\n    <div className="flex">\n      <Sidebar />\n      <div className="ml-64 h-screen flex flex-col">\n        <header className="h-16 fixed top-0 left-64 right-0 z-30 bg-gray-900 text-white flex items-center justify-between px-4">\n          <h1 className="text-xl font-bold">ERP Admin Panel</h1>\n        </header>\n        <main className="flex-1 overflow-y-auto mt-16">\n          {children}\n        </main>\n      </div>\n    </div>\n  );\n};\n\nexport default DashboardLayout;',
+      path: "src/layouts/DashboardLayout.jsx",
+    },
+    {
+      content:
+        "import axios from 'axios';\n\nconst instance = axios.create({\n  baseURL: import.meta.env.VITE_ADMIN_BASE_URL,\n  headers: {\n    'Content-Type': 'application/json',\n    'Authorization': 'API-KEY',\n    'X-API-KEY': 'P-wkLyW3aBURDx6oSwtlhk33WQn8Q3VhIc'\n  }\n});\n\nexport default instance;",
+      path: "src/api/axios.js",
+    },
+    {
+      content:
+        'import React, { useEffect, useState } from \'react\';\nimport axios from \'../api/axios\';\n\nconst Sidebar = () => {\n  const [menus, setMenus] = useState([]);\n\n  useEffect(() => {\n    const fetchMenus = async () => {\n      const response = await axios.get(`/v3/menus?parent_id=c57eedc3-a954-4262-a0af-376c65b5a284&project-id=f1c4ae97-ee0f-4868-b4fc-1b26869ebc69`);\n      setMenus(response.data?.data?.menus || []);\n    };\n    fetchMenus();\n  }, []);\n\n  return (\n    <div className="h-screen w-64 fixed bg-gray-900 text-gray-300">\n      <nav className="mt-10">\n        {menus.map((menu) => (\n          <a key={menu.id} href={menu.path} className="flex items-center p-2 hover:bg-blue-600 hover:text-white">\n            <img src={menu.icon} className="w-5 h-5 filter invert brightness-200" onError={(e) => { e.currentTarget.style.display = \'none\'; }} />\n\n            <span className="ml-3 capitalize">{menu.name}</span>\n          </a>\n        ))}\n      </nav>\n    </div>\n  );\n};\n\nexport default Sidebar;',
+      path: "src/components/Sidebar.jsx",
+    },
+    {
+      content:
+        'import React, { useEffect, useState } from \'react\';\nimport axios from \'../api/axios\';\n\nconst DynamicTable = ({ slug }) => {\n  const [fields, setFields] = useState([]);\n\n  useEffect(() => {\n    const fetchTableDetails = async () => {\n      const response = await axios.post(`/v1/table-details/${slug}`, { data: {} });\n      setFields(response.data?.data?.data?.fields || []);\n    };\n    fetchTableDetails();\n  }, [slug]);\n\n  return (\n    <div className="table-container overflow-x-auto relative">\n      <table className="min-w-full border-collapse">\n        <thead className="bg-gray-800">\n          <tr>\n            {fields.map((field) => (\n              <th key={field.id} className="sticky top-0 z-20 border border-gray-700 text-gray-200 uppercase text-xs font-bold tracking-wider">\n                {field.name}\n              </th>\n            ))}\n          </tr>\n        </thead>\n        <tbody>\n          {/* Render table rows here */}\n        </tbody>\n      </table>\n    </div>\n  );\n};\n\nexport default DynamicTable;',
+      path: "src/components/DynamicTable.jsx",
+    },
+    {
+      content:
+        'import React from \'react\';\n\nexport const ElementLink = ({ value, disabled = true, required, placeholder = "", onBlur = () => {} }) => {\n  const [innerValue, setInnerValue] = React.useState(value);\n  return (\n    <label className="flex items-center gap-2 border border-gray-700 p-2 rounded-md bg-gray-800 shadow-sm focus-within:ring-2 ring-blue-500">\n      <input className="flex-1 outline-none bg-transparent text-white placeholder-gray-500" defaultValue={innerValue} disabled={disabled} required={required} placeholder={placeholder} onBlur={(e) => { onBlur(e); setInnerValue(e.target.value); }} />\n      <a href={innerValue} className={"ml-2 px-3 py-1 text-xs font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors " + (!innerValue ? "pointer-events-none opacity-50" : "") } target="_blank" rel="noreferrer">OPEN</a>\n    </label>\n  );\n};\n\nexport const ElementText = ({ row = {}, value }) => {\n  return <div className="text-sm text-gray-300 font-medium p-2">{value ?? row?.label}</div>;\n};',
+      path: "src/components/DynamicForm.jsx",
+    },
+    {
+      content:
+        'import React from \'react\';\n\nconst DashboardHome = () => {\n  return (\n    <div className="p-4">\n      <h2 className="text-2xl font-bold text-gray-300">Welcome to the ERP Admin Panel</h2>\n      <p className="mt-2 text-gray-400">Use the sidebar to navigate through the application.</p>\n    </div>\n  );\n};\n\nexport default DashboardHome;',
+      path: "src/pages/DashboardHome.jsx",
+    },
+    {
+      content:
+        "import React from 'react';\nimport { useParams } from 'react-router-dom';\nimport DynamicTable from '../components/DynamicTable';\n\nconst DynamicTablePage = () => {\n  const { slug } = useParams();\n  return (\n    <div className=\"p-4\">\n      <h2 className=\"text-2xl font-bold text-gray-300 capitalize\">{slug?.replace(/_/g, ' ')}</h2>\n      <DynamicTable slug={slug} />\n    </div>\n  );\n};\n\nexport default DynamicTablePage;",
+      path: "src/pages/DynamicTablePage.jsx",
     },
   ],
+  project_name: "ucode-admin-panel",
 };
 const projectV2 = {
   files: [
@@ -126,7 +170,7 @@ const fileTypeToLanguage = {
   tsx: "typescript",
 };
 
-const files = projectV2.files.reduce((acc, file) => {
+const files = project.files.reduce((acc, file) => {
   acc[file.path] = {
     path: file.path,
     language:

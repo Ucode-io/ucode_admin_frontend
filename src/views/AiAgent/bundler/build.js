@@ -10,26 +10,34 @@ export async function initEsbuild() {
 }
 
 export async function buildProject(monaco) {
-
-  const fs = {}
+  const fs = {};
 
   for (const model of monaco.editor.getModels()) {
-    fs[model.uri.path] = model.getValue()
-  }
+    let path = model.uri.path;
 
-  fs["/src/__entry.jsx"] = `
-    // import React from "react"
-    // import ReactDOM from "react-dom"
-    import App from "./src/App"
+    path = path.startsWith("/") ? path.slice(1) : path;
+
+    if (!path.includes("src") && path !== "src") {
+      path = "src/" + path;
+    }
+
+    path = "/" + path;
+
+    fs[path] = model.getValue();
+  }
+  console.log(fs);
+
+  fs["/__entry.jsx"] = `
+    import App from "./src/src/App";
 
     const React = window.React;
     const ReactDOM = window.ReactDOM;
 
     const root = ReactDOM.createRoot(
       document.getElementById("root")
-    )
+    );
 
-    root.render(React.createElement(App))
+    root.render(React.createElement(App));
   `;
 
   fs["/shims/react.js"] = `
@@ -53,8 +61,32 @@ export async function buildProject(monaco) {
     export default window.axios;
   `;
 
+  // fs["/shims/react-icons-fa.js"] = `
+  //   export const FaHome = https://esm.sh/react-icons/fa@4.3.0/FaHome;
+  //   export const FaUser = window.ReactIcons.fa.FaUser;
+  // `;
+
+  fs["/shims/react-router-dom.js"] = `
+    const RRD = window.ReactRouterDOM;
+
+    export const BrowserRouter = RRD.MemoryRouter;
+    export const HashRouter = RRD.MemoryRouter;
+    export const MemoryRouter = RRD.MemoryRouter;
+
+    export const Routes = RRD.Routes;
+    export const Route = RRD.Route;
+    export const Link = RRD.Link;
+    export const NavLink = RRD.NavLink;
+    export const Navigate = RRD.Navigate;
+    export const Outlet = RRD.Outlet;
+
+    export const useParams = RRD.useParams;
+    export const useNavigate = RRD.useNavigate;
+    export const useLocation = RRD.useLocation;
+  `;
+
   const result = await esbuild.build({
-    entryPoints: ["/src/__entry.jsx"],
+    entryPoints: ["__entry.jsx"],
     bundle: true,
     write: false,
     platform: "browser",
@@ -71,10 +103,10 @@ export async function buildProject(monaco) {
         VITE_PROJECT_ID: "f1c4ae97-ee0f-4868-b4fc-1b26869ebc69",
         VITE_MAIN_MENU_ID: "c57eedc3-a954-4262-a0af-376c65b5a284",
         VITE_X_API_KEY: "P-wkLyW3aBURDx6oSwtlhk33WQn8Q3VhIc",
+        VITE_ADMIN_BASE_URL: "https://admin-api.ucode.run",
       }),
     },
   });
-   
 
-  return result.outputFiles[0].text
+  return result.outputFiles[0].text;
 }

@@ -9,22 +9,22 @@ export function virtualFsPlugin(fs) {
           return {
             path: normalizePath(args.path),
             namespace: "virtual",
-          }
+          };
         }
 
         // 2️⃣ ОТНОСИТЕЛЬНЫЕ ИМПОРТЫ ./ ../
         if (args.path.startsWith(".")) {
           const baseDir = args.importer.substring(
             0,
-            args.importer.lastIndexOf("/")
-          )
+            args.importer.lastIndexOf("/"),
+          );
 
-          const resolved = normalizePath(`${baseDir}/${args.path}`)
+          const resolved = normalizePath(`${baseDir}/${args.path}`);
 
           return {
             path: resolved,
             namespace: "virtual",
-          }
+          };
         }
 
         // 3️⃣ АБСОЛЮТНЫЕ ПУТИ /src/...
@@ -32,7 +32,7 @@ export function virtualFsPlugin(fs) {
           return {
             path: normalizePath(args.path),
             namespace: "virtual",
-          }
+          };
         }
 
         if (args.path === "react") {
@@ -47,13 +47,28 @@ export function virtualFsPlugin(fs) {
           return { path: "/shims/react-dom-client.js", namespace: "virtual" };
         }
 
+        // if (args.path === "react-icons/fa") {
+        //   return { path: "/shims/react-icons-fa.js", namespace: "virtual" };
+        // }
+
+        if (args.path === "react-router-dom") {
+          return { path: "/shims/react-router-dom.js", namespace: "virtual" };
+        }
+
         if (args.path === "axios") {
           return { path: "/shims/axios.js", namespace: "virtual" };
-        }                
+        }
+
+        if (args.path.startsWith("http")) {
+          return {
+            path: args.path,
+            external: true,
+          };
+        }
 
         // 4️⃣ 🚨 BARE IMPORTS (react, react-dom, etc)
         // НЕ трогаем — пусть esbuild сам обработает + external
-        return null
+        return null;
       })
 
       // 5️⃣ LOAD ТОЛЬКО virtual namespace

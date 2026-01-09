@@ -12,31 +12,33 @@ import {
 } from "@chakra-ui/react";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { Tooltip } from "@mui/material";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { BsThreeDots } from "react-icons/bs";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import { Draggable } from "react-smooth-dnd";
-import { useMenuListQuery } from "../../services/menuService";
-import { store } from "../../store";
-import { menuActions } from "../../store/menuItem/menuItem.slice";
-import { menuAccordionActions } from "../../store/menus/menus.slice";
-import { relationTabActions } from "../../store/relationTab/relationTab.slice";
+import {Skeleton, Tooltip} from "@mui/material";
+import {useState} from "react";
+import {useTranslation} from "react-i18next";
+import {BsThreeDots} from "react-icons/bs";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate, useParams} from "react-router-dom";
+import {Draggable} from "react-smooth-dnd";
+import {useMenuListQuery} from "../../services/menuService";
+import {store} from "../../store";
+import {menuActions} from "../../store/menuItem/menuItem.slice";
+import {menuAccordionActions} from "../../store/menus/menus.slice";
+import {relationTabActions} from "../../store/relationTab/relationTab.slice";
 import IconGenerator from "../IconPicker/IconGenerator";
 import MenuIcon from "./MenuIcon";
 import NewSubMenu from "./NewSubMenu";
 import newClickHandler from "./newClickHandler";
 import oldClickHandler from "./oldClickHandler";
-import { groupFieldActions } from "../../store/groupField/groupField.slice";
-import { detailDrawerActions } from "../../store/detailDrawer/detailDrawer.slice";
+import {groupFieldActions} from "../../store/groupField/groupField.slice";
+import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
 import IconGeneratorIconjs from "../IconPicker/IconGeneratorIconjs";
-import { tableActions } from "../../store/table/table.slice";
+import {tableActions} from "../../store/table/table.slice";
 import { iconsList } from "../../utils/constants/iconsList";
 
 export const adminId = import.meta.env.VITE_ADMIN_FOLDER_ID;
 export const analyticsId = import.meta.env.VITE_ANALYTICS_FOLDER_ID;
+
+const USERS_MENU_ITEM_ID = "9e988322-cffd-484c-9ed6-460d8701551b";
 
 const AppSidebar = ({
   index,
@@ -58,6 +60,7 @@ const AppSidebar = ({
   languageData,
   subMenuIsOpen,
   subSearchText,
+  menuDraggable,
   setMenuDraggable,
   getMenuList,
   childMenu = false,

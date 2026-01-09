@@ -50,13 +50,13 @@ const newClickHandler = ({
         state: {url: website_link},
       });
     } else if (element?.id === "3b74ee68-26e3-48c8-bc95-257ca7d6aa5c") {
-      navigate(
-        replaceValues(
-          element?.attributes?.link,
-          auth?.loginTableSlug,
-          auth?.userId
-        )
-      );
+      // navigate(
+      //   replaceValues(
+      //     element?.attributes?.link,
+      //     auth?.loginTableSlug,
+      //     auth?.userId
+      //   )
+      // );
     } else {
       navigate(element?.attributes?.link);
     }

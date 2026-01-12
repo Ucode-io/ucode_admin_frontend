@@ -308,12 +308,12 @@ export const useTableProps = ({ tab }) => {
             offset: pageToOffset(currentPage, limit),
             order: computedSortColumns,
             view_fields: checkedColumns,
-            ...defaultFiltersMap,
             search: tableSearch,
             [`${selectedV?.relation_table_slug || selectedV?.table_slug}_id`]:
               isRelationView ? selectedV?.detailId : undefined,
             limit: limit,
             ...filters,
+            ...defaultFiltersMap,
             [tab?.slug]: tab
               ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
                   ?.type === "MULTISELECT"
@@ -398,6 +398,10 @@ export const useTableProps = ({ tab }) => {
       ),
     );
   }, [view?.attributes?.quick_filters?.length, filters, columns, menuId]);
+
+  useEffect(() => {
+    if (Object.keys(defaultFiltersMap)?.length) refetch();
+  }, [defaultFiltersMap]);
 
   const prevViewId = useRef(viewId);
 

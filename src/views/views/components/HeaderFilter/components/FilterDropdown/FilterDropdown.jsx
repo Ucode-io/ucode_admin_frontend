@@ -5,23 +5,27 @@ export const FilterDropdown = ({
   multiple,
   options,
   placeholder,
-  onChange,
+  onChange = () => {},
   defaultValue,
   searchable,
   onSearch = () => {},
- }) => {
-
+  onClick = () => {},
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState(defaultValue ?? []);
   const wrapperRef = useRef(null);
 
   const handleSelect = (option) => {
     if (multiple) {
-      setSelectedOptions((prev) =>
-        prev.find((item) => item.value === option.value)
+      setSelectedOptions((prev) => {
+        const result = prev.find((item) => item.value === option.value)
           ? prev.filter((item) => item.value !== option.value)
-          : [...prev, option]
-      );
+          : [...prev, option];
+
+        onChange(result);
+
+        return result;
+      });
       return;
     }
 
@@ -47,19 +51,22 @@ export const FilterDropdown = ({
   }, []);
 
   useEffect(() => {
-    onChange(selectedOptions);
-  }, [selectedOptions]);
+    setSelectedOptions(defaultValue);
+  }, [defaultValue]);
 
   return (
     <div className={cls.filterDropdownWrapper} ref={wrapperRef}>
       <button
         type="button"
         className={cls.filterDropdown}
-        onClick={handleOpen}
+        onClick={() => {
+          handleOpen();
+          onClick();
+        }}
       >
         <div className={cls.filterDropdown__selected}>
-          {selectedOptions.length > 0 ? (
-            selectedOptions.map((option) => (
+          {selectedOptions?.length > 0 ? (
+            selectedOptions?.map((option) => (
               <span
                 className={cls.filterDropdown__selected__item}
                 key={option.value}
@@ -82,47 +89,47 @@ export const FilterDropdown = ({
 
       {isOpen && (
         <div className={cls.filterDropdown__options}>
-          {
-            searchable && (
-              <div className={cls.filterDropdown__search}>
-                <input
-                  onChange={(e) => onSearch(e.target.value)}
-                  type="text"
-                  className={cls.filterDropdown__search__input}
-                  placeholder="Search"
-                />
-              </div>
-            )
-          }
-          <div>
-          {options.map((option) => {
-            const isSelected = selectedOptions?.find(
-              (item) => item?.value === option?.value
-            );
+          {searchable && (
+            <div className={cls.filterDropdown__search}>
+              <input
+                onChange={(e) => onSearch(e.target.value)}
+                type="text"
+                className={cls.filterDropdown__search__input}
+                placeholder="Search"
+              />
+            </div>
+          )}
+          <div className={cls.filterDropdown__options__list}>
+            {options.map((option) => {
+              const isSelected = selectedOptions?.find(
+                (item) => item?.value === option?.value,
+              );
 
-            return (
-              <button
-                type="button"
-                key={option.value}
-                className={`${cls.filterDropdown__options__option} ${
-                  isSelected ? cls["filterDropdown__options__option--active"] : ""
-                }`}
-                onClick={() => handleSelect(option)}
-              >
-                <span>{option.label}</span>
-                <span
-                  className={`${cls.filterDropdown__options__option__check} ${
+              return (
+                <button
+                  type="button"
+                  key={option.value}
+                  className={`${cls.filterDropdown__options__option} ${
                     isSelected
-                      ? cls["filterDropdown__options__option__check--visible"]
+                      ? cls["filterDropdown__options__option--active"]
                       : ""
                   }`}
-                />
-              </button>
-            );
-          })}
-        </div>
+                  onClick={() => handleSelect(option)}
+                >
+                  <span>{option.label}</span>
+                  <span
+                    className={`${cls.filterDropdown__options__option__check} ${
+                      isSelected
+                        ? cls["filterDropdown__options__option__check--visible"]
+                        : ""
+                    }`}
+                  />
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>
   );
-}
+};

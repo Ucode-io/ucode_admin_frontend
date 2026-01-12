@@ -43,6 +43,8 @@ import { ExcelExport } from "../ExcelExport";
 import { DeleteView } from "../DeleteView";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import { viewIcons } from "@/utils/constants/viewTypes";
+import { FilterListOutlined } from "@mui/icons-material";
+import { DefaultFilters } from "../DefaultFilters";
 
 export const ViewOptions = ({
   handleOpenPopup,
@@ -120,7 +122,12 @@ export const ViewOptions = ({
             style={{ marginLeft: "auto" }}
           />
         </PopoverTrigger>
-        <PopoverContent ref={ref} w="250px" p={"8px"} borderRadius="8px">
+        <PopoverContent
+          ref={ref}
+          w={openedMenu === "default-filters" ? "400px" : "250px"}
+          p={"8px"}
+          borderRadius="8px"
+        >
           {openedMenu === null && (
             <>
               <Box py="4px" borderBottom="1px solid #D0D5DD">
@@ -218,6 +225,18 @@ export const ViewOptions = ({
                             </>
                           )}
                       </Flex>
+                    }
+                  />
+                  <OptionItem
+                    title="Default filters"
+                    icon={<FilterListOutlined />}
+                    onClick={() => setOpenedMenu("default-filters")}
+                    rightContent={
+                      <>
+                        <div className={cls.viewOptionSubtitle}>
+                          {filters.length}
+                        </div>
+                      </>
                     }
                   />
                   {(roleInfo === "DEFAULT ADMIN" || permissions?.group) &&
@@ -392,6 +411,13 @@ export const ViewOptions = ({
 
           {openedMenu === "columns-visibility" && (
             <ColumnsVisibility onBackClick={() => setOpenedMenu(null)} />
+          )}
+
+          {openedMenu === "default-filters" && (
+            <DefaultFilters
+              onBackClick={() => setOpenedMenu(null)}
+              handleClosePopover={handleClosePopover}
+            />
           )}
 
           {openedMenu === "group" && (

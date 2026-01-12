@@ -93,7 +93,8 @@ export const useTableProps = ({ tab }) => {
     getValues,
   } = fieldsForm;
 
-  const { orderBy, setSortedDatas, sortedDatas } = useFilterContext();
+  const { orderBy, setSortedDatas, sortedDatas, defaultFiltersMap } =
+    useFilterContext();
 
   const tableLan = useGetLang("Table");
 
@@ -293,6 +294,7 @@ export const useTableProps = ({ tab }) => {
         computedSortColumns,
         checkedColumns,
         menuId,
+        defaultFiltersMap,
       },
     ],
     queryFn: () => {
@@ -311,6 +313,7 @@ export const useTableProps = ({ tab }) => {
               isRelationView ? selectedV?.detailId : undefined,
             limit: limit,
             ...filters,
+            ...defaultFiltersMap,
             [tab?.slug]: tab
               ? Object.values(fieldsMap).find((el) => el.slug === tab?.slug)
                   ?.type === "MULTISELECT"
@@ -395,6 +398,10 @@ export const useTableProps = ({ tab }) => {
       ),
     );
   }, [view?.attributes?.quick_filters?.length, filters, columns, menuId]);
+
+  useEffect(() => {
+    if (Object.keys(defaultFiltersMap)?.length) refetch();
+  }, [defaultFiltersMap]);
 
   const prevViewId = useRef(viewId);
 

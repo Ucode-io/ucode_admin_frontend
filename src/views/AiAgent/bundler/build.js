@@ -2,33 +2,38 @@ import * as esbuild from "esbuild-wasm"
 import wasmURL from "esbuild-wasm/esbuild.wasm?url"
 import { virtualFsPlugin } from "./esbuildPlugin"
 
-export async function initEsbuild() {
-  await esbuild.initialize({
-    wasmURL,
-    worker: true,
-  })
+let initPromise = null;
+
+export function ensureEsbuild() {
+  if (!initPromise) {
+    initPromise = esbuild.initialize({
+      wasmURL,
+      worker: true,
+    });
+  }
+  return initPromise;
 }
 
-export async function buildProject(monaco) {
+export async function buildProjectFromFiles(files, env) {
   const fs = {};
 
-  for (const model of monaco.editor.getModels()) {
-    let path = model.uri.path;
+  for (const file of Object.values(files)) {
+    let path = file.path;
 
+    // normalize: src/App.jsx → /src/App.jsx
     path = path.startsWith("/") ? path.slice(1) : path;
 
-    if (!path.includes("src") && path !== "src") {
+    if (!path.startsWith("src/")) {
       path = "src/" + path;
     }
 
     path = "/" + path;
 
-    fs[path] = model.getValue();
+    fs[path] = file.value;
   }
-  console.log(fs);
 
   fs["/__entry.jsx"] = `
-    import App from "./src/src/App";
+    import App from "./src/App";
 
     const React = window.React;
     const ReactDOM = window.ReactDOM;
@@ -60,11 +65,6 @@ export async function buildProject(monaco) {
   fs["/shims/axios.js"] = `
     export default window.axios;
   `;
-
-  // fs["/shims/react-icons-fa.js"] = `
-  //   export const FaHome = https://esm.sh/react-icons/fa@4.3.0/FaHome;
-  //   export const FaUser = window.ReactIcons.fa.FaUser;
-  // `;
 
   fs["/shims/react-router-dom.js"] = `
     const RRD = window.ReactRouterDOM;
@@ -98,13 +98,7 @@ export async function buildProject(monaco) {
 
     define: {
       "process.env.NODE_ENV": '"development"',
-      "import.meta.env": JSON.stringify({
-        VITE_API_URL: "https://admin-api.ucode.run",
-        VITE_PROJECT_ID: "f1c4ae97-ee0f-4868-b4fc-1b26869ebc69",
-        VITE_MAIN_MENU_ID: "c57eedc3-a954-4262-a0af-376c65b5a284",
-        VITE_X_API_KEY: "P-wkLyW3aBURDx6oSwtlhk33WQn8Q3VhIc",
-        VITE_ADMIN_BASE_URL: "https://admin-api.ucode.run",
-      }),
+      "import.meta.env": JSON.stringify(env),
     },
   });
 

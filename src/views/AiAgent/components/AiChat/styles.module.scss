@@ -4,6 +4,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   border-right: 1px solid #e5e9eb;
   overflow: hidden;
   background-color: #fff;
@@ -16,11 +17,57 @@
 
 .aiChatHeader {
   height: 44px;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px;
   border-bottom: 1px solid #e5e9eb;
+}
+
+.aiChatToggler {
+  width: 16px;
+  height: 44px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #fff;
+  background-color: #9dcdef;
+  transition: all 0.4s ease-in-out;
+
+  & .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(180deg);
+  }
+}
+
+.aiChatToggler.closed {
+  height: 48px;
+  position: fixed;
+  top: 43px;
+  left: 0;
+  z-index: 1000;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  opacity: 0.4;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  & .icon {
+    transform: rotate(0deg);
+  }
 }
 
 .backButton {

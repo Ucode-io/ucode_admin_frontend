@@ -50,6 +50,7 @@
     </script>
     <script type="module">
       let overlay = null;
+      let overlayTag = null;
       let enabled = false;
     
       function ensureOverlay() {
@@ -58,18 +59,50 @@
           overlay.style.position = "fixed";
           overlay.style.pointerEvents = "none";
           overlay.style.zIndex = "999999";
-          overlay.style.border = "2px dashed #62c0ff";
+          overlay.style.border = "1px dashed #62c0ff";
+          
+          overlayTag = document.createElement("div");
+          overlayTag.style.position = "absolute";
+          overlayTag.style.pointerEvents = "none";
+          overlayTag.style.bottom = "calc(100% + 6px)";
+          overlayTag.style.left = "0";
+          overlayTag.style.padding = "2px 4px";
+          overlayTag.style.borderRadius = "4px";
+          overlayTag.style.backgroundColor = "#62c0ff";
+          overlayTag.style.color = "#fff";
+          overlayTag.style.fontSize = "12px";
+          
+          overlay.appendChild(overlayTag);
+
           document.body.appendChild(overlay);
         }
       }
+
+      function getLabel(el) {
+        let label = el.tagName.toLowerCase();
+        if (el.id) label += `#${el.id}`;
+        if (el.classList.length) {
+          label += "." + [...el.classList].slice(0, 2).join(".");
+        }
+        return label;
+      }
+
     
       function highlight(el) {
-        ensureOverlay();
+        ensureOverlay(el);
         const rect = el.getBoundingClientRect();
         overlay.style.top = rect.top + "px";
         overlay.style.left = rect.left + "px";
         overlay.style.width = rect.width + "px";
         overlay.style.height = rect.height + "px";
+
+        if (el === document.documentElement || el === document.body) {
+          overlay.style.display = "none";
+          return;
+        }
+        overlay.style.display = "block";
+
+        overlayTag.textContent = getLabel(el);
       }
     
       function clear() {
@@ -87,9 +120,9 @@
         e.preventDefault();
         e.stopPropagation();
     
-        enabled = false;
-        clear();
-        document.body.style.cursor = "default";
+        // enabled = false;
+        // clear();
+        // document.body.style.cursor = "default";
     
         window.parent.postMessage({
           type: "INSPECT_SELECT",
@@ -102,7 +135,7 @@
       window.addEventListener("message", (e) => {
         if (e.data?.type === "INSPECT_ON") {
           enabled = true;
-          document.body.style.cursor = "crosshair";
+          document.body.style.cursor = "default";
         }
     
         if (e.data?.type === "INSPECT_OFF") {

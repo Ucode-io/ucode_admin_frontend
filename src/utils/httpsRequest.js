@@ -8,7 +8,7 @@ export const baseURL = `${import.meta.env.VITE_BASE_URL}`;
 
 const httpsRequest = axios.create({
   baseURL,
-  timeout: 100000,
+  timeout: 1000000,
 });
 
 // const errorHandler = (error, hooks) => {
@@ -100,12 +100,12 @@ httpsRequest.interceptors.request.use(
     return config;
   },
 
-  (error) => errorHandler(error)
+  (error) => errorHandler(error),
 );
 
 httpsRequest.interceptors.response.use((response) => {
   customMessageHandler(response);
-  return response.data.data;
+  return response.data.data || response.data.data || response.data || response;
 }, errorHandler);
 
 export default httpsRequest;

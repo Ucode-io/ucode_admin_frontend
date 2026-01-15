@@ -3,6 +3,7 @@ import { useAiChatProps } from "./useAiChatProps"
 import { Message } from "../Message";
 import HighlightAltIcon from "@mui/icons-material/HighlightAlt";
 import SendIcon from "@mui/icons-material/Send";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
 import cls from "./styles.module.scss";
 import clsx from "clsx";
@@ -12,6 +13,7 @@ export const AiChat = ({
   setMessages = () => {},
   generatedUiRef,
   visible,
+  handleFullScreen,
 }) => {
   const {
     handleSend,
@@ -48,6 +50,14 @@ export const AiChat = ({
         <button className={cls.backButton} onClick={onBackClick}>
           <ArrowBackIcon width="32px" height="32px" />
         </button>
+        <span
+          className={clsx(cls.aiChatToggler, { [cls.closed]: !visible })}
+          onClick={handleFullScreen}
+        >
+          <span className={cls.icon}>
+            <PlayArrowIcon fontSize="14px" />
+          </span>
+        </span>
       </div>
       <div className={cls.aiChatBody} ref={chatBodyRef}>
         <div className={cls.messages}>

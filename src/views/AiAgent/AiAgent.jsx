@@ -1,26 +1,45 @@
 import cls from "./styles.module.scss";
 import { useAiAgentProps } from "./useAiAgentProps";
 import { AiResult } from "./modules/AiResult";
-import { AiChat } from "./components/AiChat";
+import { PromptContainer } from "./components/PromptContainer";
+import { MoveablePromptInput } from "./components/MoveablePromptInput";
+import clsx from "clsx";
 
 export const AiAgent = () => {
-  const { messages, setMessages, generatedUiRef, isChatVisible, isLoading } =
+  const { generatedUiRef, isLoading, files, onSubmit, prompt, setPrompt, env } =
     useAiAgentProps();
 
-  if (isLoading === "loading")
-    return <div style={{ padding: 16 }}>Loading...</div>;
+  const hasProject = Object.keys(files).length > 0;
 
   return (
-    <div className={cls.aiAgent}>
-      <div className={cls.gradient} />
+    <div className={clsx(cls.aiAgent, { [cls.withProject]: hasProject })}>
+      {!hasProject && <div className={cls.gradient} />}
       <div className={cls.container}>
-        <AiChat
+        {hasProject ? (
+          <MoveablePromptInput
+            value={prompt}
+            setValue={setPrompt}
+            generatedUiRef={generatedUiRef}
+            onSubmit={onSubmit}
+          />
+        ) : (
+          <PromptContainer
+            prompt={prompt}
+            setPrompt={setPrompt}
+            onSubmit={onSubmit}
+            isLoading={isLoading}
+          />
+        )}
+        {/* <AiChat
           visible={isChatVisible}
           messages={messages}
           setMessages={setMessages}
           generatedUiRef={generatedUiRef}
-        />
-        <AiResult generatedUiRef={generatedUiRef} />
+          handleFullScreen={handleFullScreen}
+        /> */}
+        {hasProject && (
+          <AiResult generatedUiRef={generatedUiRef} files={files} env={env} />
+        )}
       </div>
     </div>
   );

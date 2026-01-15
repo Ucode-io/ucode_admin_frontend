@@ -3,6 +3,53 @@
   display: flex;
 }
 
+.tabs {
+  display: flex;
+  width: 100%;
+  color: #939393;
+  background-color: #252526;
+}
+
+.tab {
+  min-width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 10px 7px;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  list-style: none;
+
+  &:hover {
+    background-color: #3b3b3b;
+
+    .close {
+      opacity: 1;
+    }
+  }
+}
+
+.tab.active {
+  color: #ffd966;
+  border-bottom-color: #fcfcfc;
+
+  .close {
+    opacity: 1;
+  }
+}
+
+.close {
+  opacity: 0;
+  padding: 0;
+  border: none;
+  color: #fcfcfc;
+  background-color: transparent;
+  cursor: pointer;
+}
+
 .editor {
-  flex-grow: 1;
+  width: 100%;
+  // flex-grow: 1;
 }

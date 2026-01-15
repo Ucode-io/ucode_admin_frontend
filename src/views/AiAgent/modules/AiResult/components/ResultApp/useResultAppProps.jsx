@@ -1,6 +1,3 @@
 export const useResultAppProps = () => {
-
-  return {
-
-  }
-}
+  return {};
+};

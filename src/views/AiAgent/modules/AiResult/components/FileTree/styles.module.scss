@@ -1,8 +1,8 @@
 .fileTree {
   width: 220px;
   border-right: 1px solid #e5e9eb;
-  background: #fff;
-  color: #1e1e1e;
+  background: #252526;
+  color: #939393;
 }
 
 .file {
@@ -10,6 +10,12 @@
   cursor: pointer;
 
   &:hover {
-    background: #f6f8f9;
+    background-color: #3b3b3b;
   }
 }
+
+.file.active {
+  background-color: #3b3b3b;
+  color: #fff;
+}
+

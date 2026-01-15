@@ -28,6 +28,12 @@
   gap: 12px;
 }
 
+.promptContainer.moveable {
+  & .recommendedPrompts {
+    display: none;
+  }
+}
+
 .recommendedPrompt {
   padding: 4px 6px;
   // border: 1px dashed #e9d4ff;
@@ -39,4 +45,9 @@
   background-color: #d2edff;
   white-space: nowrap;
   cursor: pointer;
+}
+
+.recommendedPrompt.loading {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

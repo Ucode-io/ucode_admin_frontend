@@ -56,6 +56,7 @@ import {FIELD_TYPES} from "@/utils/constants/fieldTypes";
 import cls from "./field-generator.styles.module.scss";
 import useDebounce from "@/hooks/useDebounce";
 import HFSwitch from "@/components/FormElements/HFSwitch";
+import { BackendFormulaDisplay } from "../../ElementGenerators/DisplayFields/BackendFormulaDisplay";
 // import RelationField from "./RelationField";
 
 const RelationField = lazy(() => import("./RelationField"));
@@ -129,7 +130,7 @@ function DrawerFieldGenerator({
       select: (res) => {
         return listToOptions(res.functions, "name", "id");
       },
-    }
+    },
   );
 
   switch (field?.type || field?.relation_type) {
@@ -461,6 +462,14 @@ function DrawerFieldGenerator({
           isNewTableView={true}
           updateObject={updateObject}
           required={isRequired}
+        />
+      );
+
+    case "FORMULA":
+      return (
+        <BackendFormulaDisplay
+          value={watch(computedSlug)}
+          formula={field.attributes?.formula}
         />
       );
 

@@ -6,9 +6,11 @@ export const { actions: menuActions, reducer: menuReducer } = createSlice({
     menuItem: {},
     menuTemplate: "",
     invite: false,
+    activeTable: {},
   },
   reducers: {
     setMenuItem: (state, { payload }) => {
+      if (payload.type === "TABLE") state.activeTable = payload;
       state.menuItem = payload ?? {};
     },
     setInvite: (state, { payload }) => {
@@ -16,6 +18,9 @@ export const { actions: menuActions, reducer: menuReducer } = createSlice({
     },
     setMenuLayout: (state, { payload }) => {
       state.menuTemplate = payload ?? {};
+    },
+    setActiveTable: (state, { payload }) => {
+      state.activeTable = payload ?? {};
     },
   },
 });

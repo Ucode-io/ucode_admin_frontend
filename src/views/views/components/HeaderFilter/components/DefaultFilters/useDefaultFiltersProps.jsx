@@ -1,21 +1,21 @@
-import { useViewContext } from "@/providers/ViewProvider";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import { useFieldsContext } from "@/views/views/providers/FieldsProvider";
 import { useTranslation } from "react-i18next";
 import { FilterDropdown } from "../FilterDropdown";
 import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import constructorTableService from "@/services/tableService/table.service";
-import { constructorTableActions } from "@/store/constructorTable/constructorTable.slice";
 import { useFilterContext } from "@/views/views/providers/FilterProvider";
 import { DefaultFilterRelation } from "../DefaultFilterRelation";
 import { DefaultFilterDate } from "../DefaultFilterDate";
 import useDebounce from "@/hooks/useDebounce";
+import menuSettingsService from "@/services/menuSettingsService";
+import { menuActions } from "@/store/menuItem/menuItem.slice";
 
 export const useDefaultFiltersProps = ({ handleClosePopover }) => {
   const { i18n } = useTranslation();
 
-  const { viewForm, refetchMainDataList } = useViewContext();
+  const { activeTable } = useSelector((state) => state.menu);
+
   const { fieldsMap } = useFieldsContext();
   const { defaultFiltersMap, setDefaultFiltersMap } = useFilterContext();
 
@@ -23,34 +23,23 @@ export const useDefaultFiltersProps = ({ handleClosePopover }) => {
 
   const isChanged = useRef(false);
 
-  const projectId = useSelector((state) => state.auth.projectId);
-
-  const updateConstructorTable = (data) => {
-    const updateTableData = constructorTableService.update(data, projectId);
-
-    Promise.all([updateTableData]).then(() => {
-      dispatch(constructorTableActions.setDataById(data));
-      refetchMainDataList();
-      handleClosePopover();
-    });
-  };
-
-  const updateTable = () => {
+  const updateDefaultFilter = () => {
+    console.log(isChanged.current);
     if (isChanged.current) {
-      const data = viewForm.getValues();
-      const computedData = {
-        ...data,
-        id: data?.id,
-        show_in_menu: true,
-        attributes: {
-          ...data.attributes,
-          default_filters: defaultFiltersMap,
-        },
+      const attributes = {
+        ...activeTable?.attributes,
+        default_filters: defaultFiltersMap,
       };
 
-      if (data?.id) {
-        updateConstructorTable(computedData);
-      }
+      const updatedTable = {
+        ...activeTable,
+        attributes,
+      };
+
+      menuSettingsService.update(updatedTable).finally(() => {
+        handleClosePopover();
+      });
+      dispatch(menuActions.setActiveTable(updatedTable));
     }
   };
 
@@ -90,12 +79,9 @@ export const useDefaultFiltersProps = ({ handleClosePopover }) => {
     }
 
     setDefaultFiltersMap(newDefaultFilters);
-
-    // viewForm.setValue("attributes.default_filters", newDefaultFilters);
   };
 
-  const debouncedHandleChange = (value, name) =>
-    useDebounce(handleChange, 500)(value, name);
+  const debouncedHandleChange = useDebounce(handleChange, 500);
 
   const filterGenerator = (field) => {
     const todoOptions = field?.attributes?.todo?.options ?? [];
@@ -195,6 +181,6 @@ export const useDefaultFiltersProps = ({ handleClosePopover }) => {
     allFields,
     i18n,
     filterGenerator,
-    updateTable,
+    updateDefaultFilter,
   };
 };

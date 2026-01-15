@@ -110,6 +110,7 @@
     "editorjs-text-color-plugin": "^2.0.4",
     "editorjs-toggle-block": "^0.3.8",
     "editorjs-undo": "^2.0.18",
+    "esbuild-wasm": "^0.27.2",
     "ffmpeg": "^0.0.4",
     "firebase": "^12.0.0",
     "framer-motion": "^10.12.16",

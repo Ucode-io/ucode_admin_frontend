@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Preview</title>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/history@5/umd/history.development.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/react-router@6/umd/react-router.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-router-dom@6/umd/react-router-dom.development.js"></script>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script src="https://unpkg.com/react-icons@4/umd/react-icons.development.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      let currentScriptUrl = null;
+
+      window.addEventListener("message", (event) => {
+        if (!event.data || event.data.type !== "EXECUTE") return;
+
+        // cleanup старого кода
+        if (currentScriptUrl) {
+          URL.revokeObjectURL(currentScriptUrl);
+          currentScriptUrl = null;
+        }
+
+        const blob = new Blob([event.data.code], {
+          type: "text/javascript",
+        });
+
+        const script = document.createElement("script");
+        // script.type = "module";
+        currentScriptUrl = URL.createObjectURL(blob);
+        script.src = currentScriptUrl;
+
+        document.body.appendChild(script);
+      });
+
+      // сообщаем родителю, что iframe готов
+      window.parent.postMessage({ type: "READY" }, "*");
+    </script>
+    <script type="module">
+      let overlay = null;
+      let overlayTag = null;
+      let enabled = false;
+    
+      function ensureOverlay() {
+        if (!overlay) {
+          overlay = document.createElement("div");
+          overlay.style.position = "fixed";
+          overlay.style.pointerEvents = "none";
+          overlay.style.zIndex = "999999";
+          overlay.style.border = "1px dashed #62c0ff";
+          
+          overlayTag = document.createElement("div");
+          overlayTag.style.position = "absolute";
+          overlayTag.style.pointerEvents = "none";
+          overlayTag.style.bottom = "calc(100% + 6px)";
+          overlayTag.style.left = "0";
+          overlayTag.style.padding = "2px 4px";
+          overlayTag.style.borderRadius = "4px";
+          overlayTag.style.backgroundColor = "#62c0ff";
+          overlayTag.style.color = "#fff";
+          overlayTag.style.fontSize = "12px";
+          
+          overlay.appendChild(overlayTag);
+
+          document.body.appendChild(overlay);
+        }
+      }
+
+      function getLabel(el) {
+        let label = el.tagName.toLowerCase();
+        if (el.id) label += `#${el.id}`;
+        if (el.classList.length) {
+          label += "." + [...el.classList].slice(0, 2).join(".");
+        }
+        return label;
+      }
+
+    
+      function highlight(el) {
+        ensureOverlay(el);
+        const rect = el.getBoundingClientRect();
+        overlay.style.top = rect.top + "px";
+        overlay.style.left = rect.left + "px";
+        overlay.style.width = rect.width + "px";
+        overlay.style.height = rect.height + "px";
+
+        if (el === document.documentElement || el === document.body) {
+          overlay.style.display = "none";
+          return;
+        }
+        overlay.style.display = "block";
+
+        overlayTag.textContent = getLabel(el);
+      }
+    
+      function clear() {
+        overlay?.remove();
+        overlay = null;
+      }
+    
+      document.addEventListener("mouseover", (e) => {
+        if (!enabled) return;
+        highlight(e.target);
+      }, true);
+    
+      document.addEventListener("click", (e) => {
+        if (!enabled) return;
+        e.preventDefault();
+        e.stopPropagation();
+    
+        // enabled = false;
+        // clear();
+        // document.body.style.cursor = "default";
+    
+        window.parent.postMessage({
+          type: "INSPECT_SELECT",
+          tag: e.target.tagName,
+          id: e.target.id,
+          className: e.target.className,
+        }, "*");
+      }, true);
+    
+      window.addEventListener("message", (e) => {
+        if (e.data?.type === "INSPECT_ON") {
+          enabled = true;
+          document.body.style.cursor = "default";
+        }
+    
+        if (e.data?.type === "INSPECT_OFF") {
+          enabled = false;
+          document.body.style.cursor = "default";
+          clear();
+        }
+      });
+    </script>
+    
+  </body>
+</html>

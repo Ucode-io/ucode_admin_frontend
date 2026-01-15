@@ -3,6 +3,7 @@ import { useAiChatProps } from "./useAiChatProps"
 import { Message } from "../Message";
 import HighlightAltIcon from "@mui/icons-material/HighlightAlt";
 import SendIcon from "@mui/icons-material/Send";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
 import cls from "./styles.module.scss";
 import clsx from "clsx";
@@ -10,11 +11,9 @@ import clsx from "clsx";
 export const AiChat = ({
   messages = [],
   setMessages = () => {},
-  setPrompt = () => {},
-  sendPrompt = () => {},
-  prompt,
   generatedUiRef,
   visible,
+  handleFullScreen,
 }) => {
   const {
     handleSend,
@@ -29,14 +28,21 @@ export const AiChat = ({
     handleMouseMove,
     handleMouseLeave,
     handleClick,
-  } = useAiChatProps({
-    setMessages,
-    messages,
-    setPrompt,
-    sendPrompt,
-    prompt,
-    generatedUiRef,
-  });
+  } = useAiChatProps({ setMessages, messages, generatedUiRef });
+
+  const enableInspect = () => {
+    generatedUiRef.current.contentWindow?.postMessage(
+      { type: "INSPECT_ON" },
+      "*",
+    );
+  };
+
+  const disableInspect = () => {
+    generatedUiRef.current.contentWindow?.postMessage(
+      { type: "INSPECT_OFF" },
+      "*",
+    );
+  };
 
   return (
     <div className={clsx(cls.aiChat, { [cls.visible]: visible })}>
@@ -44,6 +50,14 @@ export const AiChat = ({
         <button className={cls.backButton} onClick={onBackClick}>
           <ArrowBackIcon width="32px" height="32px" />
         </button>
+        <span
+          className={clsx(cls.aiChatToggler, { [cls.closed]: !visible })}
+          onClick={handleFullScreen}
+        >
+          <span className={cls.icon}>
+            <PlayArrowIcon fontSize="14px" />
+          </span>
+        </span>
       </div>
       <div className={cls.aiChatBody} ref={chatBodyRef}>
         <div className={cls.messages}>
@@ -76,7 +90,8 @@ export const AiChat = ({
                 [cls.active]: isInspectEnabled,
               })}
               type="button"
-              onClick={handleInspect}
+              // onClick={handleInspect}
+              onClick={enableInspect}
             >
               <HighlightAltIcon />
             </button>

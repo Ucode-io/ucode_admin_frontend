@@ -1,61 +1,46 @@
-import AiUiPreview from "../AiUiPreview/AiUiPreview";
 import cls from "./styles.module.scss";
 import { useAiAgentProps } from "./useAiAgentProps";
+import { AiResult } from "./modules/AiResult";
 import { PromptContainer } from "./components/PromptContainer";
-import { GeneratedUi } from "./modules/GeneratedUi";
-import { AiChat } from "./components/AiChat";
+import { MoveablePromptInput } from "./components/MoveablePromptInput";
 import clsx from "clsx";
-import { FullScreenButton } from "./components/FullScreenButton";
 
 export const AiAgent = () => {
-  const {
-    status,
-    uiSpec,
-    handleFullScreen,
-    prompt,
-    setPrompt,
-    hasChatHistory,
-    messages,
-    setMessages,
-    sendPrompt,
-    generatedUiRef,
-    isChatVisible,
-  } = useAiAgentProps();
+  const { generatedUiRef, isLoading, files, onSubmit, prompt, setPrompt, env } =
+    useAiAgentProps();
 
-  if (status === "loading")
-    return <div style={{ padding: 16 }}>Loading...</div>;
+  const hasProject = Object.keys(files).length > 0;
 
   return (
-    <div className={cls.aiAgent}>
-      <FullScreenButton
-        className={cls.fullScreenBtn}
-        onClick={handleFullScreen}
-        opened={!isChatVisible}
-      />
-      <div className={cls.gradient} />
-      <div
-        className={clsx(cls.container, [hasChatHistory && cls.hasChatHistory])}
-      >
-        {hasChatHistory ? (
-          <AiChat
-            visible={isChatVisible}
-            messages={messages}
-            setMessages={setMessages}
-            prompt={prompt}
-            setPrompt={setPrompt}
-            sendPrompt={sendPrompt}
+    <div className={clsx(cls.aiAgent, { [cls.withProject]: hasProject })}>
+      {!hasProject && <div className={cls.gradient} />}
+      <div className={cls.container}>
+        {hasProject ? (
+          <MoveablePromptInput
+            value={prompt}
+            setValue={setPrompt}
             generatedUiRef={generatedUiRef}
+            onSubmit={onSubmit}
           />
         ) : (
           <PromptContainer
             prompt={prompt}
             setPrompt={setPrompt}
-            sendPrompt={sendPrompt}
+            onSubmit={onSubmit}
+            isLoading={isLoading}
           />
         )}
-        <GeneratedUi className={cls.generatedUi} ref={generatedUiRef} />
+        {/* <AiChat
+          visible={isChatVisible}
+          messages={messages}
+          setMessages={setMessages}
+          generatedUiRef={generatedUiRef}
+          handleFullScreen={handleFullScreen}
+        /> */}
+        {hasProject && (
+          <AiResult generatedUiRef={generatedUiRef} files={files} env={env} />
+        )}
       </div>
-      {status === "ready" && <AiUiPreview uiSpec={uiSpec} />}
     </div>
   );
 };

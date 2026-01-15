@@ -7,7 +7,8 @@ import cls from "./styles.module.scss";
 
 export const DefaultFilters = ({ onBackClick, handleClosePopover }) => {
 
-  const { allFields, i18n, filterGenerator, updateTable } = useDefaultFiltersProps({ handleClosePopover });
+  const { allFields, i18n, filterGenerator, updateDefaultFilter } =
+    useDefaultFiltersProps({ handleClosePopover });
 
   return (
     <Box className={cls.defaultFilters}>
@@ -45,7 +46,7 @@ export const DefaultFilters = ({ onBackClick, handleClosePopover }) => {
         paddingTop="6px"
         borderTop="1px solid #E2E8F0"
       >
-        <PrimaryButton onClick={updateTable}>Save</PrimaryButton>
+        <PrimaryButton onClick={updateDefaultFilter}>Save</PrimaryButton>
       </Box>
     </Box>
   );

@@ -2,11 +2,22 @@ import prettier from "prettier/standalone";
 import parserBabel from "prettier/parser-babel";
 import parserTypescript from "prettier/parser-typescript";
 
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { editorActions } from "@/store/codeEditor/codeEditor.slice";
 
 export const useResultCodeProps = ({ monacoRef, editorRef, files }) => {
-  const [openFiles, setOpenFiles] = useState([]);
-  const [activeFile, setActiveFile] = useState("");
+  const { openedFiles, activeFile } = useSelector((state) => state.codeEditor);
+  console.log(openedFiles);
+
+  const dispatch = useDispatch();
+
+  const setOpenFiles = (payload) => {
+    dispatch(editorActions.setOpenedFiles(payload));
+  };
+
+  const setActiveFile = (payload) => {
+    dispatch(editorActions.setActiveFile(payload));
+  };
 
   function onEditorMount(editor, monaco) {
     monacoRef.current = monaco;
@@ -62,18 +73,17 @@ export const useResultCodeProps = ({ monacoRef, editorRef, files }) => {
 
     if (!model) return;
 
-    // 🔹 добавить таб, если его ещё нет
-    setOpenFiles((prev) => (prev.includes(path) ? prev : [...prev, path]));
+    setOpenFiles(
+      openedFiles.includes(path) ? openedFiles : [...openedFiles, path],
+    );
 
-    // 🔹 активный файл
     setActiveFile(path);
 
-    // 🔹 переключить Monaco
     editor.setModel(model);
   }
 
   function closeFile(path) {
-    setOpenFiles((prev) => prev.filter((f) => f !== path));
+    setOpenFiles(openedFiles.filter((f) => f !== path));
   }
 
   function initAllModels(files) {
@@ -93,5 +103,5 @@ export const useResultCodeProps = ({ monacoRef, editorRef, files }) => {
     });
   }
 
-  return { files, openFile, onEditorMount, openFiles, activeFile, closeFile };
+  return { files, openFile, onEditorMount, openedFiles, activeFile, closeFile };
 };

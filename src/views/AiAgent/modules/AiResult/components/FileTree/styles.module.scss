@@ -1,21 +1,10 @@
 .fileTree {
-  width: 220px;
-  border-right: 1px solid #e5e9eb;
+  width: 260px;
+  height: calc(100vh - 26px);
+  padding: 10px 0;
+  border-right: 1px solid #000;
   background: #252526;
   color: #939393;
+  overflow: auto;
+  scrollbar-width: none;
 }
-
-.file {
-  padding: 4px 12px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #3b3b3b;
-  }
-}
-
-.file.active {
-  background-color: #3b3b3b;
-  color: #fff;
-}
-

@@ -5,6 +5,7 @@ import { useResultCodeProps } from "./useResultCodeProps"
 import cls from "./styles.module.scss"
 import clsx from "clsx";
 import "./styles.scss";
+import { getFileIcon } from "@/utils/getFileIcon";
 
 export const ResultCode = ({
   handleEditorMount,
@@ -12,7 +13,7 @@ export const ResultCode = ({
   monacoRef,
   files,
 }) => {
-  const { openFile, onEditorMount, openFiles, activeFile, closeFile } =
+  const { openFile, onEditorMount, openedFiles, activeFile, closeFile } =
     useResultCodeProps({
       editorRef,
       monacoRef,
@@ -25,12 +26,13 @@ export const ResultCode = ({
         <FileTree onOpen={openFile} files={files} activeFile={activeFile} />
         <div className={cls.editor}>
           <div className={cls.tabs}>
-            {openFiles.map((path) => (
+            {openedFiles.map((path) => (
               <div
                 key={path}
                 className={clsx(cls.tab, { [cls.active]: activeFile === path })}
                 onClick={() => openFile(path)}
               >
+                <span className={cls.tabIcon}>{getFileIcon(path)}</span>
                 {path.split("/").pop()}
                 <button
                   className={cls.close}

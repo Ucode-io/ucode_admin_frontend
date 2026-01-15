@@ -8,6 +8,8 @@
   width: 100%;
   color: #939393;
   background-color: #252526;
+  overflow: auto;
+  scrollbar-width: none;
 }
 
 .tab {
@@ -40,6 +42,11 @@
   }
 }
 
+.tabIcon {
+  width: 16px;
+  height: 16px;
+}
+
 .close {
   opacity: 0;
   padding: 0;
@@ -51,5 +58,7 @@
 
 .editor {
   width: 100%;
+  max-width: calc(100vw - 260px);
+  height: 100%;
   // flex-grow: 1;
 }

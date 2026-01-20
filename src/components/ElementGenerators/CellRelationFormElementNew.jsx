@@ -276,7 +276,7 @@ const AutoCompleteElement = ({
     );
   };
 
-  const { refetch } = useQuery(
+  const { refetch, isFetching } = useQuery(
     [
       "GET_OBJECT_LIST",
       page,
@@ -550,6 +550,8 @@ const AutoCompleteElement = ({
       )}
 
       <Select
+        instanceId="post-category-select"
+        isLoading={isFetching}
         className={styles.select}
         id="relation-lookup"
         inputValue={inputValue}
@@ -565,6 +567,7 @@ const AutoCompleteElement = ({
         value={localValue}
         menuPortalTarget={document.body}
         menuIsOpen={menuIsOpen}
+        filterOption={null}
         onMenuOpen={() => {
           setMenuIsOpen(true);
           refetch();
@@ -612,7 +615,6 @@ const AutoCompleteElement = ({
             ""
           );
         }}
-        // filterOption={() => true}
         getOptionValue={(option) => option?.guid ?? option?.value ?? option?.id}
         isOptionSelected={(option, value) => {
           if (Array.isArray(value)) {

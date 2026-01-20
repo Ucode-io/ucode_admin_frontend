@@ -9,15 +9,25 @@ import { getFileIcon } from "@/utils/getFileIcon";
 
 export const ResultCode = ({
   handleEditorMount,
+  handleUpdateCode,
   editorRef,
   monacoRef,
   files,
 }) => {
-  const { openFile, onEditorMount, openedFiles, activeFile, closeFile } =
+  const {
+    openFile,
+    onEditorMount,
+    openedFiles,
+    activeFile,
+    closeFile,
+    handleChange,
+    changedFiles,
+  } =
     useResultCodeProps({
       editorRef,
       monacoRef,
       files,
+      handleUpdateCode,
     });
 
   return (
@@ -26,7 +36,7 @@ export const ResultCode = ({
         <FileTree onOpen={openFile} files={files} activeFile={activeFile} />
         <div className={cls.editor}>
           <div className={cls.tabs}>
-            {openedFiles.map((path) => (
+            {openedFiles.map((path, index) => (
               <div
                 key={path}
                 className={clsx(cls.tab, { [cls.active]: activeFile === path })}
@@ -34,11 +44,14 @@ export const ResultCode = ({
               >
                 <span className={cls.tabIcon}>{getFileIcon(path)}</span>
                 {path.split("/").pop()}
+                {
+                  changedFiles.includes(path) && <span className={cls.changed} />
+                }
                 <button
                   className={cls.close}
                   onClick={(e) => {
                     e.stopPropagation();
-                    closeFile(path);
+                    closeFile(path, index);
                   }}
                 >
                   ✕
@@ -54,6 +67,7 @@ export const ResultCode = ({
               handleEditorMount(...rest);
               onEditorMount(...rest);
             }}
+            onChange={handleChange}
             options={{
               tabSize: 2,
               fontFamily: "JetBrains Mono, Fira Code, monospace",

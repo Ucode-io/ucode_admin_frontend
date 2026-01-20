@@ -85,6 +85,7 @@ import NewObjectsFormPage from "../views/Objects/NewObjectsFormPage";
 import DocView from "../views/Objects/DocView";
 import { Views } from "@/views/views";
 import { AiAgent } from "@/views/AiAgent";
+import { AiDashboard } from "@/views/AiDashboard";
 
 const AuthLayoutDesign = lazy(
   () => import("../layouts/AuthLayout/AuthLayoutDesign"),
@@ -205,7 +206,7 @@ const NewRouter = ({ resetQueryClient }) => {
   return (
     <Routes>
       <Route path="ai-agent" element={<AiAgent />} />
-      <Route path="ai-agent/:tableSlug" element={<AiAgent />} />
+      <Route path="ai-dashboard/:id" element={<AiDashboard />} />
       <Route
         path="/"
         element={

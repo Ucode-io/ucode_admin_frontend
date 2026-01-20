@@ -14,6 +14,7 @@
 
 .tab {
   min-width: 80px;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -27,6 +28,10 @@
   &:hover {
     background-color: #3b3b3b;
 
+    .changed {
+      display: none;
+    }
+
     .close {
       opacity: 1;
     }
@@ -36,10 +41,6 @@
 .tab.active {
   color: #ffd966;
   border-bottom-color: #fcfcfc;
-
-  .close {
-    opacity: 1;
-  }
 }
 
 .tabIcon {
@@ -48,12 +49,33 @@
 }
 
 .close {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   opacity: 0;
   padding: 0;
   border: none;
+  border-radius: 4px;
   color: #fcfcfc;
   background-color: transparent;
   cursor: pointer;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.changed {
+  width: 8px;
+  height: 8px;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background-color: #fff;
 }
 
 .editor {

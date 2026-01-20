@@ -9,6 +9,7 @@ export const MoveablePromptInput = ({
   setValue = () => {},
   generatedUiRef,
   onSubmit = () => {},
+  files = [],
 }) => {
 
   const {
@@ -24,7 +25,7 @@ export const MoveablePromptInput = ({
     isInspectEnabled,
     selectedContexts,
     handleRemoveContext,
-  } = useMoveablePromptInputProps({ generatedUiRef});
+  } = useMoveablePromptInputProps({ generatedUiRef, files });
 
   const isOpen = value.length > 40
 
@@ -71,7 +72,7 @@ export const MoveablePromptInput = ({
       <button 
         className={clsx(cls.sendButton, {[cls.show]: !isOpen})}
         type="button"
-        onClick={onSubmit}
+        onClick={() => onSubmit({context: selectedContexts, type: "update"})}
         disabled={!value?.trim()}
       >
         <span className={cls.sendButtonIcon}>

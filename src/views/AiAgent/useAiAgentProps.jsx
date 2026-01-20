@@ -1,127 +1,86 @@
-import { useRef, useState } from "react";
-import { mockProject } from "./mockProject";
+import { useEffect, useRef, useState } from "react";
 import mcpService from "./service/mcp.service";
+import { useDispatch, useSelector } from "react-redux";
+import { generatedUiActions } from "@/store/generatedUi/generatedUi.slice";
+import { resp } from "./mockProject";
 
-const fileTypeToLanguage = {
-  html: "html",
-  css: "css",
-  js: "javascript",
-  jsx: "javascript",
-  ts: "typescript",
-  tsx: "typescript",
-  json: "json",
-  cjs: "cjs",
-  lock: "lock",
-};
-
-// const customMessages = [
-//   {
-//     from: "user",
-//     text: "Create a modern dashboard design and landing page for SaaS. Mobile app interface and e-commerce product card",
-//   },
-//   {
-//     from: "ai",
-//     text: "Dashboard design",
-//   },
-//   {
-//     from: "user",
-//     text: "Generate a landing page for SaaS",
-//   },
-//   {
-//     from: "ai",
-//     text: "Landing page design",
-//   },
-//   {
-//     from: "user",
-//     text: "Design a mobile app interface",
-//   },
-//   {
-//     from: "ai",
-//     text: "Mobile app interface design",
-//   },
-//   {
-//     from: "user",
-//     text: "Build an e-commerce product card",
-//   },
-//   {
-//     from: "ai",
-//     text: "E-commerce product card design",
-//   },
-// ];
-
-const files = mockProject.reduce((acc, file) => {
-  acc[file.path] = {
-    path: file.path,
-    language:
-      file.language ||
-      fileTypeToLanguage[
-        file.path.split(".")[file.path.split(".").length - 1]
-      ] ||
-      file.path.split(".")[file.path.split(".").length - 1],
-    value: file.content,
-  };
-  return acc;
-}, {});
-
-function formatFiles(files) {
-  return files.reduce((acc, file) => {
-    acc[file.path] = {
-      path: file.path,
-      language:
-        file.language ||
-        fileTypeToLanguage[
-          file.path.split(".")[file.path.split(".").length - 1]
-        ] ||
-        file.path.split(".")[file.path.split(".").length - 1],
-      value: file.content,
-    };
-    return acc;
-  }, {});
-}
-
-function sanitizeAIJson(text) {
-  if (typeof text !== "string") return text;
-
-  return text
-    .replace(/^\s*```json\s*/i, "")
-    .replace(/^\s*```\s*/i, "")
-    .replace(/\s*```\s*$/i, "")
-    .trim();
-}
+// import { resp } from "./mockProject";
 
 export const useAiAgentProps = () => {
+  const generatedUiData = useSelector(
+    (state) => state.generatedUi.generatedUi,
+  );
+
+  const dispatch = useDispatch();
+
   const generatedUiRef = useRef(null);
 
   const [prompt, setPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = () => {
-    if (!prompt.trim()) return;
+  const files = generatedUiData?.files || [];
+  const env = generatedUiData?.env;
+  const projectId = generatedUiData?.project_id;
 
-    setIsLoading(true);
-    mcpService
-      .generateFrontend({
-        prompt,
-      })
-      .then((res) => {
-        console.log(res);
-        localStorage.setItem("generatedUiData", res?.content?.[0]?.text);
-      })
-      .finally(() => setIsLoading(false));
-  };
 
-  let generatedUiData = null;
-
-  try {
-    generatedUiData = JSON.parse(
-      sanitizeAIJson(localStorage.getItem("generatedUiData")),
-    );
-  } catch (e) {
-    console.log(e);
+  const handleUpdateCode = (changedFiles) => {
+    mcpService.updateFrontendCode({
+      files: changedFiles
+    })
   }
 
-  const files = formatFiles(generatedUiData?.files) || [];
-  const env = generatedUiData?.env;
+  const onSubmit = ({ context, type }) => {
+
+    if (!prompt.trim()) return;
+
+    if(type === "update") {
+
+      if(!projectId) {
+        console.error("Project id not found")
+        return;
+      }
+
+      setIsLoading(true);
+
+      mcpService.updateFrontend({
+        prompt,
+        // context
+      }, projectId)
+      .then(() => {
+        console.log("updated")
+      })
+      .finally(() => setIsLoading(false));
+
+    } else {
+
+      setIsLoading(true);
+
+      mcpService
+        .generateFrontend({
+          prompt,
+        })
+        .then((res) => {
+          console.log(res)
+
+          dispatch(
+            generatedUiActions.setGeneratedUi(res),
+          );
+          setPrompt("");
+        })
+        .finally(() => setIsLoading(false));
+
+    }
+
+  };
+
+  useEffect(() => {
+    mcpService.getFrontend().then(() => {
+      console.log("Frontend loaded")
+      // dispatch(
+      //   generatedUiActions.setGeneratedUi(resp.data),
+      // )
+    })
+  }, [])
 
   return {
     generatedUiRef,
@@ -131,5 +90,6 @@ export const useAiAgentProps = () => {
     prompt,
     setPrompt,
     env,
+    handleUpdateCode,
   };
 };

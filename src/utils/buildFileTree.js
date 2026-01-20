@@ -1,7 +1,7 @@
 export function buildFileTree(files) {
   const root = {};
 
-  Object.keys(files).forEach((path) => {
+  files.forEach(({path}) => {
     const parts = path.split("/");
     let current = root;
     let currentPath = "";

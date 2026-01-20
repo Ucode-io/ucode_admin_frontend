@@ -17,7 +17,7 @@ export function ensureEsbuild() {
 export async function buildProjectFromFiles(files, env) {
   const fs = {};
 
-  for (const file of Object.values(files)) {
+  for (const file of files) {
     let path = file.path;
 
     // normalize: src/App.jsx → /src/App.jsx
@@ -29,7 +29,7 @@ export async function buildProjectFromFiles(files, env) {
 
     path = "/" + path;
 
-    fs[path] = file.value;
+    fs[path] = file.content;
   }
 
   fs["/__entry.jsx"] = `

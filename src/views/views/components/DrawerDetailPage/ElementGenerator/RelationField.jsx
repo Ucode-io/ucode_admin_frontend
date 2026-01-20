@@ -126,6 +126,8 @@ const AutoCompleteElement = ({
   const { state } = useLocation();
   const languages = useSelector((state) => state.languages.list);
   const isSettings = window.location.pathname?.includes("settings/constructor");
+  const dispatch = useDispatch();
+  const onMenuOpen = () => setEnabled(true);
 
   const customStyles = {
     control: (provided) => ({
@@ -386,7 +388,7 @@ const AutoCompleteElement = ({
     }
   };
 
-  // const inputUpdateObject = useDebounce(() => updateObject(), 500);
+
 
   const setClientTypeValue = () => {
     const value = options?.find((item) => item?.guid === clientTypeID);
@@ -571,9 +573,7 @@ const AutoCompleteElement = ({
     });
   }, [tables, relationTableSlug, field]);
 
-  const dispatch = useDispatch();
 
-  const onMenuOpen = () => setEnabled(true);
 
   return (
     <Tooltip
@@ -669,10 +669,7 @@ const AutoCompleteElement = ({
                           option.data,
                           activeLang ?? i18n?.language,
                         );
-                        // return (
-                        //   option?.[`${el}_${activeLang ?? i18n?.language}`] ??
-                        //   option?.[`${el}`]
-                        // );
+             
                       } else {
                         return isMulti ? el : option?.[el];
                       }
@@ -711,16 +708,7 @@ const AutoCompleteElement = ({
                       </svg>
                     </span>
                   </Box>
-                  {/* <IconGenerator
-                  icon="delete.svg"
-                  style={{ marginLeft: "10px", cursor: "pointer" }}
-                  size={15}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    deleteHandler(option.data);
-                  }}
-                /> */}
+         
                 </div>
               );
             },

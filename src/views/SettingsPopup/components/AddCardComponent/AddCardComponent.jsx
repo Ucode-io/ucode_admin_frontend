@@ -151,7 +151,7 @@ export const AddCardComponent = ({
         });
     }
   }, [tabIndex]);
-  console.log("cardcard", card);
+
   return (
     <Box sx={{ maxWidth: "100%", p: 3 }}>
       <Typography

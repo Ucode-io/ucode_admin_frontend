@@ -2,8 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { ResultApp } from "./components/ResultApp";
 import { ResultCode } from "./components/ResultCode";
 import { buildProjectFromFiles, ensureEsbuild } from "../../bundler/build";
+import { useDispatch, useSelector } from "react-redux";
+import { editorActions } from "@/store/codeEditor/codeEditor.slice";
 
-export const useAiResultProps = ({ generatedUiRef, files, env }) => {
+export const useAiResultProps = ({ generatedUiRef, files, env, handleUpdateCode = () => {} }) => {
+
+  const { changedFiles } = useSelector((state) => state.codeEditor);
+
+  const dispatch = useDispatch();
+
   const monacoRef = useRef(null);
   const editorRef = useRef(null);
 
@@ -24,12 +31,37 @@ export const useAiResultProps = ({ generatedUiRef, files, env }) => {
   const initialRunCode = () => {
     setTimeout(() => {
       runCode();
+      setLoading(false);
     }, 2000);
   };
 
   const handleChangeTab = (value) => {
     setActiveTab(value);
-    if (value === "app") initialRunCode();
+    if (value === "app") {
+
+      if(changedFiles.length) {
+        const editor = editorRef.current;
+        const monaco = monacoRef.current
+    
+        if (!editor) return;
+
+        const files = changedFiles.map(path => {
+          const model = monaco.editor.getModels().find(m => m.uri.path === `/${path}`)
+          return {
+            path,
+            content: model.getValue()
+          }
+        })
+
+        handleUpdateCode(files);
+
+        changedFiles.forEach(path => {
+          dispatch(editorActions.removeChangedFile(path));
+        })
+      }
+
+      initialRunCode();
+    }
   };
 
   function handleEditorMount(editor, monaco) {
@@ -42,7 +74,6 @@ export const useAiResultProps = ({ generatedUiRef, files, env }) => {
       <ResultApp
         ref={generatedUiRef}
         monaco={monacoRef.current}
-        files={files}
       />
     ),
     code: (
@@ -50,6 +81,7 @@ export const useAiResultProps = ({ generatedUiRef, files, env }) => {
         editorRef={editorRef}
         monacoRef={monacoRef}
         handleEditorMount={handleEditorMount}
+        handleUpdateCode={handleUpdateCode}
         ref={generatedUiRef}
         files={files}
       />
@@ -76,6 +108,7 @@ export const useAiResultProps = ({ generatedUiRef, files, env }) => {
   }
 
   useEffect(() => {
+    setLoading(true);
     initialRunCode();
   }, []);
 

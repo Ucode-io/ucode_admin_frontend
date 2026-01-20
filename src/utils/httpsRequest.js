@@ -8,7 +8,7 @@ export const baseURL = `${import.meta.env.VITE_BASE_URL}`;
 
 const httpsRequest = axios.create({
   baseURL,
-  timeout: 1000000,
+  timeout: 100000,
 });
 
 // const errorHandler = (error, hooks) => {

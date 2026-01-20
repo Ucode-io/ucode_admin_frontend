@@ -110,6 +110,32 @@
         overlay = null;
       }
     
+      function getDomPath(el) {
+        const path = [];
+        let current = el;
+
+        while (current && current.nodeType === 1) {
+          let selector = current.tagName.toLowerCase();
+
+          if (current.id) {
+            selector += `#${current.id}`;
+            path.unshift(selector);
+            break; // id — якорь, дальше не идём
+          } else {
+            const parent = current.parentElement;
+            if (parent) {
+              const index = Array.from(parent.children).indexOf(current) + 1;
+              selector += `:nth-child(${index})`;
+            }
+          }
+
+          path.unshift(selector);
+          current = current.parentElement;
+        }
+
+        return path.join(" > ");
+      }
+
       document.addEventListener("mouseover", (e) => {
         if (!enabled) return;
         highlight(e.target);
@@ -119,16 +145,24 @@
         if (!enabled) return;
         e.preventDefault();
         e.stopPropagation();
-    
+
+        const target = e.target;
+        const componentRoot = target.closest("[data-path]");
+
         // enabled = false;
         // clear();
         // document.body.style.cursor = "default";
     
         window.parent.postMessage({
           type: "INSPECT_SELECT",
-          tag: e.target.tagName,
-          id: e.target.id,
-          className: e.target.className,
+
+          tag: target.tagName,
+          id: target.id || null,
+          className: target.className || null,
+
+          domPath: getDomPath(target),
+
+          filePath: componentRoot.getAttribute("data-path"),
         }, "*");
       }, true);
     

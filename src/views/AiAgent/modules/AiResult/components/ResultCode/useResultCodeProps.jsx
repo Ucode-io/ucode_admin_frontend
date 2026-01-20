@@ -4,12 +4,15 @@ import parserTypescript from "prettier/parser-typescript";
 
 import { useDispatch, useSelector } from "react-redux";
 import { editorActions } from "@/store/codeEditor/codeEditor.slice";
+import { generatedUiActions } from "@/store/generatedUi/generatedUi.slice";
+import { useCallback, useEffect, useRef } from "react";
 
-export const useResultCodeProps = ({ monacoRef, editorRef, files }) => {
-  const { openedFiles, activeFile } = useSelector((state) => state.codeEditor);
-  console.log(openedFiles);
+export const useResultCodeProps = ({ monacoRef, editorRef, files, handleUpdateCode }) => {
+  const { openedFiles, activeFile, changedFiles } = useSelector((state) => state.codeEditor);
 
   const dispatch = useDispatch();
+
+  const activeFileRef = useRef(activeFile);
 
   const setOpenFiles = (payload) => {
     dispatch(editorActions.setOpenedFiles(payload));
@@ -18,6 +21,35 @@ export const useResultCodeProps = ({ monacoRef, editorRef, files }) => {
   const setActiveFile = (payload) => {
     dispatch(editorActions.setActiveFile(payload));
   };
+
+  const handleSave = useCallback(() => {
+    const file = activeFileRef.current;
+    const editor = editorRef.current;
+    
+    if (!file || !editor) return;
+
+    const content = editor.getValue();
+
+    if (!content) return;
+
+    const savedFile = {
+      path: file,
+      content
+    }
+
+    handleUpdateCode([savedFile])
+
+    dispatch(editorActions.removeChangedFile(file));
+  }, []);
+
+  function registerSaveShortcut(editor, monaco) {
+    editor.addCommand(
+      monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+      () => {
+        handleSave();
+      }
+    );
+  }
 
   function onEditorMount(editor, monaco) {
     monacoRef.current = monaco;
@@ -40,12 +72,16 @@ export const useResultCodeProps = ({ monacoRef, editorRef, files }) => {
 
     initAllModels(files);
 
-    Object.values(files).forEach((file) => {
+    files.forEach((file) => {
       monaco.languages.typescript.typescriptDefaults.addExtraLib(
-        file.value,
+        file.content,
         `file:///${file.path}`,
       );
     });
+
+    if (activeFile) {
+      openFile(activeFile);
+    }
 
     editor.addAction({
       id: "format-with-prettier",
@@ -62,9 +98,12 @@ export const useResultCodeProps = ({ monacoRef, editorRef, files }) => {
         editor.setValue(formatted);
       },
     });
+
+    registerSaveShortcut(editor, monaco);
+
   }
 
-  function openFile(path) {
+  function openPathInModel (path) {
     const monaco = monacoRef.current;
     const editor = editorRef.current;
 
@@ -73,35 +112,65 @@ export const useResultCodeProps = ({ monacoRef, editorRef, files }) => {
 
     if (!model) return;
 
+    editor.setModel(model);
+  }
+
+  function openFile(path) {
+    
+    openPathInModel(path);
+
     setOpenFiles(
       openedFiles.includes(path) ? openedFiles : [...openedFiles, path],
     );
 
     setActiveFile(path);
-
-    editor.setModel(model);
   }
 
-  function closeFile(path) {
-    setOpenFiles(openedFiles.filter((f) => f !== path));
+  function closeFile(path, index) {
+    const filteredOpenedFiles = openedFiles.filter((f) => f !== path)
+
+    setOpenFiles(filteredOpenedFiles);
+
+    if(path === activeFile) {
+      setActiveFile(filteredOpenedFiles[index - 1] || filteredOpenedFiles[index]);
+      openPathInModel(filteredOpenedFiles[index - 1] || filteredOpenedFiles[index]);
+    }
   }
 
   function initAllModels(files) {
     const monaco = monacoRef.current;
 
-    Object.values(files).forEach((file) => {
+    files.forEach((file, index) => {
       const uri = monaco.Uri.parse(`file:///${file.path}`);
       let model = monaco.editor.getModel(uri);
 
       if (!model) {
-        model = monaco.editor.createModel(file.value, file.language, uri);
+        model = monaco.editor.createModel(file.content, file.language, uri);
       }
 
       model.onDidChangeContent(() => {
-        files[file.path].value = model.getValue();
+        dispatch(generatedUiActions.updateFile({index, content: model.getValue()}));
       });
     });
   }
 
-  return { files, openFile, onEditorMount, openedFiles, activeFile, closeFile };
+  function handleChange () {
+    if(changedFiles.includes(activeFile)) return;
+    dispatch(editorActions.addChangedFile(activeFile));
+  }
+
+  useEffect(() => {
+    activeFileRef.current = activeFile;
+  }, [activeFile]);
+
+  return {
+    files,
+    openFile,
+    onEditorMount,
+    openedFiles,
+    activeFile,
+    closeFile,
+    handleChange,
+    changedFiles,
+  };
 };

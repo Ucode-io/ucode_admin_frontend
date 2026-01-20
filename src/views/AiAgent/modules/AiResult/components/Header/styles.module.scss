@@ -1,10 +1,26 @@
 .header {
   height: 26px;
   display: flex;
-  justify-content: space-between;
   padding-right: 12px;
   border-bottom: 1px solid #e5e9eb;
   background-color: #fff;
+}
+
+.header.dark {
+  border-bottom: 1px solid #3e3e3e;
+  background-color: #252526;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  margin-right: 20px;
+  border: none;
+  color: #222;
+  background-color: transparent;
+  cursor: pointer;
 }
 
 .tabs {
@@ -34,9 +50,27 @@
   cursor: pointer;
 }
 
+.tabItem:first-child .tab {
+  border-left: 1px solid #e5e9eb;
+}
+
+.header.dark .tabItem:first-child .tab {
+  border-left: 1px solid #3e3e3e;
+}
+
+.header.dark .tab {
+  color: #939393;
+  border-right: 1px solid #3e3e3e;
+}
+
 .tab.active {
   color: #62c0ff;
   border-bottom: 2px solid #62c0ff;
+}
+
+.header.dark .tab.active {
+  color: #1189d4;
+  border-bottom: 2px solid #1189d4;
 }
 
 .actions {
@@ -44,14 +78,21 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-left: auto;
 }
 
 .publishButton {
-  padding: 6px;
+  // height: 100%;
+  padding: 0 6px;
   border: none;
   border-radius: 6px;
   font-size: 14px;
   color: #fff;
   background-color: #62c0ff;
   cursor: pointer;
+}
+
+.header.dark .publishButton {
+  color: #fff;
+  background-color: #0076bf;
 }

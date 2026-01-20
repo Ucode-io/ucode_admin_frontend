@@ -14,7 +14,7 @@ export const FileNode = ({
   deep = 0,
 }) => {
   if (node.type === "folder") {
-    const isExpanded = expandedFolders.has(node.path);
+    const isExpanded = expandedFolders[node.path];
 
     return (
       <div className={cls.folderWrapper}>

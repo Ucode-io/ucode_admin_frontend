@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-export const useMoveablePromptInputProps = ({ generatedUiRef }) => {
+export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
 
   const [pos, setPos] = useState({ x: 80, y: 80 });
   const [isInspectEnabled, setIsInspectEnabled] = useState(false);
@@ -108,10 +108,57 @@ export const useMoveablePromptInputProps = ({ generatedUiRef }) => {
   };
 
   const handleRemoveContext = (context) => {
-    console.log(context)
-    console.log(selectedContexts)
     setSelectedContexts(prev => prev.filter(item => (item.id || item.className) !== (context.id || context.className) && item.tag !== context.tag))
   }
+
+  function findElementPositionInFile({
+    content,
+    id,
+    tag,
+  }) {
+    const lines = content.split("\n");
+  
+    // 1️⃣ Самый точный способ — по id
+    if (id) {
+      const idPattern = new RegExp(`id=["']${id}["']`);
+      for (let i = 0; i < lines.length; i++) {
+        if (idPattern.test(lines[i])) {
+          return {
+            line: i + 1,          // Monaco: 1-based
+            column: lines[i].indexOf("id=") + 1,
+            reason: "id",
+          };
+        }
+      }
+    }
+  
+    // 2️⃣ По JSX тегу
+    if (tag) {
+      const tagPattern = new RegExp(`<${tag.toLowerCase()}[\\s>]`);
+      for (let i = 0; i < lines.length; i++) {
+        if (tagPattern.test(lines[i])) {
+          return {
+            line: i + 1,
+            column: lines[i].indexOf("<") + 1,
+            reason: "tag",
+          };
+        }
+      }
+    }
+  
+    // 3️⃣ Fallback — начало компонента
+    for (let i = 0; i < lines.length; i++) {
+      if (/function\s+\w+|const\s+\w+\s*=/.test(lines[i])) {
+        return {
+          line: i + 1,
+          column: 1,
+          reason: "component-root",
+        };
+      }
+    }
+  
+    return null;
+  }  
 
   useEffect(() => {
     posRef.current = pos;
@@ -135,6 +182,13 @@ export const useMoveablePromptInputProps = ({ generatedUiRef }) => {
       if (e.data?.type === "INSPECT_SELECT") {
         setSelectedContexts(prev => [...prev, e.data]);
       }
+      // const file = files.find((f) => f.path === inspected.filePath);
+
+      // const pos = findElementPositionInFile({
+      //   content: file.content,
+      //   tag: inspected.tag,
+      //   id: inspected.id,
+      // });
     };
 
     window.addEventListener("message", onMessage);

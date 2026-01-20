@@ -311,7 +311,7 @@ const AutoCompleteElement = ({
     return Object.values(autoFiltersValue).join(",");
   }, [autoFiltersValue]);
 
-  const { data: optionsFromLocale } = useQuery(
+  const { data: optionsFromLocale, isFetching } = useQuery(
     ["GET_OBJECT_LIST", page, tableSlug, debouncedValue, autoFiltersValue],
     queryFn,
     {
@@ -624,6 +624,9 @@ const AutoCompleteElement = ({
         }}
       >
         <Select
+          instanceId="post-category-select"
+          isLoading={isFetching}
+          filterOption={null}
           onMenuOpen={onMenuOpen}
           placeholder="Empty"
           defaultMenuIsOpen={false}
@@ -646,7 +649,7 @@ const AutoCompleteElement = ({
             }
           }}
           onMenuScrollToBottom={loadMoreItems}
-          // inputChangeHandler={(e) => inputChangeHandler(e)}
+
           onInputChange={(e) => {
             setInputValue(e ?? null);
             inputChangeHandler(e);

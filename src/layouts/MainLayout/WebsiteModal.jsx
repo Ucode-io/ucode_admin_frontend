@@ -38,14 +38,19 @@ const WebsiteModal = ({
   });
 
   const onSubmit = (data) => {
-    if (!selectedFolder?.data || selectedFolder?.type !== "FOLDER") {
-      updateType(data, selectedFolder);
-    } else {
-      createType(data, selectedFolder);
-    }
+
+    if(selectedFolder?.type) {
+      if (!selectedFolder?.data || selectedFolder?.type !== "FOLDER") {
+        updateType(data, selectedFolder);
+      } else {
+        createType(data, selectedFolder);
+      }
+    } else createType(data, selectedFolder);
+   
   };
 
   const createType = (data, selectedFolder) => {
+
     menuSettingsService
       .create({
         ...data,

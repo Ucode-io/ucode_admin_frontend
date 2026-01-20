@@ -29,9 +29,10 @@ export const BillingTable = () => {
       <Typography
         variant="h6"
         sx={{
-          mb: 2,
+          mb: 2.5,
           fontWeight: 600,
-          color: "#000",
+          color: "#1A202C",
+          fontSize: "18px",
         }}
       >
         Transactions
@@ -39,22 +40,24 @@ export const BillingTable = () => {
       <TableContainer
         component={Paper}
         sx={{
-          borderRadius: 1,
-          minHeight: "calc(100vh - 650px)",
+          borderRadius: "8px",
+          height: "calc(100vh - 400px)",
           marginBottom: "15px",
+          boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.08)",
+          border: "1px solid #E5E9EB",
+          overflow: "auto",
         }}
         className="scrollbarNone"
       >
         <Table
           sx={{
             position: "relative",
-            borderTop: "0px",
-            border: "1px solid #dbe0e4",
-            borderRadius: "8px",
+            borderCollapse: "separate",
+            borderSpacing: 0,
           }}
           stickyHeader
         >
-          <TableHead>
+          <TableHead borderBottom="1px solid #E5E9EB">
             <TableRow>
               {tableHeads?.map((item, index) => (
                 <TableHeadCell key={index}>{item}</TableHeadCell>
@@ -73,69 +76,103 @@ export const BillingTable = () => {
                 <TableRow
                   key={index}
                   sx={{
+                    transition: "background-color 0.2s ease",
+                    "&:hover": {
+                      backgroundColor: "#F8FAFC !important",
+                      "& .MuiTableCell-root": {
+                        backgroundColor: "transparent",
+                      },
+                    },
                     "& .MuiTableCell-root": {
                       borderBottom: "1px solid #EAECF0",
                       background:
                         row?.payment_status?.toLowerCase() === "cancelled"
-                          ? "#ffefee"
+                          ? "#FFF5F5"
                           : isOdd(index + 1)
-                            ? "#F9FAFB"
-                            : "#fff",
-                      ":first-of-type": {
-                        paddingLeft: "15px",
+                            ? "#FAFBFC"
+                            : "#FFFFFF",
+                      padding: "14px 16px",
+                      fontSize: "14px",
+                      color: "#1A202C",
+                      "&:first-of-type": {
+                        paddingLeft: "20px",
                       },
-                      ":last-of-type": {
-                        paddingRight: "15px",
+                      "&:last-of-type": {
+                        paddingRight: "20px",
                       },
                     },
                   }}
                 >
-                  <TableCell sx={{ fontSize: "14px", padding: "12px 8px" }}>
-                    {project?.title}
+                  <TableCell
+                    sx={{
+                      fontWeight: 500,
+                      color: "#2D3748",
+                    }}
+                  >
+                    {project?.title || "—"}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "14px", padding: "12px 8px" }}>
+                  <TableCell
+                    sx={{
+                      fontWeight: 600,
+                      color: "#1A202C",
+                    }}
+                  >
                     {numberWithSpaces(row.amount)} {row.currency?.code || "UZS"}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "14px", padding: "12px 8px" }}>
+                  <TableCell>
                     <Box
                       sx={{
-                        display: "inline-block",
-                        padding: "4px 12px",
-                        borderRadius: "16px",
-                        fontSize: "13px",
-                        fontWeight: 500,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        padding: "6px 14px",
+                        borderRadius: "20px",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        textTransform: "capitalize",
                         backgroundColor:
                           row.transaction_type?.toLowerCase() === "subscription"
-                            ? "#d1fae5"
-                            : "#dbeafe",
+                            ? "#D1FAE5"
+                            : "#DBEAFE",
                         color:
                           row.transaction_type?.toLowerCase() === "subscription"
-                            ? "#059669"
-                            : "#2563eb",
+                            ? "#065F46"
+                            : "#1E40AF",
+                        border: "none",
                       }}
                     >
                       {row.transaction_type || "Top up"}
                     </Box>
                   </TableCell>
-                  <TableCell sx={{ fontSize: "14px", padding: "12px 8px" }}>
+                  <TableCell
+                    sx={{
+                      color: "#64748B",
+                    }}
+                  >
                     {format(new Date(row.created_at), "dd.MM.yyyy, HH:mm")}
                   </TableCell>
-                  <TableCell sx={{ fontSize: "14px", padding: "12px 8px" }}>
+                  <TableCell>
                     <Box
                       sx={{
-                        display: "inline-block",
-                        padding: "4px 12px",
-                        borderRadius: "16px",
-                        fontSize: "13px",
-                        fontWeight: 500,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        padding: "6px 14px",
+                        borderRadius: "20px",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        textTransform: "capitalize",
                         backgroundColor:
                           row.payment_status?.toLowerCase() === "accepted"
-                            ? "#d1fae5"
-                            : "#D92D20",
+                            ? "#D1FAE5"
+                            : row.payment_status?.toLowerCase() === "cancelled"
+                              ? "#FEE2E2"
+                              : "#FEF3C7",
                         color:
                           row.payment_status?.toLowerCase() === "accepted"
-                            ? "#059669"
-                            : "#fff",
+                            ? "#065F46"
+                            : row.payment_status?.toLowerCase() === "cancelled"
+                              ? "#991B1B"
+                              : "#92400E",
+                        border: "none",
                       }}
                     >
                       {row.payment_status}
@@ -144,27 +181,66 @@ export const BillingTable = () => {
                 </TableRow>
               ))
             ) : (
-              <Box
-                sx={{
-                  position: "absolute",
-                  width: "100%",
-                  height: "150px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  fontSize: "16px",
-                  border: "2px solid #dbe0e4",
-                  borderTop: "0px",
-                  borderBottomLeftRadius: "8px",
-                  borderBottomRightRadius: "8px",
-                }}
-              >
-                No transactions are found.
-                <Box sx={{ marginTop: "12px" }}>
-                  <BackupTableIcon style={{ width: "40px", height: "30px" }} />
-                </Box>
-              </Box>
+              <TableRow>
+                <TableCell
+                  colSpan={5}
+                  sx={{
+                    border: "none",
+                    padding: "60px 20px",
+                    textAlign: "center",
+                    background: "#FFFFFF",
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 2,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: "64px",
+                        height: "64px",
+                        borderRadius: "50%",
+                        backgroundColor: "#F1F5F9",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: 1,
+                      }}
+                    >
+                      <BackupTableIcon
+                        sx={{
+                          fontSize: "32px",
+                          color: "#94A3B8",
+                        }}
+                      />
+                    </Box>
+                    <Typography
+                      sx={{
+                        fontSize: "16px",
+                        fontWeight: 500,
+                        color: "#475569",
+                        marginTop: 1,
+                      }}
+                    >
+                      No transactions found
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: "14px",
+                        color: "#94A3B8",
+                        marginTop: -1,
+                      }}
+                    >
+                      Your transaction history will appear here
+                    </Typography>
+                  </Box>
+                </TableCell>
+              </TableRow>
             )}
           </TableBody>
         </Table>
@@ -177,23 +253,25 @@ const TableHeadCell = ({ children, ...props }) => {
   return (
     <TableCell
       sx={{
-        background: "#fff",
+        background: "#F8FAFC",
         border: "none",
-        borderBottom: "1px solid #dbe0e4",
+        borderBottom: "2px solid #E5E9EB",
         "&:last-of-type": {
-          paddingRight: "15px",
-          borderRadius: "0",
-          borderTopRightRadius: "8px",
+          paddingRight: "20px",
         },
         "&:first-of-type": {
-          paddingLeft: "15px",
-          borderRadius: "0",
-          borderTopLeftRadius: "8px",
+          paddingLeft: "20px",
         },
-        fontWeight: "bold",
+        fontWeight: 500,
         fontSize: "14px",
+        textTransform: "capitalize",
+        letterSpacing: "0.5px",
+        color: "#64748B",
+        padding: "14px 16px",
         boxShadow: "none !important",
-        padding: "8px",
+        position: "sticky",
+        top: 0,
+        zIndex: 10,
       }}
       {...props}
     >
@@ -205,43 +283,29 @@ const TableHeadCell = ({ children, ...props }) => {
 const TableSkeleton = () => {
   return (
     <TableRow>
-      <TableCell
-        sx={{
-          textAlign: "center",
-          padding: "0",
-          borderBottom: "1px solid #EAECF0",
-        }}
-      >
-        <Skeleton height="53px" />
-      </TableCell>
-      <TableCell
-        sx={{
-          textAlign: "center",
-          padding: "0",
-          borderBottom: "1px solid #EAECF0",
-        }}
-      >
-        <Skeleton height="53px" />
-      </TableCell>
-      <TableCell
-        sx={{
-          textAlign: "center",
-          padding: "0",
-          borderBottom: "1px solid #EAECF0",
-        }}
-      >
-        <Skeleton height="53px" />
-      </TableCell>
-      <TableCell
-        sx={{
-          textAlign: "center",
-          padding: "0",
-          paddingRight: "0 !important",
-          borderBottom: "1px solid #EAECF0",
-        }}
-      >
-        <Skeleton height="53px" />
-      </TableCell>
+      {[1, 2, 3, 4, 5].map((item) => (
+        <TableCell
+          key={item}
+          sx={{
+            padding: "14px 16px",
+            borderBottom: "1px solid #EAECF0",
+            "&:first-of-type": {
+              paddingLeft: "20px",
+            },
+            "&:last-of-type": {
+              paddingRight: "20px",
+            },
+          }}
+        >
+          <Skeleton
+            height="20px"
+            width="80%"
+            sx={{
+              borderRadius: "4px",
+            }}
+          />
+        </TableCell>
+      ))}
     </TableRow>
   );
 };

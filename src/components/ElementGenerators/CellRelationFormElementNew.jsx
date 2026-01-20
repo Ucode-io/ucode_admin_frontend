@@ -1,6 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import LaunchIcon from "@mui/icons-material/Launch";
-import { Box, Popover, Typography } from "@mui/material";
+import { Box, Popover } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { get } from "@ngard/tiny-get";
 import React, { useEffect, useMemo, useState } from "react";
@@ -18,13 +18,8 @@ import {
 } from "@/utils/getRelationFieldLabel";
 import { pageToOffset } from "@/utils/pageToOffset";
 import ModalDetailPage from "@/views/Objects/ModalDetailPage/ModalDetailPage";
-import CascadingElement from "./CascadingElement";
-import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { Close } from "@mui/icons-material";
-import clsx from "clsx";
-import { CustomSingleValue } from "./components/CustomSingleValue";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
 import { groupFieldActions } from "@/store/groupField/groupField.slice";
@@ -72,41 +67,7 @@ const CellRelationFormElementNew = ({
         name={name}
         defaultValue={defaultValue}
         render={({ field: { onChange, value }, fieldState: { error } }) => {
-          return field?.attributes?.cascading_tree_table_slug ? (
-            <RelationGroupCascading
-              field={field}
-              tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
-              value={value ?? ""}
-              setFormValue={setFormValue}
-              classes={classes}
-              name={name}
-              control={control}
-              index={index}
-              setValue={(e) => {
-                onChange(e);
-                updateObject();
-              }}
-            />
-          ) : field?.attributes?.cascadings?.length > 1 ? (
-            <CascadingElement
-              field={field}
-              tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
-              value={value ?? ""}
-              setFormValue={setFormValue}
-              classes={classes}
-              name={name}
-              control={control}
-              index={index}
-              setValue={(e) => {
-                onChange(e);
-                updateObject();
-              }}
-            />
-          ) : (
+          return (
             <AutoCompleteElement
               row={row}
               relOptions={relOptions}
@@ -163,14 +124,16 @@ const AutoCompleteElement = ({
   objectIdFromJWT,
   relationView,
 }) => {
+    const dispatch = useDispatch();
   const { view } = useViewContext();
   const isNewRouter = localStorage.getItem("new_router") === "true";
   const { navigateToForm } = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
+  const [menuIsOpen, setMenuIsOpen] = useState(false);
   const inputChangeHandler = useDebounce((val) => setDebouncedValue(val), 300);
   const [page, setPage] = useState(1);
-  const [allOptions, setAllOptions] = useState();
+  const [allOptions, setAllOptions] = useState([]);
   const [count, setCount] = useState(0);
   const [localValue, setLocalValue] = useState(
     row?.[`${field?.slug}_data`] ?? null,
@@ -180,7 +143,7 @@ const AutoCompleteElement = ({
   const [tableSlugFromProps, setTableSlugFromProps] = useState("");
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
-  // const menuId = searchParams.get("menuId");
+
   const { menuId } = useParams();
   const { i18n } = useTranslation();
   const languages = useSelector((state) => state.languages.list)?.map(
@@ -208,12 +171,8 @@ const AutoCompleteElement = ({
     input: (provided, state) => {
       return {
         ...provided,
-        // position: "absolute",
-        // left: "0",
-        // height: "100%",
         width: "100%",
         border: "none",
-        // backgroundColor: "rgba(242, 241, 238, 0.6)",
       };
     },
     placeholder: (provided) => ({
@@ -249,7 +208,6 @@ const AutoCompleteElement = ({
       borderRadius: "6px",
       borderTopRightRadius: "0px",
       borderTopLeftRadius: "0px",
-      // boxShadow: "rgba(55, 53, 47, 0.16) 0px -1px inset",
       padding: "4px",
       height: "auto",
       boxShadow:
@@ -329,11 +287,7 @@ const AutoCompleteElement = ({
     ],
     queryFn,
     {
-      // enabled:
-      //   (!field?.attributes?.function_path && Boolean(page > 1)) ||
-      //   (!field?.attributes?.function_path && Boolean(debouncedValue)) ||
-      //   newColumn,
-      enabled: Boolean(debouncedValue),
+      enabled: Boolean(field?.table_slug),
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -343,15 +297,17 @@ const AutoCompleteElement = ({
         };
       },
       onSuccess: (data) => {
-        if (Object.keys(autoFiltersValue)?.length) {
-          setAllOptions(data?.options);
+        const shouldReplace =
+          page === 1 || Object.keys(autoFiltersValue)?.length;
+        if (shouldReplace) {
+          setAllOptions(data?.options ?? []);
         } else if (data?.options?.length) {
           setAllOptions((prevOptions) => [
             ...(prevOptions ?? []),
             ...(data.options ?? []),
           ]);
         }
-        setCount(data?.count);
+        setCount(data?.count ?? data?.options?.length ?? 0);
       },
     },
   );
@@ -462,7 +418,11 @@ const AutoCompleteElement = ({
     setLocalValue(row?.[`${field?.slug}_data`]);
   }, [row]);
 
-  const dispatch = useDispatch();
+  // useEffect(() => {
+  //   setPage(1);
+  //   setAllOptions([]);
+  // }, [debouncedValue, autoFiltersValue]);
+
 
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>
@@ -604,8 +564,13 @@ const AutoCompleteElement = ({
         options={openedItemValue ?? computedOptions ?? []}
         value={localValue}
         menuPortalTarget={document.body}
+        menuIsOpen={menuIsOpen}
         onMenuOpen={() => {
+          setMenuIsOpen(true);
           refetch();
+        }}
+        onMenuClose={() => {
+          setMenuIsOpen(false);
         }}
         isClearable={!openedItemValue}
         components={{
@@ -627,19 +592,34 @@ const AutoCompleteElement = ({
         menuShouldScrollIntoView
         styles={customStyles}
         getOptionLabel={(option) => {
-          return field?.attributes?.enable_multi_language
-            ? getRelationFieldTabsLabelLang(
+          if (!option) return "";
+          if (field?.attributes?.enable_multi_language) {
+            return (
+              getRelationFieldTabsLabelLang(
                 field,
                 option,
                 i18n?.language,
                 languages,
-              )
-            : `${getRelationFieldTabsLabel(field, option, i18n?.language)}`;
+              ) ?? ""
+            );
+          }
+          return (
+            getRelationFieldTabsLabel(field, option, i18n?.language) ||
+            option?.name ||
+            option?.title ||
+            option?.label ||
+            option?.guid ||
+            ""
+          );
         }}
-        getOptionValue={(option) => option.value}
-        isOptionSelected={(option, value) =>
-          value.some((val) => val.guid === value)
-        }
+        // filterOption={() => true}
+        getOptionValue={(option) => option?.guid ?? option?.value ?? option?.id}
+        isOptionSelected={(option, value) => {
+          if (Array.isArray(value)) {
+            return value.some((val) => val?.guid === option?.guid);
+          }
+          return value?.guid === option?.guid;
+        }}
         blurInputOnSelect
       />
     </div>

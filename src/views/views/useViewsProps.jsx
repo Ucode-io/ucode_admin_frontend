@@ -1,7 +1,7 @@
 import { viewsActions } from "@/store/views/view.slice";
 import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -680,6 +680,15 @@ export const useViewsProps = ({ isRelationView }) => {
       }
     }
   };
+
+  useEffect(() => {
+    console.log(activeTable?.attributes?.default_filters);
+    if (activeTable?.attributes?.default_filters) {
+      setDefaultFiltersMap(activeTable?.attributes?.default_filters);
+    } else {
+      setDefaultFiltersMap({});
+    }
+  }, [activeTable?.attributes?.default_filters]);
 
   return {
     viewsMap,

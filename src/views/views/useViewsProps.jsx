@@ -1,7 +1,7 @@
 import { viewsActions } from "@/store/views/view.slice";
 import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -48,6 +48,8 @@ import { Pivot } from "./modules/Grid/Pivot";
 
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
+
+  const { activeTable } = useSelector((state) => state.menu);
 
   const { selectedView: selectedViewMain } = useSelector(
     (state) => state.views,
@@ -552,7 +554,9 @@ export const useViewsProps = ({ isRelationView }) => {
     updateViewMutation.mutate(data);
   };
 
-  const [defaultFiltersMap, setDefaultFiltersMap] = useState({});
+  const [defaultFiltersMap, setDefaultFiltersMap] = useState(
+    activeTable?.attributes?.default_filters || {},
+  );
 
   const { isLoading: isLoadingTable } = useTableByIdQuery({
     id: menuItem?.table_id,
@@ -560,7 +564,7 @@ export const useViewsProps = ({ isRelationView }) => {
       enabled: !!menuItem?.table_id,
       onSuccess: (res) => {
         setAuthInfo(res?.attributes?.auth_info);
-        setDefaultFiltersMap(res?.attributes?.default_filters || {});
+        // setDefaultFiltersMap(res?.attributes?.default_filters || {});
         viewForm.reset(res);
       },
     },
@@ -676,6 +680,15 @@ export const useViewsProps = ({ isRelationView }) => {
       }
     }
   };
+
+  useEffect(() => {
+    console.log(activeTable?.attributes?.default_filters);
+    if (activeTable?.attributes?.default_filters) {
+      setDefaultFiltersMap(activeTable?.attributes?.default_filters);
+    } else {
+      setDefaultFiltersMap({});
+    }
+  }, [activeTable?.attributes?.default_filters]);
 
   return {
     viewsMap,

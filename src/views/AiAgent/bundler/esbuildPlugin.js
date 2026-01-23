@@ -59,6 +59,10 @@ export function virtualFsPlugin(fs) {
           return { path: "/shims/axios.js", namespace: "virtual" };
         }
 
+        if (args.path === "lucide-react") {
+          return { path: "/shims/lucide-react.js", namespace: "virtual" };
+        }
+
         if (args.path.startsWith("http")) {
           return {
             path: args.path,

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
 export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
-
   const [pos, setPos] = useState({ x: 80, y: 80 });
   const [isInspectEnabled, setIsInspectEnabled] = useState(false);
   const [selectedContexts, setSelectedContexts] = useState([]);
@@ -23,7 +22,7 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
 
   // const onElementSelect = (el) => {
   //   console.log(el)
-    
+
   // }
 
   const onPointerDown = (e) => {
@@ -98,7 +97,7 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
   };
 
   const toggleInspect = () => {
-    if(isInspectEnabled) {
+    if (isInspectEnabled) {
       disableInspect();
       setIsInspectEnabled(false);
     } else {
@@ -107,32 +106,40 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
     }
   };
 
-  const handleRemoveContext = (context) => {
-    setSelectedContexts(prev => prev.filter(item => (item.id || item.className) !== (context.id || context.className) && item.tag !== context.tag))
+  function resolvePath(input) {
+    const match = input.match(/^([a-zA-Z0-9_-]+)\.([a-z0-9-]+)$/);
+    if (!match) return null;
+
+    const [, folder, name] = match;
+
+    const pascalName = name
+      .split("-")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join("");
+
+    return `src/${folder}/${pascalName}.jsx`;
   }
 
-  function findElementPositionInFile({
-    content,
-    id,
-    tag,
-  }) {
-    const lines = content.split("\n");
-  
-    // 1️⃣ Самый точный способ — по id
+  const handleRemoveContext = (index) => {
+    setSelectedContexts((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  function findElementPositionInFile({ content, id, tag }) {
+    const lines = content?.split("\n");
+
     if (id) {
       const idPattern = new RegExp(`id=["']${id}["']`);
       for (let i = 0; i < lines.length; i++) {
         if (idPattern.test(lines[i])) {
           return {
-            line: i + 1,          // Monaco: 1-based
+            line: i + 1, // Monaco: 1-based
             column: lines[i].indexOf("id=") + 1,
             reason: "id",
           };
         }
       }
     }
-  
-    // 2️⃣ По JSX тегу
+
     if (tag) {
       const tagPattern = new RegExp(`<${tag.toLowerCase()}[\\s>]`);
       for (let i = 0; i < lines.length; i++) {
@@ -145,7 +152,7 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
         }
       }
     }
-  
+
     // 3️⃣ Fallback — начало компонента
     for (let i = 0; i < lines.length; i++) {
       if (/function\s+\w+|const\s+\w+\s*=/.test(lines[i])) {
@@ -156,9 +163,9 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
         };
       }
     }
-  
+
     return null;
-  }  
+  }
 
   useEffect(() => {
     posRef.current = pos;
@@ -180,15 +187,29 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
   useEffect(() => {
     const onMessage = (e) => {
       if (e.data?.type === "INSPECT_SELECT") {
-        setSelectedContexts(prev => [...prev, e.data]);
-      }
-      // const file = files.find((f) => f.path === inspected.filePath);
+        const inspected = e.data;
 
-      // const pos = findElementPositionInFile({
-      //   content: file.content,
-      //   tag: inspected.tag,
-      //   id: inspected.id,
-      // });
+        const file = files.find(
+          (f) => f.path === resolvePath(inspected?.filePath),
+        );
+
+        const pos = findElementPositionInFile({
+          content: file?.content,
+          tag: inspected?.tag,
+          id: inspected?.id,
+        });
+
+        setSelectedContexts((prev) => [
+          ...prev,
+          {
+            ...pos,
+            target_file: file?.path,
+            tag: inspected?.tag,
+            target_element_id: inspected?.id,
+            code_fragment: file?.content,
+          },
+        ]);
+      }
     };
 
     window.addEventListener("message", onMessage);
@@ -207,7 +228,7 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
     toggleInspect,
     isInspectEnabled,
     selectedContexts,
+    setSelectedContexts,
     handleRemoveContext,
   };
-
-}
+};

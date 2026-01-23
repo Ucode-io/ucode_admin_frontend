@@ -263,6 +263,8 @@ export const useTableProps = ({ tab }) => {
     }
   }, [filters]);
 
+  console.log({ defaultFiltersMap });
+
   const tableSearch =
     detectStringType(searchText) === "number"
       ? parseInt(searchText)

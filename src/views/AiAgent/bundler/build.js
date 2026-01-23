@@ -66,6 +66,9 @@ export async function buildProjectFromFiles(files, env) {
     export default window.axios;
   `;
 
+  fs["/shims/lucide-react.js"] = `
+  `;
+
   fs["/shims/react-router-dom.js"] = `
     const RRD = window.ReactRouterDOM;
 

@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import mcpService from "./service/mcp.service";
 import { useDispatch, useSelector } from "react-redux";
 import { generatedUiActions } from "@/store/generatedUi/generatedUi.slice";
-import { resp } from "./mockProject";
+import mcpService from "@/services/mcp/mcp.service";
+import { useParams } from "react-router-dom";
+import { editorActions } from "@/store/codeEditor/codeEditor.slice";
 
 // import { resp } from "./mockProject";
 
 export const useAiAgentProps = () => {
-  const generatedUiData = useSelector(
-    (state) => state.generatedUi.generatedUi,
-  );
+  const { id } = useParams();
+
+  const generatedUiData = useSelector((state) => state.generatedUi.generatedUi);
 
   const dispatch = useDispatch();
 
@@ -18,41 +19,65 @@ export const useAiAgentProps = () => {
   const [prompt, setPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const files = generatedUiData?.files || [];
-  const env = generatedUiData?.env;
-  const projectId = generatedUiData?.project_id;
-
+  const files = generatedUiData?.project_files || [];
+  const env = generatedUiData?.project_env;
+  const projectId = generatedUiData?.id;
 
   const handleUpdateCode = (changedFiles) => {
-    mcpService.updateFrontendCode({
-      files: changedFiles
-    })
-  }
+    mcpService.updateFrontendCode(
+      {
+        id,
+        project_files: changedFiles.map((item) => ({
+          ...item,
+        })),
+      },
+      id,
+    );
+  };
 
   const onSubmit = ({ context, type }) => {
-
     if (!prompt.trim()) return;
 
-    if(type === "update") {
-
-      if(!projectId) {
-        console.error("Project id not found")
+    if (type === "update") {
+      if (!projectId) {
+        console.error("Project id not found");
         return;
       }
 
       setIsLoading(true);
 
-      mcpService.updateFrontend({
-        prompt,
-        // context
-      }, projectId)
-      .then(() => {
-        console.log("updated")
-      })
-      .finally(() => setIsLoading(false));
+      mcpService
+        .updateFrontend(
+          {
+            prompt,
+            context,
+          },
+          projectId,
+        )
+        .then((res) => {
+          const updatedFiles = res?.updated_files;
 
+          if (updatedFiles?.length && files?.length) {
+            const newFiles = [...files];
+
+            updatedFiles?.forEach((f) => {
+              const updatedFileIndex = newFiles?.findIndex(
+                (file) => file.path === f.path,
+              );
+              dispatch(
+                generatedUiActions.updateFile({
+                  index: updatedFileIndex,
+                  content: f.content,
+                }),
+              );
+            });
+
+            setPrompt("");
+          }
+          setIsLoading(false);
+        })
+        .finally(() => setIsLoading(false));
     } else {
-
       setIsLoading(true);
 
       mcpService
@@ -60,27 +85,27 @@ export const useAiAgentProps = () => {
           prompt,
         })
         .then((res) => {
-          console.log(res)
+          console.log(res);
 
-          dispatch(
-            generatedUiActions.setGeneratedUi(res),
-          );
+          dispatch(generatedUiActions.setGeneratedUi(res));
           setPrompt("");
         })
         .finally(() => setIsLoading(false));
-
     }
-
   };
 
   useEffect(() => {
-    mcpService.getFrontend().then(() => {
-      console.log("Frontend loaded")
-      // dispatch(
-      //   generatedUiActions.setGeneratedUi(resp.data),
-      // )
-    })
-  }, [])
+    if (id) {
+      mcpService.getProject(id).then((res) => {
+        dispatch(generatedUiActions.setGeneratedUi(res));
+      });
+    }
+
+    return () => {
+      dispatch(generatedUiActions.resetGeneratedUi());
+      dispatch(editorActions.resetCodeEditor());
+    };
+  }, [id]);
 
   return {
     generatedUiRef,
@@ -91,5 +116,6 @@ export const useAiAgentProps = () => {
     setPrompt,
     env,
     handleUpdateCode,
+    hasProject: !!id,
   };
 };

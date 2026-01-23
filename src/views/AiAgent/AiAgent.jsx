@@ -16,14 +16,13 @@ export const AiAgent = () => {
     setPrompt,
     env,
     handleUpdateCode,
+    hasProject,
   } = useAiAgentProps();
-
-  const hasProject = files.length > 0;
 
   return (
     <div className={clsx(cls.aiAgent, { [cls.withProject]: hasProject })}>
       {!hasProject && <div className={cls.gradient} />}
-      {isLoading && <GeneratingOverlay open={true} text="Generating..." />}
+      {isLoading && <GeneratingOverlay open={true} prompt={prompt} />}
       <div className={cls.container}>
         {hasProject ? (
           <MoveablePromptInput
@@ -42,7 +41,7 @@ export const AiAgent = () => {
           />
         )}
         {hasProject && (
-          <AiResult 
+          <AiResult
             generatedUiRef={generatedUiRef}
             files={files}
             env={env}

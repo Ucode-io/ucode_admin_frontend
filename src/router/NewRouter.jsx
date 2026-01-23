@@ -205,7 +205,10 @@ const NewRouter = ({ resetQueryClient }) => {
 
   return (
     <Routes>
-      <Route path="ai-agent" element={<AiAgent />} />
+      <Route path="ai-agent">
+        <Route path=":id" element={<AiAgent />} />
+        <Route path="" element={<AiAgent />} />
+      </Route>
       <Route path="ai-dashboard/:id" element={<AiDashboard />} />
       <Route
         path="/"

@@ -31,7 +31,14 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { Dialog, Modal } from "@mui/material";
+import {
+  Dialog,
+  List,
+  ListItem,
+  ListItemText,
+  Modal,
+  Typography,
+} from "@mui/material";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -88,6 +95,7 @@ import {
 } from "@/utils/constants/main";
 import { viewsActions } from "@/store/views/view.slice";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
+import mcpService from "@/services/mcp/mcp.service";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
 
@@ -338,9 +346,29 @@ const LayoutSidebar = ({
     }
   };
 
+  const [aiProjects, setAiProjects] = useState([]);
+  const [isProjectsModalOpen, setIsProjectsModalOpen] = useState(false);
+
+  const handleNavigateToProject = (id) => {
+    navigate(`/ai-agent/${id}`);
+  };
+
+  const handleAiAgentClick = () => {
+    if (aiProjects.length > 1) setIsProjectsModalOpen(true);
+    else handleNavigateToProject(aiProjects[0]?.id);
+  };
+
   const setSidebarIsOpen = (val) => {
     dispatch(mainActions.setSettingsSidebarIsOpen(val));
   };
+
+
+  useEffect(() => {
+    mcpService.getProjects().then((res) => {
+      setAiProjects(res.projects);
+    });
+  }, []);
+
   // useEffect(() => {
   //   if (menuTemplate?.icon_style === "MODERN") {
   //     setSidebarIsOpen(false);
@@ -849,7 +877,9 @@ const LayoutSidebar = ({
                         alignItems="center"
                         justifyContent={sidebarIsOpen ? "flex-start" : "center"}
                         gap={8}
-                        onClick={() => navigate("/ai-agent")}
+                        onClick={() => {
+                          handleAiAgentClick();
+                        }}
                         {...getActionProps("ai-agent")}
                       >
                         <Box
@@ -1071,6 +1101,53 @@ const LayoutSidebar = ({
       {menuSettingModal && (
         <MenuSettingModal closeModal={closeMenuSettingModal} />
       )}
+
+      <Modal
+        open={isProjectsModalOpen}
+        onClose={() => setIsProjectsModalOpen(false)}
+      >
+        <Box
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "#fff",
+            borderRadius: "12px",
+            outline: "none",
+            width: 400,
+            padding: "20px",
+            boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="h6">Select Project</Typography>
+          <List>
+            {aiProjects.map((project) => (
+              <ListItem
+                key={project.id}
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": {
+                    backgroundColor: "rgba(0, 0, 0, 0.1)",
+                  },
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  justifyContent: "flex-start",
+                  borderRadius: "4px",
+                }}
+                onClick={() => handleNavigateToProject(project.id)}
+              >
+                <ListItemText primary={project.title} />
+                <ListItemText style={{ fontSize: "12px", color: "#888888" }}>
+                  {project.description}
+                </ListItemText>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Modal>
 
       <ChakraBaseProvider theme={theme}>
         <InviteModal

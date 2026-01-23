@@ -1,11 +1,10 @@
 import { Editor } from "@monaco-editor/react"
 import { FileTree } from "../FileTree"
 import { useResultCodeProps } from "./useResultCodeProps"
+import { OpenedTabs } from "../OpenedTabs";
 
 import cls from "./styles.module.scss"
-import clsx from "clsx";
 import "./styles.scss";
-import { getFileIcon } from "@/utils/getFileIcon";
 
 export const ResultCode = ({
   handleEditorMount,
@@ -35,30 +34,13 @@ export const ResultCode = ({
       <div className={cls.resultCode}>
         <FileTree onOpen={openFile} files={files} activeFile={activeFile} />
         <div className={cls.editor}>
-          <div className={cls.tabs}>
-            {openedFiles.map((path, index) => (
-              <div
-                key={path}
-                className={clsx(cls.tab, { [cls.active]: activeFile === path })}
-                onClick={() => openFile(path)}
-              >
-                <span className={cls.tabIcon}>{getFileIcon(path)}</span>
-                {path.split("/").pop()}
-                {
-                  changedFiles.includes(path) && <span className={cls.changed} />
-                }
-                <button
-                  className={cls.close}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    closeFile(path, index);
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-          </div>
+          <OpenedTabs
+            activeFile={activeFile}
+            openedFiles={openedFiles}
+            openFile={openFile}
+            closeFile={closeFile}
+            changedFiles={changedFiles}
+          />
           <Editor
             height="100%"
             defaultLanguage="javascript"

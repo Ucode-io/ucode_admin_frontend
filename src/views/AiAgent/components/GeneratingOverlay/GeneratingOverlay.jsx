@@ -1,5 +1,44 @@
-export function GeneratingOverlay({ open, text = "Generating...", withContent = true }) {
+import { useEffect, useState } from "react";
+
+export function GeneratingOverlay({ open, prompt }) {
   if (!open) return null;
+
+  const loadingTexts = [
+    `Analyzing ${prompt || ""}…`,
+    "Planning UI structure…",
+    "Creating components…",
+    "Creating tables…",
+    "Thinking…",
+    "Fixing details…",
+  ];
+  
+  const [textIndex, setTextIndex] = useState(0);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTextIndex((i) => (i + 1) % loadingTexts.length);
+    }, 3000);
+  
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+  
+    let lastIndex = 0;
+  
+    const interval = setInterval(() => {
+      setTextIndex((prev) => {
+        let next;
+        do {
+          next = Math.floor(Math.random() * loadingTexts.length);
+        } while (next === prev);
+  
+        return next;
+      });
+    }, 1400);
+  
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div
@@ -20,9 +59,7 @@ export function GeneratingOverlay({ open, text = "Generating...", withContent = 
           background: "rgba(0,0,0,0.1)",
         }}
       />
-
-        {
-          withContent && <div
+        <div
           style={{
             position: "absolute",
             inset: 0,
@@ -34,88 +71,68 @@ export function GeneratingOverlay({ open, text = "Generating...", withContent = 
         >
           <div
             style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "12px",
               width: 360,
               maxWidth: "90vw",
+              backgroundColor: "#fff",
               borderRadius: 16,
-              // background: "rgba(255, 255, 255, 0.98)",
               border: "1px solid rgba(255,255,255,0.12)",
-              // boxShadow: "0 10px 30px rgba(171, 171, 171, 0.35)",
               padding: 18,
             }}
           >
-            {/* верхняя бегущая линия */}
-            {/* <div
+            <p
+              className="loading-text"
               style={{
-                height: 4,
-                borderRadius: 999,
-                overflow: "hidden",
-                background: "rgba(79, 79, 79, 0.1)",
-                marginBottom: 14,
-                position: "relative",
+                fontSize: "14px",
+                color: "#a1a1a1"
               }}
             >
-              <div className="gen-bar" />
-            </div> */}
-  
-            {/* спиннер */}
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div className="gen-spinner" />
-              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                <div style={{ fontSize: 14, color: "rgba(42, 42, 42, 0.6)", fontWeight: 600 }}>
-                  {text}
-                </div>
-                <div style={{ fontSize: 12, color: "rgba(42, 42, 42, 0.6)" }}>
-                  Please wait… don&apos;t close the tab
-                </div>
-              </div>
-            </div>
-  
-            {/* точки */}
-            {/* <div style={{ marginTop: 12, fontSize: 12, color: "rgba(81, 81, 81, 0.55)" }}>
-              Working<span className="gen-dots">...</span>
-            </div> */}
+              {loadingTexts[textIndex]}
+            </p>
+            <div className="loader"></div>
           </div>
         </div>
-        }
-
       <style>{`
-        .gen-spinner{
-          width: 18px;
-          height: 18px;
-          border-radius: 999px;
-          border: 2px solid rgba(95, 95, 95, 0.25);
-          border-top-color: rgba(94, 94, 94, 0.95);
-          animation: genSpin 0.9s linear infinite;
-          flex: 0 0 auto;
-        }
-        @keyframes genSpin { to { transform: rotate(360deg); } }
 
-        .gen-bar{
-          position:absolute;
-          inset:0;
-          width:40%;
-          background: rgb(255, 255, 255);
-          border-radius: 999px;
-          transform: translateX(-60%);
-          animation: genBar 1.2s linear infinite;
-        }
-        @keyframes genBar{
-          0% { transform: translateX(-60%); opacity: .35; }
-          50% { transform: translateX(160%); opacity: 1; }
-          100% { transform: translateX(260%); opacity: .35; }
+        .loader {
+          width: 15px;
+          aspect-ratio: 1;
+          border-radius: 50%;
+          margin-right: 15px;
+          animation: l5 1s infinite linear alternate;
         }
 
-        .gen-dots{
-          display:inline-block;
-          width: 18px;
-          text-align:left;
-          animation: genDots 1.2s steps(3,end) infinite;
+        .loading-text {
+          opacity: 0.85;
+          animation: fade 1.5s ease-in-out infinite;
         }
-        @keyframes genDots{
-          0% { content:""; }
-          33% { }
-          66% { }
-          100% { }
+
+        @keyframes fade {
+          0% { opacity: 0.4 }
+          50% { opacity: 1 }
+          100% { opacity: 0.4 }
+        }
+
+        @keyframes l5 {
+          0% {
+            background: #62c0ff;
+            box-shadow: 20px 0 #62c0ff, -20px 0 rgba(98, 192, 255, 0.25);
+          }
+          33% {
+            background: rgba(98, 192, 255, 0.25);
+            box-shadow: 20px 0 #62c0ff, -20px 0 rgba(98, 192, 255, 0.25);
+          }
+          66% {
+            background: rgba(98, 192, 255, 0.25);
+            box-shadow: 20px 0 rgba(98, 192, 255, 0.25), -20px 0 #62c0ff;
+          }
+          100% {
+            background: #62c0ff;
+            box-shadow: 20px 0 rgba(98, 192, 255, 0.25), -20px 0 #62c0ff;
+          }
         }
       `}</style>
     </div>

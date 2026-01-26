@@ -358,6 +358,8 @@ const LayoutSidebar = ({
   const [aiProjects, setAiProjects] = useState([]);
   const [isProjectsModalOpen, setIsProjectsModalOpen] = useState(false);
 
+  const [editingProject, setEditingProject] = useState(null);
+
   const handleNavigateToProject = (id) => {
     navigate(`/ai-agent/${id}`);
   };
@@ -370,6 +372,26 @@ const LayoutSidebar = ({
   const [projectEditAnchorEl, setProjectEditAnchorEl] = useState(false);
 
   const projectSettingsOpen = Boolean(projectEditAnchorEl);
+
+  const handleUpdateProject = (e) => {
+    e.preventDefault();
+    const elements = e.target.elements;
+
+    const data = {
+      title: elements.title.value,
+      description: elements.description.value,
+      id: editingProject?.id,
+    };
+
+    mcpService.updateProject(data, editingProject?.id).then(() => {
+      setEditingProject(null);
+      setAiProjects((prev) =>
+        prev?.map((el) =>
+          el?.id === editingProject?.id ? { ...editingProject, ...data } : el,
+        ),
+      );
+    });
+  };
 
   const handleOpenProjectSettings = (event) => {
     setProjectEditAnchorEl(event.currentTarget);
@@ -1231,14 +1253,32 @@ const LayoutSidebar = ({
                       }}
                     >
                       <Button
-                        style={{ display: "flex" }}
+                        style={{
+                          display: "flex",
+                          borderRadius: "4px",
+                          padding: "2px",
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingProject(project);
+                        }}
                         _hover={{
                           backgroundColor: "rgba(0, 0, 0, 0.1) !important",
                         }}
                       >
                         <Edit htmlColor="#8F8E8B" />
                       </Button>
-                      <Button style={{ display: "flex" }}>
+                      <Button
+                        style={{
+                          display: "flex",
+                          borderRadius: "4px",
+                          padding: "2px",
+                        }}
+                        // onClick={() => handleDeleteProject(project.id)}
+                        _hover={{
+                          backgroundColor: "rgba(0, 0, 0, 0.1) !important",
+                        }}
+                      >
                         <Delete htmlColor="rgb(255 76 76)" />
                       </Button>
                     </Box>
@@ -1249,11 +1289,10 @@ const LayoutSidebar = ({
           </List>
         </Box>
       </Modal>
-      <Modal
-        open={false}
-        // onClose={() => setIsProjectsModalOpen(false)}
-      >
+      <Modal open={!!editingProject} onClose={() => setEditingProject(null)}>
         <Box
+          onSubmit={handleUpdateProject}
+          as="form"
           style={{
             position: "absolute",
             top: "50%",
@@ -1263,12 +1302,69 @@ const LayoutSidebar = ({
             borderRadius: "12px",
             outline: "none",
             width: 400,
-            padding: "20px",
+            padding: "16px 16px 10px",
             boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
             textAlign: "center",
           }}
         >
-          <p>LOREM</p>
+          <Box display="flex" flexDirection="column" gap="16px">
+            <label
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+              }}
+            >
+              <span style={{ color: "#8F8E8B" }}>Title</span>
+              <input
+                style={{
+                  width: "100%",
+                  outline: "none",
+                  border: "none",
+                  borderBottom: "1px solid #ccc",
+                }}
+                placeholder="Project title"
+                defaultValue={editingProject?.title}
+                id="title"
+              />
+            </label>
+            <label
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+              }}
+            >
+              <span style={{ color: "#8F8E8B" }}>Description</span>
+              <input
+                style={{
+                  width: "100%",
+                  outline: "none",
+                  border: "none",
+                  borderBottom: "1px solid #ccc",
+                }}
+                placeholder="Project description"
+                defaultValue={editingProject?.description}
+                id="description"
+              />
+            </label>
+          </Box>
+          <Box display="flex" justifyContent="flex-end">
+            <Button
+              type="submit"
+              style={{
+                marginTop: "20px",
+                backgroundColor: "#007BFF",
+                color: "#fff",
+                border: "none",
+                borderRadius: "6px",
+                padding: "8px 16px",
+                cursor: "pointer",
+              }}
+            >
+              Apply changes
+            </Button>
+          </Box>
         </Box>
       </Modal>
 

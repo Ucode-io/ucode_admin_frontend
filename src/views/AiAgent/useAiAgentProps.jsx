@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { generatedUiActions } from "@/store/generatedUi/generatedUi.slice";
 import mcpService from "@/services/mcp/mcp.service";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { editorActions } from "@/store/codeEditor/codeEditor.slice";
 
 // import { resp } from "./mockProject";
 
 export const useAiAgentProps = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const generatedUiData = useSelector((state) => state.generatedUi.generatedUi);
 
@@ -24,7 +25,7 @@ export const useAiAgentProps = () => {
   const projectId = generatedUiData?.id;
 
   const handleUpdateCode = (changedFiles) => {
-    mcpService.updateFrontendCode(
+    mcpService.updateProject(
       {
         id,
         project_files: changedFiles.map((item) => ({
@@ -64,13 +65,14 @@ export const useAiAgentProps = () => {
               const updatedFileIndex = newFiles?.findIndex(
                 (file) => file.path === f.path,
               );
-              dispatch(
-                generatedUiActions.updateFile({
-                  index: updatedFileIndex,
-                  content: f.content,
-                }),
-              );
+
+              newFiles[updatedFileIndex] = {
+                ...newFiles[updatedFileIndex],
+                content: f.content,
+              };
             });
+
+            dispatch(generatedUiActions.updateFiles(newFiles));
 
             setPrompt("");
           }
@@ -86,9 +88,9 @@ export const useAiAgentProps = () => {
         })
         .then((res) => {
           console.log(res);
-
           dispatch(generatedUiActions.setGeneratedUi(res));
           setPrompt("");
+          navigate(`/ai-agent/${res?.id}`);
         })
         .finally(() => setIsLoading(false));
     }

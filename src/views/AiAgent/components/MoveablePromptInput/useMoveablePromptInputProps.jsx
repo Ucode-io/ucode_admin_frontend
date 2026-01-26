@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
+  console.log({ files });
   const [pos, setPos] = useState({ x: 80, y: 80 });
   const [isInspectEnabled, setIsInspectEnabled] = useState(false);
   const [selectedContexts, setSelectedContexts] = useState([]);
@@ -90,6 +91,7 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
   };
 
   const disableInspect = () => {
+    setIsInspectEnabled(false);
     generatedUiRef.current.contentWindow?.postMessage(
       { type: "INSPECT_OFF" },
       "*",
@@ -195,7 +197,7 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
       if (e.data?.type === "INSPECT_SELECT") {
         const inspected = e.data;
 
-        const file = files.find(
+        const file = files?.find(
           (f) => f.path === resolvePath(inspected?.filePath),
         );
 
@@ -205,6 +207,8 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
           id: inspected?.id,
         });
 
+        console.log(inspected);
+
         setSelectedContexts((prev) => [
           ...prev,
           {
@@ -213,6 +217,7 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
             tag: inspected?.tag,
             target_element_id: inspected?.id,
             code_fragment: file?.content,
+            name: inspected?.name,
           },
         ]);
       }
@@ -236,5 +241,6 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
     selectedContexts,
     setSelectedContexts,
     handleRemoveContext,
+    disableInspect,
   };
 };

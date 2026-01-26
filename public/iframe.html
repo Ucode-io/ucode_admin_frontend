@@ -161,6 +161,8 @@
           tag: target.tagName,
           id: target.id || null,
           className: target.className || null,
+          
+          name: target.getAttribute("data-element-name") || null,
 
           domPath: getDomPath(target),
 

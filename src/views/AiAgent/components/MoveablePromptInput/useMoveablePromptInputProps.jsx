@@ -129,6 +129,9 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
 
     if (id) {
       const idPattern = new RegExp(`id=["']${id}["']`);
+
+      if (lines?.length === 0 || !lines) return;
+
       for (let i = 0; i < lines.length; i++) {
         if (idPattern.test(lines[i])) {
           return {
@@ -142,8 +145,11 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
 
     if (tag) {
       const tagPattern = new RegExp(`<${tag.toLowerCase()}[\\s>]`);
-      for (let i = 0; i < lines.length; i++) {
-        if (tagPattern.test(lines[i])) {
+
+      if (lines?.length === 0 || !lines) return;
+
+      for (let i = 0; i < lines?.length; i++) {
+        if (tagPattern?.test(lines[i])) {
           return {
             line: i + 1,
             column: lines[i].indexOf("<") + 1,

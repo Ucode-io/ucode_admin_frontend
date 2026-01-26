@@ -13,6 +13,7 @@ import {
   Accordion,
   AccordionItem,
   AccordionPanel,
+  background,
   Box,
   Button,
   ChakraBaseProvider,
@@ -25,7 +26,13 @@ import {
   useDisclosure,
   useOutsideClick,
 } from "@chakra-ui/react";
-import { Logout, AssistantOutlined } from "@mui/icons-material";
+import {
+  Logout,
+  AssistantOutlined,
+  Add,
+  Edit,
+  Delete,
+} from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
@@ -33,6 +40,7 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import LogoutIcon from "@mui/icons-material/Logout";
 import {
   Dialog,
+  IconButton,
   List,
   ListItem,
   ListItemText,
@@ -96,6 +104,7 @@ import {
 import { viewsActions } from "@/store/views/view.slice";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import mcpService from "@/services/mcp/mcp.service";
+import { BsThreeDots } from "react-icons/bs";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
 
@@ -354,8 +363,16 @@ const LayoutSidebar = ({
   };
 
   const handleAiAgentClick = () => {
-    if (aiProjects.length > 1) setIsProjectsModalOpen(true);
-    else handleNavigateToProject(aiProjects[0]?.id);
+    if (aiProjects.length > 0) setIsProjectsModalOpen(true);
+    else navigate("/ai-agent");
+  };
+
+  const [projectEditAnchorEl, setProjectEditAnchorEl] = useState(false);
+
+  const projectSettingsOpen = Boolean(projectEditAnchorEl);
+
+  const handleOpenProjectSettings = (event) => {
+    setProjectEditAnchorEl(event.currentTarget);
   };
 
   const setSidebarIsOpen = (val) => {
@@ -1121,7 +1138,25 @@ const LayoutSidebar = ({
             textAlign: "center",
           }}
         >
-          <Typography variant="h6">Select Project</Typography>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Typography variant="h6">Select Project</Typography>
+            <button onClick={() => navigate("/ai-agent")}>
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  color: "#2d6ce5",
+                }}
+              >
+                <Add />
+                <span>Add new project</span>
+              </span>
+            </button>
+          </Box>
           <List>
             {aiProjects.map((project) => (
               <ListItem
@@ -1131,18 +1166,79 @@ const LayoutSidebar = ({
                   "&:hover": {
                     backgroundColor: "rgba(0, 0, 0, 0.1)",
                   },
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  justifyContent: "flex-start",
                   borderRadius: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                 }}
                 onClick={() => handleNavigateToProject(project.id)}
               >
-                <ListItemText primary={project.title} />
-                <ListItemText style={{ fontSize: "12px", color: "#888888" }}>
-                  {project.description}
-                </ListItemText>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    justifyContent: "flex-start",
+                  }}
+                >
+                  <ListItemText primary={project.title} />
+                  <ListItemText style={{ fontSize: "12px", color: "#888888" }}>
+                    {project.description}
+                  </ListItemText>
+                </Box>
+                <Popover
+                  id={"simple-popover"}
+                  // open={projectSettingsOpen}
+                  anchorEl={projectEditAnchorEl}
+                  onClose={() => setProjectEditAnchorEl(null)}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                >
+                  <PopoverTrigger>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenProjectSettings(e);
+                      }}
+                      _hover={{
+                        backgroundColor: "rgba(255, 255, 255, 0.87)",
+                      }}
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                        transform: "rotate(90deg)",
+                        borderRadius: "6px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <BsThreeDots />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      gap="6px"
+                      sx={{
+                        padding: "4px",
+                        backgroundColor: "#fff",
+                        borderRadius: "6px",
+                        boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.1)",
+                      }}
+                    >
+                      <button style={{ display: "flex" }}>
+                        <Edit htmlColor="#8F8E8B" />
+                      </button>
+                      <button style={{ display: "flex" }}>
+                        <Delete htmlColor="rgb(255 76 76)" />
+                      </button>
+                    </Box>
+                  </PopoverContent>
+                </Popover>
               </ListItem>
             ))}
           </List>

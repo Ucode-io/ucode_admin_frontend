@@ -22,12 +22,12 @@ export const PromptContainer = ({
               })}
               onClick={() => {
                 if (isLoading) return;
-                setPrompt(rec);
+                setPrompt(rec.prompt);
                 inputRef.current.focus();
               }}
               key={index}
             >
-              {rec}
+              {rec.title}
             </div>
           ))}
         </div>

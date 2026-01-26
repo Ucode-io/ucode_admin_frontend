@@ -59,46 +59,47 @@ export function GeneratingOverlay({ open, prompt }) {
           background: "rgba(0,0,0,0.1)",
         }}
       />
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          display: "grid",
+          placeItems: "center",
+          padding: 24,
+          color: "rgba(0, 0, 0, 0.92)",
+        }}
+      >
         <div
           style={{
-            position: "absolute",
-            inset: 0,
-            display: "grid",
-            placeItems: "center",
-            padding: 24,
-            color: "rgba(0, 0, 0, 0.92)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "12px",
+            width: 360,
+            maxWidth: "90vw",
+            backgroundColor: "#fff",
+            borderRadius: 16,
+            border: "1px solid rgba(255,255,255,0.12)",
+            padding: 18,
           }}
         >
-          <div
+          <p
+            className="loading-text"
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "12px",
-              width: 360,
-              maxWidth: "90vw",
-              backgroundColor: "#fff",
-              borderRadius: 16,
-              border: "1px solid rgba(255,255,255,0.12)",
-              padding: 18,
+              fontSize: "14px",
+              color: "#a1a1a1",
             }}
           >
-            <p
-              className="loading-text"
-              style={{
-                fontSize: "14px",
-                color: "#a1a1a1"
-              }}
-            >
-              {loadingTexts[textIndex]}
-            </p>
-            <div className="loader"></div>
-          </div>
+            {loadingTexts[textIndex]}
+          </p>
+          <div className="loader"></div>
         </div>
+      </div>
       <style>{`
 
         .loader {
           width: 15px;
+          flex-shrink: 0;
           aspect-ratio: 1;
           border-radius: 50%;
           margin-right: 15px;

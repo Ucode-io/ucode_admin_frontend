@@ -22,6 +22,10 @@ export const { actions: generatedUiActions, reducer: generatedUiReducer } =
         state.generatedUi.project_files[index].content = content;
       },
 
+      updateFiles(state, { payload }) {
+        state.generatedUi.project_files = payload;
+      },
+
       resetGeneratedUi(state) {
         state.generatedUi = initialState.generatedUi;
       },

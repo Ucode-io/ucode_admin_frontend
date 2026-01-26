@@ -86,6 +86,8 @@ export async function buildProjectFromFiles(files, env) {
     export const useParams = RRD.useParams;
     export const useNavigate = RRD.useNavigate;
     export const useLocation = RRD.useLocation;
+
+    export const useOutletContext = RRD.useOutletContext; 
   `;
 
   const result = await esbuild.build({

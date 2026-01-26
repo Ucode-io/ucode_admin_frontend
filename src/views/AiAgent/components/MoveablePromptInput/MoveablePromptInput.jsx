@@ -23,7 +23,9 @@ export const MoveablePromptInput = ({
     toggleInspect,
     isInspectEnabled,
     selectedContexts,
+    setSelectedContexts,
     handleRemoveContext,
+    disableInspect,
   } = useMoveablePromptInputProps({
     generatedUiRef,
     files,
@@ -79,9 +81,11 @@ export const MoveablePromptInput = ({
         <button
           className={clsx(cls.sendButton, { [cls.show]: !isOpen })}
           type="button"
-          onClick={() =>
-            onSubmit({ context: selectedContexts, type: "update" })
-          }
+          onClick={() => {
+            setSelectedContexts([]);
+            onSubmit({ context: selectedContexts, type: "update" });
+            disableInspect(false);
+          }}
           disabled={!value?.trim()}
         >
           <span className={cls.sendButtonIcon}>
@@ -104,9 +108,11 @@ export const MoveablePromptInput = ({
             [cls.show]: isOpen,
           })}
           type="button"
-          onClick={() =>
-            onSubmit({ context: selectedContexts, type: "update" })
-          }
+          onClick={() => {
+            onSubmit({ context: selectedContexts, type: "update" });
+            setSelectedContexts([]);
+            disableInspect(false);
+          }}
           disabled={!value?.trim()}
         >
           <span className={cls.sendButtonIcon}>

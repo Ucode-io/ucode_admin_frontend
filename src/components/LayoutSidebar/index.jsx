@@ -363,7 +363,7 @@ const LayoutSidebar = ({
   };
 
   const handleAiAgentClick = () => {
-    if (aiProjects.length > 0) setIsProjectsModalOpen(true);
+    if (aiProjects?.length > 0) setIsProjectsModalOpen(true);
     else navigate("/ai-agent");
   };
 
@@ -1158,7 +1158,7 @@ const LayoutSidebar = ({
             </button>
           </Box>
           <List>
-            {aiProjects.map((project) => (
+            {aiProjects?.map((project) => (
               <ListItem
                 key={project.id}
                 sx={{
@@ -1247,6 +1247,28 @@ const LayoutSidebar = ({
               </ListItem>
             ))}
           </List>
+        </Box>
+      </Modal>
+      <Modal
+        open={false}
+        // onClose={() => setIsProjectsModalOpen(false)}
+      >
+        <Box
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "#fff",
+            borderRadius: "12px",
+            outline: "none",
+            width: 400,
+            padding: "20px",
+            boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
+            textAlign: "center",
+          }}
+        >
+          <p>LOREM</p>
         </Box>
       </Modal>
 

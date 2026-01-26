@@ -1230,12 +1230,17 @@ const LayoutSidebar = ({
                         boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.1)",
                       }}
                     >
-                      <button style={{ display: "flex" }}>
+                      <Button
+                        style={{ display: "flex" }}
+                        _hover={{
+                          backgroundColor: "rgba(0, 0, 0, 0.1) !important",
+                        }}
+                      >
                         <Edit htmlColor="#8F8E8B" />
-                      </button>
-                      <button style={{ display: "flex" }}>
+                      </Button>
+                      <Button style={{ display: "flex" }}>
                         <Delete htmlColor="rgb(255 76 76)" />
-                      </button>
+                      </Button>
                     </Box>
                   </PopoverContent>
                 </Popover>

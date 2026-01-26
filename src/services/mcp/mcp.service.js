@@ -4,7 +4,7 @@ import request from "@/utils/request";
 const mcpService = {
   mcpCell: (data) => request.post("/mcp-call", data),
   generateFrontend: (data) =>
-    request.post("/mcp-front", data, { timeout: 540000 }),
+    request.post("/mcp_project/generate_frontend", data, { timeout: 540000 }),
   getFrontend: (params) =>
     Promise.resolve({ data: { frontend: "frontend", params } }),
   getProjects: (params) => request.get("/mcp_project/list", { params }),

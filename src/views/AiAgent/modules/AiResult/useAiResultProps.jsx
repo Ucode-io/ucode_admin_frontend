@@ -1,12 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { ResultApp } from "./components/ResultApp";
 import { ResultCode } from "./components/ResultCode";
-import { buildProjectFromFiles, ensureEsbuild } from "../../bundler/build";
+import { buildProjectFromFiles, ensureEsbuild } from "@/utils/bundler/build";
 import { useDispatch, useSelector } from "react-redux";
 import { editorActions } from "@/store/codeEditor/codeEditor.slice";
+import { generatePreviewHtml } from "@/utils/generatePreviewHtml";
 
-export const useAiResultProps = ({ generatedUiRef, files, env, handleUpdateCode = () => {} }) => {
-
+export const useAiResultProps = ({
+  files,
+  env,
+  generatedUiRef,
+  handleUpdateCode = () => {},
+}) => {
   const { changedFiles } = useSelector((state) => state.codeEditor);
 
   const dispatch = useDispatch();
@@ -14,6 +19,7 @@ export const useAiResultProps = ({ generatedUiRef, files, env, handleUpdateCode 
   const monacoRef = useRef(null);
   const editorRef = useRef(null);
 
+  const [srcDoc, setSrcDoc] = useState(null);
   const [activeTab, setActiveTab] = useState("app");
   const [loading, setLoading] = useState(false);
 
@@ -109,39 +115,31 @@ export const useAiResultProps = ({ generatedUiRef, files, env, handleUpdateCode 
     },
   ];
 
-  const initialRunCode = () => {
-    setTimeout(() => {
-      runCode();
-      setLoading(false);
-    }, 2000);
-  };
-
   const handleChangeTab = (value) => {
     setActiveTab(value);
     if (value === "app") {
-
-      if(changedFiles.length) {
+      if (changedFiles.length) {
         const editor = editorRef.current;
-        const monaco = monacoRef.current
-    
+        const monaco = monacoRef.current;
+
         if (!editor) return;
 
-        const files = changedFiles.map(path => {
-          const model = monaco.editor.getModels().find(m => m.uri.path === `/${path}`)
+        const files = changedFiles.map((path) => {
+          const model = monaco.editor
+            .getModels()
+            .find((m) => m.uri.path === `/${path}`);
           return {
             path,
-            content: model.getValue()
-          }
-        })
+            content: model.getValue(),
+          };
+        });
 
         handleUpdateCode(files);
 
-        changedFiles.forEach(path => {
+        changedFiles.forEach((path) => {
           dispatch(editorActions.removeChangedFile(path));
-        })
+        });
       }
-
-      initialRunCode();
     }
   };
 
@@ -153,8 +151,10 @@ export const useAiResultProps = ({ generatedUiRef, files, env, handleUpdateCode 
   const tabContent = {
     app: (
       <ResultApp
-        ref={generatedUiRef}
         monaco={monacoRef.current}
+        ref={generatedUiRef}
+        srcDoc={srcDoc}
+        loading={loading}
       />
     ),
     code: (
@@ -163,34 +163,35 @@ export const useAiResultProps = ({ generatedUiRef, files, env, handleUpdateCode 
         monacoRef={monacoRef}
         handleEditorMount={handleEditorMount}
         handleUpdateCode={handleUpdateCode}
-        ref={generatedUiRef}
         files={files}
       />
     ),
   };
 
   const runCode = async () => {
-    await ensureEsbuild();
+    setLoading(true);
+    try {
+      await ensureEsbuild();
+      const { code, dependencies } = await buildProjectFromFiles(files, env);
 
-    const js = await buildProjectFromFiles(files, env);
-    iframeEval(js);
+      const html = generatePreviewHtml(code, dependencies);
+
+      setSrcDoc(html);
+    } catch (err) {
+      console.error("Build failed:", err);
+      setSrcDoc(
+        `<html><body><pre style="color:red">${err.message}</pre></body></html>`,
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
-  function iframeEval(code) {
-    const iframe = document.getElementById("preview");
-
-    iframe.contentWindow?.postMessage(
-      {
-        type: "EXECUTE",
-        code,
-      },
-      "*",
-    );
-  }
-
   useEffect(() => {
-    setLoading(true);
-    initialRunCode();
+    const timeout = setTimeout(() => {
+      runCode();
+    }, 1000);
+    return () => clearTimeout(timeout);
   }, [files]);
 
   return {
@@ -198,7 +199,7 @@ export const useAiResultProps = ({ generatedUiRef, files, env, handleUpdateCode 
     tabs,
     handleChangeTab,
     tabContent,
-    runCode,
     loading,
+    srcDoc,
   };
 };

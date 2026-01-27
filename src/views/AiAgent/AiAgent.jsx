@@ -42,10 +42,10 @@ export const AiAgent = () => {
         )}
         {hasProject && (
           <AiResult
-            generatedUiRef={generatedUiRef}
             files={files}
             env={env}
             handleUpdateCode={handleUpdateCode}
+            generatedUiRef={generatedUiRef}
           />
         )}
       </div>

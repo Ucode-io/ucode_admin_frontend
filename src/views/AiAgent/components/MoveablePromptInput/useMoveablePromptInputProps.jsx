@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
 export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
-  console.log({ files });
   const [pos, setPos] = useState({ x: 80, y: 80 });
   const [isInspectEnabled, setIsInspectEnabled] = useState(false);
   const [selectedContexts, setSelectedContexts] = useState([]);
@@ -21,16 +20,10 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
 
   const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
 
-  // const onElementSelect = (el) => {
-  //   console.log(el)
-
-  // }
-
   const onPointerDown = (e) => {
     const el = boxRef.current;
     if (!el) return;
 
-    // ЛКМ или touch/pen
     if (e.pointerType === "mouse" && e.button !== 0) return;
 
     const rect = el.getBoundingClientRect();
@@ -40,7 +33,6 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
     dragRef.current.offsetX = e.clientX - rect.left;
     dragRef.current.offsetY = e.clientY - rect.top;
 
-    // Чтобы не терять события, когда курсор выходит за элемент
     el.setPointerCapture(e.pointerId);
   };
 

@@ -2,11 +2,13 @@
 import clsx from "clsx";
 import cls from "./styles.module.scss";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import mcpService from "@/services/mcp/mcp.service";
+import { showAlert } from "@/store/alert/alert.thunk";
+import { store } from "@/store/index";
 
 export const Header = ({
   activeTab,
@@ -19,8 +21,12 @@ export const Header = ({
     navigate("/");
   };
 
+  const { id } = useParams();
+
   const handlePublish = () => {
-    mcpService.publishFrontend();
+    mcpService.publishFrontend(id).then(() => {
+      store.dispatch(showAlert("Successfully published!"));
+    });
   }
 
   return (

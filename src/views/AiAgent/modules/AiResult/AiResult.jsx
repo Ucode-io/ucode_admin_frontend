@@ -2,27 +2,19 @@ import { Header } from "./components/Header";
 import { useAiResultProps } from "./useAiResultProps";
 
 import cls from "./styles.module.scss";
-import { GeneratingOverlay } from "../../components/GeneratingOverlay";
 
-export const AiResult = ({ generatedUiRef, files, env, handleUpdateCode }) => {
-  const {
-    activeTab,
-    tabs,
-    tabContent,
-    handleChangeTab,
-    runCode,
-    loading,
-  } = useAiResultProps({ generatedUiRef, files, env, handleUpdateCode });
+export const AiResult = ({ files, env, handleUpdateCode, generatedUiRef }) => {
+  const { activeTab, tabs, tabContent, handleChangeTab } = useAiResultProps({
+    files,
+    env,
+    handleUpdateCode,
+    generatedUiRef,
+  });
 
   return (
     <div className={cls.aiResult}>
-      <Header
-        tabs={tabs}
-        activeTab={activeTab}
-        handleRunCode={runCode}
-        onChange={handleChangeTab}
-      />
-        <div className={cls.content}>{tabContent[activeTab]}</div>
+      <Header tabs={tabs} activeTab={activeTab} onChange={handleChangeTab} />
+      <div className={cls.content}>{tabContent[activeTab]}</div>
     </div>
   );
 };

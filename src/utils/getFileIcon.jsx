@@ -1,5 +1,5 @@
 export function getFileIcon(name) {
-  const ext = name.split(".").pop();
+  const ext = name?.split(".")?.pop();
 
   switch (ext) {
     case "js":

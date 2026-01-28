@@ -5,7 +5,7 @@ import parserTypescript from "prettier/parser-typescript";
 import { useDispatch, useSelector } from "react-redux";
 import { editorActions } from "@/store/codeEditor/codeEditor.slice";
 import { generatedUiActions } from "@/store/generatedUi/generatedUi.slice";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export const useResultCodeProps = ({ monacoRef, editorRef, files, handleUpdateCode }) => {
   const { openedFiles, activeFile, changedFiles } = useSelector((state) => state.codeEditor);
@@ -13,6 +13,19 @@ export const useResultCodeProps = ({ monacoRef, editorRef, files, handleUpdateCo
   const dispatch = useDispatch();
 
   const activeFileRef = useRef(activeFile);
+
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+
+  const [expandedFiles, setExpandedFiles] = useState({});
+
+  const toggleFile = (filePath) => {
+    setExpandedFiles((prev) => ({
+      ...prev,
+      [filePath]: !prev[filePath],
+    }));
+  };
 
   const setOpenFiles = (payload) => {
     dispatch(editorActions.setOpenedFiles(payload));
@@ -42,12 +55,81 @@ export const useResultCodeProps = ({ monacoRef, editorRef, files, handleUpdateCo
     dispatch(editorActions.removeChangedFile(file));
   }, []);
 
+  const handleGlobalSearch = (query) => {
+    setSearchQuery(query);
+
+    if (!query || query.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    const groupedResults = []; // Массив групп файлов
+    const lowerQuery = query.toLowerCase();
+
+    // Для авто-раскрытия найденных файлов
+    const newExpandedState = {};
+
+    files.forEach((file) => {
+      const fileMatches = [];
+
+      const lines = file.content.split("\n");
+      lines.forEach((line, index) => {
+        if (line.toLowerCase().includes(lowerQuery)) {
+          fileMatches.push({
+            lineContent: line.trim(),
+            lineNumber: index + 1,
+            // Можно добавить индексы для подсветки, если нужно
+          });
+        }
+      });
+
+      if (fileMatches.length > 0) {
+        groupedResults.push({
+          file: file, // Ссылка на объект файла
+          filePath: file.path,
+          matches: fileMatches,
+        });
+        // По умолчанию раскрываем файлы, где нашли совпадения
+        newExpandedState[file.path] = true;
+      }
+    });
+
+    setExpandedFiles(newExpandedState);
+    setSearchResults(groupedResults);
+  };
+
+  const jumpToCode = (file, lineNumber) => {
+    console.log({ file, lineNumber });
+    openFile(file.path);
+    setActiveFile(file.path);
+    // setIsSearchOpen(false);
+
+    setTimeout(() => {
+      if (editorRef.current) {
+        editorRef.current.revealLineInCenter(lineNumber);
+        editorRef.current.setPosition({ lineNumber, column: 1 });
+        editorRef.current.focus();
+      }
+    }, 50);
+  };
+
   function registerSaveShortcut(editor, monaco) {
     editor.addCommand(
       monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
       () => {
         handleSave();
       }
+    );
+  }
+
+  function registerSearchShortcut(editor, monaco) {
+    editor.addCommand(
+      monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyF,
+      () => {
+        setIsSearchOpen(true);
+        setSearchQuery("");
+        setSearchResults([]);
+      },
     );
   }
 
@@ -79,8 +161,32 @@ export const useResultCodeProps = ({ monacoRef, editorRef, files, handleUpdateCo
       );
     });
 
+    monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+      target: monaco.languages.typescript.ScriptTarget.ES2020,
+      allowNonTsExtensions: true,
+      moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+      module: monaco.languages.typescript.ModuleKind.CommonJS,
+      noEmit: true,
+      esModuleInterop: true,
+      jsx: monaco.languages.typescript.JsxEmit.React,
+      reactNamespace: "React",
+      allowJs: true,
+      typeRoots: ["node_modules/@types"],
+    });
+
+    monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: false,
+      noSyntaxValidation: false,
+    });
+
     if (activeFile) {
       openFile(activeFile);
+    } else {
+      const defaultFile = files?.find(f => f?.path?.includes("App.jsx"))
+
+      if (defaultFile) {
+        openFile(defaultFile.path);
+      }
     }
 
     editor.addAction({
@@ -99,7 +205,43 @@ export const useResultCodeProps = ({ monacoRef, editorRef, files, handleUpdateCo
       },
     });
 
+    const reactTypes = `
+      declare module 'react' {
+        export function useState<T>(initialState: T): [T, (newState: T) => void];
+        export function useEffect(effect: () => void | (() => void), deps?: any[]): void;
+        export function useContext(context: any): any;
+        export function createContext(initialValue?: any): any;
+        export function useRef<T>(initialValue: T): { current: T };
+      }
+      declare module 'react-router-dom' {
+        export function useNavigate(): (path: string) => void;
+        export function useLocation(): { pathname: string, search: string };
+        export function useParams(): Record<string, string>;
+        export const BrowserRouter: any;
+        export const Routes: any;
+        export const Route: any;
+        export const Link: any;
+      }
+      declare module 'axios' {
+        export const get: (url: string) => Promise<any>;
+        export const post: (url: string, data: any) => Promise<any>;
+        const axios: any;
+        export default axios;
+      }
+      declare module 'lucide-react' {
+        export const Home: any;
+        export const User: any;
+        // ...
+      }
+    `;
+
+    monaco.languages.typescript.javascriptDefaults.addExtraLib(
+      reactTypes,
+      "file:///node_modules/@types/global-libs.d.ts",
+    );
+
     registerSaveShortcut(editor, monaco);
+    registerSearchShortcut(editor, monaco);
 
   }
 
@@ -172,5 +314,14 @@ export const useResultCodeProps = ({ monacoRef, editorRef, files, handleUpdateCo
     closeFile,
     handleChange,
     changedFiles,
+    isSearchOpen,
+    searchQuery,
+    setSearchQuery,
+    setIsSearchOpen,
+    searchResults,
+    handleGlobalSearch,
+    jumpToCode,
+    expandedFiles,
+    toggleFile,
   };
 };

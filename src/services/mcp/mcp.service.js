@@ -14,8 +14,7 @@ const mcpService = {
       timeout: 540000,
     }),
   updateProject: (data, id) => request.put(`/mcp_project/${id}`, data),
-  publishFrontend: (id) =>
-    request.post(request.post(`/mcp_project/publish-frontend/${id}`)),
+  publishFrontend: (id) => request.post(`/mcp_project/publish-frontend/${id}`),
 };
 
 export const useMcpCellMutation = ((mutationSettings) => {

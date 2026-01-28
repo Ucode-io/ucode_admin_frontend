@@ -25,7 +25,7 @@ export const Header = ({
 
   const handlePublish = () => {
     mcpService.publishFrontend(id).then(() => {
-      store.dispatch(showAlert("Successfully published!"));
+      store.dispatch(showAlert("Successfully published!", "success"));
     });
   }
 
@@ -74,7 +74,11 @@ export const Header = ({
         </ul>
       </nav>
       <div className={cls.actions}>
-        <button className={cls.publishButton} onClick={handlePublish}>
+        <button
+          type="button"
+          className={cls.publishButton}
+          onClick={handlePublish}
+        >
           <AutoAwesomeIcon />
           <span>Publish</span>
         </button>

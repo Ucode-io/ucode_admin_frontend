@@ -21,18 +21,39 @@ export const ResultCode = ({
     closeFile,
     handleChange,
     changedFiles,
-  } =
-    useResultCodeProps({
-      editorRef,
-      monacoRef,
-      files,
-      handleUpdateCode,
-    });
+    isSearchOpen,
+    searchQuery,
+    setSearchQuery,
+    setIsSearchOpen,
+    searchResults,
+    handleGlobalSearch,
+    jumpToCode,
+    expandedFiles,
+    toggleFile,
+  } = useResultCodeProps({
+    editorRef,
+    monacoRef,
+    files,
+    handleUpdateCode,
+  });
 
   return (
     <>
       <div className={cls.resultCode}>
-        <FileTree onOpen={openFile} files={files} activeFile={activeFile} />
+        <FileTree
+          onOpen={openFile}
+          files={files}
+          activeFile={activeFile}
+          isSearchOpen={isSearchOpen}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          setIsSearchOpen={setIsSearchOpen}
+          searchResults={searchResults}
+          handleGlobalSearch={handleGlobalSearch}
+          jumpToCode={jumpToCode}
+          expandedFiles={expandedFiles}
+          toggleFile={toggleFile}
+        />
         <div className={cls.editor}>
           <OpenedTabs
             activeFile={activeFile}

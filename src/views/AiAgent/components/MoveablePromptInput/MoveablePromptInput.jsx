@@ -38,22 +38,16 @@ export const MoveablePromptInput = ({
 
   const isOpen = value.length > 40;
 
-  const { images, handlePickClick, fileInputRef, onFileUpload, removeImage } =
-    useFileUpload();
-
-  const handleSendToServer = () => {
-    const formData = new FormData();
-
-    images.forEach((img) => {
-      formData.append("files", img.file);
-    });
-
-    fileService.folderUpload(formData).then((res) => {
-      console.log({ res });
-    });
-
-    // axios.post('/api/upload', formData)...
-  };
+  const {
+    fileInputRef,
+    images,
+    isDragging,
+    handlePickClick,
+    onFileUpload,
+    dragDropProps,
+    onPaste,
+    removeImage,
+  } = useFileUpload();
 
   useEffect(() => {
     if (!isDragged && images.length > 0) {
@@ -71,6 +65,7 @@ export const MoveablePromptInput = ({
         [cls.opened]: isOpen,
         [cls.withContext]: selectedContexts.length > 0,
         [cls.imageUploaded]: images.length > 0,
+        [cls.dragged]: isDragged,
       })}
       ref={boxRef}
       onPointerDown={(e) => {
@@ -84,6 +79,8 @@ export const MoveablePromptInput = ({
         transform: `translate3d(${pos.x}px, ${pos.y}px, 0)`,
         touchAction: "none",
       }}
+      {...dragDropProps}
+      onPaste={onPaste}
     >
       {selectedContexts.length > 0 && (
         <div className={cls.contexts}>

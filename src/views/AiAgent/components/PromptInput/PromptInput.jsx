@@ -23,14 +23,26 @@ export const PromptInput = forwardRef(
   ({ setPrompt, prompt = "", onSubmit, isLoading }, ref) => {
     const dots = useGetDots();
 
-    const { images, handlePickClick, fileInputRef, onFileUpload, removeImage } =
-      useFileUpload();
+    const {
+      fileInputRef,
+      images,
+      isDragging,
+      handlePickClick,
+      onFileUpload,
+      dragDropProps,
+      onPaste,
+      removeImage,
+    } = useFileUpload();
 
     return (
       <div
         className={clsx(cls.promptInputWrapper, { [cls.loading]: isLoading })}
       >
-        <div className={cls.promptInput}>
+        <div
+          className={clsx(cls.promptInput, { [cls.dragging]: isDragging })}
+          {...dragDropProps}
+          onPaste={onPaste}
+        >
           <div className={cls.images}>
             {images.map((img) => (
               <div key={img.id} className={cls.image}>
@@ -52,7 +64,9 @@ export const PromptInput = forwardRef(
             value={isLoading ? `Generating your project${dots}` : prompt}
             onChange={(e) => setPrompt(e.target.value)}
             ref={ref}
-            className={clsx(cls.textArea, { [cls.hasFile]: images.length > 0 })}
+            className={clsx(cls.textArea, {
+              [cls.hasFile]: images.length > 0,
+            })}
             placeholder="Describe what you want to generate..."
             disabled={isLoading}
           />

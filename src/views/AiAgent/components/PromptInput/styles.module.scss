@@ -17,6 +17,26 @@
   font-size: 16px;
 }
 
+.promptInput.dragging {
+
+  &::after {
+    content: "Dragging...";
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: calc(100% + 8px);
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+    font-size: 24px;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: rgba(96, 158, 200, 0.6);
+  }
+}
+
 .images {
   width: 100%;
   position: absolute;

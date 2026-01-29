@@ -89,12 +89,18 @@ export const useAiAgentProps = () => {
           image_urls: images,
         })
         .then((res) => {
-          console.log(res);
-          console.log(res.data);
-          console.log(res?.data?.data);
-          dispatch(generatedUiActions.setGeneratedUi(res));
+
+          const responseData = res?.id
+            ? res
+            : res?.data?.id
+              ? res?.data
+              : res?.data?.data?.id
+                ? res?.data?.data
+                : null;
+
+          dispatch(generatedUiActions.setGeneratedUi(responseData));
           setPrompt("");
-          navigate(`/ai-agent/${res?.id}`);
+          navigate(`/ai-agent/${responseData?.id}`);
         })
         .finally(() => setIsLoading(false));
     }

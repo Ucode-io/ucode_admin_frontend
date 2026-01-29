@@ -127,5 +127,6 @@ export const useFileUpload = () => {
       onDrop,
     },
     onPaste,
+    setImages,
   };
 };

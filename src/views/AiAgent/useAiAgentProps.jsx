@@ -19,6 +19,7 @@ export const useAiAgentProps = () => {
 
   const [prompt, setPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [chatVisible, setChatVisible] = useState(false);
 
   const files = generatedUiData?.project_files || [];
   const env = generatedUiData?.project_env;
@@ -36,15 +37,10 @@ export const useAiAgentProps = () => {
     );
   };
 
-  const onSubmit = ({ context, type, images = [] }) => {
+  const onSubmit = ({ context, images = [] }) => {
     if (!prompt.trim()) return;
 
-    if (type === "update") {
-      if (!projectId) {
-        console.error("Project id not found");
-        return;
-      }
-
+    if (projectId) {
       setIsLoading(true);
 
       mcpService
@@ -89,7 +85,6 @@ export const useAiAgentProps = () => {
           image_urls: images,
         })
         .then((res) => {
-
           const responseData = res?.id
             ? res
             : res?.data?.id
@@ -129,5 +124,7 @@ export const useAiAgentProps = () => {
     env,
     handleUpdateCode,
     hasProject: !!id,
+    chatVisible,
+    setChatVisible,
   };
 };

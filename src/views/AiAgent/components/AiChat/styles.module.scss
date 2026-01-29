@@ -1,14 +1,34 @@
 .aiChat {
   width: 0;
-  height: 100vh;
+  height: calc((100vh - 30px));
   position: relative;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  border-right: 1px solid #e5e9eb;
+  border-left: 1px solid #e5e9eb;
   overflow: hidden;
   background-color: #fff;
   transition: width 0.3s ease-in-out;
+}
+
+.aiChat.dragging {
+
+  &::after {
+    content: "Dragging...";
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: calc(100% + 8px);
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+    font-size: 18px;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: rgba(96, 158, 200, 0.6);
+  }
 }
 
 .aiChat.visible {
@@ -30,7 +50,7 @@
   height: 44px;
   position: absolute;
   top: 0;
-  right: 0;
+  left: 0;
   z-index: 1;
   display: flex;
   align-items: center;
@@ -47,28 +67,28 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transform: rotate(180deg);
+    // transform: rotate(180deg);
   }
 }
 
-.aiChatToggler.closed {
-  height: 48px;
-  position: fixed;
-  top: 43px;
-  left: 0;
-  z-index: 1000;
-  border-top-right-radius: 6px;
-  border-bottom-right-radius: 6px;
-  opacity: 0.4;
+// .aiChatToggler.closed {
+//   height: 48px;
+//   position: fixed;
+//   top: 43px;
+//   left: 0;
+//   z-index: 1000;
+//   border-top-right-radius: 6px;
+//   border-bottom-right-radius: 6px;
+//   opacity: 0.4;
 
-  &:hover {
-    opacity: 1;
-  }
+//   &:hover {
+//     opacity: 1;
+//   }
 
-  & .icon {
-    transform: rotate(0deg);
-  }
-}
+//   & .icon {
+//     transform: rotate(0deg);
+//   }
+// }
 
 .backButton {
   display: flex;
@@ -79,7 +99,7 @@
   cursor: pointer;
 }
 
-.inspectButton {
+.actionButton {
   width: 28px;
   height: 28px;
   display: flex;
@@ -91,9 +111,15 @@
   color: #ccc;
   background-color: transparent;
   cursor: pointer;
+
+  & .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
-.inspectButton.active {
+.actionButton.active {
   border-color: #67C0FF;
   color: #67C0FF;
 }
@@ -121,6 +147,14 @@
   height: 200px;
   padding: 12px;
   border-top: 1px solid #e5e9eb;
+}
+
+.contexts {
+  min-height: 38px;
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  overflow: auto;
 }
 
 .promptInputWrapper {
@@ -202,6 +236,7 @@
   top: 50%;
   right: 2px;
   display: none;
+  border: none;
   transform: translateY(-50%);
   background-size: cover;
   background-repeat: no-repeat;
@@ -229,4 +264,61 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.images {
+  // width: calc(100% + 2px);
+  // position: absolute;
+  // left: -1px;
+  // position: absolute;
+  // top: 100%;
+  min-height: 44px;
+  display: flex;
+  gap: 3px;
+  // border: 1px solid #e5e9eb;
+  // border-bottom-left-radius: 6px;
+  // border-bottom-left-radius: 6px;
+  // background-color: #fff;
+  overflow-y: hidden;
+  // overflow: auto;
+}
+
+.image {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.imagePreview {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border: 1px solid #e5e9eb;
+  border-radius: 6px;
+}
+
+.imageRemove {
+  display: none;
+  position: absolute;
+  top: 0px;
+  right: -5px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.image:hover .imageRemove {
+  display: flex;
 }

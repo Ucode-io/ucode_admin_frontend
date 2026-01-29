@@ -878,11 +878,7 @@ export const EyeOffIcon = ({
   </svg>
 );
 
-export const FileDropdownIcon = ({
-  width = "16",
-  height = "16",
-  color = "#101828",
-}) => (
+export const FileDropdownIcon = ({ width = "16", height = "16" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={width}
@@ -1197,6 +1193,126 @@ export const SearchIcon = ({
         fill={color}
         opacity="1"
         data-original="#000000"
+        className=""
+      ></path>
+    </g>
+  </svg>
+);
+
+export const LeftBarIcon = ({ width = "20", height = "20" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    version="1.1"
+    width={width}
+    height={height}
+    x="0"
+    y="0"
+    viewBox="0 0 24 24"
+    enableBackground="new 0 0 512 512"
+    xmlSpace="preserve"
+    className=""
+  >
+    <g>
+      <g fill="#000" fillRule="evenodd" clipRule="evenodd">
+        <path
+          d="M4.5 3.75a.75.75 0 0 0-.75.75v15c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75v-15a.75.75 0 0 0-.75-.75zm-2.25.75A2.25 2.25 0 0 1 4.5 2.25h15a2.25 2.25 0 0 1 2.25 2.25v15a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25z"
+          fill="currentColor"
+          opacity="1"
+          data-original="#000000"
+          className=""
+        ></path>
+        <path
+          d="M8 2.25a.75.75 0 0 1 .75.75v18a.75.75 0 0 1-1.5 0V3A.75.75 0 0 1 8 2.25z"
+          fill="currentColor"
+          opacity="1"
+          data-original="#000000"
+          className=""
+        ></path>
+        <path
+          d="M5.75 21a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1-.75-.75zM5.75 3a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 0 1.5h-3A.75.75 0 0 1 5.75 3z"
+          fill="currentColor"
+          opacity="1"
+          data-original="#000000"
+        ></path>
+      </g>
+    </g>
+  </svg>
+);
+
+export const BottomBarIcon = ({ width = "20", height = "20" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    version="1.1"
+    width={width}
+    height={height}
+    x="0"
+    y="0"
+    viewBox="0 0 24 24"
+    enableBackground="new 0 0 512 512"
+    xmlSpace="preserve"
+    className=""
+  >
+    <g>
+      <g fill="#000">
+        <path
+          d="M4.5 3.75a.75.75 0 0 0-.75.75v15c0 .414.336.75.75.75h15a.75.75 0 0 0 .75-.75v-15a.75.75 0 0 0-.75-.75zm-2.25.75A2.25 2.25 0 0 1 4.5 2.25h15a2.25 2.25 0 0 1 2.25 2.25v15a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25z"
+          fill="currentColor"
+          opacity="1"
+          data-original="#000000"
+        ></path>
+        <path
+          d="M2.25 16a.75.75 0 0 1 .75-.75h18a.75.75 0 0 1 0 1.5H3a.75.75 0 0 1-.75-.75z"
+          fill="currentColor"
+          opacity="1"
+          data-original="#000000"
+          className=""
+        ></path>
+        <g fillRule="evenodd" clipRule="evenodd">
+          <path
+            d="M3 13.75a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3a.75.75 0 0 1 .75-.75zM21 13.75a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3a.75.75 0 0 1 .75-.75z"
+            fill="currentColor"
+            opacity="1"
+            data-original="#000000"
+          ></path>
+        </g>
+      </g>
+    </g>
+  </svg>
+);
+
+export const ChatIcon = ({ width = "20", height = "20" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    version="1.1"
+    width={width}
+    height={height}
+    x="0"
+    y="0"
+    viewBox="0 0 512 512"
+    enableBackground="new 0 0 512 512"
+    xmlSpace="preserve"
+    className=""
+  >
+    <g>
+      <path
+        d="M304 96H112c-8.832 0-16 7.168-16 16s7.168 16 16 16h192c8.832 0 16-7.168 16-16s-7.168-16-16-16zM240 160H112c-8.832 0-16 7.168-16 16s7.168 16 16 16h128c8.832 0 16-7.168 16-16s-7.168-16-16-16z"
+        fill="currentColor"
+        opacity="1"
+        data-original="currentColor"
+        className=""
+      ></path>
+      <path
+        d="M352 0H64C28.704 0 0 28.704 0 64v320c0 6.208 3.584 11.872 9.216 14.496A16.232 16.232 0 0 0 16 400c3.68 0 7.328-1.28 10.24-3.712L117.792 320H352c35.296 0 64-28.704 64-64V64c0-35.296-28.704-64-64-64zm32 256c0 17.632-14.336 32-32 32H112c-3.744 0-7.36 1.312-10.24 3.712L32 349.856V64c0-17.632 14.336-32 32-32h288c17.664 0 32 14.368 32 32v192z"
+        fill="currentColor"
+        opacity="1"
+        data-original="currentColor"
+        className=""
+      ></path>
+      <path
+        d="M448 128c-8.832 0-16 7.168-16 16s7.168 16 16 16c17.664 0 32 14.368 32 32v270.688l-54.016-43.2A16.12 16.12 0 0 0 416 416H192c-17.664 0-32-14.368-32-32v-16c0-8.832-7.168-16-16-16s-16 7.168-16 16v16c0 35.296 28.704 64 64 64h218.368l75.616 60.512A16.158 16.158 0 0 0 496 512c2.336 0 4.704-.512 6.944-1.568A16.05 16.05 0 0 0 512 496V192c0-35.296-28.704-64-64-64z"
+        fill="currentColor"
+        opacity="1"
+        data-original="currentColor"
         className=""
       ></path>
     </g>

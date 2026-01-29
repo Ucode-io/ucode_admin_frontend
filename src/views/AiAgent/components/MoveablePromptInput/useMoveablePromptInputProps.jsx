@@ -46,7 +46,6 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
     const newX = e.clientX - dragRef.current.offsetX;
     const newY = e.clientY - dragRef.current.offsetY;
 
-    // (опционально) ограничим в пределах viewport
     const w = el.offsetWidth;
     const h = el.offsetHeight;
     const maxX = window.innerWidth - w;
@@ -228,6 +227,7 @@ export const useMoveablePromptInputProps = ({ generatedUiRef, files }) => {
     textareaRef,
     setPos,
     isDragged: isDraggedRef.current,
+    isDraggedRef,
     toggleInspect,
     isInspectEnabled,
     selectedContexts,

@@ -36,7 +36,7 @@ export const useAiAgentProps = () => {
     );
   };
 
-  const onSubmit = ({ context, type }) => {
+  const onSubmit = ({ context, type, images = [] }) => {
     if (!prompt.trim()) return;
 
     if (type === "update") {
@@ -52,6 +52,7 @@ export const useAiAgentProps = () => {
           {
             prompt,
             context,
+            image_urls: images,
           },
           projectId,
         )
@@ -85,9 +86,12 @@ export const useAiAgentProps = () => {
       mcpService
         .generateFrontend({
           prompt,
+          image_urls: images,
         })
         .then((res) => {
           console.log(res);
+          console.log(res.data);
+          console.log(res?.data?.data);
           dispatch(generatedUiActions.setGeneratedUi(res));
           setPrompt("");
           navigate(`/ai-agent/${res?.id}`);

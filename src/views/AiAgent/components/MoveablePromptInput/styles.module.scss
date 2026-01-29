@@ -16,6 +16,12 @@
   }
 }
 
+.moveablePromptInput.imageUploaded {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-color: transparent;
+}
+
 .moveablePromptInput.opened {
   height: 120px;
   flex-direction: column;
@@ -109,6 +115,7 @@
 
 .actions {
   display: flex;
+  gap: 4px;
   padding: 4px;
 }
 
@@ -194,4 +201,66 @@
   background-color: #fafafa;
   cursor: pointer;
   border: none;
+}
+
+.fileInputLabel {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.images {
+  width: calc(100% + 2px);
+  position: absolute;
+  left: -1px;
+  position: absolute;
+  top: 100%;
+  display: flex;
+  gap: 3px;
+  border: 1px solid #e5e9eb;
+  border-bottom-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  background-color: #fff;
+  overflow: auto;
+}
+
+.image {
+  width: 60px;
+  height: 60px;
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.imagePreview {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border: 1px solid #e5e9eb;
+  border-radius: 6px;
+}
+
+.imageRemove {
+  display: none;
+  position: absolute;
+  top: 0px;
+  right: -5px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.image:hover .imageRemove {
+  display: flex;
 }

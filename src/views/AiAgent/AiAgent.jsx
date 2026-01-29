@@ -3,8 +3,8 @@ import { useAiAgentProps } from "./useAiAgentProps";
 import { AiResult } from "./modules/AiResult";
 import { PromptContainer } from "./components/PromptContainer";
 import { MoveablePromptInput } from "./components/MoveablePromptInput";
-import clsx from "clsx";
 import { GeneratingOverlay } from "./components/GeneratingOverlay";
+import clsx from "clsx";
 
 export const AiAgent = () => {
   const {
@@ -17,6 +17,8 @@ export const AiAgent = () => {
     env,
     handleUpdateCode,
     hasProject,
+    chatVisible,
+    setChatVisible,
   } = useAiAgentProps();
 
   return (
@@ -25,13 +27,15 @@ export const AiAgent = () => {
       {isLoading && <GeneratingOverlay open={true} prompt={prompt} />}
       <div className={cls.container}>
         {hasProject ? (
-          <MoveablePromptInput
-            value={prompt}
-            setValue={setPrompt}
-            generatedUiRef={generatedUiRef}
-            onSubmit={onSubmit}
-            files={files}
-          />
+          !chatVisible ? (
+            <MoveablePromptInput
+              value={prompt}
+              setValue={setPrompt}
+              generatedUiRef={generatedUiRef}
+              onSubmit={onSubmit}
+              files={files}
+            />
+          ) : null
         ) : (
           <PromptContainer
             prompt={prompt}
@@ -46,6 +50,11 @@ export const AiAgent = () => {
             env={env}
             handleUpdateCode={handleUpdateCode}
             generatedUiRef={generatedUiRef}
+            onSubmit={onSubmit}
+            prompt={prompt}
+            setPrompt={setPrompt}
+            chatVisible={chatVisible}
+            setChatVisible={setChatVisible}
           />
         )}
       </div>

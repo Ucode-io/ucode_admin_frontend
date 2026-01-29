@@ -3,7 +3,14 @@
   flex-grow: 1;
 }
 
-.content {
+.content {width: 100%;
+  // height: calc(100vh - 30px);
+  // overflow: auto;
+}
+
+.body {
+  width: 100%;
   height: calc(100vh - 30px);
+  display: flex;
   overflow: auto;
 }

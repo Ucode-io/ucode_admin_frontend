@@ -1,58 +1,60 @@
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useAiChatProps } from "./useAiChatProps"
+import { useAiChatProps } from "./useAiChatProps";
 import { Message } from "../Message";
 import HighlightAltIcon from "@mui/icons-material/HighlightAlt";
 import SendIcon from "@mui/icons-material/Send";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 import cls from "./styles.module.scss";
 import clsx from "clsx";
+import { useInspect } from "@/hooks/useInspect";
+import { useFileUpload } from "@/hooks/useFileUpload";
 
 export const AiChat = ({
-  messages = [],
-  setMessages = () => {},
   generatedUiRef,
   visible,
-  handleFullScreen,
+  setVisible = () => {},
+  onSubmit = () => {},
+  value,
+  setValue,
+  files = [],
 }) => {
   const {
-    handleSend,
-    handleInspect,
+    messages,
     chatBodyRef,
-    textAreaRef,
-    onBackClick,
-    isEmpty,
-    handleInput,
-    handleKeyDown,
     isInspectEnabled,
-    handleMouseMove,
-    handleMouseLeave,
-    handleClick,
-  } = useAiChatProps({ setMessages, messages, generatedUiRef });
+    enableInspect,
+    disableInspect,
+    handleSend,
+  } = useAiChatProps({ generatedUiRef });
 
-  const enableInspect = () => {
-    generatedUiRef.current.contentWindow?.postMessage(
-      { type: "INSPECT_ON" },
-      "*",
-    );
-  };
+  const { selectedContexts, handleRemoveContext, setSelectedContexts } = useInspect({ files });
 
-  const disableInspect = () => {
-    generatedUiRef.current.contentWindow?.postMessage(
-      { type: "INSPECT_OFF" },
-      "*",
-    );
-  };
+  const {
+    fileInputRef,
+    images = [],
+    handlePickClick,
+    onFileUpload,
+    dragDropProps,
+    onPaste,
+    removeImage,
+    isDragging,
+    setImages,
+  } = useFileUpload();
 
   return (
-    <div className={clsx(cls.aiChat, { [cls.visible]: visible })}>
+    <div
+      className={clsx(cls.aiChat, {
+        [cls.visible]: visible,
+        [cls.dragging]: isDragging,
+      })}
+      {...dragDropProps}
+      onPaste={onPaste}
+    >
       <div className={cls.aiChatHeader}>
-        <button className={cls.backButton} onClick={onBackClick}>
-          <ArrowBackIcon width="32px" height="32px" />
-        </button>
         <span
           className={clsx(cls.aiChatToggler, { [cls.closed]: !visible })}
-          onClick={handleFullScreen}
+          onClick={() => setVisible(!visible)}
         >
           <span className={cls.icon}>
             <PlayArrowIcon fontSize="14px" />
@@ -67,34 +69,89 @@ export const AiChat = ({
         </div>
       </div>
       <div className={cls.aiChatFooter}>
-        <form className={cls.promptInputWrapper} onSubmit={handleSend}>
-          {isEmpty && (
-            <span className={cls.textAreaPlaceholder}>
-              Ask AI to change something...
-            </span>
+        <form
+          className={cls.promptInputWrapper}
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit({
+              context: selectedContexts,
+              images: images?.map((img) => img.url),
+            });
+            handleSend(value);
+            setImages([]);
+            setSelectedContexts([]);
+          }}
+        >
+          {selectedContexts.length > 0 && (
+            <div className={cls.contexts}>
+              {selectedContexts?.map((item, index) => (
+                <span className={cls.badge} key={index}>
+                  {"<" + item.tag?.toLowerCase() + "/>"}
+                  <button
+                    className={cls.badgeClearBtn}
+                    onClick={() => handleRemoveContext(index)}
+                    type="button"
+                  />
+                </span>
+              ))}
+            </div>
           )}
-          <div
+          {images?.length > 0 && (
+            <div className={cls.images}>
+              {images.map((img) => (
+                <div key={img.id} className={cls.image}>
+                  <img
+                    src={img.url}
+                    alt={img.name}
+                    className={cls.imagePreview}
+                  />
+                  <button
+                    onClick={() => removeImage(img.id)}
+                    className={cls.imageRemove}
+                    type="button"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <textarea
             className={cls.textArea}
-            ref={textAreaRef}
-            onInput={handleInput}
-            onKeyDown={handleKeyDown}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            onClick={handleClick}
-            contentEditable
-            suppressContentEditableWarning
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder="Ask AI to change something..."
           />
           <div className={cls.aiChatFooterBottom}>
             <button
-              className={clsx(cls.inspectButton, {
+              className={clsx(cls.actionButton, {
                 [cls.active]: isInspectEnabled,
               })}
               type="button"
-              // onClick={handleInspect}
-              onClick={enableInspect}
+              onClick={() => {
+                isInspectEnabled ? disableInspect() : enableInspect();
+              }}
             >
               <HighlightAltIcon />
             </button>
+            <input
+              ref={fileInputRef}
+              className={cls.fileInput}
+              type="file"
+              accept="image/*"
+              onChange={onFileUpload}
+              multiple
+              style={{ display: "none" }}
+            />
+            <div
+              className={clsx(cls.fileInputLabel, cls.actionButton)}
+              onClick={handlePickClick}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <span className={cls.icon}>
+                <AttachFileIcon fontSize="medium" htmlColor="currentColor" />
+              </span>
+            </div>
             <button className={cls.sendButton} type="submit">
               <SendIcon />
             </button>

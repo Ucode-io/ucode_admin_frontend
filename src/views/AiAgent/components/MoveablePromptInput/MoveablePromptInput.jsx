@@ -4,9 +4,7 @@ import { useMoveablePromptInputProps } from "./useMoveablePromptInputProps";
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import HighlightAltIcon from "@mui/icons-material/HighlightAlt";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-import { useEffect } from "react";
-import { useFileUpload } from "@/hooks/useFileUpload";
-import fileService from "@/services/fileService";
+import { useInspect } from "@/hooks/useInspect";
 
 export const MoveablePromptInput = ({
   value = "",
@@ -15,6 +13,7 @@ export const MoveablePromptInput = ({
   onSubmit = () => {},
   files = [],
 }) => {
+
   const {
     boxRef,
     pos,
@@ -26,38 +25,23 @@ export const MoveablePromptInput = ({
     isDragged,
     toggleInspect,
     isInspectEnabled,
-    selectedContexts,
-    setSelectedContexts,
-    handleRemoveContext,
     disableInspect,
-    isDraggedRef,
-  } = useMoveablePromptInputProps({
-    generatedUiRef,
-    files,
-  });
-
-  const isOpen = value.length > 40;
-
-  const {
     fileInputRef,
     images,
-    isDragging,
     handlePickClick,
     onFileUpload,
     dragDropProps,
     onPaste,
     removeImage,
-  } = useFileUpload();
+    setImages,
+  } = useMoveablePromptInputProps({
+    generatedUiRef,
+  });
 
-  useEffect(() => {
-    if (!isDragged && images.length > 0) {
-      setPos((prev) => ({
-        ...prev,
-        y: prev.y - 100,
-      }));
-      isDraggedRef.current = true;
-    }
-  }, [images]);
+  const isOpen = value.length > 40;
+
+  const { selectedContexts, setSelectedContexts, handleRemoveContext } =
+    useInspect({ files });
 
   return (
     <div
@@ -113,7 +97,11 @@ export const MoveablePromptInput = ({
           type="button"
           onClick={() => {
             setSelectedContexts([]);
-            onSubmit({ context: selectedContexts, type: "update" });
+            onSubmit({
+              context: selectedContexts,
+              images: images?.map((img) => img.url),
+            });
+            setImages([]);
             disableInspect(false);
           }}
           disabled={!value?.trim()}
@@ -157,9 +145,13 @@ export const MoveablePromptInput = ({
           })}
           type="button"
           onClick={() => {
-            onSubmit({ context: selectedContexts, type: "update" });
+            onSubmit({
+              context: selectedContexts,
+              images: images?.map((img) => img.url),
+            });
             setSelectedContexts([]);
             disableInspect(false);
+            setImages([]);
           }}
           disabled={!value?.trim()}
         >

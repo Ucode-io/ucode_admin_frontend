@@ -44,6 +44,7 @@ const CDatePicker = ({
               display: "flex",
               alignItems: "center",
               position: "relative",
+              zIndex: 100,
             }
           : disabled
             ? {
@@ -52,6 +53,7 @@ const CDatePicker = ({
                 alignItems: "center",
                 borderRadius: "4px",
                 position: "relative",
+                zIndex: 100,
               }
             : {
                 background: isBlackBg ? "#2A2D34" : "",
@@ -59,8 +61,10 @@ const CDatePicker = ({
                 display: "flex",
                 alignItems: "center",
                 position: "relative",
+                zIndex: 100,
               }
-      }>
+      }
+    >
       <DatePicker
         id={`date_${name}`}
         disabled={disabled}
@@ -80,7 +84,8 @@ const CDatePicker = ({
               value={value ?? undefined}
               onChange={handleChange}
               disabled={disabled}
-              required={required}>
+              required={required}
+            >
               {(InputProps) => (
                 <TextField
                   size="small"
@@ -94,7 +99,7 @@ const CDatePicker = ({
                   autoFocus={tabIndex === 1}
                   InputProps={{
                     ...InputProps,
-                    inputProps: {tabIndex},
+                    inputProps: { tabIndex },
                     readOnly: disabled,
                     classes: {
                       input: isBlackBg ? classes.input : "",
@@ -116,7 +121,7 @@ const CDatePicker = ({
                           },
                     endAdornment: (
                       <InputAdornment position="end">
-                        <Box sx={{display: "flex", alignItems: "center"}}>
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
                           <Today
                             style={{
                               color: isBlackBg ? "#fff" : "",
@@ -125,7 +130,7 @@ const CDatePicker = ({
                           />
                           {disabled && (
                             <Tooltip title="This field is disabled for this role!">
-                              <Lock style={{fontSize: "20px"}} />
+                              <Lock style={{ fontSize: "20px" }} />
                             </Tooltip>
                           )}
                         </Box>
@@ -155,7 +160,8 @@ const CDatePicker = ({
             bottom: newColumn ? "-10px" : "-20px",
             left: "10px",
           }}
-          error>
+          error
+        >
           {error?.message}
         </FormHelperText>
       )}

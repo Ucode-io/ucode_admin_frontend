@@ -18,6 +18,7 @@ import { menuAccordionActions } from "@/store/menus/menus.slice";
 import menuService, { useMenuListQuery } from "@/services/menuService";
 import { useQueryClient } from "react-query";
 import { TreeNode } from "../TreeNode";
+import { useNavigate } from "react-router-dom";
 
 const ROOT_PARENT_ID = "c57eedc3-a954-4262-a0af-376c65b5a284";
 const ROOT_DROP_ID = "ROOT_DROP_ZONE";
@@ -52,12 +53,18 @@ export const SortableSidebarTree = ({
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
   );
 
-  function onToggle(id) {
+  const navigate = useNavigate();
+
+  function onToggle(node) {
+    const id = node.id;
+
     const isOpening = !menuChilds?.[id]?.open;
 
     if (isOpening) {
       setSelectedFolderId(id);
     }
+
+    if (node?.type !== "FOLDER") navigate(`/${id}`);
 
     dispatch(menuAccordionActions.toggleMenuOpen({ id }));
   }
@@ -237,6 +244,7 @@ export const SortableSidebarTree = ({
             onToggle={onToggle}
             menuChilds={menuChilds}
             getMenuLabel={getMenuLabel}
+            // handlers={handlers}
           />
         ))}
       </SortableContext>
@@ -259,4 +267,4 @@ export const SortableSidebarTree = ({
       </DragOverlay>
     </DndContext>
   );
-}
+};

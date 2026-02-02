@@ -1,21 +1,21 @@
-import {CssBaseline, createTheme} from "@mui/material";
-import {ThemeProvider} from "@mui/styles";
-import {useEffect, useState} from "react";
+import { CssBaseline, createTheme } from "@mui/material";
+import { ThemeProvider } from "@mui/styles";
+import { useEffect, useState } from "react";
 import Favicon from "react-favicon";
-import {useDispatch} from "react-redux";
-import {Outlet, useLocation, useParams} from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Outlet, useLocation, useParams } from "react-router-dom";
 import LayoutSidebar from "../../components/LayoutSidebar";
-import {useProjectGetByIdQuery} from "../../services/projectService";
-import {store} from "../../store";
+import { useProjectGetByIdQuery } from "../../services/projectService";
+import { store } from "../../store";
 
 import styles from "./style.module.scss";
 import SubscriptionWarning from "./SubscriptionWarning";
-import {SettingsPopup} from "../../views/SettingsPopup/SettingsPopup";
-import {differenceInCalendarDays, parseISO} from "date-fns";
-import {TAB_COMPONENTS} from "../../utils/constants/settingsPopup";
+import { SettingsPopup } from "../../views/SettingsPopup/SettingsPopup";
+import { differenceInCalendarDays, parseISO } from "date-fns";
+import { TAB_COMPONENTS } from "../../utils/constants/settingsPopup";
 import useSearchParams from "../../hooks/useSearchParams";
-import {ToastContainer} from "react-toastify";
-import {iconCategoryActions} from "../../store/IconCategory/iconCategory.slice";
+import { ToastContainer } from "react-toastify";
+import { iconCategoryActions } from "../../store/IconCategory/iconCategory.slice";
 import AddingGroup from "./AddingGroup";
 import { settingsModalActions } from "@/store/settingsModal/settingsModal.slice";
 

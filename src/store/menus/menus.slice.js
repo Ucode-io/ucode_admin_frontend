@@ -1,14 +1,21 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-export const {actions: menuAccordionActions, reducer: menuAccordionReducer} =
+export const { actions: menuAccordionActions, reducer: menuAccordionReducer } =
   createSlice({
     name: "menu",
     initialState: {
       menuChilds: {},
     },
     reducers: {
-      toggleMenuChilds: (state, {payload}) => {
+      toggleMenuChilds: (state, { payload }) => {
         state.menuChilds = payload;
+      },
+      toggleMenuOpen: (state, { payload }) => {
+        const id = payload.id;
+        state.menuChilds[id] = {
+          ...state.menuChilds?.[id],
+          open: !state.menuChilds?.[id]?.open,
+        };
       },
     },
   });

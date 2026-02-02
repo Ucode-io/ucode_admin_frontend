@@ -8,12 +8,11 @@ import {useCompanyListQuery} from "@/services/companyService";
 import {useEnvironmentListQuery} from "@/services/environmentService";
 import {authActions} from "@/store/auth/auth.slice";
 import {companyActions} from "@/store/company/company.slice";
-import { AccordionButton, AccordionIcon, SearchIcon } from "@chakra-ui/icons";
+import { AccordionButton, AccordionIcon } from "@chakra-ui/icons";
 import {
   Accordion,
   AccordionItem,
   AccordionPanel,
-  background,
   Box,
   Button,
   ChakraBaseProvider,
@@ -40,7 +39,6 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import LogoutIcon from "@mui/icons-material/Logout";
 import {
   Dialog,
-  IconButton,
   List,
   ListItem,
   ListItemText,
@@ -48,14 +46,13 @@ import {
   Typography,
 } from "@mui/material";
 import { differenceInCalendarDays, parseISO } from "date-fns";
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import InlineSVG from "react-inlinesvg";
 import { useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Container } from "react-smooth-dnd";
 import useSearchParams from "../../hooks/useSearchParams";
 import FolderCreateModal from "../../layouts/MainLayout/FolderCreateModal";
 import LinkTableModal from "../../layouts/MainLayout/LinkTableModal";
@@ -68,13 +65,10 @@ import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModa
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import connectionServiceV2 from "../../services/auth/connectionService";
 import menuService, { useMenuGetByIdQuery } from "../../services/menuService";
-import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
 import menuSettingsService from "../../services/menuSettingsService";
 import projectService, {
   useProjectGetByIdQuery,
   useProjectListQuery,
-  useProjectsAllSettingQuery,
-  useProjectUpdateMutation,
 } from "../../services/projectService";
 import { store } from "../../store";
 import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
@@ -85,9 +79,9 @@ import { applyDrag } from "../../utils/applyDrag";
 import { generateLangaugeText } from "../../utils/generateLanguageText";
 import { isJSONParsable } from "../../utils/isJsonValid";
 import { getAllFromDB } from "../../utils/languageDB";
-import { AIMenu, useAIChat } from "../ProfilePanel/AIChat";
+// import { AIMenu, useAIChat } from "../ProfilePanel/AIChat";
 import AddOrganization from "./AddOrganization";
-import AppSidebar from "./AppSidebarComponent";
+// import AppSidebar from "./AppSidebarComponentV2";
 import DocsChatwootModal from "./DocsChatwootModal";
 import DynamicConnections from "./DynamicConnections";
 import FolderModal from "./FolderModalComponent";
@@ -105,6 +99,7 @@ import { viewsActions } from "@/store/views/view.slice";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import mcpService from "@/services/mcp/mcp.service";
 import { BsThreeDots } from "react-icons/bs";
+import { SidebarList } from "./SidebarList";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
 
@@ -599,7 +594,20 @@ const LayoutSidebar = ({
                 dispatch(mainActions.setSidebarHighlightedMenu(null))
               }
             >
-              <Container
+              <ChakraBaseProvider theme={theme}>
+                <SidebarList
+                  handleOpenNotify={handleOpenNotify}
+                  sidebarIsOpen={sidebarIsOpen}
+                  menuList={menuList}
+                  setMenuList={setMenuList}
+                  setSubMenuIsOpen={setSubMenuIsOpen}
+                  selectedApp={selectedApp}
+                  setSelectedFolder={setSelectedFolder}
+                  setSelectedApp={setSelectedApp}
+                  getMenuList={getMenuList}
+                />
+              </ChakraBaseProvider>
+              {/* <Container
                 dragHandleSelector=".column-drag-handle"
                 groupName="main-menu"
                 onDrop={onDrop}
@@ -639,7 +647,7 @@ const LayoutSidebar = ({
                     getMenuList={getMenuList}
                   />
                 ))}
-              </Container>
+              </Container> */}
 
               {Boolean(permissions?.menu_button) && (
                 <SidebarAppTooltip id="create" title="Create">
@@ -1380,96 +1388,96 @@ const LayoutSidebar = ({
   );
 };
 
-const AIChat = forwardRef(
-  ({ sidebarOpen = false, children, ...props }, ref) => {
-    const {
-      open,
-      anchorEl,
-      loader,
-      setLoader,
-      inputValue,
-      setInputValue,
-      messages,
-      messagesEndRef,
-      handleClick,
-      handleClose,
-      handleKeyDown,
-      handleSendClick,
-      showInput,
-      setShowInput,
-      handleSuccess,
-      handleError,
-      onExited,
-      appendMessage,
-      selectedEntityType,
-      handleChangeEntityType,
-      setMessages,
-      control,
-      errors,
-      handleSubmit,
-      reset,
-      setAnchorEl,
-      setValue,
-      watch,
-    } = useAIChat();
+// const AIChat = forwardRef(
+//   ({ sidebarOpen = false, children, ...props }, ref) => {
+//     const {
+//       open,
+//       anchorEl,
+//       loader,
+//       setLoader,
+//       inputValue,
+//       setInputValue,
+//       messages,
+//       messagesEndRef,
+//       handleClick,
+//       handleClose,
+//       handleKeyDown,
+//       handleSendClick,
+//       showInput,
+//       setShowInput,
+//       handleSuccess,
+//       handleError,
+//       onExited,
+//       appendMessage,
+//       selectedEntityType,
+//       handleChangeEntityType,
+//       setMessages,
+//       control,
+//       errors,
+//       handleSubmit,
+//       reset,
+//       setAnchorEl,
+//       setValue,
+//       watch,
+//     } = useAIChat();
 
-    return (
-      <>
-        <Flex
-          w={sidebarOpen ? "100%" : 36}
-          borderRadius={6}
-          // _hover={{
-          //   background: "#37352F0F",
-          // }}
-          h={"25px"}
-          // pl={sidebarOpen ? "35px" : 0}
-          cursor="pointer"
-          mb={sidebarOpen ? 0 : 4}
-          ref={ref}
-          {...props}
-          onClick={handleClick}
-          justifyContent="center"
-          alignItems="center"
-        >
-          {sidebarOpen ? (
-            children
-          ) : (
-            <SearchIcon color="#475467" fontSize={16} />
-          )}
-        </Flex>
+//     return (
+//       <>
+//         <Flex
+//           w={sidebarOpen ? "100%" : 36}
+//           borderRadius={6}
+//           // _hover={{
+//           //   background: "#37352F0F",
+//           // }}
+//           h={"25px"}
+//           // pl={sidebarOpen ? "35px" : 0}
+//           cursor="pointer"
+//           mb={sidebarOpen ? 0 : 4}
+//           ref={ref}
+//           {...props}
+//           onClick={handleClick}
+//           justifyContent="center"
+//           alignItems="center"
+//         >
+//           {sidebarOpen ? (
+//             children
+//           ) : (
+//             <SearchIcon color="#475467" fontSize={16} />
+//           )}
+//         </Flex>
 
-        <AIMenu
-          open={open}
-          anchorEl={anchorEl}
-          loader={loader}
-          setLoader={setLoader}
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          messages={messages}
-          messagesEndRef={messagesEndRef}
-          handleClose={handleClose}
-          handleKeyDown={handleKeyDown}
-          handleSendClick={handleSendClick}
-          showInput={showInput}
-          setShowInput={setShowInput}
-          handleSuccess={handleSuccess}
-          handleError={handleError}
-          onExited={onExited}
-          appendMessage={appendMessage}
-          selectedEntityType={selectedEntityType}
-          handleChangeEntityType={handleChangeEntityType}
-          setMessages={setMessages}
-          control={control}
-          errors={errors}
-          handleSubmit={handleSubmit}
-          reset={reset}
-          setValue={setValue}
-          watch={watch}
-        />
-      </>
-    );
-  },
-);
+//         <AIMenu
+//           open={open}
+//           anchorEl={anchorEl}
+//           loader={loader}
+//           setLoader={setLoader}
+//           inputValue={inputValue}
+//           setInputValue={setInputValue}
+//           messages={messages}
+//           messagesEndRef={messagesEndRef}
+//           handleClose={handleClose}
+//           handleKeyDown={handleKeyDown}
+//           handleSendClick={handleSendClick}
+//           showInput={showInput}
+//           setShowInput={setShowInput}
+//           handleSuccess={handleSuccess}
+//           handleError={handleError}
+//           onExited={onExited}
+//           appendMessage={appendMessage}
+//           selectedEntityType={selectedEntityType}
+//           handleChangeEntityType={handleChangeEntityType}
+//           setMessages={setMessages}
+//           control={control}
+//           errors={errors}
+//           handleSubmit={handleSubmit}
+//           reset={reset}
+//           setValue={setValue}
+//           watch={watch}
+//         />
+//       </>
+//     );
+//   },
+// );
 
 const Header = ({
   sidebarIsOpen,

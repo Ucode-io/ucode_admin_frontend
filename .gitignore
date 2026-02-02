@@ -16,7 +16,6 @@ dist-ssr
 
 yarn.lock
 *.local
-.env.demo
 .env.development
 .env.staging
 .env.production

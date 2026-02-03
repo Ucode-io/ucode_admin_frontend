@@ -5,6 +5,10 @@ const mcpService = {
   mcpCell: (data) => request.post("/mcp-call", data),
   generateFrontend: (data) =>
     request.post("/mcp_project/generate_frontend", data, { timeout: 540000 }),
+  generateProjectWithPlan: (data) =>
+    request.post("mcp_project/generate-project/with-plan?with_planning=true", data, { timeout: 540000 }),
+  createPlan: (data) =>
+    request.post("/mcp_project/create-plan", data, { timeout: 540000 }),
   // request.post(
   //   "http://192.0.0.49:8001/v1/mcp_project/generate_frontend",
   //   data,

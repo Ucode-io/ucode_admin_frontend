@@ -1,10 +1,13 @@
 import cls from "./styles.module.scss";
 import { useAiAgentProps } from "./useAiAgentProps";
 import { AiResult } from "./modules/AiResult";
-import { PromptContainer } from "./components/PromptContainer";
+// import { PromptContainer } from "./components/PromptContainer";
 import { MoveablePromptInput } from "./components/MoveablePromptInput";
 import { GeneratingOverlay } from "./components/GeneratingOverlay";
+import HomePage from "./modules/HomePage/HomePage";
 import clsx from "clsx";
+
+import PlanEditor from "./modules/PlanEditor/PlanEditor";
 
 export const AiAgent = () => {
   const {
@@ -19,12 +22,17 @@ export const AiAgent = () => {
     hasProject,
     chatVisible,
     setChatVisible,
+    plan,
+    setPlan,
+    generateProjectWithPlan,
   } = useAiAgentProps();
+
+  const hasPlan = plan && (plan.frontend_plan || plan.backend_plan);
 
   return (
     <div className={clsx(cls.aiAgent, { [cls.withProject]: hasProject })}>
-      {!hasProject && <div className={cls.gradient} />}
-      {isLoading && <GeneratingOverlay open={true} prompt={prompt} />}
+      {!hasProject && !hasPlan && <div className={cls.gradient} />}
+      {isLoading && <GeneratingOverlay open={true} prompt={prompt} planning={!hasProject} />}
       <div className={cls.container}>
         {hasProject ? (
           !chatVisible ? (
@@ -36,13 +44,10 @@ export const AiAgent = () => {
               files={files}
             />
           ) : null
+        ) : hasPlan ? (
+          <PlanEditor plan={plan} setPlan={setPlan} onSubmit={generateProjectWithPlan} />
         ) : (
-          <PromptContainer
-            prompt={prompt}
-            setPrompt={setPrompt}
-            onSubmit={onSubmit}
-            isLoading={isLoading}
-          />
+          <HomePage setPrompt={setPrompt} prompt={prompt} onSubmit={onSubmit} />
         )}
         {hasProject && (
           <AiResult

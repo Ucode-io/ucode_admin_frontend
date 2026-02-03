@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export function GeneratingOverlay({ open, prompt }) {
+export function GeneratingOverlay({ open, prompt, planning }) {
   if (!open) return null;
 
   const loadingTexts = [
@@ -11,32 +11,31 @@ export function GeneratingOverlay({ open, prompt }) {
     "Thinking…",
     "Fixing details…",
   ];
-  
+
   const [textIndex, setTextIndex] = useState(0);
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       setTextIndex((i) => (i + 1) % loadingTexts.length);
     }, 3000);
-  
+
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-  
     let lastIndex = 0;
-  
+
     const interval = setInterval(() => {
       setTextIndex((prev) => {
         let next;
         do {
           next = Math.floor(Math.random() * loadingTexts.length);
         } while (next === prev);
-  
+
         return next;
       });
     }, 1400);
-  
+
     return () => clearInterval(interval);
   }, []);
 
@@ -90,7 +89,7 @@ export function GeneratingOverlay({ open, prompt }) {
               color: "#a1a1a1",
             }}
           >
-            {loadingTexts[textIndex]}
+            {!planning ? loadingTexts[textIndex] : "Planning..."}
           </p>
           <div className="loader"></div>
         </div>

@@ -1,7 +1,16 @@
 import { SortableSidebarTree } from "./components/SortableSidebarTree";
 import { useSidebarListProps } from "./useSidebarListProps";
 
-export const SidebarList = ({ menuList, setMenuList, getMenuList }) => {
+export const SidebarList = ({
+  menuList,
+  setMenuList,
+  getMenuList,
+  handlers,
+  setSelectedFolder,
+  selectedApp,
+  menu,
+  setMenu,
+}) => {
   const { getMenuLabel, menuChilds } = useSidebarListProps({
     menuList,
     setMenuList,
@@ -14,6 +23,11 @@ export const SidebarList = ({ menuList, setMenuList, getMenuList }) => {
       setMenuList={setMenuList}
       menuChilds={menuChilds}
       getMenuLabel={getMenuLabel}
+      handlers={handlers}
+      setSelectedFolder={setSelectedFolder}
+      selectedApp={selectedApp}
+      menu={menu}
+      setMenu={setMenu}
     />
   );
 };

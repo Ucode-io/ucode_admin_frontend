@@ -41,6 +41,11 @@ export const SortableSidebarTree = ({
   menuChilds,
   getMenuLabel,
   setMenuList,
+  handlers,
+  setSelectedFolder,
+  selectedApp,
+  menu,
+  setMenu,
 }) => {
   const dispatch = useDispatch();
 
@@ -57,6 +62,7 @@ export const SortableSidebarTree = ({
 
   function onToggle(node) {
     const id = node.id;
+    setSelectedFolder(node);
 
     const isOpening = !menuChilds?.[id]?.open;
 
@@ -244,7 +250,11 @@ export const SortableSidebarTree = ({
             onToggle={onToggle}
             menuChilds={menuChilds}
             getMenuLabel={getMenuLabel}
-            // handlers={handlers}
+            handlers={handlers}
+            setSelectedFolder={setSelectedFolder}
+            selectedApp={selectedApp}
+            menu={menu}
+            setMenu={setMenu}
           />
         ))}
       </SortableContext>

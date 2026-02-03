@@ -123,7 +123,7 @@ const LayoutSidebar = ({
   const [child, setChild] = useState();
   const [element, setElement] = useState();
   const [subSearchText, setSubSearchText] = useState();
-  const [menu, setMenu] = useState({ event: "", type: "", root: false });
+  const [menu, setMenu] = useState(null);
   const openSidebarMenu = Boolean(menu?.event);
   const { data: projectInfo } = useProjectGetByIdQuery({
     projectId,
@@ -539,6 +539,19 @@ const LayoutSidebar = ({
                   setSelectedFolder={setSelectedFolder}
                   setSelectedApp={setSelectedApp}
                   getMenuList={getMenuList}
+                  menu={menu}
+                  setMenu={setMenu}
+                  handlers={{
+                    setMicrofrontendModal,
+                    openFolderCreateModal,
+                    openTableCreateModal,
+                    deleteFolder,
+                    setTableModal,
+                    setWebsiteModalLink,
+                    setFolderModalType,
+                    setTemplatePopover,
+                    handleOpenNotify,
+                  }}
                 />
               </ChakraBaseProvider>
               {/* <Container

@@ -9,15 +9,20 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 import { Tooltip, IconButton, Box } from "@mui/material";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz"; // ThreeDots
-import AddIcon from "@mui/icons-material/Add"; // Plus
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import AddIcon from "@mui/icons-material/Add";
 import { NodeActionsMenu } from "../NodeActionsMenu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import IconGeneratorIconjs from "@/components/IconPicker/IconGeneratorIconjs";
 import IconGenerator from "@/components/IconPicker/IconGenerator";
 import { useTranslation } from "react-i18next";
 import { iconsList } from "@/utils/constants/iconsList";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import { useDispatch, useSelector } from "react-redux";
+import MaterialUIProvider from "@/providers/MaterialUIProvider";
+import { menuActions } from "@/store/menuItem/menuItem.slice";
+
+export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
 const CustomTooltip = ({ title, children }) => (
   <Tooltip
@@ -27,8 +32,8 @@ const CustomTooltip = ({ title, children }) => (
     componentsProps={{
       tooltip: {
         sx: {
-          bgcolor: "#222",
-          "& .MuiTooltip-arrow": { color: "#222" },
+          bgcolor: "#4d4d4d",
+          "& .MuiTooltip-arrow": { color: "#4d4d4d" },
           padding: "4px 8px",
         },
       },
@@ -44,14 +49,28 @@ export const TreeNode = ({
   onToggle,
   menuChilds,
   getMenuLabel,
-  sidebarIsOpen,
   menuTemplate,
-  handlers, // Передаем все функции (deleteFolder, и т.д.) из родителя
+  handlers,
+  setSelectedFolder,
+  selectedApp,
+  menu,
+  setMenu,
 }) => {
   const { i18n } = useTranslation();
 
+  const dispatch = useDispatch();
+  const sidebarIsOpen = useSelector(
+    (state) => state.main.settingsSidebarIsOpen,
+  );
+
+  const { handleOpenNotify } = handlers;
+
   const [isHovered, setIsHovered] = useState(false);
-  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const isMenuOpen = Boolean(menu?.event);
+
+  const showActions = isHovered || menuOpen;
 
   const menuStyle = {
     ...menuTemplate?.menu_template,
@@ -71,6 +90,7 @@ export const TreeNode = ({
   } = useSortable({ id: node.id });
 
   const { setNodeRef: setDroppableRef, isOver } = useDroppable({ id: node.id });
+
   const setRef = (el) => {
     setSortableRef(el);
     setDroppableRef(el);
@@ -109,7 +129,7 @@ export const TreeNode = ({
       ? "#e8f0ff"
       : isOver
         ? "#f1f5ff"
-        : isHovered
+        : showActions // Подсветка остается, пока открыто меню
           ? "#f5f5f5"
           : "transparent",
     cursor: "pointer",
@@ -120,10 +140,39 @@ export const TreeNode = ({
     userSelect: "none",
   };
 
+  const type = node.type;
+
+  const folderSettings = (e) => {
+    e.stopPropagation();
+    setMenuOpen(true);
+    setIsHovered(false);
+    setSelectedFolder(node);
+    dispatch(menuActions.setMenuItem(node));
+    if (selectedApp?.id !== adminId) {
+      if (
+        type === "FOLDER" ||
+        (type === "WIKI_FOLDER" &&
+          node?.id !== "cd5f1ab0-432c-459d-824a-e64c139038ea")
+      ) {
+        handleOpenNotify(e, "FOLDER");
+      } else if (type === "TABLE") {
+        handleOpenNotify(e, "TABLE");
+      } else if (type === "WIKI") {
+        handleOpenNotify(e, "WIKI");
+      } else if (type === "MICROFRONTEND") {
+        handleOpenNotify(e, "MICROFRONTEND");
+      } else if (type === "MINIO_FOLDER") {
+        handleOpenNotify(e, "MINIO_FOLDER");
+      } else if (type === "LINK") {
+        handleOpenNotify(e, "LINK");
+      }
+    }
+  };
+
   const getMenuColor = (element) => {
     if (element?.label === "Settings") {
       return "#fff";
-    } else return false ? "#5F5E5A" : menuStyle?.text || "#475467";
+    } else return menuStyle?.text || "#475467";
     // } else return activeMenu ? "#5F5E5A" : menuStyle?.text || "#475467";
   };
 
@@ -143,10 +192,27 @@ export const TreeNode = ({
 
   const handleMenuOpen = (e) => {
     e.stopPropagation();
-    setMenuAnchor(e.currentTarget);
+    setSelectedFolder(node);
+    dispatch(menuActions.setMenuItem(node));
+    // setMenuAnchor(e.currentTarget);
   };
 
   const newIcons = iconsList.slice(0, 17);
+
+  useEffect(() => {
+    const onWindowClick = (e) => {
+      console.log(e.target.closest(`[data-id="${node.id}"]`));
+      if (!e.target.closest(`[data-id="${node.id}"]`)) {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("click", onWindowClick);
+
+    return () => {
+      window.removeEventListener("click", onWindowClick);
+    };
+  });
 
   return (
     <>
@@ -156,6 +222,7 @@ export const TreeNode = ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={handleToggleClick} // Теперь вся строка работает как Toggle
+        data-id={node.id}
         {...attributes}
         {...listeners} // Слушатели DnD на всей строке
       >
@@ -169,7 +236,7 @@ export const TreeNode = ({
         >
           {/* Слева: Иконка или Стрелка при ховере */}
           <div style={{ width: 20, display: "flex", justifyContent: "center" }}>
-            {isFolder && isHovered ? (
+            {isFolder && showActions ? (
               <span
                 style={{
                   fontSize: 18,
@@ -234,17 +301,18 @@ export const TreeNode = ({
         </div>
 
         {/* Справа: Кнопки действий при ховере */}
-        {isHovered && sidebarIsOpen && (
+        {showActions && sidebarIsOpen && (
           <div
             style={{ display: "flex", alignItems: "center" }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Plus Button */}
-            {node?.data?.permission?.write && (
-              <CustomTooltip title="Add New">
+            {node?.data?.permission?.write && isFolder && (
+              <CustomTooltip node={node} title="Create folder">
                 <IconButton
                   size="small"
                   onClick={() => {
+                    setSelectedFolder(node);
                     /* Логика добавления */
                   }}
                 >
@@ -254,13 +322,18 @@ export const TreeNode = ({
             )}
 
             {/* Three Dots Button */}
-            {isFolder && !node?.is_static && (
-              <CustomTooltip title="Options">
-                <IconButton size="small" onClick={handleMenuOpen}>
-                  <MoreHorizIcon sx={{ fontSize: 18 }} />
-                </IconButton>
-              </CustomTooltip>
-            )}
+            {!node?.is_static &&
+              (node?.data?.permission?.delete ||
+                node?.data?.permission?.update ||
+                node?.data?.permission?.write) && (
+                <CustomTooltip
+                  title={isFolder ? "Folder settings" : "Table settings"}
+                >
+                  <IconButton size="small" onClick={folderSettings}>
+                    <MoreHorizIcon sx={{ fontSize: 18 }} />
+                  </IconButton>
+                </CustomTooltip>
+              )}
           </div>
         )}
       </div>
@@ -283,6 +356,10 @@ export const TreeNode = ({
                 getMenuLabel={getMenuLabel}
                 sidebarIsOpen={sidebarIsOpen}
                 handlers={handlers}
+                setSelectedFolder={setSelectedFolder}
+                selectedApp={selectedApp}
+                menu={menu}
+                setMenu={setMenu}
               />
             ))}
           </SortableContext>
@@ -290,92 +367,17 @@ export const TreeNode = ({
       )}
 
       {/* Попап меню */}
-      <NodeActionsMenu
-        anchorEl={menuAnchor}
-        open={Boolean(menuAnchor)}
-        onClose={() => setMenuAnchor(null)}
-        node={node}
-        handlers={handlers}
-      />
+      {/* <MaterialUIProvider>
+        <NodeActionsMenu
+          selectedApp={selectedApp}
+          anchorEl={menu?.event}
+          open={Boolean(menu?.event)}
+          onClose={() => setMenu({ event: null, type: null, root: null })}
+          node={node}
+          handlers={handlers}
+          setSelectedFolder={setSelectedFolder}
+        />
+      </MaterialUIProvider> */}
     </>
   );
 };
-
-// export const TreeNode = ({ node, depth = 0, onToggle, menuChilds, getMenuLabel }) => {
-//   const { attributes, listeners, setNodeRef: setSortableRef, transform, transition, isDragging } = useSortable({ id: node.id });
-
-//   const currentNode = menuChilds?.[node.id];
-//   const children = Array.isArray(currentNode?.children)
-//     ? currentNode.children
-//     : [];
-
-//   const isFolder = node.type === "FOLDER";
-
-//   const { setNodeRef: setDroppableRef, isOver } = useDroppable({
-//     id: node.id,
-//   });
-
-//   const setRef = (el) => {
-//     setSortableRef(el);
-//     setDroppableRef(el);
-//   };
-
-//   const style = {
-//     transform: CSS.Transform.toString(transform),
-//     transition: transition || "transform 180ms cubic-bezier(0.2, 0, 0, 1)",
-//     padding: "8px 10px",
-//     borderRadius: 6,
-//     marginBottom: 4,
-//     marginLeft: depth * 12,
-//     background: isDragging ? "#e8f0ff" : isOver ? "#f1f5ff" : "#fff",
-//     boxShadow: isDragging ? "0 8px 24px rgba(0,0,0,0.12)" : "none",
-//     cursor: "grab",
-//     userSelect: "none",
-//   };
-
-//   console.log({
-//     node
-//   })
-
-//   return (
-//     <div ref={setRef} style={style} {...attributes}>
-//       <div
-//         {...listeners}
-//         style={{ display: "flex", alignItems: "center", gap: 6 }}
-//       >
-//         {isFolder && (
-//           <span
-//             onClick={(e) => {
-//               e.stopPropagation();
-//               onToggle(node.id);
-//             }}
-//           >
-//             {currentNode?.open ? "▾" : "▸"}
-//           </span>
-//         )}
-//         <span>{getMenuLabel(node)}</span>
-//       </div>
-
-//       {isFolder && currentNode?.open && (
-//         <div style={{ marginTop: 6 }}>
-//           <SortableContext
-//             id={node.id}
-//             items={children.map((c) => c.id)}
-//             strategy={verticalListSortingStrategy}
-//           >
-//             {children.map((child) => (
-//               <TreeNode
-//                 key={child.id}
-//                 node={child}
-//                 depth={depth + 1}
-//                 onToggle={onToggle}
-//                 menuChilds={menuChilds}
-//                 getMenuLabel={getMenuLabel}
-//               />
-//             ))}
-//           </SortableContext>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }

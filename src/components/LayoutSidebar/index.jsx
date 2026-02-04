@@ -103,8 +103,7 @@ import {
 } from "@/utils/constants/main";
 import { viewsActions } from "@/store/views/view.slice";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
-import mcpService from "@/services/mcp/mcp.service";
-import { BsThreeDots } from "react-icons/bs";
+import { AiProjectsModal } from "../AiProjectsModal";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
 
@@ -244,8 +243,6 @@ const LayoutSidebar = ({
     setTemplatePopover(null);
   };
 
-  const navigate = useNavigate();
-
   const getMenuList = () => {
     setIsMenuListLoading(true);
 
@@ -354,59 +351,6 @@ const LayoutSidebar = ({
       });
     }
   };
-
-  const [aiProjects, setAiProjects] = useState([]);
-  const [isProjectsModalOpen, setIsProjectsModalOpen] = useState(false);
-
-  const [editingProject, setEditingProject] = useState(null);
-
-  const handleNavigateToProject = (id) => {
-    navigate(`/ai-agent/${id}`);
-  };
-
-  const handleAiAgentClick = () => {
-    if (aiProjects?.length > 0) setIsProjectsModalOpen(true);
-    else navigate("/ai-agent");
-  };
-
-  const [projectEditAnchorEl, setProjectEditAnchorEl] = useState(false);
-
-  const projectSettingsOpen = Boolean(projectEditAnchorEl);
-
-  const handleUpdateProject = (e) => {
-    e.preventDefault();
-    const elements = e.target.elements;
-
-    const data = {
-      title: elements.title.value,
-      description: elements.description.value,
-      id: editingProject?.id,
-    };
-
-    mcpService.updateProject(data, editingProject?.id).then(() => {
-      setEditingProject(null);
-      setAiProjects((prev) =>
-        prev?.map((el) =>
-          el?.id === editingProject?.id ? { ...editingProject, ...data } : el,
-        ),
-      );
-    });
-  };
-
-  const handleOpenProjectSettings = (event) => {
-    setProjectEditAnchorEl(event.currentTarget);
-  };
-
-  const setSidebarIsOpen = (val) => {
-    dispatch(mainActions.setSettingsSidebarIsOpen(val));
-  };
-
-
-  useEffect(() => {
-    mcpService.getProjects().then((res) => {
-      setAiProjects(res.projects);
-    });
-  }, []);
 
   // useEffect(() => {
   //   if (menuTemplate?.icon_style === "MODERN") {
@@ -911,26 +855,30 @@ const LayoutSidebar = ({
                     }
                   >
                     <SidebarActionTooltip id="ai-agent" title="AI Agent">
-                      <Flex
-                        w={sidebarIsOpen ? "100%" : 36}
-                        alignItems="center"
-                        justifyContent={sidebarIsOpen ? "flex-start" : "center"}
-                        gap={8}
-                        onClick={() => {
-                          handleAiAgentClick();
-                        }}
-                        {...getActionProps("ai-agent")}
-                      >
-                        <Box
-                          pl={sidebarIsOpen ? "5px" : 0}
-                          display="flex"
+                      <AiProjectsModal>
+                        <Flex
+                          w={sidebarIsOpen ? "100%" : 36}
                           alignItems="center"
-                          justifyContent="center"
+                          justifyContent={
+                            sidebarIsOpen ? "flex-start" : "center"
+                          }
+                          gap={8}
+                          // onClick={() => {
+                          //   handleAiAgentClick();
+                          // }}
+                          {...getActionProps("ai-agent")}
                         >
-                          <AssistantOutlined />
-                        </Box>
-                        {sidebarIsOpen ? <span>AI Agent</span> : null}
-                      </Flex>
+                          <Box
+                            pl={sidebarIsOpen ? "5px" : 0}
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                          >
+                            <AssistantOutlined />
+                          </Box>
+                          {sidebarIsOpen ? <span>AI Agent</span> : null}
+                        </Flex>
+                      </AiProjectsModal>
                     </SidebarActionTooltip>
                   </Flex>
                 </Box>
@@ -1141,7 +1089,7 @@ const LayoutSidebar = ({
         <MenuSettingModal closeModal={closeMenuSettingModal} />
       )}
 
-      <Modal
+      {/* <Modal
         open={isProjectsModalOpen}
         onClose={() => setIsProjectsModalOpen(false)}
       >
@@ -1366,7 +1314,7 @@ const LayoutSidebar = ({
             </Button>
           </Box>
         </Box>
-      </Modal>
+      </Modal> */}
 
       <ChakraBaseProvider theme={theme}>
         <InviteModal
@@ -1380,96 +1328,96 @@ const LayoutSidebar = ({
   );
 };
 
-const AIChat = forwardRef(
-  ({ sidebarOpen = false, children, ...props }, ref) => {
-    const {
-      open,
-      anchorEl,
-      loader,
-      setLoader,
-      inputValue,
-      setInputValue,
-      messages,
-      messagesEndRef,
-      handleClick,
-      handleClose,
-      handleKeyDown,
-      handleSendClick,
-      showInput,
-      setShowInput,
-      handleSuccess,
-      handleError,
-      onExited,
-      appendMessage,
-      selectedEntityType,
-      handleChangeEntityType,
-      setMessages,
-      control,
-      errors,
-      handleSubmit,
-      reset,
-      setAnchorEl,
-      setValue,
-      watch,
-    } = useAIChat();
+// const AIChat = forwardRef(
+//   ({ sidebarOpen = false, children, ...props }, ref) => {
+//     const {
+//       open,
+//       anchorEl,
+//       loader,
+//       setLoader,
+//       inputValue,
+//       setInputValue,
+//       messages,
+//       messagesEndRef,
+//       handleClick,
+//       handleClose,
+//       handleKeyDown,
+//       handleSendClick,
+//       showInput,
+//       setShowInput,
+//       handleSuccess,
+//       handleError,
+//       onExited,
+//       appendMessage,
+//       selectedEntityType,
+//       handleChangeEntityType,
+//       setMessages,
+//       control,
+//       errors,
+//       handleSubmit,
+//       reset,
+//       setAnchorEl,
+//       setValue,
+//       watch,
+//     } = useAIChat();
 
-    return (
-      <>
-        <Flex
-          w={sidebarOpen ? "100%" : 36}
-          borderRadius={6}
-          // _hover={{
-          //   background: "#37352F0F",
-          // }}
-          h={"25px"}
-          // pl={sidebarOpen ? "35px" : 0}
-          cursor="pointer"
-          mb={sidebarOpen ? 0 : 4}
-          ref={ref}
-          {...props}
-          onClick={handleClick}
-          justifyContent="center"
-          alignItems="center"
-        >
-          {sidebarOpen ? (
-            children
-          ) : (
-            <SearchIcon color="#475467" fontSize={16} />
-          )}
-        </Flex>
+//     return (
+//       <>
+//         <Flex
+//           w={sidebarOpen ? "100%" : 36}
+//           borderRadius={6}
+//           // _hover={{
+//           //   background: "#37352F0F",
+//           // }}
+//           h={"25px"}
+//           // pl={sidebarOpen ? "35px" : 0}
+//           cursor="pointer"
+//           mb={sidebarOpen ? 0 : 4}
+//           ref={ref}
+//           {...props}
+//           onClick={handleClick}
+//           justifyContent="center"
+//           alignItems="center"
+//         >
+//           {sidebarOpen ? (
+//             children
+//           ) : (
+//             <SearchIcon color="#475467" fontSize={16} />
+//           )}
+//         </Flex>
 
-        <AIMenu
-          open={open}
-          anchorEl={anchorEl}
-          loader={loader}
-          setLoader={setLoader}
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          messages={messages}
-          messagesEndRef={messagesEndRef}
-          handleClose={handleClose}
-          handleKeyDown={handleKeyDown}
-          handleSendClick={handleSendClick}
-          showInput={showInput}
-          setShowInput={setShowInput}
-          handleSuccess={handleSuccess}
-          handleError={handleError}
-          onExited={onExited}
-          appendMessage={appendMessage}
-          selectedEntityType={selectedEntityType}
-          handleChangeEntityType={handleChangeEntityType}
-          setMessages={setMessages}
-          control={control}
-          errors={errors}
-          handleSubmit={handleSubmit}
-          reset={reset}
-          setValue={setValue}
-          watch={watch}
-        />
-      </>
-    );
-  },
-);
+//         <AIMenu
+//           open={open}
+//           anchorEl={anchorEl}
+//           loader={loader}
+//           setLoader={setLoader}
+//           inputValue={inputValue}
+//           setInputValue={setInputValue}
+//           messages={messages}
+//           messagesEndRef={messagesEndRef}
+//           handleClose={handleClose}
+//           handleKeyDown={handleKeyDown}
+//           handleSendClick={handleSendClick}
+//           showInput={showInput}
+//           setShowInput={setShowInput}
+//           handleSuccess={handleSuccess}
+//           handleError={handleError}
+//           onExited={onExited}
+//           appendMessage={appendMessage}
+//           selectedEntityType={selectedEntityType}
+//           handleChangeEntityType={handleChangeEntityType}
+//           setMessages={setMessages}
+//           control={control}
+//           errors={errors}
+//           handleSubmit={handleSubmit}
+//           reset={reset}
+//           setValue={setValue}
+//           watch={watch}
+//         />
+//       </>
+//     );
+//   },
+// );
 
 const Header = ({
   sidebarIsOpen,

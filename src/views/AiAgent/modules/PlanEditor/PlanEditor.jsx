@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm";
 import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
 import cls from "./styles.module.scss";
+import clsx from "clsx";
 
 const turndownService = new TurndownService({
   headingStyle: "atx",
@@ -17,7 +18,8 @@ const PlanEditor = ({ plan, setPlan, onSubmit }) => {
   const editableRef = useRef(null);
 
   // currentContent derived from activeTab
-  const currentContent = activeTab === "frontend" ? plan.frontend_plan : plan.backend_plan;
+  const currentContent =
+    activeTab === "frontend" ? plan.frontend_plan : plan.backend_plan;
 
   const getMarkdownFromHtml = () => {
     if (editableRef.current) {
@@ -49,14 +51,14 @@ const PlanEditor = ({ plan, setPlan, onSubmit }) => {
     // Construct the full plan object with the latest update
     const updatedPlan = {
       ...plan,
-      [`${activeTab}_plan`]: currentMd
+      [`${activeTab}_plan`]: currentMd,
     };
 
     console.log("Current Plan:", updatedPlan);
     if (onSubmit) onSubmit(updatedPlan);
   };
 
-  // We use key={activeTab} to force React to re-mount the editable div 
+  // We use key={activeTab} to force React to re-mount the editable div
   // with new initial content when tab changes.
   // This prevents React reconciliation issues with contentEditable.
 
@@ -82,7 +84,7 @@ const PlanEditor = ({ plan, setPlan, onSubmit }) => {
 
         <div style={{ display: "flex", gap: "10px" }}>
           <button
-            className={cls.saveBtn}
+            className={clsx(cls.saveBtn, cls.secondary)}
             onClick={() => {
               // Save first to ensure we export latest
               const currentMd = getMarkdownFromHtml();

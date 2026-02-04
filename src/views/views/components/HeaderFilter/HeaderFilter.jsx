@@ -194,7 +194,21 @@ export const HeaderFilter = ({
         />
 
         {viewType !== VIEW_TYPES_MAP.WEBSITE && (
-          <SearchPopover handleSearchOnChange={handleSearchOnChange} />
+          <>
+            <div
+              style={{
+                position: "absolute",
+                opacity: 0,
+                height: 0,
+                width: 0,
+                zIndex: -1,
+              }}
+            >
+              <input type="text" name="fake_usernm" tabIndex="-1" />
+              <input type="password" name="fake_password" tabIndex="-1" />
+            </div>
+            <SearchPopover handleSearchOnChange={handleSearchOnChange} />
+          </>
         )}
 
         {viewType !== VIEW_TYPES_MAP.SECTION &&

@@ -239,6 +239,9 @@ export const TreeNode = ({
             {isFolder && showActions ? (
               <span
                 style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                   fontSize: 18,
                   color: "#666",
                 }}

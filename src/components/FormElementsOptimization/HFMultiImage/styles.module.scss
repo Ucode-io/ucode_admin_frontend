@@ -1,28 +1,35 @@
 .imageContainer {
   width: 100%;
-  padding: 20px;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 16px;
 
   .ImageItem {
-    width: 135px;
-    height: 120px;
-    border: 1px solid #ada9a9;
-    border-radius: 5px;
+    width: 150px;
+    height: 140px;
+    border-radius: 12px;
     position: relative;
-    transition: ease-in-out 0.4s;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
 
     &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+
       .clearBtn {
-        display: block;
-        width: 50px !important;
-        transition: ease-in-out 0.4s;
+        opacity: 1;
+        transform: scale(1);
       }
+
       .fullBtn {
         opacity: 1;
-        transition: all 0.5s;
+      }
+
+      img {
+        transform: scale(1.05);
       }
     }
 
@@ -30,18 +37,42 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .imageIndex {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(102, 126, 234, 0.4);
+      z-index: 10;
     }
 
     .clearBtn {
-      transition: ease-in-out 0.4s;
+      transition: all 0.2s ease;
       position: absolute;
-      top: 5px;
-      right: 0px;
-      background: none;
-      border: none;
+      top: 8px;
+      right: 8px;
+      width: 32px !important;
+      height: 32px !important;
+      min-width: 32px !important;
+      padding: 0 !important;
+      border-radius: 50% !important;
       cursor: pointer;
-      display: none;
+      opacity: 0;
+      transform: scale(0.8);
       z-index: 99;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 
     .fullBtn {
@@ -49,13 +80,14 @@
       top: 0;
       left: 0;
       opacity: 0;
-      color: #ffff;
       width: 100%;
       height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(0, 0, 0, 0.5);
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.1) 100%);
+      transition: opacity 0.3s ease;
+      pointer-events: none;
     }
   }
 }

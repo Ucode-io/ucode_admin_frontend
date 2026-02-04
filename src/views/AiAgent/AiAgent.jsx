@@ -27,6 +27,8 @@ export const AiAgent = () => {
     generateProjectWithPlan,
   } = useAiAgentProps();
 
+  console.log("hasPlan", hasPlan);
+
   const hasPlan = plan && (plan.frontend_plan || plan.backend_plan);
 
   return (

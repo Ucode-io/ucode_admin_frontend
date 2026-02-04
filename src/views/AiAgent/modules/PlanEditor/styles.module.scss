@@ -46,9 +46,9 @@
     }
 
     &.active {
-        color: #62c0ff;
+        color: #2783de;
         /* Gray-900, almost black */
-        border-bottom-color: #62c0ff;
+        border-bottom-color: #2783de;
     }
 }
 
@@ -59,11 +59,11 @@
     padding: 8px 16px;
     border-radius: 6px;
     border: none;
-    background: #62c0ff;
+    background: #2783de;
     /* Minimal black button */
     color: white;
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: bold;
     cursor: pointer;
     transition: all 0.2s;
 
@@ -71,6 +71,10 @@
         background: rgba(98, 192, 255, 0.6);
         transform: translateY(-1px);
     }
+}
+
+.saveBtn.secondary {
+    background-color: #b3b6ba;
 }
 
 .editorWrapper {

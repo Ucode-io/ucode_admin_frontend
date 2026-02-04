@@ -97,9 +97,8 @@ import {
 } from "@/utils/constants/main";
 import { viewsActions } from "@/store/views/view.slice";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
-import mcpService from "@/services/mcp/mcp.service";
-import { BsThreeDots } from "react-icons/bs";
 import { SidebarList } from "./SidebarList";
+import { AiProjectsModal } from "../AiProjectsModal";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
 
@@ -239,8 +238,6 @@ const LayoutSidebar = ({
     setTemplatePopover(null);
   };
 
-  const navigate = useNavigate();
-
   const getMenuList = () => {
     setIsMenuListLoading(true);
 
@@ -349,59 +346,6 @@ const LayoutSidebar = ({
       });
     }
   };
-
-  const [aiProjects, setAiProjects] = useState([]);
-  const [isProjectsModalOpen, setIsProjectsModalOpen] = useState(false);
-
-  const [editingProject, setEditingProject] = useState(null);
-
-  const handleNavigateToProject = (id) => {
-    navigate(`/ai-agent/${id}`);
-  };
-
-  const handleAiAgentClick = () => {
-    if (aiProjects?.length > 0) setIsProjectsModalOpen(true);
-    else navigate("/ai-agent");
-  };
-
-  const [projectEditAnchorEl, setProjectEditAnchorEl] = useState(false);
-
-  const projectSettingsOpen = Boolean(projectEditAnchorEl);
-
-  const handleUpdateProject = (e) => {
-    e.preventDefault();
-    const elements = e.target.elements;
-
-    const data = {
-      title: elements.title.value,
-      description: elements.description.value,
-      id: editingProject?.id,
-    };
-
-    mcpService.updateProject(data, editingProject?.id).then(() => {
-      setEditingProject(null);
-      setAiProjects((prev) =>
-        prev?.map((el) =>
-          el?.id === editingProject?.id ? { ...editingProject, ...data } : el,
-        ),
-      );
-    });
-  };
-
-  const handleOpenProjectSettings = (event) => {
-    setProjectEditAnchorEl(event.currentTarget);
-  };
-
-  const setSidebarIsOpen = (val) => {
-    dispatch(mainActions.setSettingsSidebarIsOpen(val));
-  };
-
-
-  useEffect(() => {
-    mcpService.getProjects().then((res) => {
-      setAiProjects(res.projects);
-    });
-  }, []);
 
   // useEffect(() => {
   //   if (menuTemplate?.icon_style === "MODERN") {
@@ -932,26 +876,30 @@ const LayoutSidebar = ({
                     }
                   >
                     <SidebarActionTooltip id="ai-agent" title="AI Agent">
-                      <Flex
-                        w={sidebarIsOpen ? "100%" : 36}
-                        alignItems="center"
-                        justifyContent={sidebarIsOpen ? "flex-start" : "center"}
-                        gap={8}
-                        onClick={() => {
-                          handleAiAgentClick();
-                        }}
-                        {...getActionProps("ai-agent")}
-                      >
-                        <Box
-                          pl={sidebarIsOpen ? "5px" : 0}
-                          display="flex"
+                      <AiProjectsModal>
+                        <Flex
+                          w={sidebarIsOpen ? "100%" : 36}
                           alignItems="center"
-                          justifyContent="center"
+                          justifyContent={
+                            sidebarIsOpen ? "flex-start" : "center"
+                          }
+                          gap={8}
+                          // onClick={() => {
+                          //   handleAiAgentClick();
+                          // }}
+                          {...getActionProps("ai-agent")}
                         >
-                          <AssistantOutlined />
-                        </Box>
-                        {sidebarIsOpen ? <span>AI Agent</span> : null}
-                      </Flex>
+                          <Box
+                            pl={sidebarIsOpen ? "5px" : 0}
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                          >
+                            <AssistantOutlined />
+                          </Box>
+                          {sidebarIsOpen ? <span>AI Agent</span> : null}
+                        </Flex>
+                      </AiProjectsModal>
                     </SidebarActionTooltip>
                   </Flex>
                 </Box>
@@ -1162,7 +1110,7 @@ const LayoutSidebar = ({
         <MenuSettingModal closeModal={closeMenuSettingModal} />
       )}
 
-      <Modal
+      {/* <Modal
         open={isProjectsModalOpen}
         onClose={() => setIsProjectsModalOpen(false)}
       >
@@ -1387,7 +1335,7 @@ const LayoutSidebar = ({
             </Button>
           </Box>
         </Box>
-      </Modal>
+      </Modal> */}
 
       <ChakraBaseProvider theme={theme}>
         <InviteModal

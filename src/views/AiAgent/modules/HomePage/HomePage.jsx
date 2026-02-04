@@ -196,7 +196,7 @@ const HomePage = ({ prompt, setPrompt, onSubmit }) => {
 
       <div className="home-container">
         <div className="home-content-wrapper">
-          <div className="blue-pill">
+          {/* <div className="blue-pill">
             <span
               style={{
                 background: "rgba(255,255,255,0.2)",
@@ -206,7 +206,7 @@ const HomePage = ({ prompt, setPrompt, onSubmit }) => {
               }}
             ></span>
             New: Introducing Smart Templates
-          </div>
+          </div> */}
 
           <h1 className="home-title">Build something</h1>
           <p className="home-subtitle">
@@ -261,8 +261,9 @@ const HomePage = ({ prompt, setPrompt, onSubmit }) => {
                   {suggestions.map((suggestion, index) => (
                     <div
                       key={index}
-                      className={`suggestion-item ${index === selectedIndex ? "selected" : ""
-                        }`}
+                      className={`suggestion-item ${
+                        index === selectedIndex ? "selected" : ""
+                      }`}
                       onClick={() => handlePromptSelect(suggestion)}
                       onMouseEnter={() => setSelectedIndex(index)}
                     >
@@ -279,19 +280,15 @@ const HomePage = ({ prompt, setPrompt, onSubmit }) => {
 
             <div className="prompt-footer">
               <div className="prompt-actions-left">
-                <button className="action-btn" title="Add File">
+                {/* <button className="action-btn" title="Add File">
                   <Plus size={18} />
-                </button>
-                <button
-                  className="action-btn templates-btn-inline"
-                  onClick={() => setIsModalOpen(true)}
-                  title="Browse Templates"
-                >
-                  <LayoutTemplate size={16} />
-                  <span>Templates</span>
-                </button>
+                </button> */}
 
-                <button className="action-btn" title="Attach" onClick={handlePickClick}>
+                <button
+                  className="action-btn"
+                  title="Attach"
+                  onClick={handlePickClick}
+                >
                   <Paperclip size={16} />
                   <span>Attach</span>
                 </button>
@@ -304,20 +301,29 @@ const HomePage = ({ prompt, setPrompt, onSubmit }) => {
                   style={{ display: "none" }}
                 />
                 <button
-                  className={`action-btn ${isPromptLibraryOpen ? "active" : ""
-                    }`}
+                  className={`action-btn ${
+                    isPromptLibraryOpen ? "active" : ""
+                  }`}
                   onClick={() => setIsPromptLibraryOpen(true)}
                   title="Open Prompt Library"
                 >
                   <Sparkles size={16} />
                   <span>Prompts</span>
                 </button>
+                <button
+                  className="action-btn templates-btn-inline"
+                  onClick={() => setIsModalOpen(true)}
+                  title="Browse Templates"
+                >
+                  <LayoutTemplate size={16} />
+                  <span>Templates</span>
+                </button>
               </div>
 
               <div className="prompt-actions-right">
-                <button className="action-btn" title="Voice Input">
+                {/* <button className="action-btn" title="Voice Input">
                   <Mic size={18} />
-                </button>
+                </button> */}
                 <button
                   className="send-btn-circle"
                   onClick={() => handleSend()}

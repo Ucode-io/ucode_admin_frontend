@@ -65,27 +65,35 @@ function MultiImageUpload({
     handleCloseGallery(false);
     setFullScreen(null);
   };
-  const inputChangeHandler = (e) => {
-    setLoading(true);
-    const file = e.target.files[0];
+  const inputChangeHandler = async (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
 
-    const data = new FormData();
-    data.append("file", file);
-    fileService
-      .folderUpload(data, {
-        folder_name: "media",
-      })
-      .then((res) => {
-        onChange([
-          ...(value ?? []),
-          import.meta.env.VITE_CDN_BASE_URL + res?.link,
-        ]);
-        setImageList([
-          ...imageList,
-          import.meta.env.VITE_CDN_BASE_URL + res?.link,
-        ]);
-      })
-      .finally(() => setLoading(false));
+    setLoading(true);
+
+    const uploadedUrls = [];
+
+    try {
+      for (const file of files) {
+        const data = new FormData();
+        data.append("file", file);
+
+        const res = await fileService.folderUpload(data, {
+          folder_name: "media",
+        });
+
+        const imageUrl = import.meta.env.VITE_CDN_BASE_URL + res?.link;
+        uploadedUrls.push(imageUrl);
+      }
+
+      onChange([...(value ?? []), ...uploadedUrls]);
+      setImageList([...imageList, ...uploadedUrls]);
+    } finally {
+      setLoading(false);
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
+    }
   };
 
   const removeImage = (imgLink) => {
@@ -339,6 +347,7 @@ function MultiImageUpload({
             >
               <input
                 type="file"
+                multiple
                 style={{
                   display: "none",
                 }}

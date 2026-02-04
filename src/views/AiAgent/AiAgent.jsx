@@ -27,14 +27,15 @@ export const AiAgent = () => {
     generateProjectWithPlan,
   } = useAiAgentProps();
 
-  console.log("hasPlan", hasPlan);
-
   const hasPlan = plan && (plan.frontend_plan || plan.backend_plan);
+  console.log("hasPlan", hasPlan);
 
   return (
     <div className={clsx(cls.aiAgent, { [cls.withProject]: hasProject })}>
       {!hasProject && !hasPlan && <div className={cls.gradient} />}
-      {isLoading && <GeneratingOverlay open={true} prompt={prompt} planning={!hasProject} />}
+      {isLoading && (
+        <GeneratingOverlay open={true} prompt={prompt} planning={!hasProject} />
+      )}
       <div className={cls.container}>
         {hasProject ? (
           !chatVisible ? (
@@ -47,7 +48,11 @@ export const AiAgent = () => {
             />
           ) : null
         ) : hasPlan ? (
-          <PlanEditor plan={plan} setPlan={setPlan} onSubmit={generateProjectWithPlan} />
+          <PlanEditor
+            plan={plan}
+            setPlan={setPlan}
+            onSubmit={generateProjectWithPlan}
+          />
         ) : (
           <HomePage setPrompt={setPrompt} prompt={prompt} onSubmit={onSubmit} />
         )}

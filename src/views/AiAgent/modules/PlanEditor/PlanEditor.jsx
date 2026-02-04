@@ -81,38 +81,39 @@ const PlanEditor = ({ plan, setPlan, onSubmit }) => {
         </div>
 
         <div style={{ display: "flex", gap: "10px" }}>
-          <button className={cls.saveBtn} onClick={() => {
-            // Save first to ensure we export latest
-            const currentMd = getMarkdownFromHtml();
-            const blob = new Blob([currentMd], { type: "text/markdown" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `${activeTab}_plan.md`;
-            a.click();
-            URL.revokeObjectURL(url);
-          }}>
+          <button
+            className={cls.saveBtn}
+            onClick={() => {
+              // Save first to ensure we export latest
+              const currentMd = getMarkdownFromHtml();
+              const blob = new Blob([currentMd], { type: "text/markdown" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `${activeTab}_plan.md`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+          >
             <FileDown size={18} />
             Export MD
           </button>
           <button className={cls.saveBtn} onClick={handleLogPlan}>
-            <Save size={18} />
-            Save & Log
+            {/* <Save size={18} /> */}
+            Accept
           </button>
         </div>
       </div>
 
       <div className={cls.editorWrapper}>
-        <div
-          className={cls.previewContainer}
-        >
+        <div className={cls.previewContainer}>
           <div
             className={cls.markdownBody}
             contentEditable
             suppressContentEditableWarning={true}
             ref={editableRef}
             key={activeTab} // Force remount on tab change
-            style={{ outline: 'none', minHeight: '100%' }}
+            style={{ outline: "none", minHeight: "100%" }}
           >
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {currentContent || ""}

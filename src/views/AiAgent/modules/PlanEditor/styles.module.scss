@@ -46,9 +46,9 @@
     }
 
     &.active {
-        color: #111827;
+        color: #62c0ff;
         /* Gray-900, almost black */
-        border-bottom-color: #000000;
+        border-bottom-color: #62c0ff;
     }
 }
 
@@ -59,7 +59,7 @@
     padding: 8px 16px;
     border-radius: 6px;
     border: none;
-    background: #111827;
+    background: #62c0ff;
     /* Minimal black button */
     color: white;
     font-size: 0.9rem;
@@ -68,7 +68,7 @@
     transition: all 0.2s;
 
     &:hover {
-        background: #374151;
+        background: rgba(98, 192, 255, 0.6);
         transform: translateY(-1px);
     }
 }

@@ -25,26 +25,13 @@ import {
   useDisclosure,
   useOutsideClick,
 } from "@chakra-ui/react";
-import {
-  Logout,
-  AssistantOutlined,
-  Add,
-  Edit,
-  Delete,
-} from "@mui/icons-material";
+import { Logout, AssistantOutlined } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import LogoutIcon from "@mui/icons-material/Logout";
-import {
-  Dialog,
-  List,
-  ListItem,
-  ListItemText,
-  Modal,
-  Typography,
-} from "@mui/material";
+import { Dialog, Modal } from "@mui/material";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -98,6 +85,8 @@ import { viewsActions } from "@/store/views/view.slice";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import { SidebarList } from "./SidebarList";
 import { AiProjectsModal } from "../AiProjectsModal";
+import { Container } from "react-smooth-dnd";
+import AppSidebar from "./AppSidebarComponentV2";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
 

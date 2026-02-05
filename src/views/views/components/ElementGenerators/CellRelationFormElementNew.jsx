@@ -24,6 +24,7 @@ import { updateQueryWithoutRerender } from "@/utils/useSafeQueryUpdater";
 import { groupFieldActions } from "@/store/groupField/groupField.slice";
 import { useViewContext } from "@/providers/ViewProvider";
 import ClearIcon from "@mui/icons-material/Clear";
+import { useFieldsContext } from "../../providers/FieldsProvider";
 
 const CellRelationFormElementNew = ({
   relOptions,
@@ -81,8 +82,7 @@ const CellRelationFormElementNew = ({
               autoFocus={autoFocus}
               rowData={rowData}
             />
-          )
-          
+          );
         }}
       />
     );
@@ -111,6 +111,7 @@ const AutoCompleteElement = ({
 }) => {
   const dispatch = useDispatch();
   const { view } = useViewContext();
+  const { fieldsMap } = useFieldsContext();
   const isNewRouter = localStorage.getItem("new_router") === "true";
   const { navigateToForm } = useTabRouter();
 
@@ -242,6 +243,8 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, rowData, value]);
 
+  console.log("autoFiltersValue update", { autoFiltersValue, rowData });
+
   const queryClient = useQueryClient();
 
   const queryFn = (pageProp) => {
@@ -329,7 +332,7 @@ const AutoCompleteElement = ({
     return uniqueObjects ?? [];
   }, [allOptions, autoFilters, isFetching]);
 
-  console.log('computedOptionscomputedOptions', computedOptions, allOptions)
+  console.log("computedOptionscomputedOptions", computedOptions, allOptions);
 
   const computedValue = useMemo(() => {
     const findedOption = allOptions?.find((el) => el?.guid === value);
@@ -429,8 +432,6 @@ const AutoCompleteElement = ({
   //   setAllOptions([]);
   // }, [debouncedValue, autoFiltersValue]);
 
-
-
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>
       <div
@@ -467,7 +468,7 @@ const AutoCompleteElement = ({
                     relation_table_slug: data?.table_slug,
                   }),
                 );
-     
+
                 updateQueryWithoutRerender("p", props?.data?.guid);
                 updateQueryWithoutRerender("field_slug", field?.table_slug);
               } else {
@@ -570,10 +571,9 @@ const AutoCompleteElement = ({
         />
       )}
 
-
       <Select
         instanceId="post-category-select"
-        isLoading={isFetching} 
+        isLoading={isFetching}
         className={styles.select}
         id="relation-lookup"
         inputValue={inputValue}

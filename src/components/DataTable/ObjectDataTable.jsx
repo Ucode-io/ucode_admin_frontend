@@ -342,7 +342,7 @@ const ObjectDataTable = ({
           return (
             columns && (
               <TableRow
-                key={isRelationTable ? virtualRowObject?.id : index}
+                key={isRelationTable ? virtualRowObject?.id : (virtualRowObject?.guid || index)}
                 tableView={tableView}
                 width={"80px"}
                 remove={remove}

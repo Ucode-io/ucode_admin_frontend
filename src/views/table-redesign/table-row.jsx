@@ -69,7 +69,7 @@ const TableRow = ({
       {!relationAction ? (
         <>
           <CTableRow
-            key={key}
+            key={row.guid}
             style={{ ...style, height: "32px" }}
             className="new-ui"
             ref={parentRef}
@@ -136,7 +136,7 @@ const TableRow = ({
                       height: "26px",
                       position: `${
                         tableSettings?.[pageName]?.find(
-                          (item) => item?.id === virtualColumn?.id
+                          (item) => item?.id === virtualColumn?.id,
                         )?.isStiky ||
                         view?.attributes?.fixedColumns?.[virtualColumn?.id]
                           ? "sticky"
@@ -150,7 +150,7 @@ const TableRow = ({
                         : "0",
                       backgroundColor: `${
                         tableSettings?.[pageName]?.find(
-                          (item) => item?.id === virtualColumn?.id
+                          (item) => item?.id === virtualColumn?.id,
                         )?.isStiky ||
                         view?.attributes?.fixedColumns?.[virtualColumn?.id]
                           ? "#F6F6F6"
@@ -162,7 +162,7 @@ const TableRow = ({
                       }`,
                       zIndex: `${
                         tableSettings?.[pageName]?.find(
-                          (item) => item?.id === virtualColumn?.id
+                          (item) => item?.id === virtualColumn?.id,
                         )?.isStiky ||
                         view?.attributes?.fixedColumns?.[virtualColumn?.id]
                           ? "1"
@@ -226,7 +226,7 @@ const TableRow = ({
                       </div>
                     )}
                   </CTableCell>
-                )
+                ),
             )}
             <td
               style={{
@@ -348,7 +348,7 @@ const TableRow = ({
                     padding: "0 5px",
                     position: `${
                       tableSettings?.[pageName]?.find(
-                        (item) => item?.id === virtualColumn?.id
+                        (item) => item?.id === virtualColumn?.id,
                       )?.isStiky ||
                       view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "sticky"
@@ -359,7 +359,7 @@ const TableRow = ({
                       : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find(
-                        (item) => item?.id === virtualColumn?.id
+                        (item) => item?.id === virtualColumn?.id,
                       )?.isStiky ||
                       view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "#F6F6F6"
@@ -367,7 +367,7 @@ const TableRow = ({
                     }`,
                     zIndex: `${
                       tableSettings?.[pageName]?.find(
-                        (item) => item?.id === virtualColumn?.id
+                        (item) => item?.id === virtualColumn?.id,
                       )?.isStiky ||
                       view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "1"
@@ -400,7 +400,7 @@ const TableRow = ({
                     <CellElementGenerator field={virtualColumn} row={row} />
                   )}
                 </CTableCell>
-              )
+              ),
           )}
           <td
             style={{
@@ -514,7 +514,7 @@ const TableRow = ({
                 padding: "0 5px",
                 position: `${
                   tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
+                    (item) => item?.id === column?.id,
                   )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                     ? "sticky"
                     : "relative"
@@ -524,14 +524,14 @@ const TableRow = ({
                   : "0",
                 backgroundColor: `${
                   tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
+                    (item) => item?.id === column?.id,
                   )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                     ? "#F6F6F6"
                     : "#fff"
                 }`,
                 zIndex: `${
                   tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
+                    (item) => item?.id === column?.id,
                   )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                     ? "1"
                     : "0"

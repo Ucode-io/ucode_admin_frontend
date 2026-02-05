@@ -6,15 +6,13 @@ const newClickHandler = ({
   menuActions,
   relationTabActions,
   setSelectedApp,
-  setFolderItem,
   setSelectedFolder,
   closeMenu,
   menuChilds,
   coontrolAccordionAction,
-  setElement,
+  setElement = () => {},
   setSubMenuIsOpen,
-  auth,
-  refetch,
+  refetch = () => {},
 }) => {
   if (element?.id === "USERS_MENU_ITEM_ID") {
     return navigate("/client-types");
@@ -26,7 +24,6 @@ const newClickHandler = ({
 
   if (element.type === "FOLDER") {
     refetch();
-    setFolderItem(el);
     setSelectedFolder(el?.id ? el : element);
     const isOpen = menuChilds[element.id]?.open;
     if (isOpen) {
@@ -47,7 +44,7 @@ const newClickHandler = ({
     const website_link = element?.attributes?.website_link;
     if (website_link) {
       navigate(`/${element?.id}/website`, {
-        state: {url: website_link},
+        state: { url: website_link },
       });
     } else if (element?.id === "3b74ee68-26e3-48c8-bc95-257ca7d6aa5c") {
       // navigate(
@@ -74,7 +71,7 @@ const newClickHandler = ({
     });
   } else if (element.type === "WEBPAGE") {
     navigate(
-      `/${element?.id}/web-page/${element?.data?.webpage?.id}?menuId=${element?.id}`
+      `/${element?.id}/web-page/${element?.data?.webpage?.id}?menuId=${element?.id}`,
     );
     setSubMenuIsOpen(false);
   }

@@ -19,6 +19,12 @@ import menuService, { useMenuListQuery } from "@/services/menuService";
 import { useQueryClient } from "react-query";
 import { TreeNode } from "../TreeNode";
 import { useNavigate } from "react-router-dom";
+import { tableActions } from "@/store/table/table.slice";
+import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
+import { groupFieldActions } from "@/store/groupField/groupField.slice";
+import { menuActions } from "@/store/menuItem/menuItem.slice";
+import { relationTabActions } from "@/store/relationTab/relationTab.slice";
+import newClickHandler from "../../../newClickHandler";
 
 const ROOT_PARENT_ID = "c57eedc3-a954-4262-a0af-376c65b5a284";
 const ROOT_DROP_ID = "ROOT_DROP_ZONE";
@@ -44,6 +50,7 @@ export const SortableSidebarTree = ({
   handlers,
   setSelectedFolder,
   selectedApp,
+  setSelectedApp,
   menu,
   setMenu,
 }) => {
@@ -60,6 +67,30 @@ export const SortableSidebarTree = ({
 
   const navigate = useNavigate();
 
+  const closeMenu = (id) => {
+    const updated = { ...menuChilds };
+    updated[id] = { ...updated[id], open: false };
+
+    dispatch(menuAccordionActions.toggleMenuChilds(updated));
+  };
+
+  function openMenu(item) {
+    const updated = { ...menuChilds };
+    updated[item?.id] = { ...updated[item?.id], open: true };
+
+    dispatch(menuAccordionActions.toggleMenuChilds(updated));
+  }
+
+  const controlAccordionAction = (el) => {
+    const isOpen = menuChilds?.[el?.id]?.open;
+
+    if (isOpen) {
+      closeMenu(el?.id);
+    } else {
+      openMenu(el);
+    }
+  };
+
   function onToggle(node) {
     const id = node.id;
     setSelectedFolder(node);
@@ -70,7 +101,27 @@ export const SortableSidebarTree = ({
       setSelectedFolderId(id);
     }
 
-    if (node?.type !== "FOLDER") navigate(`/${id}`);
+    dispatch(tableActions.setTable(node?.data?.table));
+    dispatch(detailDrawerActions.setMainTabIndex(0));
+    dispatch(detailDrawerActions.closeDrawer());
+    dispatch(groupFieldActions.clearViews());
+
+    if (node?.type !== "FOLDER") {
+      navigate(`/${id}`);
+      newClickHandler({
+        el: node,
+        element: node,
+        navigate,
+        dispatch,
+        menuActions,
+        relationTabActions,
+        setSelectedApp,
+        setSelectedFolder,
+        closeMenu,
+        menuChilds,
+        coontrolAccordionAction: controlAccordionAction,
+      });
+    }
 
     dispatch(menuAccordionActions.toggleMenuOpen({ id }));
   }

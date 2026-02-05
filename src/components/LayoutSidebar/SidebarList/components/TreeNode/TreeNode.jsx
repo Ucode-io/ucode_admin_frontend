@@ -11,7 +11,6 @@ import { CSS } from "@dnd-kit/utilities";
 import { Tooltip, IconButton, Box } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import AddIcon from "@mui/icons-material/Add";
-import { NodeActionsMenu } from "../NodeActionsMenu";
 import { useEffect, useState } from "react";
 import IconGeneratorIconjs from "@/components/IconPicker/IconGeneratorIconjs";
 import IconGenerator from "@/components/IconPicker/IconGenerator";
@@ -19,7 +18,6 @@ import { useTranslation } from "react-i18next";
 import { iconsList } from "@/utils/constants/iconsList";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useDispatch, useSelector } from "react-redux";
-import MaterialUIProvider from "@/providers/MaterialUIProvider";
 import { menuActions } from "@/store/menuItem/menuItem.slice";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
@@ -67,8 +65,6 @@ export const TreeNode = ({
 
   const [isHovered, setIsHovered] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
-  const isMenuOpen = Boolean(menu?.event);
 
   const showActions = isHovered || menuOpen;
 
@@ -190,13 +186,6 @@ export const TreeNode = ({
     onToggle(node);
   };
 
-  const handleMenuOpen = (e) => {
-    e.stopPropagation();
-    setSelectedFolder(node);
-    dispatch(menuActions.setMenuItem(node));
-    // setMenuAnchor(e.currentTarget);
-  };
-
   const newIcons = iconsList.slice(0, 17);
 
   useEffect(() => {
@@ -239,6 +228,9 @@ export const TreeNode = ({
             {isFolder && showActions ? (
               <span
                 style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                   fontSize: 18,
                   color: "#666",
                 }}
@@ -365,19 +357,6 @@ export const TreeNode = ({
           </SortableContext>
         </div>
       )}
-
-      {/* Попап меню */}
-      {/* <MaterialUIProvider>
-        <NodeActionsMenu
-          selectedApp={selectedApp}
-          anchorEl={menu?.event}
-          open={Boolean(menu?.event)}
-          onClose={() => setMenu({ event: null, type: null, root: null })}
-          node={node}
-          handlers={handlers}
-          setSelectedFolder={setSelectedFolder}
-        />
-      </MaterialUIProvider> */}
     </>
   );
 };

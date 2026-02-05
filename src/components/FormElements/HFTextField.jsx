@@ -61,6 +61,7 @@ const HFTextField = ({
 
   return (
     <Controller
+      key={name}
       control={control}
       name={name}
       defaultValue={defaultValue ?? ""}
@@ -72,7 +73,7 @@ const HFTextField = ({
         return (
           <TextField
             size="small"
-            value={value}
+            value={value ?? ""}
             onChange={(e) => {
               onChange(
                 withTrim

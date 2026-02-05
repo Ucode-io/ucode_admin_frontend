@@ -61,6 +61,8 @@ export const useViewsProps = ({ isRelationView }) => {
 
   const selectedView = isRelationView ? selectedViewDrawer : selectedViewMain;
 
+  console.log({ selectedView });
+
   const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);
   const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
   const selectedTabIndex = isRelationView ? drawerTabIndex : mainTabIndex;

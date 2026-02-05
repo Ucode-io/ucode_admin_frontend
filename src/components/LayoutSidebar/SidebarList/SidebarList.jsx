@@ -8,6 +8,7 @@ export const SidebarList = ({
   handlers,
   setSelectedFolder,
   selectedApp,
+  setSelectedApp,
   menu,
   setMenu,
 }) => {
@@ -26,6 +27,7 @@ export const SidebarList = ({
       handlers={handlers}
       setSelectedFolder={setSelectedFolder}
       selectedApp={selectedApp}
+      setSelectedApp={setSelectedApp}
       menu={menu}
       setMenu={setMenu}
     />

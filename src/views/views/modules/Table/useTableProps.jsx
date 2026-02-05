@@ -450,6 +450,8 @@ export const useTableProps = ({ tab }) => {
     refetch();
   }, [currentPage, limit, tableSearch]);
 
+  if (isRelationView) console.log("ROWS", rows);
+
   return {
     tableLan,
     dataCount,

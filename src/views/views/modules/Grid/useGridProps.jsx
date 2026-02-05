@@ -147,6 +147,18 @@ export const useGridProps = () => {
                 item?.type === "LOOKUP"
                   ? item?.relation_id
                   : item?.id || generateGUID(),
+              valueGetter: (params) => {
+                if (!params.data) return null;
+                const lang = i18n.language;
+                const fieldName = item?.slug;
+
+                return (
+                  params.data[`${fieldName}_${lang}`] ||
+                  params.data[`${fieldName}_en`] ||
+                  params.data[fieldName]
+                );
+              },
+
               headerName:
                 item?.attributes?.[`label_${i18n?.language}`] || item?.label,
               headerComponent: HeaderComponent,
@@ -158,93 +170,6 @@ export const useGridProps = () => {
       };
     },
   });
-
-  // const navigateToEditPage = (row) => {
-  //   dispatch(detailDrawerActions.setDrawerTabIndex(0));
-  //   dispatch(
-  //     groupFieldActions.addView({
-  //       id: view?.id,
-  //       label: view?.table_label || initialTableInfo?.label,
-  //       table_slug: view?.table_slug,
-  //       relation_table_slug: view.relation_table_slug ?? null,
-  //       is_relation_view: view?.is_relation_view,
-  //       detailId: row?.guid,
-  //     })
-  //   );
-  //   if (Boolean(selectedView?.is_relation_view)) {
-  //     setSelectedView(view);
-  //     setSelectedRow(row);
-  //     dispatch(detailDrawerActions.openDrawer());
-  //     updateQueryWithoutRerender("p", row?.guid);
-  //   } else {
-  //     if (new_router) {
-  //       updateQueryWithoutRerender("p", row?.guid);
-  //       if (view?.attributes?.url_object) {
-  //         navigateToDetailPage(row);
-  //       } else if (projectInfo?.new_layout) {
-  //         setSelectedRow(row);
-  //         dispatch(detailDrawerActions.openDrawer());
-  //       } else {
-  //         if (layoutType === "PopupLayout") {
-  //           setSelectedRow(row);
-  //           dispatch(detailDrawerActions.openDrawer());
-  //         } else {
-  //           navigateToDetailPage(row);
-  //         }
-  //       }
-  //     } else {
-  //       if (view?.attributes?.url_object) {
-  //         navigateToDetailPage(row);
-  //       } else if (projectInfo?.new_layout) {
-  //         setSelectedRow(row);
-  //         dispatch(detailDrawerActions.openDrawer());
-  //       } else {
-  //         if (layoutType === "PopupLayout") {
-  //           setSelectedRow(row);
-  //           dispatch(detailDrawerActions.openDrawer());
-  //         } else {
-  //           navigateToDetailPage(row);
-  //         }
-  //       }
-  //     }
-  //   }
-  // };
-
-  // const replaceUrlVariables = (urlTemplate, data) => {
-  //   return urlTemplate.replace(/\{\{\$(\w+)\}\}/g, (_, variable) => {
-  //     return data[variable] || "";
-  //   });
-  // };
-
-  // function navigateToDetailPage(row) {
-  //   if (
-  //     view?.attributes?.navigate?.params?.length ||
-  //     view?.attributes?.navigate?.url
-  //   ) {
-  //     const params = view?.attributes?.navigate?.params
-  //       ?.map(
-  //         (param) =>
-  //           `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
-  //             param.value,
-  //             row
-  //           )}`
-  //       )
-  //       .join("&");
-
-  //     const urlTemplate = view?.attributes?.navigate?.url;
-
-  //     const matches = replaceUrlVariables(urlTemplate, row);
-
-  //     navigate(`${matches}${params ? "?" + params : ""}`);
-  //   } else {
-  //     navigate(`/${menuId}/detail?p=${row?.guid}`, {
-  //       state: {
-  //         viewId,
-  //         tableSlug,
-  //       },
-  //     });
-  //   }
-  // }
 
   const columns = useMemo(() => {
     if (fiedlsarray?.length) {
@@ -295,7 +220,7 @@ export const useGridProps = () => {
         },
       ];
     }
-  }, [fiedlsarray, view?.columns]);
+  }, [fiedlsarray, view?.columns, i18n.language]);
 
   const handleOpenModal = () => setOpenDeleteModal(true);
   const handleCloseModal = () => setOpenDeleteModal(false);
@@ -334,7 +259,6 @@ export const useGridProps = () => {
   }
 
   function removeRow(params, guid) {
-
     const node = params.node;
     if (!node || !node.data) return;
 
@@ -751,6 +675,13 @@ export const useGridProps = () => {
     },
     [tableSlug, cleanedFilters],
   );
+
+  useEffect(() => {
+    if (gridApi.current) {
+      gridApi.current.api.refreshCells({ force: true });
+      gridApi.current.api.refreshHeader();
+    }
+  }, [i18n.language, gridApi]);
 
   return {
     view,

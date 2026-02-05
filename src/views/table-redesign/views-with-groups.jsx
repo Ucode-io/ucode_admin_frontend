@@ -339,11 +339,13 @@ export const NewUiViewsWithGroups = ({
   };
 
   const columnsForSearch = useMemo(() => {
+    console.log({ fieldsMap });
     return Object.values(fieldsMap)?.filter(
       (el) =>
         el?.type === "SINGLE_LINE" ||
         el?.type === "MULTI_LINE" ||
         el?.type === "NUMBER" ||
+        el?.type === "FLOAT" ||
         el?.type === "PHONE" ||
         el?.type === "EMAIL" ||
         el?.type === "INTERNATION_PHONE" ||

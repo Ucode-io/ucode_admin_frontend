@@ -4,9 +4,12 @@ import RowIndexField from "../RowIndexField";
 import IndexHeaderComponent from "../IndexHeaderComponent";
 import FieldCreateHeaderComponent from "../FieldCreateHeaderComponent";
 import constructorObjectService from "@/services/constructorObjectService";
+import { useTranslation } from "react-i18next";
 
-function AggridDefaultComponents({customAutoGroupColumnDef}) {
-  const {fields, tableSlug} = customAutoGroupColumnDef;
+function AggridDefaultComponents({ customAutoGroupColumnDef }) {
+  const { fields, tableSlug } = customAutoGroupColumnDef;
+
+  const { i18n } = useTranslation();
 
   const recursiveField = fields?.find((el) => el?.table_slug === tableSlug);
 
@@ -20,7 +23,7 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
       fillHandleDirection: "xy",
       suppressMultiRangeSelection: false,
     }),
-    []
+    [],
   );
 
   const autoGroupColumnDef = useMemo(
@@ -30,16 +33,21 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
         suppressCount: true,
         innerRenderer: (params) => {
           return (
-            <div style={{display: "flex", alignItems: "center"}}>
+            <div style={{ display: "flex", alignItems: "center" }}>
               {params.value}
             </div>
           );
         },
         checkbox: true,
       },
+      valueGetter: (params) => {
+        const lang = i18n.language;
+        // Предположим, поле в дереве называется 'name'
+        return params.data?.[`name_${lang}`] || params.data?.name;
+      },
       minWidth: 280,
     }),
-    []
+    [],
   );
   const rowSelection = useMemo(
     () => ({
@@ -47,7 +55,7 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
       checkboxes: false,
       headerCheckbox: false,
     }),
-    []
+    [],
   );
   const cellSelection = useMemo(
     () => ({
@@ -56,7 +64,7 @@ function AggridDefaultComponents({customAutoGroupColumnDef}) {
         direction: "y",
       },
     }),
-    []
+    [],
   );
   return {
     rowSelection,

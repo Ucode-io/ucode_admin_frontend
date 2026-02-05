@@ -61,8 +61,6 @@ export const useViewsProps = ({ isRelationView }) => {
 
   const selectedView = isRelationView ? selectedViewDrawer : selectedViewMain;
 
-  console.log({ selectedView });
-
   const mainTabIndex = useSelector((state) => state.drawer.mainTabIndex);
   const drawerTabIndex = useSelector((state) => state.drawer.drawerTabIndex);
   const selectedTabIndex = isRelationView ? drawerTabIndex : mainTabIndex;
@@ -684,7 +682,6 @@ export const useViewsProps = ({ isRelationView }) => {
   };
 
   useEffect(() => {
-    console.log(activeTable?.attributes?.default_filters);
     if (activeTable?.attributes?.default_filters) {
       setDefaultFiltersMap(activeTable?.attributes?.default_filters);
     } else {

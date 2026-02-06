@@ -24,10 +24,10 @@ function MetabaseContent({settingLan, control, watch = () => {}}) {
   const {i18n} = useTranslation();
   const [loader, setLoader] = useState(null);
 
-  const handleCopy = (text, index) => {
+  const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
   };
-  const {data: dashboards} = useQuery(
+  const { data: dashboards } = useQuery(
     ["GET_OBJECT_LIST"],
     () => {
       return resourceService.metabaseResource({
@@ -39,7 +39,7 @@ function MetabaseContent({settingLan, control, watch = () => {}}) {
       select: (res) => {
         return res?.dashboards ?? [];
       },
-    }
+    },
   );
 
   const getPublicUrl = (id) => {
@@ -67,13 +67,12 @@ function MetabaseContent({settingLan, control, watch = () => {}}) {
           flexWrap: "wrap",
           gap: "20px",
           marginTop: "10px",
-        }}>
-        <Box sx={{width: "48%"}}>
-          <FieldLabel
-            children={
-              generateLangaugeText(settingLan, i18n?.language, "Link") || "Link"
-            }
-          />
+        }}
+      >
+        <Box sx={{ width: "48%" }}>
+          <FieldLabel>
+            {generateLangaugeText(settingLan, i18n?.language, "Link") || "Link"}
+          </FieldLabel>
           <HFResourceField
             isLink={true}
             control={control}
@@ -86,13 +85,11 @@ function MetabaseContent({settingLan, control, watch = () => {}}) {
             }}
           />
         </Box>
-        <Box sx={{width: "48%"}}>
-          <FieldLabel
-            children={
-              generateLangaugeText(settingLan, i18n?.language, "Username") ||
-              "Username"
-            }
-          />
+        <Box sx={{ width: "48%" }}>
+          <FieldLabel>
+            {generateLangaugeText(settingLan, i18n?.language, "Username") ||
+              "Username"}
+          </FieldLabel>
           <HFResourceField
             control={control}
             required
@@ -104,13 +101,11 @@ function MetabaseContent({settingLan, control, watch = () => {}}) {
             }}
           />
         </Box>
-        <Box sx={{width: "48%"}}>
-          <FieldLabel
-            children={
-              generateLangaugeText(settingLan, i18n?.language, "Password") ||
-              "Password"
-            }
-          />
+        <Box sx={{ width: "48%" }}>
+          <FieldLabel>
+            {generateLangaugeText(settingLan, i18n?.language, "Password") ||
+              "Password"}
+          </FieldLabel>
           <HFResourceField
             control={control}
             required
@@ -124,15 +119,18 @@ function MetabaseContent({settingLan, control, watch = () => {}}) {
         </Box>
       </Box>
 
-      <Box sx={{padding: "0px", marginTop: "20px"}}>
-        <TableCard cardStyles={{padding: "1px"}}>
+      <Box sx={{ padding: "0px", marginTop: "20px" }}>
+        <TableCard
+          cardStyles={{ padding: "1px", height: "330px", overflow: "auto" }}
+        >
           <CTable
             disablePagination={true}
             loader={false}
             removableHeight={false}
             count={dashboards?.length}
             page={1}
-            dataCount={dashboards?.length}>
+            dataCount={dashboards?.length}
+          >
             <CTableHead>
               <CTableCell className={cls.tableHeadCell} width={1}>
                 №
@@ -148,12 +146,14 @@ function MetabaseContent({settingLan, control, watch = () => {}}) {
             <CTableBody
               loader={false}
               columnsCount={3}
-              dataLength={dashboards?.length}>
+              dataLength={dashboards?.length}
+            >
               {loader ? (
                 <CTableRow>
                   <CTableCell
                     colSpan={3}
-                    style={{textAlign: "center", padding: "20px 0"}}>
+                    style={{ textAlign: "center", padding: "20px 0" }}
+                  >
                     <CircularProgress />
                   </CTableCell>
                 </CTableRow>
@@ -161,7 +161,8 @@ function MetabaseContent({settingLan, control, watch = () => {}}) {
                 <CTableRow>
                   <CTableCell
                     colSpan={3}
-                    style={{textAlign: "center", padding: "10px"}}>
+                    style={{ textAlign: "center", padding: "10px" }}
+                  >
                     <CircularProgress />
                   </CTableCell>
                 </CTableRow>
@@ -170,7 +171,8 @@ function MetabaseContent({settingLan, control, watch = () => {}}) {
                   <CTableRow key={item.id} className={cls.row}>
                     <CTableCell
                       className={cls.tBodyCell}
-                      style={{textAlign: "center"}}>
+                      style={{ textAlign: "center" }}
+                    >
                       {index + 1}
                     </CTableCell>
                     <CTableCell className={cls.tBodyCell}>
@@ -178,10 +180,12 @@ function MetabaseContent({settingLan, control, watch = () => {}}) {
                     </CTableCell>
                     <CTableCell
                       className={cls.tBodyCell}
-                      style={{textAlign: "center"}}>
+                      style={{ textAlign: "center" }}
+                    >
                       <Button
                         disabled={loader === item?.id}
-                        onClick={() => getPublicUrl(item?.id)}>
+                        onClick={() => getPublicUrl(item?.id)}
+                      >
                         {loader !== item?.id ? (
                           <ContentCopyIcon />
                         ) : (

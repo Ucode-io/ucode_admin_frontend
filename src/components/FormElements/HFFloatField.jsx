@@ -36,13 +36,14 @@ const HFFloatField = ({
   return (
     <Controller
       control={control}
+      key={name}
       name={name}
       defaultValue={defaultValue}
       rules={{
         required: required ? "This is required field" : false,
         ...rules,
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => {
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
         const decimalSeparator = isFloat ? "." : undefined;
         return (
           <NumericFormat
@@ -78,11 +79,12 @@ const HFFloatField = ({
             }`}
             name={name}
             readOnly={disabled}
-            style={{...style, padding: newUi ? "4px" : ""}}
+            style={{ ...style, padding: newUi ? "4px" : "" }}
             {...props}
           />
         );
-      }}></Controller>
+      }}
+    ></Controller>
   );
 };
 

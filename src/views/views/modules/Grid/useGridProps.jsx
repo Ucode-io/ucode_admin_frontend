@@ -81,15 +81,6 @@ export const useGridProps = () => {
   );
 
   const { filters } = useFilters(tableSlug, view.id);
-  const { defaultColDef, autoGroupColumnDef, rowSelection, cellSelection } =
-    AggridDefaultComponents({
-      customAutoGroupColumnDef: {
-        suppressCount: true,
-        fields: visibleColumns,
-        view,
-        tableSlug,
-      },
-    });
 
   const handleOpenFieldDrawer = (column) => {
     if (column?.attributes?.relation_data) {
@@ -170,6 +161,17 @@ export const useGridProps = () => {
       };
     },
   });
+
+  const { defaultColDef, autoGroupColumnDef, rowSelection, cellSelection } =
+    AggridDefaultComponents({
+      customAutoGroupColumnDef: {
+        suppressCount: true,
+        fields: visibleColumns,
+        view,
+        tableSlug,
+        fiedlsarray,
+      },
+    });
 
   const columns = useMemo(() => {
     if (fiedlsarray?.length) {
@@ -463,7 +465,7 @@ export const useGridProps = () => {
 
     return [
       {
-        name: "<span>Edit</span>",
+        name: "Edit",
         action: (action) => {
           setFieldCreateAnchor(true);
           setFieldData(action.column?.colDef?.fieldObj);
@@ -472,7 +474,7 @@ export const useGridProps = () => {
       },
       ...defaultItems,
       {
-        name: '<span style="color: #FE4842;">Delete field</span>',
+        name: "Delete field",
         action: (action) => {
           setColumnId(action?.column?.colDef?.columnID);
           handleOpenModal();

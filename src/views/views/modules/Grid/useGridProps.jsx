@@ -678,8 +678,10 @@ export const useGridProps = () => {
 
   useEffect(() => {
     if (gridApi.current) {
-      gridApi.current.api.refreshCells({ force: true });
-      gridApi.current.api.refreshHeader();
+      if (gridApi.current?.api?.refreshCells)
+        gridApi.current?.api?.refreshCells({ force: true });
+      if (gridApi.current?.api?.refreshHeader)
+        gridApi.current?.api?.refreshHeader();
     }
   }, [i18n.language, gridApi]);
 

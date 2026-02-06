@@ -11,11 +11,17 @@ const Login = () => {
 
   return (
     <div className={styles.page}>
+      <div style={{ 
+        position: "absolute", 
+        top: "20px", 
+        right: "20px",
+        zIndex: 10
+      }}>
+        <LanguageSelector />
+      </div>
+      
       {formType !== "register" && (
         <>
-          <div style={{ marginLeft: "auto" }}>
-            <LanguageSelector />
-          </div>
           <h1 className={styles.title}>
             {index === 0 ? t("enter.to.system") : t("register.form")}
           </h1>

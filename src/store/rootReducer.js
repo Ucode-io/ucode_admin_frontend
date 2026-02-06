@@ -31,6 +31,8 @@ import {iconCategoryReducer} from "./IconCategory/iconCategory.slice";
 import { projectInfoReducer } from "./projectInfo/projectInfo.slice";
 import { tablePaginationReducer } from "./pagination/paginationV2.slice";
 import { drawerBreadcrumbReducer } from "./drawerBreadcrumb/drawerBreadcrumb.slice";
+import { codeEditorReducer } from "./codeEditor/codeEditor.slice";
+import { generatedUiReducer } from "./generatedUi/generatedUi.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -146,6 +148,16 @@ const iconCategoriesPersistConfig = {
   storage,
 };
 
+const codeEditorPersistConfig = {
+  key: "codeEditor",
+  storage,
+};
+
+const generatedUiPersistConfig = {
+  key: "generatedUi",
+  storage,
+};
+
 // const detailDrawerConfig = {
 //   key: "detailDrawer",
 //   storage,
@@ -198,6 +210,8 @@ const rootReducer = combineReducers({
   settingsModal: persistReducer(settingsModal, settingsModalReducer),
   table: tableReducer,
   projectInfo: projectInfoReducer,
+  codeEditor: persistReducer(codeEditorPersistConfig, codeEditorReducer),
+  generatedUi: persistReducer(generatedUiPersistConfig, generatedUiReducer),
 });
 
 export default rootReducer;

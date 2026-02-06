@@ -13,6 +13,7 @@ import {
   Accordion,
   AccordionItem,
   AccordionPanel,
+  background,
   Box,
   Button,
   ChakraBaseProvider,
@@ -25,13 +26,27 @@ import {
   useDisclosure,
   useOutsideClick,
 } from "@chakra-ui/react";
-import { Logout } from "@mui/icons-material";
+import {
+  Logout,
+  AssistantOutlined,
+  Add,
+  Edit,
+  Delete,
+} from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { Dialog, Modal } from "@mui/material";
+import {
+  Dialog,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Modal,
+  Typography,
+} from "@mui/material";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -88,6 +103,7 @@ import {
 } from "@/utils/constants/main";
 import { viewsActions } from "@/store/views/view.slice";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
+import { AiProjectsModal } from "../AiProjectsModal";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
 
@@ -337,9 +353,6 @@ const LayoutSidebar = ({
     }
   };
 
-  const setSidebarIsOpen = (val) => {
-    dispatch(mainActions.setSettingsSidebarIsOpen(val));
-  };
   // useEffect(() => {
   //   if (menuTemplate?.icon_style === "MODERN") {
   //     setSidebarIsOpen(false);
@@ -811,6 +824,64 @@ const LayoutSidebar = ({
                       </Flex>
                     </SidebarActionTooltip>
                   </Flex>
+                  <Flex
+                    position="relative"
+                    h={30}
+                    mx={8}
+                    mb={4}
+                    alignItems="center"
+                    whiteSpace="nowrap"
+                    borderRadius={6}
+                    color="#475467"
+                    fontSize={14}
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    _hover={{
+                      bg: "#EAECF0",
+                      ".accordionFolderIcon": {
+                        display: "none",
+                      },
+                      ".accordionIcon": {
+                        display: "block",
+                      },
+                    }}
+                    cursor="pointer"
+                    onMouseLeave={
+                      sidebarIsOpen
+                        ? undefined
+                        : () =>
+                            dispatch(
+                              mainActions.setSidebarHighlightedAction(null),
+                            )
+                    }
+                  >
+                    <SidebarActionTooltip id="ai-agent" title="AI Agent">
+                      <AiProjectsModal>
+                        <Flex
+                          w={sidebarIsOpen ? "100%" : 36}
+                          alignItems="center"
+                          justifyContent={
+                            sidebarIsOpen ? "flex-start" : "center"
+                          }
+                          gap={8}
+                          // onClick={() => {
+                          //   handleAiAgentClick();
+                          // }}
+                          {...getActionProps("ai-agent")}
+                        >
+                          <Box
+                            pl={sidebarIsOpen ? "5px" : 0}
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                          >
+                            <AssistantOutlined />
+                          </Box>
+                          {sidebarIsOpen ? <span>AI Agent</span> : null}
+                        </Flex>
+                      </AiProjectsModal>
+                    </SidebarActionTooltip>
+                  </Flex>
                 </Box>
               )}
             </div>
@@ -1021,6 +1092,233 @@ const LayoutSidebar = ({
         <MenuSettingModal closeModal={closeMenuSettingModal} />
       )}
 
+      {/* <Modal
+        open={isProjectsModalOpen}
+        onClose={() => setIsProjectsModalOpen(false)}
+      >
+        <Box
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "#fff",
+            borderRadius: "12px",
+            outline: "none",
+            width: 400,
+            padding: "20px",
+            boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
+            textAlign: "center",
+          }}
+        >
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Typography variant="h6">Select Project</Typography>
+            <button onClick={() => navigate("/ai-agent")}>
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  color: "#2d6ce5",
+                }}
+              >
+                <Add />
+                <span>Add new project</span>
+              </span>
+            </button>
+          </Box>
+          <List>
+            {aiProjects?.map((project) => (
+              <ListItem
+                key={project.id}
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": {
+                    backgroundColor: "rgba(0, 0, 0, 0.1)",
+                  },
+                  borderRadius: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+                onClick={() => handleNavigateToProject(project.id)}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    justifyContent: "flex-start",
+                  }}
+                >
+                  <ListItemText primary={project.title} />
+                  <ListItemText style={{ fontSize: "12px", color: "#888888" }}>
+                    {project.description}
+                  </ListItemText>
+                </Box>
+                <Popover
+                  id={"simple-popover"}
+                  // open={projectSettingsOpen}
+                  anchorEl={projectEditAnchorEl}
+                  onClose={() => setProjectEditAnchorEl(null)}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                >
+                  <PopoverTrigger>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenProjectSettings(e);
+                      }}
+                      _hover={{
+                        backgroundColor: "rgba(255, 255, 255, 0.87)",
+                      }}
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                        transform: "rotate(90deg)",
+                        borderRadius: "6px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <BsThreeDots />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      gap="6px"
+                      sx={{
+                        padding: "4px",
+                        backgroundColor: "#fff",
+                        borderRadius: "6px",
+                        boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.1)",
+                      }}
+                    >
+                      <Button
+                        style={{
+                          display: "flex",
+                          borderRadius: "4px",
+                          padding: "2px",
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingProject(project);
+                        }}
+                        _hover={{
+                          backgroundColor: "rgba(0, 0, 0, 0.1) !important",
+                        }}
+                      >
+                        <Edit htmlColor="#8F8E8B" />
+                      </Button>
+                      <Button
+                        style={{
+                          display: "flex",
+                          borderRadius: "4px",
+                          padding: "2px",
+                        }}
+                        // onClick={() => handleDeleteProject(project.id)}
+                        _hover={{
+                          backgroundColor: "rgba(0, 0, 0, 0.1) !important",
+                        }}
+                      >
+                        <Delete htmlColor="rgb(255 76 76)" />
+                      </Button>
+                    </Box>
+                  </PopoverContent>
+                </Popover>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Modal>
+      <Modal open={!!editingProject} onClose={() => setEditingProject(null)}>
+        <Box
+          onSubmit={handleUpdateProject}
+          as="form"
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "#fff",
+            borderRadius: "12px",
+            outline: "none",
+            width: 400,
+            padding: "16px 16px 10px",
+            boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
+            textAlign: "center",
+          }}
+        >
+          <Box display="flex" flexDirection="column" gap="16px">
+            <label
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+              }}
+            >
+              <span style={{ color: "#8F8E8B" }}>Title</span>
+              <input
+                style={{
+                  width: "100%",
+                  outline: "none",
+                  border: "none",
+                  borderBottom: "1px solid #ccc",
+                }}
+                placeholder="Project title"
+                defaultValue={editingProject?.title}
+                id="title"
+              />
+            </label>
+            <label
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+              }}
+            >
+              <span style={{ color: "#8F8E8B" }}>Description</span>
+              <input
+                style={{
+                  width: "100%",
+                  outline: "none",
+                  border: "none",
+                  borderBottom: "1px solid #ccc",
+                }}
+                placeholder="Project description"
+                defaultValue={editingProject?.description}
+                id="description"
+              />
+            </label>
+          </Box>
+          <Box display="flex" justifyContent="flex-end">
+            <Button
+              type="submit"
+              style={{
+                marginTop: "20px",
+                backgroundColor: "#007BFF",
+                color: "#fff",
+                border: "none",
+                borderRadius: "6px",
+                padding: "8px 16px",
+                cursor: "pointer",
+              }}
+            >
+              Apply changes
+            </Button>
+          </Box>
+        </Box>
+      </Modal> */}
+
       <ChakraBaseProvider theme={theme}>
         <InviteModal
           isOpen={isOpenInviteModal}
@@ -1033,96 +1331,96 @@ const LayoutSidebar = ({
   );
 };
 
-const AIChat = forwardRef(
-  ({ sidebarOpen = false, children, ...props }, ref) => {
-    const {
-      open,
-      anchorEl,
-      loader,
-      setLoader,
-      inputValue,
-      setInputValue,
-      messages,
-      messagesEndRef,
-      handleClick,
-      handleClose,
-      handleKeyDown,
-      handleSendClick,
-      showInput,
-      setShowInput,
-      handleSuccess,
-      handleError,
-      onExited,
-      appendMessage,
-      selectedEntityType,
-      handleChangeEntityType,
-      setMessages,
-      control,
-      errors,
-      handleSubmit,
-      reset,
-      setAnchorEl,
-      setValue,
-      watch,
-    } = useAIChat();
+// const AIChat = forwardRef(
+//   ({ sidebarOpen = false, children, ...props }, ref) => {
+//     const {
+//       open,
+//       anchorEl,
+//       loader,
+//       setLoader,
+//       inputValue,
+//       setInputValue,
+//       messages,
+//       messagesEndRef,
+//       handleClick,
+//       handleClose,
+//       handleKeyDown,
+//       handleSendClick,
+//       showInput,
+//       setShowInput,
+//       handleSuccess,
+//       handleError,
+//       onExited,
+//       appendMessage,
+//       selectedEntityType,
+//       handleChangeEntityType,
+//       setMessages,
+//       control,
+//       errors,
+//       handleSubmit,
+//       reset,
+//       setAnchorEl,
+//       setValue,
+//       watch,
+//     } = useAIChat();
 
-    return (
-      <>
-        <Flex
-          w={sidebarOpen ? "100%" : 36}
-          borderRadius={6}
-          // _hover={{
-          //   background: "#37352F0F",
-          // }}
-          h={"25px"}
-          // pl={sidebarOpen ? "35px" : 0}
-          cursor="pointer"
-          mb={sidebarOpen ? 0 : 4}
-          ref={ref}
-          {...props}
-          onClick={handleClick}
-          justifyContent="center"
-          alignItems="center"
-        >
-          {sidebarOpen ? (
-            children
-          ) : (
-            <SearchIcon color="#475467" fontSize={16} />
-          )}
-        </Flex>
+//     return (
+//       <>
+//         <Flex
+//           w={sidebarOpen ? "100%" : 36}
+//           borderRadius={6}
+//           // _hover={{
+//           //   background: "#37352F0F",
+//           // }}
+//           h={"25px"}
+//           // pl={sidebarOpen ? "35px" : 0}
+//           cursor="pointer"
+//           mb={sidebarOpen ? 0 : 4}
+//           ref={ref}
+//           {...props}
+//           onClick={handleClick}
+//           justifyContent="center"
+//           alignItems="center"
+//         >
+//           {sidebarOpen ? (
+//             children
+//           ) : (
+//             <SearchIcon color="#475467" fontSize={16} />
+//           )}
+//         </Flex>
 
-        <AIMenu
-          open={open}
-          anchorEl={anchorEl}
-          loader={loader}
-          setLoader={setLoader}
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          messages={messages}
-          messagesEndRef={messagesEndRef}
-          handleClose={handleClose}
-          handleKeyDown={handleKeyDown}
-          handleSendClick={handleSendClick}
-          showInput={showInput}
-          setShowInput={setShowInput}
-          handleSuccess={handleSuccess}
-          handleError={handleError}
-          onExited={onExited}
-          appendMessage={appendMessage}
-          selectedEntityType={selectedEntityType}
-          handleChangeEntityType={handleChangeEntityType}
-          setMessages={setMessages}
-          control={control}
-          errors={errors}
-          handleSubmit={handleSubmit}
-          reset={reset}
-          setValue={setValue}
-          watch={watch}
-        />
-      </>
-    );
-  },
-);
+//         <AIMenu
+//           open={open}
+//           anchorEl={anchorEl}
+//           loader={loader}
+//           setLoader={setLoader}
+//           inputValue={inputValue}
+//           setInputValue={setInputValue}
+//           messages={messages}
+//           messagesEndRef={messagesEndRef}
+//           handleClose={handleClose}
+//           handleKeyDown={handleKeyDown}
+//           handleSendClick={handleSendClick}
+//           showInput={showInput}
+//           setShowInput={setShowInput}
+//           handleSuccess={handleSuccess}
+//           handleError={handleError}
+//           onExited={onExited}
+//           appendMessage={appendMessage}
+//           selectedEntityType={selectedEntityType}
+//           handleChangeEntityType={handleChangeEntityType}
+//           setMessages={setMessages}
+//           control={control}
+//           errors={errors}
+//           handleSubmit={handleSubmit}
+//           reset={reset}
+//           setValue={setValue}
+//           watch={watch}
+//         />
+//       </>
+//     );
+//   },
+// );
 
 const Header = ({
   sidebarIsOpen,

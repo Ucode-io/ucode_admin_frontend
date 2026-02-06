@@ -1,0 +1,54 @@
+.promptContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.promptInputWrapper {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  // transform: translateX(-50%) translateY(100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.promptInputWrapper.show {
+  transform: translateX(-50%) translateY(-100%);
+}
+
+.recommendedPrompts {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.promptContainer.moveable {
+  & .recommendedPrompts {
+    display: none;
+  }
+}
+
+.recommendedPrompt {
+  padding: 4px 6px;
+  // border: 1px dashed #e9d4ff;
+  border: 1px dashed #9dcdef;
+  border-radius: 12px;
+  font-size: 10px;
+  color: #39404a;
+  // background-color: #faf5ff;
+  background-color: #d2edff;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.recommendedPrompt.loading {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

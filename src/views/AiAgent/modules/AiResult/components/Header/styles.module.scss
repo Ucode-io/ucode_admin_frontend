@@ -1,0 +1,138 @@
+.header {
+  height: 30px;
+  display: flex;
+  padding-right: 12px;
+  border-bottom: 1px solid #e5e9eb;
+  background-color: #fff;
+}
+
+.header.dark {
+  border-bottom: 1px solid transparent;
+  background-color: #252526;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  margin-right: 20px;
+  border: none;
+  color: #222;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.tabs {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: auto;
+}
+
+.tabsList {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+}
+
+.tabItem {
+  // height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  // height: 100%;
+  // padding: 0px 16px;
+  border: none;
+  border-radius: 4px;
+  // border-right: 1px solid #e5e9eb;
+  // border-bottom: 2px solid transparent;
+  font-size: 12px;
+  color: #7c7c7c;
+  background-color: transparent;
+  transition: color 0.3s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(55, 53, 47, 0.08);
+    
+    .label {
+      display: block;
+    }
+  }
+}
+
+.label {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: #fff;
+  background-color: #575757;
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+.tabItem:first-child .tab {
+  // border-left: 1px solid #e5e9eb;
+}
+
+.header.dark .tabItem:first-child .tab {
+  // border-left: 1px solid #3e3e3e;
+}
+
+.header.dark .tab {
+  color: #939393;
+  // border-right: 1px solid #3e3e3e;
+}
+
+.tab.active {
+  color: #62c0ff;
+  // border-bottom: 2px solid #62c0ff;
+}
+
+.header.dark .tab.active {
+  color: #1189d4;
+  // border-bottom: 2px solid #1189d4;
+}
+
+.actions {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 20px;
+}
+
+.publishButton {
+  // height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #fff;
+  background-color: #62c0ff;
+  background-image: linear-gradient(to bottom, #62c0ff, #779ddf);
+  cursor: pointer;
+}
+
+.header.dark .publishButton {
+  color: #fff;
+  background-color: #0076bf;
+}

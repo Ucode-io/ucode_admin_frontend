@@ -1,0 +1,1 @@
+export { OpenedTabs } from './OpenedTabs';

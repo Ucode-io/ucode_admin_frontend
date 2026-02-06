@@ -7,6 +7,7 @@ import {
   Select as MuiSelect,
   IconButton,
   Box,
+  CircularProgress,
 } from "@mui/material";
 import { Controller } from "react-hook-form";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -32,6 +33,8 @@ const DropdownSelect = ({
   id,
   isClearable = true,
   disabled = false,
+  handleScroll = () => {},
+  isLoading = false,
   ...props
 }) => {
   const [selectedValue, setSelectedValue] = useState(defaultValue || "");
@@ -85,6 +88,25 @@ const DropdownSelect = ({
               onOpen={() => {
                 onOpen();
               }}
+              MenuProps={{
+                PaperProps: {
+                  onScroll: (e) => {
+                    const target = e.currentTarget;
+                    if (
+                      target.scrollTop + target.clientHeight >=
+                      target.scrollHeight - 5
+                    ) {
+                      handleScroll(e);
+                    }
+                  },
+                  style: {
+                    maxHeight: 300,
+                    overflowY: "auto",
+                  },
+                },
+                autoFocus: false,
+                disableAutoFocusItem: true,
+              }}
               disabled={disabled}
               IconComponent={() => {
                 if (selectedValue || value || defaultValue) {
@@ -119,6 +141,7 @@ const DropdownSelect = ({
               {optionType === "GROUP"
                 ? options?.map((group, groupIndex) => [
                     <MenuItem
+                      key={groupIndex}
                       onClick={(e) => getOnchangeField(group)}
                       style={{ fontWeight: 600, color: "#000", fontSize: 15 }}
                     >
@@ -155,25 +178,15 @@ const DropdownSelect = ({
                       </div>
                     </MenuItem>
                   ))}
+              {isLoading && (
+                <MenuItem disabled style={{ justifyContent: "center" }}>
+                  <CircularProgress size={20} />
+                </MenuItem>
+              )}
             </MuiSelect>
             {!disabledHelperText && error?.message && (
               <FormHelperText error>{error?.message}</FormHelperText>
             )}
-            {/* {(selectedValue || value || defaultValue) && (
-              <Box sx={{ position: "absolute", right: "20px", top: "3px" }}>
-                {isClearable && !disabled && (
-                  <IconButton
-                    onClick={() => {
-                      onFormChange("");
-                      handleClear();
-                    }}
-                    size="small"
-                  >
-                    <ClearIcon />
-                  </IconButton>
-                )}
-              </Box>
-            )} */}
           </FormControl>
         );
       }}

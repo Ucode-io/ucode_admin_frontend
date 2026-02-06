@@ -36,7 +36,15 @@ const RelationField = ({
 }) => {
   const tableSlug = useMemo(() => {
     if (field?.relation_type === "Recursive") return formTableSlug;
-    return field?.id.split("#")?.[0] ?? "";
+
+    const splitted = field?.id.split("#");
+
+    if (splitted?.length > 1) {
+      return splitted?.[0];
+    } else {
+      const result = field?.slug.replace(/_id.*$/, "");
+      return result;
+    }
   }, [field?.id, formTableSlug, field.relation_type]);
 
   const required = useMemo(() => {
@@ -641,15 +649,16 @@ const AutoCompleteElement = ({
             setInputValue(e ?? null);
             inputChangeHandler(e);
           }}
-          getOptionLabel={(option) =>
-            computedViewFields?.map((el) => {
+          getOptionLabel={(option) => {
+            console.log({ option, computedViewFields });
+            return computedViewFields?.map((el) => {
               if (field?.attributes?.enable_multi_language) {
                 return `${option[`${el}_${activeLang ?? i18n?.language}`] ?? option[`${el}`]} `;
               } else {
                 return `${option[el]} `;
               }
-            })
-          }
+            });
+          }}
           getOptionValue={(option) =>
             option?.guid ?? option?.id ?? option?.client_type_id
           }

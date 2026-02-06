@@ -247,6 +247,17 @@ const AutoCompleteElement = ({
 
   const queryClient = useQueryClient();
 
+  const searchedMap = useMemo(() => {
+    if (!field?.view_fields) return {};
+
+    const result = {};
+    field?.view_fields?.forEach((item) => {
+      const key = item?.slug;
+      if (key) result[key] = debouncedValue?.trim();
+    });
+    return result;
+  }, [field?.view_fields, debouncedValue]);
+
   const queryFn = (pageProp) => {
     if (!field?.table_slug) return null;
     const requestData = {
@@ -255,7 +266,8 @@ const AutoCompleteElement = ({
         additional_field: "guid",
       },
       view_fields: field?.view_fields?.map((f) => f.slug),
-      search: debouncedValue.trim(),
+      // search: sdebouncedValue.trim(),
+      ...searchedMap,
       limit: 10,
       offset: pageToOffset(pageProp || page, 10),
       with_relations: false,

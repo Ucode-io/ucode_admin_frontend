@@ -168,11 +168,12 @@ const LayoutSidebar = ({
     setMenu({ event: event?.currentTarget, type: type, root: root });
   };
   const handleCloseNotify = () => {
-    setMenu(null);
+    // setMenu(null);
   };
 
   const closeWebsiteModal = () => {
     setWebsiteModal(null);
+    setMenu(null);
   };
 
   const setWebsiteModalLink = () => {
@@ -979,6 +980,7 @@ const LayoutSidebar = ({
             closeModal={closeWebsiteModal}
             selectedFolder={selectedFolder}
             getMenuList={getMenuList}
+            menu={menu}
           />
         )}
         {folderModalType === "folder" && (
@@ -999,6 +1001,7 @@ const LayoutSidebar = ({
           menu={menu?.event}
           openMenu={openSidebarMenu}
           handleCloseNotify={handleCloseNotify}
+          setMenu={setMenu}
           openTableCreateModal={openTableCreateModal}
           openFolderCreateModal={openFolderCreateModal}
           menuType={menu?.type}

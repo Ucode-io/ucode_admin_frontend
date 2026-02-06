@@ -32,6 +32,7 @@ const ButtonsMenu = ({
   menuLanguages,
   setTemplatePopover = () => {},
   openTableCreateModal = () => {},
+  setMenu = () => {},
 }) => {
   const DEFAULT_ADMIN = "DEFAULT ADMIN";
 
@@ -48,7 +49,7 @@ const ButtonsMenu = ({
     <Menu
       anchorEl={menu}
       open={openMenu}
-      onClose={handleCloseNotify}
+      onClose={() => setMenu(null)}
       PaperProps={{
         elevation: 0,
         sx: {
@@ -77,7 +78,6 @@ const ButtonsMenu = ({
               }
               onClick={(e) => {
                 e.stopPropagation();
-                handleCloseNotify();
                 if (element?.type === "WIKI_FOLDER") {
                   openFolderCreateModal("WIKI_FOLDER_UPDATE", element);
                 } else {

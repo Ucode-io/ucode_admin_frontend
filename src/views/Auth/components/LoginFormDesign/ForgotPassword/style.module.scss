@@ -1,23 +1,37 @@
 .otpBackBtn {
-  position: absolute;
-  left: -40px;
-  top: -150px;
-  z-index: 999;
-  width: 106px;
+  position: relative;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  width: auto;
+  min-width: 100px;
   height: 44px;
   border: 1px solid #d0d5dd;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
   color: #344054;
-  display: flex;
+  background: #fff;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   cursor: pointer;
+  margin-bottom: 20px;
+  padding: 0 16px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #f9fafb;
+    border-color: #98a2b3;
+  }
 }
 
 .label {
   color: #344054;
   font-size: 14px;
+  font-weight: 500;
   margin-bottom: 6px;
-  margin-top: 24px;
+  margin-top: 20px;
+  line-height: 1.4;
 }

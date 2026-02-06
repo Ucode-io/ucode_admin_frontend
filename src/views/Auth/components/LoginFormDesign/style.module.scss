@@ -1,93 +1,148 @@
+// Main form container
 .form {
   height: 100%;
-  // margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
 
   .label {
     color: #344054;
     font-size: 14px;
+    font-weight: 500;
     margin-bottom: 6px;
     margin-top: 16px;
   }
 }
 
+// Header content styling
 .headerContent {
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 20px;
+  color: #101828;
 }
 
+// Form area with proper spacing
 .formArea {
-  height: 100%;
-  flex-grow: 1;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
+  overflow: visible;
 }
 
+// Individual form rows
 .formRow {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+
+  // Ensure inputs don't overflow
+  input,
+  .MuiInputBase-root,
+  .MuiOutlinedInput-root {
+    width: 100%;
+    box-sizing: border-box;
+  }
 }
 
+// Label styling
 .label {
   font-size: 14px;
-  color: #333;
-  margin-bottom: 8px;
+  font-weight: 500;
+  color: #344054;
+  margin-bottom: 6px;
+  line-height: 1.4;
 }
 
+// Footer content
 .footerContent {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   padding-top: 20px;
+  margin-top: auto;
 }
 
+// Buttons area
 .buttonsArea {
   display: flex;
-  gap: 10px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
+// Dialog container
 .dialogContainer {
   max-width: 500px;
   max-height: calc(100vh - 150px);
   min-height: 200px;
-  border-radius: 12px;
+  border-radius: 16px;
   background-color: #fff;
+  overflow: hidden;
 }
 
+// Primary button
 .primaryButton {
   background-color: #1976d2;
   color: #fff;
-  border-radius: 8px;
-  padding: 10px 30px;
+  border-radius: 10px;
+  padding: 12px 32px;
   font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
 
   &:hover {
-    background-color: #155a9e;
+    background-color: #1565c0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 
+// Cancel button
 .cancelButton {
-  background-color: #ff5a5f;
-  color: #fff;
-  border-radius: 8px;
-  padding: 10px 30px;
+  background-color: #fff;
+  color: #344054;
+  border: 1px solid #d0d5dd;
+  border-radius: 10px;
+  padding: 12px 32px;
   font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
 
   &:hover {
-    background-color: #d04648;
+    background-color: #f9fafb;
+    border-color: #98a2b3;
   }
 }
 
+// Dialog select
 .dialogSelect {
   width: 100%;
-  height: 40px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  height: 44px;
+  border: 1px solid #d0d5dd;
+  border-radius: 10px;
   font-size: 14px;
-  color: #333;
+  color: #344054;
+  padding: 0 12px;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: #1976d2;
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+  }
 }
 
+// GitHub login button
 .githubLoginBtn {
   button {
     background: none;
@@ -96,51 +151,89 @@
     color: #344054;
     font-weight: 600;
     font-size: 14px;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #1976d2;
+    }
   }
 }
 
+// Title styling
 .title {
   text-align: center;
-  font-size: 24px;
+  font-size: 26px;
+  font-weight: 700;
   color: #101828;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
 }
 
+// Subtitle styling
 .subtitle {
-  font-size: 16px;
+  font-size: 15px;
   text-align: center;
-  color: #475467;
+  color: #667085;
+  margin: 0 0 4px 0;
+  line-height: 1.5;
 }
 
+// OTP back button - adjusted for better positioning
 .otpBackBtn {
-  position: absolute;
-  left: -40px;
-  top: -35%;
-  z-index: 999;
-  width: 106px;
+  position: relative;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  width: auto;
+  min-width: 100px;
   height: 44px;
   border: 1px solid #d0d5dd;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
   color: #344054;
-  display: flex;
+  background: #fff;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   cursor: pointer;
+  margin-bottom: 16px;
+  padding: 0 16px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #f9fafb;
+    border-color: #98a2b3;
+  }
 }
 
+// Firebase OTP back button
 .otpBackBtnFirebase {
-  position: absolute;
-  left: -40px;
-  top: -65%;
-  z-index: 999;
-  width: 106px;
+  position: relative;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  width: auto;
+  min-width: 100px;
   height: 44px;
   border: 1px solid #d0d5dd;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
   color: #344054;
-  display: flex;
+  background: #fff;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   cursor: pointer;
+  margin-bottom: 16px;
+  padding: 0 16px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #f9fafb;
+    border-color: #98a2b3;
+  }
 }

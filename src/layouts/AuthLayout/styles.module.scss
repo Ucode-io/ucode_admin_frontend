@@ -1,16 +1,42 @@
 @use "/src/scss/colors";
 
 .layout {
-  width: 100wv;
-  height: 100vh;
-  overflow: hidden;
+  width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
   position: relative;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+
+  .leftSide {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
 
   .logoBlock {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 72px;
+    padding: 16px 40px;
+    box-sizing: border-box;
+
+    @media (max-width: 768px) {
+      padding: 12px 20px;
+    }
+  }
+
+  .logoTitle {
+    font-size: 28px;
+    font-weight: 700;
+    color: #101828;
+    margin: 0;
+    letter-spacing: -0.5px;
+
+    @media (max-width: 480px) {
+      font-size: 24px;
+    }
   }
 }

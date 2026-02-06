@@ -58,12 +58,18 @@ div {
   position: relative;
 
   &__tab-list {
-    border-bottom: 1px solid rgb(231, 231, 231);
-    // margin: 0 0 20px;
+    border-bottom: 1px solid #e5e7eb;
     padding: 0;
     display: flex;
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
     transform: translateY(1px);
+    gap: 4px;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   &__tab {
@@ -73,37 +79,44 @@ div {
     border: none;
     position: relative;
     white-space: nowrap;
-
-    padding: 16px 16px;
+    padding: 12px 16px;
     cursor: pointer;
     font-weight: 500;
-    color: colors.$grey;
+    font-size: 14px;
+    color: #6b7280;
     border-bottom: 2px solid transparent;
+    background: transparent;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      color: #374151;
+      background-color: #f3f4f6;
+      border-radius: 6px 6px 0 0;
+    }
 
     &--selected {
-      border-bottom: 2px solid #1890ff;
-      color: #1890ff;
+      border-bottom: 2px solid #1976d2;
+      color: #1976d2;
+      font-weight: 600;
+
+      &:hover {
+        background-color: transparent;
+      }
     }
 
     &--disabled {
-      color: silver;
+      color: #d1d5db;
       cursor: default;
+
+      &:hover {
+        background-color: transparent;
+      }
     }
 
     &:focus {
       box-shadow: none;
-      // border-color: none;
       outline: none;
-
-      // &:after {
-      //   content: "";
-      //   position: absolute;
-      //   height: 5px;
-      //   left: -4px;
-      //   right: -4px;
-      //   bottom: -5px;
-      //   background: #fff;
-      // }
     }
   }
 
@@ -829,38 +842,124 @@ u {
 //   }
 // }
 
+// Login field styling - improved design
 .loginField {
-  border-radius: 8px;
+  border-radius: 10px;
+  width: 100%;
+  box-sizing: border-box;
+
+  .MuiOutlinedInput-root {
+    border-radius: 10px;
+    background-color: #f9fafb;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: #f3f4f6;
+    }
+
+    &.Mui-focused {
+      background-color: #fff;
+
+      .MuiOutlinedInput-notchedOutline {
+        border-color: #1976d2;
+        border-width: 2px;
+      }
+    }
+
+    .MuiOutlinedInput-notchedOutline {
+      border-color: #e5e7eb;
+      transition: border-color 0.2s ease;
+    }
+  }
+
   .MuiInputBase-input {
-    height: 27px;
-    font-size: 16px;
+    height: 24px;
+    font-size: 15px;
+    padding: 12px 14px;
 
     &::placeholder {
-      font-size: 16px;
-      color: #667085;
+      font-size: 15px;
+      color: #9ca3af;
+      opacity: 1;
+    }
+  }
+
+  .MuiInputAdornment-root {
+    margin-right: 8px;
+
+    img {
+      opacity: 0.7;
     }
   }
 }
 
+// Login field with error state
 .loginFieldRequired {
-  border-radius: 8px;
-  border: 1px solid red;
+  border-radius: 10px;
+  width: 100%;
+  box-sizing: border-box;
+
+  .MuiOutlinedInput-root {
+    border-radius: 10px;
+    background-color: #fef2f2;
+
+    .MuiOutlinedInput-notchedOutline {
+      border-color: #ef4444;
+      border-width: 2px;
+    }
+
+    &.Mui-focused {
+      .MuiOutlinedInput-notchedOutline {
+        border-color: #dc2626;
+      }
+    }
+  }
+
   .MuiInputBase-input {
-    height: 27px;
-    font-size: 16px;
+    height: 24px;
+    font-size: 15px;
+    padding: 12px 14px;
 
     &::placeholder {
-      font-size: 16px;
-      color: #667085;
+      font-size: 15px;
+      color: #9ca3af;
+      opacity: 1;
     }
   }
 }
 
+// Phone input styling for login
 .phone_input {
+  width: 100%;
+  box-sizing: border-box;
+
   input {
-    height: 44px;
+    height: 48px;
     padding-left: 50px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background-color: #f9fafb;
+    font-size: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: #f3f4f6;
+    }
+
+    &:focus {
+      background-color: #fff;
+      border-color: #1976d2;
+      border-width: 2px;
+      outline: none;
+    }
+
+    &::placeholder {
+      color: #9ca3af;
+    }
   }
+
   .PhoneInputCountry {
     display: none;
   }

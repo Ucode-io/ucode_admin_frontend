@@ -20,7 +20,9 @@ const WebsiteModal = ({
   loading,
   selectedFolder,
   getMenuList = () => {},
+  menu,
 }) => {
+  console.log({ menu });
   const queryClient = useQueryClient();
   const { control, handleSubmit, reset, watch } = useForm();
 
@@ -38,15 +40,13 @@ const WebsiteModal = ({
   });
 
   const onSubmit = (data) => {
-
-    if(selectedFolder?.type) {
-      if (!selectedFolder?.data || selectedFolder?.type !== "FOLDER") {
-        updateType(data, selectedFolder);
-      } else {
-        createType(data, selectedFolder);
-      }
-    } else createType(data, selectedFolder);
-   
+    if (menu.type === "CREATE" && menu?.root) {
+      createType(data, selectedFolder);
+    } else if (!selectedFolder?.data || selectedFolder?.type !== "FOLDER") {
+      updateType(data, selectedFolder);
+    } else {
+      createType(data, selectedFolder);
+    }
   };
 
   const createType = (data, selectedFolder) => {
@@ -74,6 +74,8 @@ const WebsiteModal = ({
     menuSettingsService
       .update({
         ...data,
+        parent_id: selectedFolder?.id || "c57eedc3-a954-4262-a0af-376c65b5a284",
+        type: "LINK",
       })
       .then(() => {
         if (selectedFolder?.id) {

@@ -14,5 +14,16 @@
       "@/assets/*": ["src/assets/*"],
       "@/workers/*": ["src/workers/*"]
     }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    ".next",
+    "out",
+    "dist",
+    "build",
+    ".cache",
+    "coverage",
+    "**/*.spec.js",
+    "**/*.test.js"
+  ]
 }

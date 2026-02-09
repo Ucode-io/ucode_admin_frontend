@@ -29,7 +29,9 @@ function AggridDefaultComponents({ customAutoGroupColumnDef }) {
   const autoGroupColumnDef = useMemo(() => {
     // 1. Пытаемся найти слаг для группировки из настроек вью (view)
     const groupByColumns = view?.attributes?.group_by_columns;
-    let targetSlug = recursiveField?.view_fields?.[1]?.slug; // ваш дефолт
+    let targetSlug =
+      recursiveField?.view_fields?.[1]?.slug ||
+      recursiveField?.view_fields?.[0]?.slug; // ваш дефолт
 
     if (groupByColumns?.length > 0) {
       const groupFieldId = groupByColumns[0];

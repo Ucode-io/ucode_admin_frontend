@@ -15,5 +15,15 @@
       "@/workers/*": ["src/workers/*"]
     }
   },
-  "exclude": ["node_modules", "dist", "build", ".git", ".vscode", "coverage"]
+  "exclude": [
+    "node_modules",
+    ".next",
+    "out",
+    "dist",
+    "build",
+    ".cache",
+    "coverage",
+    "**/*.spec.js",
+    "**/*.test.js"
+  ]
 }

@@ -258,7 +258,7 @@ export default function TimeLineBlock({
   const [selectedRow, setSelectedRow] = useState("");
 
   const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage"),
+    localStorage?.getItem("detailPage") || "SidePeek",
   );
 
   // const {data: projectInfo} = useProjectGetByIdQuery({projectId});

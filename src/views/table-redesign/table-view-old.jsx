@@ -101,7 +101,7 @@ const TableViewOld = ({
   const new_router = localStorage.getItem("new_router");
 
   const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage"),
+    localStorage?.getItem("detailPage") || "SidePeek",
   );
 
   const mainForm = useForm({

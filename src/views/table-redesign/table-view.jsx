@@ -127,7 +127,7 @@ const TableView = ({
   const selectedTabIndex = relationView ? drawerTabIndex : mainTabIndex;
 
   const [selectedViewType, setSelectedViewType] = useState(
-    localStorage?.getItem("detailPage"),
+    localStorage?.getItem("detailPage") || "SidePeek",
   );
 
   const mainForm = useForm({
@@ -619,11 +619,12 @@ const TableView = ({
   }, [view?.attributes?.quick_filters?.length, refetch]);
 
   useEffect(() => {
-    if (localStorage.getItem("detailPage") === "undefined") {
+    const detailPage = localStorage.getItem("detailPage");
+    if (!detailPage || detailPage === "undefined" || detailPage === "") {
       setSelectedViewType("SidePeek");
       localStorage.setItem("detailPage", "SidePeek");
     }
-  }, [localStorage.getItem("detailPage")]);
+  }, []);
 
   return (
     <MaterialUIProvider>

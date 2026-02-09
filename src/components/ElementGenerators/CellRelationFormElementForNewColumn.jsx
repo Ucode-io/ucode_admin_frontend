@@ -139,7 +139,6 @@ const AutoCompleteElement = ({
   const [tableSlugFromProps, setTableSlugFromProps] = useState("");
   const openPopover = Boolean(anchorEl);
   const autoFilters = field?.attributes?.auto_filters;
-  console.log({ autoFilters });
   const { i18n } = useTranslation();
   const languages = useSelector((state) => state.languages.list)?.map(
     (el) => el.slug

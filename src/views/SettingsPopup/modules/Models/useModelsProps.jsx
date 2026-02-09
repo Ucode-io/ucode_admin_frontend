@@ -1,6 +1,6 @@
-import {useState} from "react";
-import {useSelector} from "react-redux";
-import {useLocation, useNavigate} from "react-router-dom";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import constructorTableService, {
   useTablesListQuery,
 } from "@/services/constructorTableService";

@@ -1,6 +1,6 @@
 import cls from "./styles.module.scss";
-import {useModelsProps} from "./useModelsProps";
-import {Delete} from "@mui/icons-material";
+import { useModelsProps } from "./useModelsProps";
+import { Delete } from "@mui/icons-material";
 import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import {
   CTable,
@@ -11,14 +11,14 @@ import {
 } from "@/components/CTable";
 import TableCard from "@/components/TableCard";
 import SearchInput from "@/components/SearchInput";
-import {ContentTitle} from "../../components/ContentTitle";
-import {Box, Button, CircularProgress} from "@mui/material";
+import { ContentTitle } from "../../components/ContentTitle";
+import { Box, Button, CircularProgress } from "@mui/material";
 import clsx from "clsx";
-import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import ChartDb from "../../../ChartDb";
 import ExternalDatabases from "./ExternalDatabases";
-import {useState} from "react";
-import {useQuery} from "react-query";
+import { useState } from "react";
+import { useQuery } from "react-query";
 import conectionDatabaseService from "../../../../services/connectionDatabaseService";
 import { pageToOffset } from "@/utils/pageToOffset";
 // import ExternalDatabases from "../../../ExternalDatabases";
@@ -39,7 +39,6 @@ export const Models = () => {
   } = useModelsProps();
   const [selectedConnection, setSelectedConnection] = useState(null);
   const [loadingId, setLoadingId] = useState();
-
 
   const { data, refetch } = useQuery(
     ["GET_CONNECTION_TABLES"],

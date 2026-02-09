@@ -317,6 +317,8 @@ const AutoCompleteElement = ({
       new Set(allOptions?.map(JSON.stringify)),
     ).map(JSON.parse);
 
+    console.log(view?.table_slug, uniqueObjects);
+
     if (field?.table_slug === "client_type") {
       return uniqueObjects?.filter(
         (item) => item?.table_slug === view?.table_slug,

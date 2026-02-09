@@ -263,8 +263,6 @@ export const useTableProps = ({ tab }) => {
     }
   }, [filters]);
 
-  console.log({ defaultFiltersMap });
-
   const tableSearch =
     detectStringType(searchText) === "number"
       ? parseInt(searchText)
@@ -449,8 +447,6 @@ export const useTableProps = ({ tab }) => {
   useEffect(() => {
     refetch();
   }, [currentPage, limit, tableSearch]);
-
-  if (isRelationView) console.log("ROWS", rows);
 
   return {
     tableLan,

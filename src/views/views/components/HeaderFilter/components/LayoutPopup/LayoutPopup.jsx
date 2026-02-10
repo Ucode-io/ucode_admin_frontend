@@ -1,5 +1,5 @@
 import cls from "./styles.module.scss";
-import {Box, Dialog, DialogActions, DialogContent} from "@mui/material";
+import { Box, Dialog, DialogActions, DialogContent } from "@mui/material";
 import { useLayoutPopupProps } from "./useLayoutPopupProps";
 import FormCard from "@/components/FormCard";
 import { generateLangaugeText } from "@/utils/generateLanguageText";
@@ -13,7 +13,7 @@ import PrimaryButton from "@/components/Buttons/PrimaryButton";
 import { LoginStrategy } from "@/mock/FolderSettings";
 
 export const LayoutPopup = ({
-  onClose = () => {},
+  onClose = () => { },
   open = false,
   tableLan,
   control,
@@ -39,7 +39,7 @@ export const LayoutPopup = ({
     onClose,
     open,
   })
-  
+
   return (
     <Dialog
       sx={{
@@ -271,6 +271,19 @@ export const LayoutPopup = ({
                   }
                   options={LoginStrategy}
                 />
+              </Box>
+              <Box display="flex" alignItems="center">
+                <CustomCheckbox
+                  control={control}
+                  name="attributes.last_activity"
+                  size="sm"
+                >
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "User activity"
+                  ) || "User activity"}
+                </CustomCheckbox>
               </Box>
             </Box>
           )}

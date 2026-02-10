@@ -18,7 +18,7 @@ import { ViewOptionTitle } from "../ViewOptionTitle";
 
 export const SearchPopover = ({ handleSearchOnChange }) => {
 
-  const { 
+  const {
     onChange,
     searchText,
     tableLan,
@@ -28,6 +28,7 @@ export const SearchPopover = ({ handleSearchOnChange }) => {
     updateField,
     tableSlug,
     columnsForSearch,
+    text,
   } = useSearchPopoverProps({ handleSearchOnChange });
 
   return (
@@ -37,13 +38,15 @@ export const SearchPopover = ({ handleSearchOnChange }) => {
           <Image src="/img/search-lg.svg" alt="search" />
         </InputLeftElement>
         <Input
-          id="search_input_2"
+          id="search_input_unique_id"
+          name={`search_${Math.random()}`}
           type="text"
-          defaultValue={searchText}
+          value={text || ""}
           placeholder={
             generateLangaugeText(tableLan, i18n?.language, "Search") || "Search"
           }
           onChange={(e) => onChange(e.target.value)}
+          autoComplete="one-time-code"
         />
         {(roleInfo === "DEFAULT ADMIN" || permissions?.search_button) && (
           <PopoverTrigger>

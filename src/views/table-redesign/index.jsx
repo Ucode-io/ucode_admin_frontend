@@ -514,7 +514,7 @@ export const DynamicTable = ({
                 (virtualRowObject, index) => {
                   return (
                     <TableRow
-                      key={isRelationTable ? virtualRowObject?.id : index}
+                      key={virtualRowObject.guid || virtualRowObject.id}
                       tableView={tableView}
                       width={"40px"}
                       remove={remove}

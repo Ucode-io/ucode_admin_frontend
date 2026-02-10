@@ -2,6 +2,7 @@ import useDebounce from "@/hooks/useDebounce";
 import { useGetLang } from "@/hooks/useGetLang";
 import { useViewContext } from "@/providers/ViewProvider";
 import { useFieldSearchUpdateMutation } from "@/services/constructorFieldService";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export const useSearchPopoverProps = ({ handleSearchOnChange = () => {} }) => {
@@ -16,10 +17,16 @@ export const useSearchPopoverProps = ({ handleSearchOnChange = () => {} }) => {
     columnsForSearch,
     searchText,
   } = useViewContext();
+  const [text, setText] = useState(searchText);
 
-  const onChange = useDebounce((value) => {
+  const onChangeDeb = useDebounce((value) => {
     handleSearchOnChange(value);
   }, 300);
+
+  const onChange = (value) => {
+    setText(value);
+    onChangeDeb(value);
+  };
 
   const { mutate: updateField } = useFieldSearchUpdateMutation({
     onSuccess: () => {
@@ -30,6 +37,7 @@ export const useSearchPopoverProps = ({ handleSearchOnChange = () => {} }) => {
   return {
     onChange,
     searchText,
+    text,
     tableLan,
     i18n,
     roleInfo,

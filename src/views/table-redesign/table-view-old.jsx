@@ -526,9 +526,15 @@ const TableViewOld = ({
 
   useEffect(() => {
     if (tableData?.length > 0) {
-      reset({
-        multi: tableData.map((i) => i),
-      });
+      reset(
+        {
+          multi: tableData.map((i) => i),
+        },
+        {
+          keepDefaultValues: false,
+          keepDirty: false,
+        },
+      );
     }
   }, [tableData, reset]);
 

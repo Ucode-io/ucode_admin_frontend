@@ -33,6 +33,7 @@ const ButtonsMenu = ({
   menuLanguages,
   setTemplatePopover = () => {},
   openTableCreateModal = () => {},
+  setMenu = () => {},
 }) => {
   const DEFAULT_ADMIN = "DEFAULT ADMIN";
 
@@ -50,12 +51,12 @@ const ButtonsMenu = ({
       <Menu
         anchorEl={menu}
         open={openMenu}
-        onClose={handleCloseNotify}
+        onClose={() => setMenu(null)}
         PaperProps={{
           elevation: 0,
           sx: {
             overflow: "visible",
-            // filter: "drop-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important",
+            filter: "drop-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important",
             padding: "2px",
             "& .MuiList-root": {
               padding: 0,

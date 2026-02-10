@@ -1,0 +1,11 @@
+.resultCode {
+  height: 100%;
+  display: flex;
+}
+
+.editor {
+  width: 100%;
+  max-width: calc(100vw - 260px);
+  height: 100%;
+  // flex-grow: 1;
+}

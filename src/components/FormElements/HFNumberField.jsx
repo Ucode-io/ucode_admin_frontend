@@ -68,7 +68,8 @@ const HFNumberField = ({
     <Controller
       control={control}
       name={name}
-      defaultValue={defaultValue}
+      key={name}
+      defaultValue={defaultValue ?? ""}
       rules={{
         required: required ? "This is a required field" : false,
         validate: (value) => {
@@ -78,7 +79,7 @@ const HFNumberField = ({
           return true;
         },
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => {
+      render={({ field: { onChange, value }, fieldState: { error } }) => {
         return (
           <Box>
             <NumericFormat
@@ -94,7 +95,7 @@ const HFNumberField = ({
               id={field?.slug ? `${field?.slug}_${name}` : `${name}`}
               allowNegative
               fullWidth={fullWidth}
-              value={!isNaN(value) ? value : ""}
+              value={!isNaN(value) ? (value ?? "") : ""}
               onChange={(e) => handleChange(e, onChange)}
               className={"custom_textfield"}
               name={name}

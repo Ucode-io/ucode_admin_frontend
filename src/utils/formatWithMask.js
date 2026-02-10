@@ -1,8 +1,10 @@
 export function formatWithMask(value, mask) {
+  if (!value || typeof value !== "string") return "";
 
-  if(!value || typeof value !== "string") return;
+  const isNegative = value.startsWith("-");
 
   const digits = value.replace(/\D/g, "");
+
   let result = "";
   let digitIndex = 0;
 
@@ -11,13 +13,14 @@ export function formatWithMask(value, mask) {
       if (digitIndex < digits.length) {
         result += digits[digitIndex];
         digitIndex++;
-      } else {
-        result += "";
       }
     } else {
-      result += mask[i];
+      if (digitIndex < digits.length) {
+        result += mask[i];
+      }
     }
   }
 
-  return result.trim();
+  const formatted = result.trim();
+  return isNegative ? `-${formatted}` : formatted;
 }

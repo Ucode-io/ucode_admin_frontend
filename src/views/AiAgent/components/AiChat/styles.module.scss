@@ -1,0 +1,324 @@
+.aiChat {
+  width: 0;
+  height: calc((100vh - 30px));
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  border-left: 1px solid #e5e9eb;
+  overflow: hidden;
+  background-color: #fff;
+  transition: width 0.3s ease-in-out;
+}
+
+.aiChat.dragging {
+
+  &::after {
+    content: "Dragging...";
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: calc(100% + 8px);
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 16px;
+    font-size: 18px;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: rgba(96, 158, 200, 0.6);
+  }
+}
+
+.aiChat.visible {
+  width: 520px;
+}
+
+.aiChatHeader {
+  height: 44px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #e5e9eb;
+}
+
+.aiChatToggler {
+  width: 16px;
+  height: 44px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #fff;
+  background-color: #9dcdef;
+  transition: all 0.4s ease-in-out;
+
+  & .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // transform: rotate(180deg);
+  }
+}
+
+// .aiChatToggler.closed {
+//   height: 48px;
+//   position: fixed;
+//   top: 43px;
+//   left: 0;
+//   z-index: 1000;
+//   border-top-right-radius: 6px;
+//   border-bottom-right-radius: 6px;
+//   opacity: 0.4;
+
+//   &:hover {
+//     opacity: 1;
+//   }
+
+//   & .icon {
+//     transform: rotate(0deg);
+//   }
+// }
+
+.backButton {
+  display: flex;
+  align-items: center;
+  border: none;
+  color: #ccc;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.actionButton {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e9eb;
+  border-radius: 6px;
+  color: #ccc;
+  background-color: transparent;
+  cursor: pointer;
+
+  & .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.actionButton.active {
+  border-color: #67C0FF;
+  color: #67C0FF;
+}
+
+.aiChatBody {
+  opacity: 0;
+  flex-grow: 1;
+  overflow: auto;
+  background-color: rgba(237, 237, 237, 0.2);
+  scroll-behavior: smooth;
+}
+
+.aiChat.visible .aiChatBody {
+  opacity: 1;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px;
+}
+
+.aiChatFooter {
+  height: 200px;
+  padding: 12px;
+  border-top: 1px solid #e5e9eb;
+}
+
+.contexts {
+  min-height: 38px;
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  overflow: auto;
+}
+
+.promptInputWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e5e9eb;
+  border-radius: 6px;
+}
+
+.textArea {
+  width: 100%;
+  flex-grow: 1;
+  background-color: transparent;
+  border: none;
+  resize: none;
+  outline: none;
+  padding: 12px;
+  font-size: 16px;
+}
+
+.aiChatFooterBottom {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 12px;
+}
+
+.textAreaPlaceholder {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  color: #ccc;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.badge {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 2px 8px;
+  padding-left: 28px;
+  border: 1px solid #e5e9eb;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  background-color: #fafafa;
+  cursor: default;
+
+  &::before {
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    z-index: 10;
+    transform: translateY(-50%);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: bottom;
+    background-image: url(/img/react.svg);
+    content: "";
+  }
+
+  &:hover .badgeClearBtn {
+    display: block;
+  }
+}
+
+.badgeClearBtn {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 50%;
+  right: 2px;
+  display: none;
+  border: none;
+  transform: translateY(-50%);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-image: url(/img/close-icon.svg);
+  background-color: #fafafa;
+  cursor: pointer;
+}
+
+.sendButton {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #62c0ff;
+  background-color: #fff;
+  border: 1px solid #e5e9eb;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sendIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.images {
+  // width: calc(100% + 2px);
+  // position: absolute;
+  // left: -1px;
+  // position: absolute;
+  // top: 100%;
+  min-height: 44px;
+  display: flex;
+  gap: 3px;
+  // border: 1px solid #e5e9eb;
+  // border-bottom-left-radius: 6px;
+  // border-bottom-left-radius: 6px;
+  // background-color: #fff;
+  overflow-y: hidden;
+  // overflow: auto;
+}
+
+.image {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.imagePreview {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border: 1px solid #e5e9eb;
+  border-radius: 6px;
+}
+
+.imageRemove {
+  display: none;
+  position: absolute;
+  top: 0px;
+  right: -5px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.image:hover .imageRemove {
+  display: flex;
+}

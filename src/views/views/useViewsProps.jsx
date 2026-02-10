@@ -385,10 +385,18 @@ export const useViewsProps = ({ isRelationView }) => {
       }
 
       if (isRelationView) {
-        dispatch(detailDrawerActions.setDrawerTabIndex(0));
-        setSelectedView(relationViews?.[0]);
+        if (selectedTabIndex === null) {
+          dispatch(detailDrawerActions.setDrawerTabIndex(0));
+          setSelectedView(relationViews?.[0]);
+          updateQueryWithoutRerender("dv", relationViews?.[0]?.id);
+        } else {
+          setSelectedView(relationViews?.[selectedTabIndex]);
+          updateQueryWithoutRerender(
+            "dv",
+            relationViews?.[selectedTabIndex]?.id,
+          );
+        }
         setRelationViews(relationViews);
-        updateQueryWithoutRerender("dv", relationViews?.[0]?.id);
         // if (state?.toDocsTab) setSelectedTabIndex(data?.length);
       } else {
         dispatch(viewsActions.setViews(views));
@@ -682,7 +690,6 @@ export const useViewsProps = ({ isRelationView }) => {
   };
 
   useEffect(() => {
-    console.log(activeTable?.attributes?.default_filters);
     if (activeTable?.attributes?.default_filters) {
       setDefaultFiltersMap(activeTable?.attributes?.default_filters);
     } else {

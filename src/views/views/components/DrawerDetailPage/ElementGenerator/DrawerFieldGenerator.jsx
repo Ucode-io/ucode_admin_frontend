@@ -5,7 +5,7 @@ import {
   InputGroup,
   InputRightElement,
 } from "@chakra-ui/react";
-import {Lock} from "@mui/icons-material";
+import { Lock } from "@mui/icons-material";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import {
   Box,
@@ -36,7 +36,7 @@ import HFMultiImage from "@/components/FormElements/HFMultiImage";
 import HFPhotoUpload from "@/components/FormElements/HFPhotoUpload";
 import useDebouncedWatch from "@/hooks/useDebouncedWatch";
 import constructorFunctionService from "@/services/constructorFunctionService";
-import {numberWithSpaces} from "@/utils/formatNumbers";
+import { numberWithSpaces } from "@/utils/formatNumbers";
 import listToOptions from "@/utils/listToOptions";
 import MultiLineInput from "./MultiLineInput";
 import HFCheckbox from "./hf-checkboxField";
@@ -49,28 +49,27 @@ import {
 } from "./hf-datePickers";
 import HFIconPicker from "./hf-iconPicker";
 import HFInternationalPhone from "./hf-internationalPhone";
-import HFMultipleAutocomplete from "./hf-multiselectField";
-import HFStatusField from "./hf-statusField";
-import {HFVideoUpload} from "./hf-videoUploadField";
-import {FIELD_TYPES} from "@/utils/constants/fieldTypes";
+import CSelect from "@/components/AppUniversalSelect/CSelect";
+import { HFVideoUpload } from "./hf-videoUploadField";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import cls from "./field-generator.styles.module.scss";
 import useDebounce from "@/hooks/useDebounce";
 import HFSwitch from "@/components/FormElements/HFSwitch";
 import { BackendFormulaDisplay } from "../../ElementGenerators/DisplayFields/BackendFormulaDisplay";
 // import RelationField from "./RelationField";
 
-const RelationField = lazy(() => import("./RelationField"));
+
 
 function DrawerFieldGenerator({
   field,
   control,
-  watch = () => {},
+  watch = () => { },
   drawerDetail,
   isDisabled,
   activeLang = "",
   inviteModal = false,
-  setFormValue = () => {},
-  updateObject = () => {},
+  setFormValue = () => { },
+  updateObject = () => { },
   errors,
   isRequired,
 }) {
@@ -141,7 +140,7 @@ function DrawerFieldGenerator({
             </>
           }
         >
-          <RelationField
+          <CSelect
             placeholder={placeholderField}
             updateObject={updateObject}
             disabled={isDisabled}
@@ -277,10 +276,10 @@ function DrawerFieldGenerator({
 
     case "STATUS":
       return (
-        <HFStatusField
+        <CSelect
+          type="status"
           placeholder={placeholderField}
           disabled={isDisabled}
-          drawerDetail={drawerDetail}
           control={control}
           name={computedSlug}
           field={field}
@@ -290,7 +289,8 @@ function DrawerFieldGenerator({
 
     case "MULTISELECT":
       return (
-        <HFMultipleAutocomplete
+        <CSelect
+          type="multiselect"
           disabled={isDisabled}
           control={control}
           name={computedSlug}
@@ -516,13 +516,13 @@ const InputField = ({
   name = "",
   type = "text",
   disabled = false,
-  watch = () => {},
+  watch = () => { },
   errors,
   functions,
   field,
   isTextarea,
   placeholder = "Empty",
-  updateObject = () => {},
+  updateObject = () => { },
   isRequired,
 }) => {
   const textareaRef = useRef(null);
@@ -650,12 +650,12 @@ const NumberField = ({
   name,
   disabled = false,
   placeholder = "",
-  updateObject = () => {},
+  updateObject = () => { },
   required,
 }) => {
   const inputChangeHandler = useDebounce(() => updateObject(), 700);
 
-  const handleChange = (event, onChange = () => {}) => {
+  const handleChange = (event, onChange = () => { }) => {
     const inputValue = event.target.value.replace(/\s+/g, "");
     const parsedValue = inputValue ? parseFloat(inputValue) : "";
 
@@ -733,7 +733,7 @@ const FormulaField = ({
   name,
   tabIndex,
   rules = {},
-  setFormValue = () => {},
+  setFormValue = () => { },
   required,
   disabledHelperText,
   fieldsList,
@@ -741,7 +741,7 @@ const FormulaField = ({
   defaultValue,
   field,
   placeholder = "",
-  updateObject = () => {},
+  updateObject = () => { },
   ...props
 }) => {
   const parser = new Parser();

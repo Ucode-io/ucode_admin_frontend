@@ -1,10 +1,10 @@
-import {Box, Button, Modal} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useFieldArray, useForm, useWatch} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useLocation} from "react-router-dom";
+import { Box, Button, Modal } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 import FormCard from "../../components/FormCard";
 import FRow from "../../components/FormElements/FRow";
 import HFCheckbox from "../../components/FormElements/HFCheckbox";
@@ -12,16 +12,16 @@ import HFMultipleSelect from "../../components/FormElements/HFMultipleSelect";
 import HFSelect from "../../components/FormElements/HFSelect";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HFTextFieldWithMultiLanguage from "../../components/FormElements/HFTextFieldWithMultiLanguage";
-import {LoginStrategy} from "../../mock/FolderSettings";
+import { LoginStrategy } from "../../mock/FolderSettings";
 import constructorObjectService from "../../services/constructorObjectService";
 import constructorTableService from "../../services/constructorTableService";
 import constructorViewRelationService from "../../services/constructorViewRelationService";
-import {showAlert} from "../../store/alert/alert.thunk";
-import {constructorTableActions} from "../../store/constructorTable/constructorTable.slice";
-import {createConstructorTableAction} from "../../store/constructorTable/constructorTable.thunk";
-import {generateGUID} from "../../utils/generateID";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
-import {getAllFromDB} from "../../utils/languageDB";
+import { showAlert } from "../../store/alert/alert.thunk";
+import { constructorTableActions } from "../../store/constructorTable/constructorTable.slice";
+import { createConstructorTableAction } from "../../store/constructorTable/constructorTable.thunk";
+import { generateGUID } from "../../utils/generateID";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
+import { getAllFromDB } from "../../utils/languageDB";
 import style from "./style.module.scss";
 import TextFieldWithMultiLanguage from "../../components/NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
 import { CloseButton } from "../../components/CloseButton";
@@ -36,8 +36,8 @@ const TableCreateModal = ({
   appId,
   selectedFolder,
   projectId,
-  getMenuList = () => {},
-  setSelectedFolder = () => {},
+  getMenuList = () => { },
+  setSelectedFolder = () => { },
 }) => {
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
@@ -134,8 +134,8 @@ const TableCreateModal = ({
       label:
         item?.type === "LOOKUP" || item?.type === "LOOKUPS"
           ? item?.attributes?.[`label_${i18n?.language}`] ||
-            item?.attributes?.[`label_to_${i18n?.language}`] ||
-            item?.label
+          item?.attributes?.[`label_to_${i18n?.language}`] ||
+          item?.label
           : item?.attributes?.[`label_${i18n?.language}`] || item?.label,
       value: item?.slug ?? "",
     }));
@@ -161,7 +161,7 @@ const TableCreateModal = ({
           getMenuList();
           closeModal();
         }
-        console.log({res})
+        console.log({ res })
         dispatch(permissionsActions.setPermissionsForNewTable({
           table_slug: res?.slug,
         }))
@@ -490,6 +490,19 @@ const TableCreateModal = ({
                     options={LoginStrategy}
                   />
                 </Box>
+              </Box>
+              <Box display="flex" alignItems="center">
+                <CustomCheckbox
+                  control={control}
+                  name="attributes.last_activity"
+                  size="sm"
+                >
+                  {generateLangaugeText(
+                    tableLan,
+                    i18n?.language,
+                    "User activity"
+                  ) || "User activity"}
+                </CustomCheckbox>
               </Box>
             </Box>
           )}

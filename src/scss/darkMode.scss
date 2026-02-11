@@ -1,18 +1,21 @@
 // Dark Mode Global Styles
 // These styles are applied when dark mode is active
+// Based on Notion dark mode color scheme
 
-// Dark mode color variables
-$dark-bg-primary: #161C24;
-$dark-bg-secondary: #212B36;
-$dark-bg-tertiary: #2D3748;
-$dark-bg-hover: #374151;
-$dark-text-primary: #FFFFFF;
-$dark-text-secondary: #A0AEC0;
-$dark-text-disabled: #637381;
-$dark-border: #374151;
-$dark-border-light: #4A5568;
-$dark-primary: #007AFF;
-$dark-primary-light: #6794ff;
+// Dark mode color variables - Notion inspired
+$dark-bg-primary: #191919;
+$dark-bg-secondary: #202020;
+$dark-bg-tertiary: #2f2f2f;
+$dark-bg-hover: #363636;
+$dark-bg-input: #252525;
+$dark-text-primary: #ffffffcf;
+$dark-text-secondary: #ffffff71;
+$dark-text-disabled: #ffffff3d;
+$dark-border: #ffffff14;
+$dark-border-light: #ffffff29;
+$dark-primary: #2383e2;
+$dark-primary-light: #529cca;
+$dark-icon-color: #9b9b9b;
 
 // Dark mode class applied to root
 [data-theme="dark"] {
@@ -29,39 +32,50 @@ $dark-primary-light: #6794ff;
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 1000px $dark-bg-secondary inset !important;
-    box-shadow: 0 0 0 1000px $dark-bg-secondary inset !important;
-    background-color: $dark-bg-secondary !important;
+    -webkit-box-shadow: 0 0 0 1000px $dark-bg-input inset !important;
+    box-shadow: 0 0 0 1000px $dark-bg-input inset !important;
+    background-color: $dark-bg-input !important;
     color: $dark-text-primary !important;
     -webkit-text-fill-color: $dark-text-primary !important;
   }
 
-  // Text colors
+  // Text colors - inherit from parent
   p, h1, h2, h3, h4, h5, h6, span, div, label {
     color: inherit;
   }
 
+  // ALL SVG icons and icon components
+  svg {
+    color: $dark-icon-color !important;
+    fill: currentColor;
+  }
+
+  // MUI Icons
+  .MuiSvgIcon-root {
+    color: $dark-icon-color !important;
+  }
+
   // Borders
   .silver-bottom-border {
-    box-shadow: inset 0px -1px 0px $dark-border;
+    box-shadow: inset 0px -1px 0px $dark-border !important;
   }
 
   .silver-right-border {
-    box-shadow: inset -1px 0px 0px $dark-border;
+    box-shadow: inset -1px 0px 0px $dark-border !important;
   }
 
   // React tabs
   .react-tabs {
     &__tab-list {
-      border-bottom: 1px solid $dark-border;
+      border-bottom: 1px solid $dark-border !important;
     }
 
     &__tab {
-      color: $dark-text-secondary;
+      color: $dark-text-secondary !important;
 
       &--selected {
-        color: $dark-primary;
-        border-bottom-color: $dark-primary;
+        color: $dark-primary !important;
+        border-bottom-color: $dark-primary !important;
       }
     }
   }
@@ -100,7 +114,7 @@ $dark-primary-light: #6794ff;
     --ag-odd-row-background-color: #{$dark-bg-primary};
     --ag-row-hover-color: #{$dark-bg-hover};
     --ag-selected-row-background-color: #{$dark-bg-tertiary};
-    --ag-range-selection-background-color: rgba(0, 122, 255, 0.2);
+    --ag-range-selection-background-color: rgba(35, 131, 226, 0.2);
     --ag-input-focus-border-color: #{$dark-primary};
     --ag-borders: solid #{$dark-border};
   }
@@ -138,7 +152,7 @@ $dark-primary-light: #6794ff;
   .MuiInputBase-root,
   .MuiOutlinedInput-root,
   .MuiTextField-root {
-    background-color: $dark-bg-tertiary !important;
+    background-color: $dark-bg-input !important;
     color: $dark-text-primary !important;
 
     input,
@@ -151,11 +165,11 @@ $dark-primary-light: #6794ff;
     }
 
     .MuiOutlinedInput-notchedOutline {
-      border-color: $dark-border !important;
+      border-color: $dark-border-light !important;
     }
 
     &:hover .MuiOutlinedInput-notchedOutline {
-      border-color: $dark-border-light !important;
+      border-color: $dark-text-secondary !important;
     }
 
     &.Mui-focused .MuiOutlinedInput-notchedOutline {
@@ -169,6 +183,11 @@ $dark-primary-light: #6794ff;
     &.Mui-focused {
       color: $dark-primary !important;
     }
+  }
+
+  // Select icons
+  .MuiSelect-icon {
+    color: $dark-icon-color !important;
   }
 
   // Select dropdown
@@ -189,12 +208,24 @@ $dark-primary-light: #6794ff;
   }
 
   // Buttons
+  .MuiButton-root {
+    color: $dark-text-primary !important;
+  }
+
   .MuiButton-outlined {
-    border-color: $dark-border !important;
+    border-color: $dark-border-light !important;
     color: $dark-text-primary !important;
 
     &:hover {
       background-color: $dark-bg-hover !important;
+      border-color: $dark-text-secondary !important;
+    }
+  }
+
+  .MuiButton-contained {
+    &.MuiButton-containedPrimary {
+      background-color: $dark-primary !important;
+      color: white !important;
     }
   }
 
@@ -204,7 +235,7 @@ $dark-primary-light: #6794ff;
 
   // Icon buttons
   .MuiIconButton-root {
-    color: $dark-text-secondary !important;
+    color: $dark-icon-color !important;
 
     &:hover {
       background-color: $dark-bg-hover !important;
@@ -253,7 +284,7 @@ $dark-primary-light: #6794ff;
     color: $dark-text-secondary !important;
 
     &.Mui-selected {
-      color: $dark-primary !important;
+      color: $dark-text-primary !important;
     }
   }
 
@@ -269,6 +300,10 @@ $dark-primary-light: #6794ff;
 
   .MuiAccordionSummary-root {
     color: $dark-text-primary !important;
+
+    .MuiAccordionSummary-expandIconWrapper {
+      color: $dark-icon-color !important;
+    }
   }
 
   // Chip
@@ -276,6 +311,10 @@ $dark-primary-light: #6794ff;
     background-color: $dark-bg-tertiary !important;
     color: $dark-text-primary !important;
     border-color: $dark-border !important;
+
+    .MuiChip-deleteIcon {
+      color: $dark-icon-color !important;
+    }
   }
 
   // Tooltip
@@ -287,7 +326,7 @@ $dark-primary-light: #6794ff;
   // Checkbox & Radio
   .MuiCheckbox-root,
   .MuiRadio-root {
-    color: $dark-text-secondary !important;
+    color: $dark-icon-color !important;
 
     &.Mui-checked {
       color: $dark-primary !important;
@@ -316,6 +355,40 @@ $dark-primary-light: #6794ff;
   // Alert
   .MuiAlert-root {
     background-color: $dark-bg-secondary !important;
+    color: $dark-text-primary !important;
+  }
+
+  // Form control labels
+  .MuiFormControlLabel-root {
+    color: $dark-text-primary !important;
+
+    .MuiFormControlLabel-label {
+      color: $dark-text-primary !important;
+    }
+  }
+
+  // Autocomplete
+  .MuiAutocomplete-root {
+    .MuiAutocomplete-popupIndicator,
+    .MuiAutocomplete-clearIndicator {
+      color: $dark-icon-color !important;
+    }
+  }
+
+  .MuiAutocomplete-paper {
+    background-color: $dark-bg-secondary !important;
+  }
+
+  .MuiAutocomplete-option {
+    color: $dark-text-primary !important;
+
+    &:hover {
+      background-color: $dark-bg-hover !important;
+    }
+
+    &[aria-selected="true"] {
+      background-color: $dark-bg-tertiary !important;
+    }
   }
 
   // Chakra UI components
@@ -355,7 +428,7 @@ $dark-primary-light: #6794ff;
   }
 
   .resourceBtnActive {
-    background: rgba(0, 122, 255, 0.2) !important;
+    background: rgba(35, 131, 226, 0.2) !important;
     border-color: $dark-primary !important;
     color: $dark-primary-light !important;
   }
@@ -380,20 +453,20 @@ $dark-primary-light: #6794ff;
 
   // Scrollbar
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
   }
 
   ::-webkit-scrollbar-track {
-    background: $dark-bg-primary;
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: $dark-border-light;
-    border-radius: 4px;
+    background: #ffffff1a;
+    border-radius: 10px;
 
     &:hover {
-      background: $dark-text-secondary;
+      background: #ffffff33;
     }
   }
 
@@ -416,7 +489,7 @@ $dark-primary-light: #6794ff;
   }
 
   .ql-container {
-    background-color: $dark-bg-tertiary !important;
+    background-color: $dark-bg-input !important;
     border-color: $dark-border !important;
     color: $dark-text-primary !important;
   }
@@ -442,25 +515,81 @@ $dark-primary-light: #6794ff;
     border-color: $dark-border !important;
   }
 
-  // Sidebar
+  // Sidebar / LayoutSidebar
   .sidebar,
-  .layoutSidebar {
+  .layoutSidebar,
+  .LayoutSidebar {
     background-color: $dark-bg-secondary !important;
     border-right-color: $dark-border !important;
+
+    .search {
+      & > div > div {
+        background-color: $dark-bg-input !important;
+      }
+    }
+
+    .header {
+      .brand-name {
+        color: $dark-text-primary !important;
+      }
+
+      .cloes-btn {
+        color: $dark-icon-color !important;
+      }
+    }
+
+    .menu-button,
+    .nav-element {
+      color: $dark-text-secondary !important;
+
+      &:hover {
+        background-color: $dark-bg-hover !important;
+      }
+
+      &.active {
+        background-color: $dark-primary !important;
+        color: white !important;
+      }
+
+      .label,
+      .open-label {
+        color: $dark-text-secondary !important;
+      }
+
+      &.active .label,
+      &.active .open-label {
+        color: white !important;
+      }
+    }
+
+    .sidebar-collapse {
+      border-bottom-color: $dark-border !important;
+    }
+
+    .nav-block {
+      .child-block {
+        background-color: $dark-bg-tertiary !important;
+      }
+
+      .sidebar-footer {
+        border-top-color: $dark-border !important;
+      }
+    }
   }
 
   // Header
   .header {
     background-color: $dark-bg-secondary !important;
     border-bottom-color: $dark-border !important;
+    color: $dark-text-primary !important;
   }
 
-  // Links
-  a {
-    color: $dark-primary-light !important;
+  // Links - not all links should change
+  a:not(.MuiButton-root):not(.MuiTab-root):not(.MuiMenuItem-root) {
+    color: $dark-primary-light;
 
     &:hover {
-      color: $dark-primary !important;
+      color: $dark-primary;
     }
   }
 
@@ -471,7 +600,78 @@ $dark-primary-light: #6794ff;
 
   // Selection
   ::selection {
-    background-color: rgba(0, 122, 255, 0.3);
+    background-color: rgba(35, 131, 226, 0.3);
     color: $dark-text-primary;
+  }
+
+  // Menu component
+  .menu {
+    background: $dark-bg-secondary !important;
+    color: $dark-text-primary !important;
+
+    div {
+      &:hover {
+        background-color: $dark-bg-hover !important;
+      }
+    }
+
+    h3 {
+      color: $dark-text-primary !important;
+    }
+  }
+
+  // Tree view
+  .tree_view {
+    li {
+      .Mui-selected {
+        background-color: $dark-primary !important;
+        color: white !important;
+      }
+
+      .MuiTreeItem-content {
+        color: $dark-text-primary !important;
+      }
+    }
+  }
+
+  // Logo avatar
+  .avatar {
+    background-color: $dark-bg-tertiary !important;
+    color: $dark-text-primary !important;
+    border-color: $dark-border !important;
+  }
+
+  // Form row labels
+  .FRow,
+  [class*="FRow"] {
+    label {
+      color: $dark-text-primary !important;
+    }
+  }
+
+  // Content titles
+  [class*="ContentTitle"],
+  .contentTitle {
+    color: $dark-text-primary !important;
+  }
+
+  // Save/Cancel buttons area
+  [class*="SaveCancelBtns"] {
+    background-color: $dark-bg-primary !important;
+    border-top-color: $dark-border !important;
+  }
+
+  // Docs button
+  .docsBtn {
+    &:hover {
+      background: $dark-bg-hover !important;
+    }
+  }
+
+  // Profile panel
+  .profilemenu,
+  .profilepaper,
+  .settingspaper {
+    background-color: $dark-bg-secondary !important;
   }
 }

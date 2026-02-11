@@ -24,8 +24,9 @@ export default function ThemeConfig({ children }) {
   // Apply theme attribute to document for CSS dark mode styles
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', themeMode);
-    document.body.style.backgroundColor = isLight ? '#ffffff' : '#161C24';
-    document.body.style.color = isLight ? '#212B36' : '#ffffff';
+    // Notion-inspired dark mode colors
+    document.body.style.backgroundColor = isLight ? '#ffffff' : '#191919';
+    document.body.style.color = isLight ? '#212B36' : '#ffffffcf';
   }, [themeMode, isLight]);
 
   const themeOptions = useMemo(

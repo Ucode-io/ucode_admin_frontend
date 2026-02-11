@@ -1,12 +1,16 @@
 $main-color: #0365f2;
 
-// Dark mode variables
-$dark-bg-primary: #161C24;
-$dark-bg-secondary: #212B36;
-$dark-bg-hover: #374151;
-$dark-text-primary: #FFFFFF;
-$dark-text-secondary: #A0AEC0;
-$dark-border: #374151;
+// Dark mode variables - Notion inspired
+$dark-bg-primary: #191919;
+$dark-bg-secondary: #202020;
+$dark-bg-tertiary: #2f2f2f;
+$dark-bg-hover: #363636;
+$dark-bg-input: #252525;
+$dark-bg-active: #2383e2;
+$dark-text-primary: #ffffffcf;
+$dark-text-secondary: #ffffff71;
+$dark-primary-light: #529cca;
+$dark-border: #ffffff14;
 
 .extra {
   cursor: pointer;
@@ -123,6 +127,10 @@ $dark-border: #374151;
     cursor: default;
     border: 0;
     column-gap: 5px;
+    
+    [data-theme="dark"] & {
+      color: $dark-text-secondary;
+    }
 
     &:hover {
       background-color: #a8a8a81a;
@@ -130,6 +138,10 @@ $dark-border: #374151;
       .extra_icon {
         display: block !important;
         cursor: pointer;
+      }
+      
+      [data-theme="dark"] & {
+        background-color: $dark-bg-hover !important;
       }
     }
 
@@ -150,6 +162,15 @@ $dark-border: #374151;
         background-color: #fff;
         color: #0365f2;
       }
+      
+      [data-theme="dark"] & {
+        background-color: $dark-bg-active !important;
+        color: #fff !important;
+        
+        .open-label, .label, p {
+          color: #fff !important;
+        }
+      }
     }
 
     &.active-with-child {
@@ -158,6 +179,19 @@ $dark-border: #374151;
 
       .extra_icon {
         display: none;
+      }
+      
+      [data-theme="dark"] & {
+        color: $dark-primary-light !important;
+        background-color: transparent !important;
+        
+        &:hover {
+          background-color: $dark-bg-hover !important;
+        }
+        
+        .open-label, .label {
+          color: $dark-primary-light !important;
+        }
       }
     }
 
@@ -192,6 +226,10 @@ $dark-border: #374151;
       align-items: center;
       // column-gap: 8px;
       color: #a8a8a8;
+      
+      [data-theme="dark"] & {
+        color: $dark-text-secondary !important;
+      }
     }
 
     .label {
@@ -205,6 +243,10 @@ $dark-border: #374151;
       // column-gap: 8px;
       color: #a8a8a8;
       justify-content: center;
+      
+      [data-theme="dark"] & {
+        color: $dark-text-secondary !important;
+      }
     }
 
     .icon_group {
@@ -303,6 +345,10 @@ $dark-border: #374151;
           cursor: default;
           border: 0;
           column-gap: 5px;
+          
+          [data-theme="dark"] & {
+            color: $dark-text-secondary;
+          }
 
           &:hover {
             background-color: #a8a8a81a;
@@ -310,6 +356,10 @@ $dark-border: #374151;
             .extra_icon {
               display: flex !important;
               cursor: pointer;
+            }
+            
+            [data-theme="dark"] & {
+              background-color: $dark-bg-hover !important;
             }
           }
 
@@ -325,6 +375,15 @@ $dark-border: #374151;
               background-color: #fff;
               color: #0365f2;
             }
+            
+            [data-theme="dark"] & {
+              background-color: $dark-bg-active !important;
+              color: #fff !important;
+              
+              .label, p {
+                color: #fff !important;
+              }
+            }
           }
 
           &.active-with-child {
@@ -338,6 +397,19 @@ $dark-border: #374151;
 
             .extra_icon {
               display: none;
+            }
+            
+            [data-theme="dark"] & {
+              color: $dark-primary-light !important;
+              background-color: transparent !important;
+              
+              &:hover {
+                background-color: $dark-bg-hover !important;
+              }
+              
+              .label {
+                color: $dark-primary-light !important;
+              }
             }
           }
 
@@ -371,6 +443,10 @@ $dark-border: #374151;
             display: flex;
             align-items: center;
             // column-gap: 8px;
+            
+            [data-theme="dark"] & {
+              color: $dark-text-secondary !important;
+            }
           }
 
           .icon_group {
@@ -399,6 +475,10 @@ $dark-border: #374151;
           padding-top: 4px;
           // margin-top: -2px;
           // margin-left: 10px;
+          
+          [data-theme="dark"] & {
+            background-color: $dark-bg-tertiary !important;
+          }
 
           .nav-element {
             margin-bottom: 10px;

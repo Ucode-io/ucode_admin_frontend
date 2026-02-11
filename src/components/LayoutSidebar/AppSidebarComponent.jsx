@@ -105,6 +105,10 @@ const AppSidebar = ({
 
   const clickHandler = (el) => {
     if (el?.id === selectedApp?.id) {
+      // Always refetch menu data when clicking on folder to ensure fresh data
+      if (el?.type === "FOLDER") {
+        refetch();
+      }
       coontrolAccordionAction(el);
       return;
     }

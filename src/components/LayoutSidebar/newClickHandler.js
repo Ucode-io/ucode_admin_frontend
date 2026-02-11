@@ -25,6 +25,7 @@ const newClickHandler = ({
   setSelectedApp(element);
 
   if (element.type === "FOLDER") {
+    // Always refetch to get fresh menu data from server
     refetch();
     setFolderItem(el);
     setSelectedFolder(el?.id ? el : element);

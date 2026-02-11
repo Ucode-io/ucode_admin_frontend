@@ -13,6 +13,7 @@ import {Flex} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import Language from "./Language";
+import ThemeToggle from "./ThemeToggle";
 
 export const ProjectSettings = () => {
   const {
@@ -65,7 +66,10 @@ export const ProjectSettings = () => {
           {generateLangaugeText(lang, i18n?.language, "Project Settings") ||
             "Project settings"}
         </ContentTitle>
-        <Language languageOptions={languageOptions} />
+        <Flex align="center">
+          <ThemeToggle />
+          <Language languageOptions={languageOptions} />
+        </Flex>
       </Flex>
       <Flex alignItems="flex-end" mb="48px">
         <HFAvatarUpload

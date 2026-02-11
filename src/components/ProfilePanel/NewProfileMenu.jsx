@@ -11,10 +11,13 @@ import ProfileItem from "./ProfileItem";
 import styles from "./newprofile.module.scss";
 import useBooleanState from "../../hooks/useBooleanState";
 import GTranslateIcon from "@mui/icons-material/GTranslate";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import {useProjectGetByIdQuery} from "../../services/projectService";
 import {languagesActions} from "../../store/globalLanguages/globalLanguages.slice";
 import {useTranslation} from "react-i18next";
 import {showAlert} from "@/store/alert/alert.thunk";
+import {toggleTheme, selectThemeMode} from "../../store/theme/theme.slice";
 
 const NewProfilePanel = ({setSidebarAnchor, sidebarAnchorEl}) => {
   const dispatch = useDispatch();
@@ -27,6 +30,13 @@ const NewProfilePanel = ({setSidebarAnchor, sidebarAnchorEl}) => {
   const location = useLocation();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const themeMode = useSelector(selectThemeMode);
+  const isDarkMode = themeMode === "dark";
+
+  const handleThemeToggle = () => {
+    dispatch(toggleTheme());
+    dispatch(showAlert(`Switched to ${isDarkMode ? "Light" : "Dark"} Mode`, "success"));
+  };
 
   const settings = location.pathname.includes("settings");
   const {i18n} = useTranslation();
@@ -178,6 +188,18 @@ const NewProfilePanel = ({setSidebarAnchor, sidebarAnchorEl}) => {
           )}
 
           <ProfileItem text={"Logout"} onClick={logoutClickHandler} />
+
+          <ProfileItem
+            children={
+              isDarkMode ? (
+                <LightModeIcon style={{color: "#747474"}} />
+              ) : (
+                <DarkModeIcon style={{color: "#747474"}} />
+              )
+            }
+            text={isDarkMode ? "Light Mode" : "Dark Mode"}
+            onClick={handleThemeToggle}
+          />
 
           <ProfileItem
             children={

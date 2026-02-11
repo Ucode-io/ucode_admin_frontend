@@ -1,11 +1,14 @@
 import { Divider, Menu } from "@mui/material";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { authActions } from "../../store/auth/auth.slice";
 import UserAvatar from "../UserAvatar";
 import styles from "./style.module.scss";
 import { store } from "../../store";
+import { toggleTheme, selectThemeMode } from "../../store/theme/theme.slice";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 
 const ProfilePanel = ({
   anchorEl,
@@ -17,6 +20,8 @@ const ProfilePanel = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { appId } = useParams();
+  const themeMode = useSelector(selectThemeMode);
+  const isDarkMode = themeMode === "dark";
 
   const handleClick = () => {
     navigate(`/main/${appId}/api-key`);
@@ -31,6 +36,10 @@ const ProfilePanel = ({
   const logoutClickHandler = () => {
     dispatch(authActions.logout());
     closeMenu();
+  };
+
+  const handleThemeToggle = () => {
+    dispatch(toggleTheme());
   };
 
   return (
@@ -94,6 +103,15 @@ const ProfilePanel = ({
             {/* <Settings className={styles.dragIcon} /> */}
 
             <p className={styles.itemText}>Settings</p>
+          </div>
+
+          <div className={styles.menuItem} onClick={handleThemeToggle}>
+            {isDarkMode ? (
+              <LightModeIcon className={styles.dragIcon} style={{ marginRight: 8 }} />
+            ) : (
+              <DarkModeIcon className={styles.dragIcon} style={{ marginRight: 8 }} />
+            )}
+            <p className={styles.itemText}>{isDarkMode ? "Light Mode" : "Dark Mode"}</p>
           </div>
 
           <div className={styles.menuItem} onClick={logoutClickHandler}>

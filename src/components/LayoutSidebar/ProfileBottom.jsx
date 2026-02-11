@@ -17,26 +17,17 @@ import {generateLangaugeText} from "../../utils/generateLanguageText";
 import GTranslateIcon from "@mui/icons-material/GTranslate";
 import LogoutIcon from "@mui/icons-material/Logout";
 import {Logout} from "@mui/icons-material";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import LightModeIcon from "@mui/icons-material/LightMode";
 import {Modal} from "@mui/material";
 import {menuAccordionActions} from "../../store/menus/menus.slice";
 import {authActions} from "../../store/auth/auth.slice";
 import {companyActions} from "../../store/company/company.slice";
 import {store} from "../../store";
-import {toggleTheme, selectThemeMode} from "../../store/theme/theme.slice";
 
 const ProfileBottom = ({projectInfo, menuLanguages}) => {
   const dispatch = useDispatch();
   const {isOpen, onOpen, onClose} = useDisclosure();
   const projectId = useSelector((state) => state.company.projectId);
   const accessToken = useSelector((state) => state.auth?.token);
-  const themeMode = useSelector(selectThemeMode);
-  const isDarkMode = themeMode === "dark";
-
-  const handleThemeToggle = () => {
-    dispatch(toggleTheme());
-  };
 
   const popoverRef = useRef();
   const {i18n} = useTranslation();
@@ -118,31 +109,6 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
 
   return (
     <Box p={8} ref={popoverRef}>
-      <Box
-        sx={{
-          borderRadius: "5px",
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          paddingLeft: "8px",
-          height: "32px",
-          cursor: "pointer",
-          color: isDarkMode ? "#e0e0e0" : "#475467",
-        }}
-        _hover={{background: isDarkMode ? "#333" : "#eeee"}}
-        onClick={handleThemeToggle}>
-        {isDarkMode ? (
-          <LightModeIcon style={{color: isDarkMode ? "#e0e0e0" : "#475467"}} />
-        ) : (
-          <DarkModeIcon style={{color: "#475467"}} />
-        )}
-        <span>
-          {isDarkMode
-            ? generateLangaugeText(menuLanguages, i18n?.language, "Light Mode") || "Light Mode"
-            : generateLangaugeText(menuLanguages, i18n?.language, "Dark Mode") || "Dark Mode"}
-        </span>
-      </Box>
-
       <Popover
         isOpen={isOpen}
         onClose={onClose}
@@ -158,14 +124,14 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
               paddingLeft: "8px",
               height: "32px",
               cursor: "pointer",
-              color: isDarkMode ? "#e0e0e0" : "#475467",
+              color: "#475467",
             }}
-            _hover={{background: isDarkMode ? "#333" : "#eeee"}}
+            _hover={{background: "#eeee"}}
             onClick={(e) => {
               e.stopPropagation();
               onOpen();
             }}>
-            <GTranslateIcon style={{color: isDarkMode ? "#e0e0e0" : "#475467"}} />
+            <GTranslateIcon style={{color: "#475467"}} />
             <span>
               {" "}
               {generateLangaugeText(
@@ -181,7 +147,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
           <Box
             minH={50}
             maxH={250}
-            bg={isDarkMode ? "#2d3748" : "white"}
+            bg={"white"}
             p={4}
             borderRadius={5}
             boxShadow="0 0 5px rgba(145, 158, 171, 0.3)">
@@ -192,13 +158,9 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
                   p={4}
                   borderRadius="6px"
                   cursor="pointer"
-                  color={isDarkMode 
-                    ? (item.slug === defaultLanguage ? "#fff" : "#e0e0e0")
-                    : (item.slug === defaultLanguage ? "#000" : "#333")}
-                  bg={isDarkMode
-                    ? (item.slug === defaultLanguage ? "#4a5568" : "#2d3748")
-                    : (item.slug === defaultLanguage ? "#E5E5E5" : "white")}
-                  _hover={{bg: isDarkMode ? "#4a5568" : "#F0F0F0"}}
+                  color={item.slug === defaultLanguage ? "#000" : "#333"}
+                  bg={item.slug === defaultLanguage ? "#E5E5E5" : "white"}
+                  _hover={{bg: "#F0F0F0"}}
                   onClick={() => changeLanguage(item.slug)}>
                   {item.title}
                 </Box>
@@ -217,11 +179,11 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
           paddingLeft: "8px",
           height: "32px",
           cursor: "pointer",
-          color: isDarkMode ? "#e0e0e0" : "#475467",
+          color: "#475467",
         }}
-        _hover={{background: isDarkMode ? "#333" : "#eeee"}}
+        _hover={{background: "#eeee"}}
         onClick={onOpenModal}>
-        <Logout style={{color: isDarkMode ? "#e0e0e0" : "#475467"}} />
+        <Logout style={{color: "#475467"}} />
         <span>
           {generateLangaugeText(menuLanguages, i18n?.language, "Log out") ||
             "Log out"}
@@ -235,8 +197,7 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            backgroundColor: isDarkMode ? "#2d3748" : "#fff",
-            color: isDarkMode ? "#e0e0e0" : "inherit",
+            backgroundColor: "#fff",
             borderRadius: "12px",
             outline: "none",
             width: 400,
@@ -285,10 +246,9 @@ const ProfileBottom = ({projectInfo, menuLanguages}) => {
               borderRadius={8}
               fontSize={14}
               fullWidth
-              bg={isDarkMode ? "#4a5568" : "#fff"}
-              color={isDarkMode ? "#e0e0e0" : "inherit"}
-              _hover={{bg: isDarkMode ? "#5a6578" : "#eee"}}
-              border={isDarkMode ? "2px solid #5a6578" : "2px solid #eee"}
+              bg={"#fff"}
+              _hover={{bg: "#eee"}}
+              border="2px solid #eee"
               style={{height: "40px"}}
               onClick={onCloseModal}>
               {generateLangaugeText(menuLanguages, i18n?.language, "Cancel") ||

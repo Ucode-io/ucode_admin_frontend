@@ -2,15 +2,18 @@ import {Box, ChakraProvider, Flex, Text} from "@chakra-ui/react";
 import TranslateIcon from "@mui/icons-material/Translate";
 import React, {useState} from "react";
 import {useTranslation} from "react-i18next";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {languagesActions} from "../../../../store/globalLanguages/globalLanguages.slice";
 import {useProjectGetByIdQuery} from "../../../../services/projectService";
 import {store} from "../../../../store";
+import {selectThemeMode} from "../../../../store/theme/theme.slice";
 
 function Language({languageOptions = []}) {
   const dispatch = useDispatch();
   const {i18n} = useTranslation();
   const [currentLangIndex, setCurrentLangIndex] = useState(0);
+  const themeMode = useSelector(selectThemeMode);
+  const isDarkMode = themeMode === "dark";
 
   const projectId = store.getState().company.projectId;
   const {data: projectInfo} = useProjectGetByIdQuery({projectId});
@@ -37,15 +40,15 @@ function Language({languageOptions = []}) {
         gap={2}
         px={3}
         py={1.5}
-        bg="white"
+        bg={isDarkMode ? "#212B36" : "white"}
         border="1px solid"
-        borderColor="gray.300"
+        borderColor={isDarkMode ? "#374151" : "gray.300"}
         borderRadius="8px"
         cursor="pointer"
         h={"36px"}
         mr={"20px"}
         _hover={{
-          bg: "gray.50",
+          bg: isDarkMode ? "#2D3748" : "gray.50",
           boxShadow: "md",
           transform: "scale(1.05)",
           transition: "all 0.2s ease-in-out",
@@ -54,8 +57,8 @@ function Language({languageOptions = []}) {
         w="fit-content"
         boxShadow="sm"
         transition="all 0.15s ease-in-out">
-        <Box as={TranslateIcon} fontSize="20px" color="gray.600" />
-        <Text fontWeight="medium" color="gray.700" fontSize="sm">
+        <Box as={TranslateIcon} fontSize="20px" color={isDarkMode ? "#A0AEC0" : "gray.600"} />
+        <Text fontWeight="medium" color={isDarkMode ? "#FFFFFF" : "gray.700"} fontSize="sm">
           {languages?.[currentLangIndex]?.short_name.toUpperCase()}
         </Text>
       </Flex>

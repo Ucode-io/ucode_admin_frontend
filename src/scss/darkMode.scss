@@ -1,0 +1,477 @@
+// Dark Mode Global Styles
+// These styles are applied when dark mode is active
+
+// Dark mode color variables
+$dark-bg-primary: #161C24;
+$dark-bg-secondary: #212B36;
+$dark-bg-tertiary: #2D3748;
+$dark-bg-hover: #374151;
+$dark-text-primary: #FFFFFF;
+$dark-text-secondary: #A0AEC0;
+$dark-text-disabled: #637381;
+$dark-border: #374151;
+$dark-border-light: #4A5568;
+$dark-primary: #007AFF;
+$dark-primary-light: #6794ff;
+
+// Dark mode class applied to root
+[data-theme="dark"] {
+  // Base elements
+  body,
+  #root,
+  .App {
+    background-color: $dark-bg-primary !important;
+    color: $dark-text-primary !important;
+  }
+
+  // Input autofill override
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px $dark-bg-secondary inset !important;
+    box-shadow: 0 0 0 1000px $dark-bg-secondary inset !important;
+    background-color: $dark-bg-secondary !important;
+    color: $dark-text-primary !important;
+    -webkit-text-fill-color: $dark-text-primary !important;
+  }
+
+  // Text colors
+  p, h1, h2, h3, h4, h5, h6, span, div, label {
+    color: inherit;
+  }
+
+  // Borders
+  .silver-bottom-border {
+    box-shadow: inset 0px -1px 0px $dark-border;
+  }
+
+  .silver-right-border {
+    box-shadow: inset -1px 0px 0px $dark-border;
+  }
+
+  // React tabs
+  .react-tabs {
+    &__tab-list {
+      border-bottom: 1px solid $dark-border;
+    }
+
+    &__tab {
+      color: $dark-text-secondary;
+
+      &--selected {
+        color: $dark-primary;
+        border-bottom-color: $dark-primary;
+      }
+    }
+  }
+
+  // Custom text fields
+  .custom_textfield,
+  .customLinkField,
+  .customLinkFieldDrawer {
+    input {
+      color: $dark-text-primary !important;
+      background-color: transparent !important;
+
+      &::placeholder {
+        color: $dark-text-secondary !important;
+      }
+    }
+  }
+
+  // Editable columns
+  .editable_col {
+    &:focus,
+    &:hover {
+      border: 1px solid $dark-text-secondary !important;
+    }
+  }
+
+  // AG Grid dark mode
+  .ag-theme-quartz,
+  .ag-theme-alpine {
+    --ag-background-color: #{$dark-bg-primary};
+    --ag-header-background-color: #{$dark-bg-secondary};
+    --ag-header-foreground-color: #{$dark-text-primary};
+    --ag-foreground-color: #{$dark-text-primary};
+    --ag-row-border-color: #{$dark-border};
+    --ag-cell-horizontal-border: solid #{$dark-border};
+    --ag-odd-row-background-color: #{$dark-bg-primary};
+    --ag-row-hover-color: #{$dark-bg-hover};
+    --ag-selected-row-background-color: #{$dark-bg-tertiary};
+    --ag-range-selection-background-color: rgba(0, 122, 255, 0.2);
+    --ag-input-focus-border-color: #{$dark-primary};
+    --ag-borders: solid #{$dark-border};
+  }
+
+  .ag-header {
+    background: $dark-bg-secondary !important;
+  }
+
+  .ag-row {
+    &:hover {
+      background: $dark-bg-hover !important;
+    }
+  }
+
+  .ag-cell {
+    background-color: inherit !important;
+  }
+
+  // Modal & Popover backgrounds
+  .MuiPaper-root,
+  .MuiDialog-paper,
+  .MuiPopover-paper,
+  .MuiMenu-paper,
+  .MuiDrawer-paper {
+    background-color: $dark-bg-secondary !important;
+    color: $dark-text-primary !important;
+  }
+
+  // Cards
+  .MuiCard-root {
+    background-color: $dark-bg-secondary !important;
+  }
+
+  // Input fields
+  .MuiInputBase-root,
+  .MuiOutlinedInput-root,
+  .MuiTextField-root {
+    background-color: $dark-bg-tertiary !important;
+    color: $dark-text-primary !important;
+
+    input,
+    textarea {
+      color: $dark-text-primary !important;
+
+      &::placeholder {
+        color: $dark-text-secondary !important;
+      }
+    }
+
+    .MuiOutlinedInput-notchedOutline {
+      border-color: $dark-border !important;
+    }
+
+    &:hover .MuiOutlinedInput-notchedOutline {
+      border-color: $dark-border-light !important;
+    }
+
+    &.Mui-focused .MuiOutlinedInput-notchedOutline {
+      border-color: $dark-primary !important;
+    }
+  }
+
+  .MuiInputLabel-root {
+    color: $dark-text-secondary !important;
+
+    &.Mui-focused {
+      color: $dark-primary !important;
+    }
+  }
+
+  // Select dropdown
+  .MuiSelect-select {
+    color: $dark-text-primary !important;
+  }
+
+  .MuiMenuItem-root {
+    color: $dark-text-primary !important;
+
+    &:hover {
+      background-color: $dark-bg-hover !important;
+    }
+
+    &.Mui-selected {
+      background-color: $dark-bg-tertiary !important;
+    }
+  }
+
+  // Buttons
+  .MuiButton-outlined {
+    border-color: $dark-border !important;
+    color: $dark-text-primary !important;
+
+    &:hover {
+      background-color: $dark-bg-hover !important;
+    }
+  }
+
+  .MuiButton-text {
+    color: $dark-text-primary !important;
+  }
+
+  // Icon buttons
+  .MuiIconButton-root {
+    color: $dark-text-secondary !important;
+
+    &:hover {
+      background-color: $dark-bg-hover !important;
+    }
+  }
+
+  // Divider
+  .MuiDivider-root {
+    border-color: $dark-border !important;
+  }
+
+  // Table
+  .MuiTable-root {
+    background-color: $dark-bg-primary !important;
+  }
+
+  .MuiTableHead-root {
+    background-color: $dark-bg-secondary !important;
+
+    .MuiTableCell-head {
+      background-color: $dark-bg-secondary !important;
+      color: $dark-text-primary !important;
+      border-bottom-color: $dark-border !important;
+    }
+  }
+
+  .MuiTableBody-root {
+    .MuiTableRow-root {
+      &:hover {
+        background-color: $dark-bg-hover !important;
+      }
+    }
+
+    .MuiTableCell-root {
+      color: $dark-text-primary !important;
+      border-bottom-color: $dark-border !important;
+    }
+  }
+
+  // Tabs
+  .MuiTabs-root {
+    border-bottom-color: $dark-border !important;
+  }
+
+  .MuiTab-root {
+    color: $dark-text-secondary !important;
+
+    &.Mui-selected {
+      color: $dark-primary !important;
+    }
+  }
+
+  // Accordion
+  .MuiAccordion-root {
+    background-color: $dark-bg-secondary !important;
+    color: $dark-text-primary !important;
+
+    &:before {
+      background-color: $dark-border !important;
+    }
+  }
+
+  .MuiAccordionSummary-root {
+    color: $dark-text-primary !important;
+  }
+
+  // Chip
+  .MuiChip-root {
+    background-color: $dark-bg-tertiary !important;
+    color: $dark-text-primary !important;
+    border-color: $dark-border !important;
+  }
+
+  // Tooltip
+  .MuiTooltip-tooltip {
+    background-color: $dark-bg-tertiary !important;
+    color: $dark-text-primary !important;
+  }
+
+  // Checkbox & Radio
+  .MuiCheckbox-root,
+  .MuiRadio-root {
+    color: $dark-text-secondary !important;
+
+    &.Mui-checked {
+      color: $dark-primary !important;
+    }
+  }
+
+  // Switch
+  .MuiSwitch-track {
+    background-color: $dark-bg-tertiary !important;
+  }
+
+  // Breadcrumbs
+  .MuiBreadcrumbs-root {
+    color: $dark-text-secondary !important;
+
+    .MuiBreadcrumbs-separator {
+      color: $dark-text-secondary !important;
+    }
+  }
+
+  // Skeleton
+  .MuiSkeleton-root {
+    background-color: $dark-bg-tertiary !important;
+  }
+
+  // Alert
+  .MuiAlert-root {
+    background-color: $dark-bg-secondary !important;
+  }
+
+  // Chakra UI components
+  .chakra-popover__content,
+  .chakra-menu__menu-list,
+  .chakra-modal__content {
+    background-color: $dark-bg-secondary !important;
+    color: $dark-text-primary !important;
+    border-color: $dark-border !important;
+  }
+
+  .chakra-menu__menuitem {
+    background-color: $dark-bg-secondary !important;
+    color: $dark-text-primary !important;
+
+    &:hover {
+      background-color: $dark-bg-hover !important;
+    }
+  }
+
+  // Custom components
+  .PlatformModal,
+  .TypeModal {
+    background-color: $dark-bg-secondary !important;
+
+    .modal-header {
+      border-bottom-color: $dark-border !important;
+    }
+  }
+
+  // Resource buttons
+  .resourceBtn,
+  .resourceBtnAdd {
+    background: $dark-bg-secondary !important;
+    border-color: $dark-border !important;
+    color: $dark-text-primary !important;
+  }
+
+  .resourceBtnActive {
+    background: rgba(0, 122, 255, 0.2) !important;
+    border-color: $dark-primary !important;
+    color: $dark-primary-light !important;
+  }
+
+  // Accordion icon hover
+  .accordionIcon,
+  .childMenuFolderArrow,
+  .childMenuFolderArrowChild {
+    &:hover {
+      background: $dark-bg-hover !important;
+    }
+  }
+
+  // Billing table
+  #billingTable {
+    th, td {
+      border-color: $dark-border !important;
+      background-color: $dark-bg-secondary !important;
+      color: $dark-text-primary !important;
+    }
+  }
+
+  // Scrollbar
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: $dark-bg-primary;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: $dark-border-light;
+    border-radius: 4px;
+
+    &:hover {
+      background: $dark-text-secondary;
+    }
+  }
+
+  // Quill editor
+  .ql-toolbar {
+    background-color: $dark-bg-secondary !important;
+    border-color: $dark-border !important;
+
+    .ql-stroke {
+      stroke: $dark-text-secondary !important;
+    }
+
+    .ql-fill {
+      fill: $dark-text-secondary !important;
+    }
+
+    .ql-picker-label {
+      color: $dark-text-secondary !important;
+    }
+  }
+
+  .ql-container {
+    background-color: $dark-bg-tertiary !important;
+    border-color: $dark-border !important;
+    color: $dark-text-primary !important;
+  }
+
+  .ql-editor {
+    color: $dark-text-primary !important;
+
+    &.ql-blank::before {
+      color: $dark-text-secondary !important;
+    }
+  }
+
+  // Code editor / Monaco
+  .monaco-editor,
+  .monaco-editor-background {
+    background-color: $dark-bg-primary !important;
+  }
+
+  // Form elements
+  .formCard,
+  .form-card {
+    background-color: $dark-bg-secondary !important;
+    border-color: $dark-border !important;
+  }
+
+  // Sidebar
+  .sidebar,
+  .layoutSidebar {
+    background-color: $dark-bg-secondary !important;
+    border-right-color: $dark-border !important;
+  }
+
+  // Header
+  .header {
+    background-color: $dark-bg-secondary !important;
+    border-bottom-color: $dark-border !important;
+  }
+
+  // Links
+  a {
+    color: $dark-primary-light !important;
+
+    &:hover {
+      color: $dark-primary !important;
+    }
+  }
+
+  // Placeholder text
+  ::placeholder {
+    color: $dark-text-secondary !important;
+  }
+
+  // Selection
+  ::selection {
+    background-color: rgba(0, 122, 255, 0.3);
+    color: $dark-text-primary;
+  }
+}

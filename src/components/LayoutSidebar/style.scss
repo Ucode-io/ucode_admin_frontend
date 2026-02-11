@@ -1,5 +1,13 @@
 $main-color: #0365f2;
 
+// Dark mode variables
+$dark-bg-primary: #161C24;
+$dark-bg-secondary: #212B36;
+$dark-bg-hover: #374151;
+$dark-text-primary: #FFFFFF;
+$dark-text-secondary: #A0AEC0;
+$dark-border: #374151;
+
 .extra {
   cursor: pointer;
 }
@@ -10,10 +18,15 @@ $main-color: #0365f2;
   height: 100vh;
   background-color: #fff;
   border-right: 1px solid rgba(192, 192, 192, 0.562);
-  transition-property: width;
+  transition-property: width, background-color, border-color;
   transition-timing-function: linear;
   transition-duration: 0.3s;
   overflow: hidden;
+
+  [data-theme="dark"] & {
+    background-color: $dark-bg-secondary;
+    border-right-color: $dark-border;
+  }
 
   &::-webkit-scrollbar-thumb {
     width: 0 !important;
@@ -476,6 +489,11 @@ $main-color: #0365f2;
   flex-direction: column;
   justify-content: center;
 
+  [data-theme="dark"] & {
+    background: $dark-bg-secondary;
+    color: $dark-text-primary;
+  }
+
   li {
     column-gap: 6px;
     padding: 5px;
@@ -493,12 +511,20 @@ $main-color: #0365f2;
 
     &:hover {
       background-color: #6e8bb714;
+
+      [data-theme="dark"] & {
+        background-color: $dark-bg-hover;
+      }
     }
   }
 
   h3 {
     font-weight: normal;
     font-size: 14px;
+
+    [data-theme="dark"] & {
+      color: $dark-text-primary;
+    }
   }
 }
 

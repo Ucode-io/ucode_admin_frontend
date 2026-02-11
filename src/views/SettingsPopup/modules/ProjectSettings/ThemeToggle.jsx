@@ -21,15 +21,15 @@ function ThemeToggle() {
         gap={2}
         px={3}
         py={1.5}
-        bg="white"
+        bg={isDarkMode ? "#212B36" : "white"}
         border="1px solid"
-        borderColor="gray.300"
+        borderColor={isDarkMode ? "#374151" : "gray.300"}
         borderRadius="8px"
         cursor="pointer"
         h={"36px"}
         mr={"8px"}
         _hover={{
-          bg: "gray.50",
+          bg: isDarkMode ? "#2D3748" : "gray.50",
           boxShadow: "md",
           transform: "scale(1.05)",
           transition: "all 0.2s ease-in-out",
@@ -41,7 +41,7 @@ function ThemeToggle() {
         <Box
           as={isDarkMode ? LightModeIcon : DarkModeIcon}
           fontSize="20px"
-          color="gray.600"
+          color={isDarkMode ? "#A0AEC0" : "gray.600"}
         />
       </Flex>
     </ChakraProvider>

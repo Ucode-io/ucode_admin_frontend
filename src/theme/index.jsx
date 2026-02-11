@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import shape from './shape';
 import palette from './palette';
@@ -20,6 +20,13 @@ ThemeConfig.propTypes = {
 export default function ThemeConfig({ children }) {
   const themeMode = useSelector(selectThemeMode);
   const isLight = themeMode === 'light';
+
+  // Apply theme attribute to document for CSS dark mode styles
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', themeMode);
+    document.body.style.backgroundColor = isLight ? '#ffffff' : '#161C24';
+    document.body.style.color = isLight ? '#212B36' : '#ffffff';
+  }, [themeMode, isLight]);
 
   const themeOptions = useMemo(
     () => (

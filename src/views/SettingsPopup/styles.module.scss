@@ -1,3 +1,12 @@
+// Dark mode variables
+$dark-bg-primary: #161C24;
+$dark-bg-secondary: #212B36;
+$dark-bg-tertiary: #2D3748;
+$dark-bg-hover: #374151;
+$dark-text-primary: #FFFFFF;
+$dark-text-secondary: #A0AEC0;
+$dark-border: #374151;
+
 .dialogContent {
   height: calc(-100px + 100vh);
   max-height: 715px;
@@ -6,6 +15,10 @@
 .content {
   display: flex;
   height: 100%;
+
+  :global([data-theme="dark"]) & {
+    background-color: $dark-bg-primary;
+  }
 }
 
 .leftBarWrapper {
@@ -15,6 +28,11 @@
   padding-right: 4px;
   background-color: #fbfbfa;
   overflow: auto;
+
+  :global([data-theme="dark"]) & {
+    background-color: $dark-bg-secondary;
+    border-right: 1px solid $dark-border;
+  }
 }
 
 .leftBar {
@@ -33,6 +51,10 @@
   font-size: 12px;
   line-height: 1;
   color: rgba(55, 53, 47, 0.65);
+
+  :global([data-theme="dark"]) & {
+    color: $dark-text-secondary;
+  }
 }
 
 .tabItem {
@@ -47,6 +69,10 @@
 
   &:hover {
     background-color: rgba(55, 53, 47, 0.06);
+
+    :global([data-theme="dark"]) & {
+      background-color: $dark-bg-hover;
+    }
   }
 }
 
@@ -61,6 +87,10 @@
   border-radius: 4px;
   color: rgb(55, 53, 47);
 
+  :global([data-theme="dark"]) & {
+    color: $dark-text-primary;
+  }
+
   &::after {
     width: 4px;
     height: 4px;
@@ -71,15 +101,27 @@
     background-color: #344054;
     transform: translateY(-50%);
     content: "";
+
+    :global([data-theme="dark"]) & {
+      background-color: $dark-text-secondary;
+    }
   }
 
   &:hover {
     background-color: rgba(55, 53, 47, 0.06) !important;
+
+    :global([data-theme="dark"]) & {
+      background-color: $dark-bg-hover !important;
+    }
   }
 }
 
 .tabItem.active {
   background-color: rgba(55, 53, 47, 0.06);
+
+  :global([data-theme="dark"]) & {
+    background-color: $dark-bg-tertiary;
+  }
 
   .tabItemTitle {
     font-weight: 500;
@@ -95,12 +137,21 @@
   line-height: 20px;
   font-weight: 400;
   color: rgb(55, 53, 47);
+
+  :global([data-theme="dark"]) & {
+    color: $dark-text-primary;
+  }
 }
 
 .rightContent {
   flex-grow: 1;
   padding: 30px 10px 10px;
   overflow: auto;
+
+  :global([data-theme="dark"]) & {
+    background-color: $dark-bg-primary;
+    color: $dark-text-primary;
+  }
 }
 
 .smPadding {

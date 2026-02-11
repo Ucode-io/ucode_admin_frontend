@@ -33,6 +33,7 @@ import { tablePaginationReducer } from "./pagination/paginationV2.slice";
 import { drawerBreadcrumbReducer } from "./drawerBreadcrumb/drawerBreadcrumb.slice";
 import { codeEditorReducer } from "./codeEditor/codeEditor.slice";
 import { generatedUiReducer } from "./generatedUi/generatedUi.slice";
+import { themeReducer } from "./theme/theme.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -158,6 +159,11 @@ const generatedUiPersistConfig = {
   storage,
 };
 
+const themePersistConfig = {
+  key: "theme",
+  storage,
+};
+
 // const detailDrawerConfig = {
 //   key: "detailDrawer",
 //   storage,
@@ -212,6 +218,7 @@ const rootReducer = combineReducers({
   projectInfo: projectInfoReducer,
   codeEditor: persistReducer(codeEditorPersistConfig, codeEditorReducer),
   generatedUi: persistReducer(generatedUiPersistConfig, generatedUiReducer),
+  theme: persistReducer(themePersistConfig, themeReducer),
 });
 
 export default rootReducer;

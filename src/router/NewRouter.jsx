@@ -41,9 +41,6 @@ import Invite from "../views/Auth/Invite";
 import LoginDesign from "../views/Auth/LoginDesign";
 import CompanyPage from "../views/Company";
 import CompanyForm from "../views/Company/CompanyFormPage";
-import TablesPage from "../views/Constructor/AllTables";
-import AppsPage from "../views/Constructor/Apps";
-import AppsForm from "../views/Constructor/Apps/AppsForm";
 import MicrofrontendPage from "../views/Constructor/Microfrontend";
 import MicrofrontendForm from "../views/Constructor/Microfrontend/MicrofrontendForm";
 import OpenFaasFunctionPage from "../views/Constructor/OpenFaasFunction/index.jsx";
@@ -329,7 +326,6 @@ const NewRouter = ({ resetQueryClient }) => {
           </Route>
 
           <Route path=":appId/tables">
-            <Route index element={<TablesPage />} />
             <Route path="create" element={<MicrofrontendForm />} />
           </Route>
 
@@ -469,13 +465,6 @@ const NewRouter = ({ resetQueryClient }) => {
             index
             element={<Navigate to={"/settings/constructor/apps"} />}
           />
-          <Route path="constructor/apps" element={<AppsPage />} />
-          <Route path="constructor/apps/create" element={<AppsForm />} />
-          <Route path="constructor/apps/:appId" element={<AppsForm />} />
-
-          <Route path="constructor/tables">
-            <Route index element={<TablesPage />} />
-          </Route>
 
           <Route
             path="constructor/apps/:appId/objects/create"

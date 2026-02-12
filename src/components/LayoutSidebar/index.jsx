@@ -66,7 +66,6 @@ import { applyDrag } from "../../utils/applyDrag";
 import { generateLangaugeText } from "../../utils/generateLanguageText";
 import { isJSONParsable } from "../../utils/isJsonValid";
 import { getAllFromDB } from "../../utils/languageDB";
-// import { AIMenu, useAIChat } from "../ProfilePanel/AIChat";
 import AddOrganization from "./AddOrganization";
 // import AppSidebar from "./AppSidebarComponentV2";
 import DocsChatwootModal from "./DocsChatwootModal";
@@ -1334,96 +1333,6 @@ const LayoutSidebar = ({
   );
 };
 
-// const AIChat = forwardRef(
-//   ({ sidebarOpen = false, children, ...props }, ref) => {
-//     const {
-//       open,
-//       anchorEl,
-//       loader,
-//       setLoader,
-//       inputValue,
-//       setInputValue,
-//       messages,
-//       messagesEndRef,
-//       handleClick,
-//       handleClose,
-//       handleKeyDown,
-//       handleSendClick,
-//       showInput,
-//       setShowInput,
-//       handleSuccess,
-//       handleError,
-//       onExited,
-//       appendMessage,
-//       selectedEntityType,
-//       handleChangeEntityType,
-//       setMessages,
-//       control,
-//       errors,
-//       handleSubmit,
-//       reset,
-//       setAnchorEl,
-//       setValue,
-//       watch,
-//     } = useAIChat();
-
-//     return (
-//       <>
-//         <Flex
-//           w={sidebarOpen ? "100%" : 36}
-//           borderRadius={6}
-//           // _hover={{
-//           //   background: "#37352F0F",
-//           // }}
-//           h={"25px"}
-//           // pl={sidebarOpen ? "35px" : 0}
-//           cursor="pointer"
-//           mb={sidebarOpen ? 0 : 4}
-//           ref={ref}
-//           {...props}
-//           onClick={handleClick}
-//           justifyContent="center"
-//           alignItems="center"
-//         >
-//           {sidebarOpen ? (
-//             children
-//           ) : (
-//             <SearchIcon color="#475467" fontSize={16} />
-//           )}
-//         </Flex>
-
-//         <AIMenu
-//           open={open}
-//           anchorEl={anchorEl}
-//           loader={loader}
-//           setLoader={setLoader}
-//           inputValue={inputValue}
-//           setInputValue={setInputValue}
-//           messages={messages}
-//           messagesEndRef={messagesEndRef}
-//           handleClose={handleClose}
-//           handleKeyDown={handleKeyDown}
-//           handleSendClick={handleSendClick}
-//           showInput={showInput}
-//           setShowInput={setShowInput}
-//           handleSuccess={handleSuccess}
-//           handleError={handleError}
-//           onExited={onExited}
-//           appendMessage={appendMessage}
-//           selectedEntityType={selectedEntityType}
-//           handleChangeEntityType={handleChangeEntityType}
-//           setMessages={setMessages}
-//           control={control}
-//           errors={errors}
-//           handleSubmit={handleSubmit}
-//           reset={reset}
-//           setValue={setValue}
-//           watch={watch}
-//         />
-//       </>
-//     );
-//   },
-// );
 
 const Header = ({
   sidebarIsOpen,

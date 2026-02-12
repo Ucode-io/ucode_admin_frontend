@@ -72,17 +72,19 @@ export const ContentList = ({
     <>
       {Boolean(!openResource) ? (
         groupedResources?.map((element) => (
-          <Box sx={{padding: "20px 16px 16px"}}>
+          <Box sx={{ padding: "20px 16px 16px" }} key={element?.head}>
             <FRLabel children={<>{element?.head}</>} />
-            <Box sx={{display: "flex", alignItems: "center", gap: "16px"}}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
               {element?.items?.map((val) => (
                 <ResourceButton
+                  key={val?.value}
                   setResourceVal={setResourceVal}
                   clickHandler={clickHandler}
                   arr={arr}
                   val={val}
                   onItemClick={onItemClick}
-                  resources={resources}>
+                  resources={resources}
+                >
                   {getElementIcon(val?.icon)}
                   <p>{val?.label}</p>
                 </ResourceButton>

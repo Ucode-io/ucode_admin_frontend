@@ -58,7 +58,7 @@ export const usePermissionsProps = () => {
     dispatch(menuActions.setMenuItem(element));
   };
 
-  const permissionData = useQuery(
+  useQuery(
     ["GET_CLIENT_TYPE_PERMISSION", permissionFolder],
     () => {
       setIsLoading(true);
@@ -80,21 +80,20 @@ export const usePermissionsProps = () => {
                 read: true,
               },
             },
-          }))
+          })),
         );
       },
       onError: () => {
         setIsLoading(false);
       },
-    }
+    },
   );
 
-  const {mutate: deleteClientType, isLoading: deleteLoading} =
-      useClientTypeDeleteMutation({
-        onSuccess: () => {
-          queryClient.refetchQueries(["GET_CLIENT_TYPE_PERMISSION"]);
-        },
-      });
+  const { mutate: deleteClientType } = useClientTypeDeleteMutation({
+    onSuccess: () => {
+      queryClient.refetchQueries(["GET_CLIENT_TYPE_PERMISSION"]);
+    },
+  });
 
   const deleteRole = async (element) => {
     console.log(element);

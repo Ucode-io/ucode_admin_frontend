@@ -1,21 +1,59 @@
-import {Box} from "@mui/material";
-import {usePermissionsRoleDetail} from "./usePermissionsRoleDetail";
-import {ContentTitle} from "../../components/ContentTitle";
-import {Button} from "../../components/Button";
+import { Box } from "@mui/material";
+import { usePermissionsRoleDetail } from "./usePermissionsRoleDetail";
+import { ContentTitle } from "../../components/ContentTitle";
+import { Button } from "../../components/Button";
 import Permissions from "./Permissions";
 import AddIcon from "@mui/icons-material/Add";
 import cls from "./styles.module.scss";
 import clsx from "clsx";
 import RoleCreateModal from "./RoleCreateModal";
-import {FolderCreateModal} from "../../components/FolderCreateModal";
-import {EditIcon} from "@/assets/icons/icon";
-import {GreyLoader} from "@/components/Loaders/GreyLoader";
+import { FolderCreateModal } from "../../components/FolderCreateModal";
+import { EditIcon } from "@/assets/icons/icon";
+import { GreyLoader } from "@/components/Loaders/GreyLoader";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
-import {useState} from "react";
+import { useState } from "react";
 import ConnectionsModal from "./ConnectionsModal";
-import {useQuery} from "react-query";
+import { useQuery } from "react-query";
 import connectionServiceV2 from "../../../../services/auth/connectionService";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
+
+const CATEGORIES = [
+  {
+    label: "Menu",
+    value: "menu",
+  },
+  {
+    label: "Global Permissions",
+    value: "permission",
+  },
+  {
+    label: "Table",
+    value: "table",
+  },
+  {
+    label: "Custom Permissions",
+    value: "custom",
+  },
+];
+
+const CategoryItem = ({ item = {}, activeTab, onClick = () => { } }) => {
+  return (
+    <li className={cls.categoryItem}>
+      <div className={cls.categoryLabel} onClick={onClick}>
+        <span
+          className={clsx(cls.customRadio, {
+            [cls.active]: activeTab.value === item.value,
+          })}
+        >
+          <span></span>
+        </span>
+        <span className={clsx(cls.categoryLabelBadge, cls[item.value])}>
+          {item.label}
+        </span>
+      </div>
+    </li>
+  );
+};
 
 export const PermissionsRoleDetail = () => {
   const {
@@ -28,7 +66,6 @@ export const PermissionsRoleDetail = () => {
     changedData,
     setValue,
     watch,
-    onBackClick,
     roles,
     onTabClick,
     activeTabId,
@@ -44,25 +81,26 @@ export const PermissionsRoleDetail = () => {
     handleChangeTab,
     handleOpenCategory,
     handleCloseCategory,
-    categories,
     getValues,
     activeRoleId,
+    updateCustomPermissions,
+    createCustom,
   } = usePermissionsRoleDetail();
   const auth = useSelector((state) => state.auth);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const {data: connections, isLoading} = useQuery(
+  const { data: connections } = useQuery(
     ["GET_CONNECTION_LIST", activeClientType?.id],
     () => {
       return connectionServiceV2.getList(
-        {client_type_id: activeClientType?.id},
-        {"Environment-id": auth.environmentId}
+        { client_type_id: activeClientType?.id },
+        { "Environment-id": auth.environmentId },
       );
     },
     {
       cacheTime: 10,
       enabled: !!activeClientType?.id,
-    }
+    },
   );
 
   return (
@@ -173,7 +211,7 @@ export const PermissionsRoleDetail = () => {
                 }}
               >
                 <span className={cls.categoryDropdownBtnInner}>
-                  <span>Category: {categories[activeTab]}</span>
+                  <span>Category: {activeTab.label}</span>
                   <ExpandMoreOutlinedIcon
                     sx={{
                       transform: isCategoryOpen
@@ -188,66 +226,14 @@ export const PermissionsRoleDetail = () => {
                 <div className={cls.categoryDropdownContent}>
                   <p className={cls.categoryTitle}>Category</p>
                   <ul className={cls.categoryList}>
-                    <li className={cls.categoryItem}>
-                      <div
-                        className={cls.categoryLabel}
-                        onClick={() => handleChangeTab("table")}
-                      >
-                        <span
-                          className={clsx(cls.customRadio, {
-                            [cls.active]: activeTab === "table",
-                          })}
-                        >
-                          <span></span>
-                        </span>
-                        <span
-                          className={clsx(cls.categoryLabelBadge, cls.table)}
-                        >
-                          Table
-                        </span>
-                      </div>
-                    </li>
-                    <li className={cls.categoryItem}>
-                      <div
-                        className={cls.categoryLabel}
-                        onClick={() => handleChangeTab("menu")}
-                      >
-                        <span
-                          className={clsx(cls.customRadio, {
-                            [cls.active]: activeTab === "menu",
-                          })}
-                        >
-                          <span></span>
-                        </span>
-                        <span
-                          className={clsx(cls.categoryLabelBadge, cls.menu)}
-                        >
-                          Menu
-                        </span>
-                      </div>
-                    </li>
-                    <li className={cls.categoryItem}>
-                      <div
-                        className={cls.categoryLabel}
-                        onClick={() => handleChangeTab("permission")}
-                      >
-                        <span
-                          className={clsx(cls.customRadio, {
-                            [cls.active]: activeTab === "permission",
-                          })}
-                        >
-                          <span></span>
-                        </span>
-                        <span
-                          className={clsx(
-                            cls.categoryLabelBadge,
-                            cls.permission
-                          )}
-                        >
-                          Global Permissions
-                        </span>
-                      </div>
-                    </li>
+                    {CATEGORIES.map((category, index) => (
+                      <CategoryItem
+                        key={index}
+                        item={category}
+                        activeTab={activeTab}
+                        onClick={() => handleChangeTab(category)}
+                      />
+                    ))}
                   </ul>
                 </div>
               )}
@@ -266,6 +252,9 @@ export const PermissionsRoleDetail = () => {
               activeTab={activeTab}
               activeRoleId={activeRoleId}
               getValues={getValues}
+              updateCustomPermissions={updateCustomPermissions}
+              createCustom={createCustom}
+              activeClientType={activeClientType}
             />
           )}
           {isCreateRoleModalOpen && (

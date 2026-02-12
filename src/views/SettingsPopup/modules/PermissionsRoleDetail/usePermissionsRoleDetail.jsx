@@ -15,6 +15,7 @@ import roleServiceV2 from "@/services/roleServiceV2";
 import cls from "./styles.module.scss";
 import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 import menuSettingsService from "../../../../services/menuSettingsService";
+import request from "@/utils/request";
 
 export const usePermissionsRoleDetail = () => {
   const { control, reset, watch, setValue, handleSubmit, getValues } =
@@ -26,7 +27,10 @@ export const usePermissionsRoleDetail = () => {
   const [isCreateRoleModalOpen, setCreateRoleModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
-  const [activeTab, setActiveTab] = useState("table");
+  const [activeTab, setActiveTab] = useState({
+    value: "table",
+    label: "Table",
+  });
   const [isCategoryOpen, setCategoryOpen] = useState(false);
   const [activeRoleId, setActiveRoleId] = useState("");
 
@@ -62,6 +66,9 @@ export const usePermissionsRoleDetail = () => {
   const [menuList, setMenuList] = useState({
     menus: [],
   });
+  const [custom, setCustom] = useState({
+    custom: [],
+  });
   const [isMenuListLoading, setIsMenuListLoading] = useState([]);
 
   const getMenuList = () => {
@@ -90,8 +97,67 @@ export const usePermissionsRoleDetail = () => {
       });
   };
 
+  const getCustomList = () => {
+    if (activeRoleId && activeClientType?.id) {
+      setIsMenuListLoading(true);
+
+      request
+        .get(
+          `/custom-permission/accesses?role_id=${activeRoleId}&client_type_id=${activeClientType?.id}`,
+        )
+        .then((res) => {
+          setCustom({
+            custom: res?.permissions,
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          setIsMenuListLoading(false);
+        });
+    }
+
+    // menuSettingsService
+    //   .getList({
+    //     parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
+    //     role_id: activeRoleId,
+    //   })
+    //   .then((res) => {
+    //     setMenuList({
+    //       menus: res?.menus?.map((item) => ({
+    //         ...item,
+    //         permission: item?.data?.permission,
+    //       })),
+    //     });
+    //     setIsMenuListLoading(false);
+    //   })
+    //   .catch((error) => {
+    //     setIsMenuListLoading(false);
+    //     console.log("error", error);
+    //   })
+    //   .finally(() => {
+    //     setIsMenuListLoading(false);
+    //   });
+  };
+
+  const createCustom = (data) => {
+    // data = {
+    //   title: string,
+    //   attributes: {
+    //     description: string,
+    //     icon: string,
+    //   }
+    return request.post("/custom-permission", data).then(() => {
+      if (!data.parent_id) {
+        setCustom((prev) => ({ custom: [...prev.custom, data] }));
+      }
+    });
+  };
+
   useEffect(() => {
     getMenuList();
+    getCustomList();
   }, [activeRoleId]);
 
   const { data: rolePermissionData, isLoading: rolePermissionGetByIdLoading } =
@@ -138,11 +204,24 @@ export const usePermissionsRoleDetail = () => {
     },
     {
       onSuccess(res) {
-        setActiveRoleId(res?.data?.response[0]?.guid);
-        dispatch(settingsModalActions.setRoleId(res?.data?.response[0]?.guid));
+        setActiveRoleId(res?.data?.response?.[0]?.guid);
+        dispatch(
+          settingsModalActions.setRoleId(res?.data?.response?.[0]?.guid),
+        );
       },
     },
   );
+
+  const updateCustomPermissions = (data) => {
+    request
+      .put(
+        `/custom-permission/accesses?role_id=${activeRoleId}&client_type_id=${activeClientType?.id}`,
+        data,
+      )
+      .then(() => {
+        dispatch(showAlert("Successfully updated", "success"));
+      });
+  };
 
   const onSubmit = (values) => {
     updateRolePermissionMutate({
@@ -180,9 +259,9 @@ export const usePermissionsRoleDetail = () => {
 
   useEffect(() => {
     if (rolePermissionData || menuList) {
-      reset({ ...menuList, ...rolePermissionData });
+      reset({ ...menuList, ...rolePermissionData, ...custom });
     }
-  }, [menuList, rolePermissionData, activeClientType]);
+  }, [menuList, rolePermissionData, custom, activeClientType]);
 
   const categories = {
     table: "Table",
@@ -231,5 +310,8 @@ export const usePermissionsRoleDetail = () => {
     categories,
     getValues,
     activeRoleId,
+    custom,
+    updateCustomPermissions,
+    createCustom,
   };
 };

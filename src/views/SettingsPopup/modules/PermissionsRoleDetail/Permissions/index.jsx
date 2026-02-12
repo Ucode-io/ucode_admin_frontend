@@ -1,4 +1,4 @@
-import {useWatch} from "react-hook-form";
+import { useWatch } from "react-hook-form";
 import TableCard from "@/components/TableCard";
 import {
   CTable,
@@ -7,19 +7,22 @@ import {
   CTableHead,
   CTableHeadRow,
 } from "@/components/CTable";
-import {Box, Card} from "@mui/material";
-import {useEffect, useState} from "react";
+import { Box, Card, Button } from "@mui/material";
+import { useEffect, useState } from "react";
 import MenuRow from "./MenuRow";
 import CustomPermissionRow from "./CustomPermission";
+import CustomRow from "./CustomRow";
+import AddCustomPermissionModal from "./Components/Modals/AddCustomPermissionModal";
+import AddIcon from "@mui/icons-material/Add";
 import styles from "./style.module.scss";
-import {permissions} from "./mock";
+import { permissions } from "./mock";
 import PermissionInfoModal from "./Components/Modals/PermissionInfoModal";
-import {GoInfo} from "react-icons/go";
-import {getAllFromDB} from "../../../../../utils/languageDB";
-import {useTranslation} from "react-i18next";
-import {generateLangaugeText} from "@/utils/generateLanguageText";
+import { GoInfo } from "react-icons/go";
+import { getAllFromDB } from "../../../../../utils/languageDB";
+import { useTranslation } from "react-i18next";
+import { generateLangaugeText } from "@/utils/generateLanguageText";
 import TableRow from "./TableRow";
-import {CustomCheckbox} from "../../../components/CustomCheckbox";
+import { CustomCheckbox } from "../../../components/CustomCheckbox";
 
 const Permissions = ({
   control,
@@ -30,8 +33,13 @@ const Permissions = ({
   activeTab,
   getValues,
   activeRoleId,
+  updateCustomPermissions,
+  activeClientType,
+  createCustom,
 }) => {
   const [modalData, setModalData] = useState(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
   const [permissionLan, setPermissionLan] = useState(null);
   const { i18n } = useTranslation();
 
@@ -48,20 +56,26 @@ const Permissions = ({
     control,
     name: "menus",
   });
+
+  const custom = useWatch({
+    control,
+    name: "custom",
+  });
+
   const allReadTrue = tables?.tables?.every(
-    (permission) => permission.record_permissions?.read === "Yes"
+    (permission) => permission.record_permissions?.read === "Yes",
   );
   const allWriteTrue = tables?.tables?.every(
-    (permission) => permission.record_permissions?.write === "Yes"
+    (permission) => permission.record_permissions?.write === "Yes",
   );
   const allUpdateTrue = tables?.tables?.every(
-    (permission) => permission.record_permissions?.update === "Yes"
+    (permission) => permission.record_permissions?.update === "Yes",
   );
   const allDeleteTrue = tables?.tables?.every(
-    (permission) => permission.record_permissions?.delete === "Yes"
+    (permission) => permission.record_permissions?.delete === "Yes",
   );
   const allPublicTrue = tables?.tables?.every(
-    (permission) => permission.record_permissions?.is_public === true
+    (permission) => permission.record_permissions?.is_public === true,
   );
 
   const allMenuReadTrue = allMenu?.every((item) => item.permission?.read);
@@ -69,8 +83,43 @@ const Permissions = ({
   const allMenuUpdateTrue = allMenu?.every((item) => item.permission?.update);
   const allMenuDeleteTrue = allMenu?.every((item) => item.permission?.delete);
   const allMenuMenuSettingsTrue = allMenu?.every(
-    (item) => item.permission?.menu_settings
+    (item) => item.permission?.menu_settings,
   );
+
+  const allCustomReadTrue =
+    custom?.length > 0 && custom?.every((item) => item?.read === "Yes");
+  const allCustomWriteTrue =
+    custom?.length > 0 && custom?.every((item) => item?.write === "Yes");
+  const allCustomUpdateTrue =
+    custom?.length > 0 && custom?.every((item) => item?.update === "Yes");
+  const allCustomDeleteTrue =
+    custom?.length > 0 && custom?.every((item) => item?.delete === "Yes");
+
+  const handleUpdate = (checked, field, item = {}) => {
+    const value = checked ? "Yes" : "No";
+
+    if (!Object.keys(item).length) {
+      const recursiveUpdate = (items) => {
+        return items?.map((el) => ({
+          ...el,
+          [field]: value,
+          children: el.children ? recursiveUpdate(el.children) : el.children,
+        }));
+      };
+
+      const updatedCustom = recursiveUpdate(custom);
+      setValue("custom", updatedCustom);
+    }
+
+    const payload = {
+      [field]: value,
+      role_id: activeRoleId,
+      client_type_id: activeClientType?.id,
+      ...item,
+    };
+
+    updateCustomPermissions(payload);
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -82,7 +131,7 @@ const Permissions = ({
           translations: item.translations || {},
         }));
         setPermissionLan(
-          formattedData?.find((item) => item?.key === "Permission")
+          formattedData?.find((item) => item?.key === "Permission"),
         );
       }
     });
@@ -114,7 +163,7 @@ const Permissions = ({
             </Tab>
           </TabList> */}
 
-          {activeTab === "table" && (
+          {activeTab.value === "table" && (
             <Box py={1}>
               <TableCard
                 withBorder
@@ -141,7 +190,7 @@ const Permissions = ({
                           {generateLangaugeText(
                             permissionLan,
                             i18n?.language,
-                            "Objects"
+                            "Objects",
                           ) || "Objects"}
                         </Box>
                       </CTableCell>
@@ -156,12 +205,12 @@ const Permissions = ({
                           {generateLangaugeText(
                             permissionLan,
                             i18n?.language,
-                            "Record Permission"
+                            "Record Permission",
                           ) || "Record Permission"}
                         </Box>
                       </CTableCell>
                       {permissions.map((item) => (
-                        <CTableCell rowSpan={2}>
+                        <CTableCell rowSpan={2} key={item.key}>
                           <Box className={styles.headCellBox}>
                             {item.title}{" "}
                             <GoInfo
@@ -188,7 +237,7 @@ const Permissions = ({
                                   ...el.record_permissions,
                                   read: e.target.checked ? "Yes" : "No",
                                 },
-                              }))
+                              })),
                             );
                           }}
                         />
@@ -205,7 +254,7 @@ const Permissions = ({
                                   ...el.record_permissions,
                                   write: e.target.checked ? "Yes" : "No",
                                 },
-                              }))
+                              })),
                             );
                           }}
                         />
@@ -222,7 +271,7 @@ const Permissions = ({
                                   ...el.record_permissions,
                                   update: e.target.checked ? "Yes" : "No",
                                 },
-                              }))
+                              })),
                             );
                           }}
                         />
@@ -239,7 +288,7 @@ const Permissions = ({
                                   ...el.record_permissions,
                                   delete: e.target.checked ? "Yes" : "No",
                                 },
-                              }))
+                              })),
                             );
                           }}
                         />
@@ -256,7 +305,7 @@ const Permissions = ({
                                   ...el.record_permissions,
                                   is_public: e.target.checked,
                                 },
-                              }))
+                              })),
                             );
                           }}
                         />
@@ -284,7 +333,7 @@ const Permissions = ({
               </TableCard>
             </Box>
           )}
-          {activeTab === "menu" && (
+          {activeTab.value === "menu" && (
             <Box py={1}>
               <TableCard
                 withBorder
@@ -306,7 +355,7 @@ const Permissions = ({
                           {generateLangaugeText(
                             permissionLan,
                             i18n?.language,
-                            "Objects"
+                            "Objects",
                           ) || "Objects"}
                         </Box>
                       </CTableCell>
@@ -321,7 +370,7 @@ const Permissions = ({
                           {generateLangaugeText(
                             permissionLan,
                             i18n?.language,
-                            "Menu permissions"
+                            "Menu permissions",
                           ) || "Menu permissions"}
                         </Box>
                       </CTableCell>
@@ -346,7 +395,7 @@ const Permissions = ({
                                   ...item.permission,
                                   read: e.target.checked,
                                 },
-                              }))
+                              })),
                             );
                             setChangedData(
                               allMenu?.map((item) => ({
@@ -362,7 +411,7 @@ const Permissions = ({
                                   ...item.permission,
                                   read: e.target.checked,
                                 },
-                              }))
+                              })),
                             );
                           }}
                         />
@@ -386,7 +435,7 @@ const Permissions = ({
                                   ...item.permission,
                                   write: e.target.checked,
                                 },
-                              }))
+                              })),
                             );
                             setChangedData(
                               allMenu?.map((item) => ({
@@ -402,7 +451,7 @@ const Permissions = ({
                                   ...item.permission,
                                   write: e.target.checked,
                                 },
-                              }))
+                              })),
                             );
                           }}
                         />
@@ -426,7 +475,7 @@ const Permissions = ({
                                   ...item.permission,
                                   update: e.target.checked,
                                 },
-                              }))
+                              })),
                             );
                             setChangedData(
                               allMenu?.map((item) => ({
@@ -442,7 +491,7 @@ const Permissions = ({
                                   ...item.permission,
                                   update: e.target.checked,
                                 },
-                              }))
+                              })),
                             );
                           }}
                         />
@@ -466,7 +515,7 @@ const Permissions = ({
                                   ...item.permission,
                                   delete: e.target.checked,
                                 },
-                              }))
+                              })),
                             );
                             setChangedData(
                               allMenu?.map((item) => ({
@@ -482,7 +531,7 @@ const Permissions = ({
                                   ...item.permission,
                                   delete: e.target.checked,
                                 },
-                              }))
+                              })),
                             );
                           }}
                         />
@@ -506,7 +555,7 @@ const Permissions = ({
                                   ...item.permission,
                                   menu_settings: e.target.checked,
                                 },
-                              }))
+                              })),
                             );
                             setChangedData(
                               allMenu?.map((item) => ({
@@ -522,7 +571,7 @@ const Permissions = ({
                                   ...item.permission,
                                   menu_settings: e.target.checked,
                                 },
-                              }))
+                              })),
                             );
                           }}
                         />
@@ -555,7 +604,7 @@ const Permissions = ({
               </TableCard>
             </Box>
           )}
-          {activeTab === "permission" && (
+          {activeTab.value === "permission" && (
             <Box py={1}>
               <TableCard
                 withBorder
@@ -576,7 +625,7 @@ const Permissions = ({
                           {generateLangaugeText(
                             permissionLan,
                             i18n?.language,
-                            "Global Permissions"
+                            "Global Permissions",
                           ) || "Global Permissions"}
                         </Box>
                       </CTableCell>
@@ -590,11 +639,157 @@ const Permissions = ({
               </TableCard>
             </Box>
           )}
+          {activeTab.value === "custom" && (
+            <Box py={1}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  marginBottom: "12px",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  size="small"
+                  startIcon={<AddIcon />}
+                  onClick={() => {
+                    setSelectedRow(null);
+                    setIsAddModalOpen(true);
+                  }}
+                  sx={{ height: "30px", textTransform: "none" }}
+                >
+                  Add
+                </Button>
+              </div>
+              <TableCard
+                withBorder
+                disablePagination
+                borderRadius="md"
+                type={"withoutPadding"}
+              >
+                <CTable removableHeight={false} disablePagination>
+                  <CTableHead>
+                    <CTableHeadRow>
+                      <CTableCell rowSpan={2} w={200}>
+                        <Box
+                          minWidth="198px"
+                          color="#475467"
+                          fontSize="12px"
+                          fontWeight={500}
+                          lineHeight="18px"
+                        >
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Name",
+                          ) || "Name"}
+                        </Box>
+                      </CTableCell>
+                      <CTableCell colSpan={4}>
+                        <Box
+                          sx={{ justifyContent: "center", display: "flex" }}
+                          color="#475467"
+                          fontSize="12px"
+                          fontWeight={500}
+                          lineHeight="18px"
+                        >
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Custom permissions",
+                          ) || "Custom permissions"}
+                        </Box>
+                      </CTableCell>
+                    </CTableHeadRow>
+                    <CTableHeadRow>
+                      <CTableCell>
+                        <CustomCheckbox
+                          checked={allCustomReadTrue}
+                          onChange={(e) => {
+                            handleUpdate(e.target.checked, "read");
+                          }}
+                        />
+                      </CTableCell>
+                      <CTableCell>
+                        <CustomCheckbox
+                          checked={allCustomWriteTrue}
+                          onChange={(e) => {
+                            handleUpdate(e.target.checked, "write");
+                          }}
+                        />
+                      </CTableCell>
+                      <CTableCell>
+                        <CustomCheckbox
+                          checked={allCustomUpdateTrue}
+                          onChange={(e) => {
+                            handleUpdate(e.target.checked, "update");
+                          }}
+                        />
+                      </CTableCell>
+                      <CTableCell>
+                        <CustomCheckbox
+                          checked={allCustomDeleteTrue}
+                          onChange={(e) => {
+                            handleUpdate(e.target.checked, "delete");
+                          }}
+                        />
+                      </CTableCell>
+                    </CTableHeadRow>
+                  </CTableHead>
+                  <CTableBody columnsCount={5} dataLength={custom?.length}>
+                    {custom?.map((item, index) => (
+                      <CustomRow
+                        key={item.custom_permission_id || index}
+                        item={item}
+                        index={index}
+                        control={control}
+                        setValue={setValue}
+                        watch={watch}
+                        updateCustomPermissions={updateCustomPermissions}
+                        activeRoleId={activeRoleId}
+                        activeClientType={activeClientType}
+                        handleUpdate={handleUpdate}
+                        setIsAddModalOpen={setIsAddModalOpen}
+                        setSelectedRow={setSelectedRow}
+                      />
+                    ))}
+                  </CTableBody>
+                </CTable>
+              </TableCard>
+            </Box>
+          )}
         </Card>
       </div>
       {modalData && (
         <PermissionInfoModal modalData={modalData} closeModal={closeModal} />
       )}
+      <AddCustomPermissionModal
+        open={isAddModalOpen}
+        handleClose={() => {
+          setIsAddModalOpen(false);
+          setSelectedRow(null);
+        }}
+        onSubmit={(data) => {
+          createCustom(data).then(() => {
+            if (selectedRow) {
+              // Re-fetch children for the parent
+              import("@/utils/request").then(({ default: request }) => {
+                request
+                  .get(
+                    `/custom-permission/accesses?role_id=${activeRoleId}&client_type_id=${activeClientType?.id}&parent_id=${selectedRow.custom_permission_id}`,
+                  )
+                  .then((res) => {
+                    setValue(
+                      `${selectedRow._formPath}.children`,
+                      res?.permissions || [],
+                    );
+                  });
+              });
+            }
+          });
+        }}
+        selectedRow={selectedRow}
+      />
     </>
   );
 };

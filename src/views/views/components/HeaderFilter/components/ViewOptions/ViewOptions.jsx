@@ -505,7 +505,6 @@ const OptionItem = ({ title, icon, rightContent, ...props }) => {
       as="span"
       cursor="pointer"
       {...props}
-      // to={`/settings/constructor/apps/${appId}/objects/${layoutQuery.data?.table_id}/${tableSlug}?menuId=${menuId}`}
     >
       <Flex>
         {typeof icon === "string" ? (

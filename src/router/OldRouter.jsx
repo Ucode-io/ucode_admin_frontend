@@ -33,12 +33,8 @@ import ApiKeysForm from "../views/ApiKeys/ApiKeysForm.jsx";
 import ApiKeyPage from "../views/ApiKeys/index.jsx";
 import Invite from "../views/Auth/Invite";
 import LoginDesign from "../views/Auth/LoginDesign";
-import Registration from "../views/Auth/Registration";
 import CompanyPage from "../views/Company";
 import CompanyForm from "../views/Company/CompanyFormPage";
-import TablesPage from "../views/Constructor/AllTables";
-import AppsPage from "../views/Constructor/Apps";
-import AppsForm from "../views/Constructor/Apps/AppsForm";
 import MicrofrontendPage from "../views/Constructor/Microfrontend";
 import MicrofrontendForm from "../views/Constructor/Microfrontend/MicrofrontendForm";
 import OpenFaasFunctionPage from "../views/Constructor/OpenFaasFunction/index.jsx";
@@ -77,8 +73,8 @@ import LanguageControl from "../components/LayoutSidebar/Components/LanguageCont
 import LayoutSettings from "../views/Objects/LayoutSettings";
 import ChartDb from "../views/ChartDb";
 import DocView from "../views/Objects/DocView";
+import { AiAgent } from "@/views/AiAgent";
 
-const AuthLayout = lazy(() => import("../layouts/AuthLayout"));
 const AuthLayoutDesign = lazy(
   () => import("../layouts/AuthLayout/AuthLayoutDesign")
 );
@@ -107,9 +103,8 @@ const OldRouter = ({ resetQueryClient }) => {
   const auth = useSelector((state) => state.auth);
   const companyDefaultLink = useSelector((state) => state.company?.defaultPage);
   const applications = useSelector((state) => state.application.list);
-  const cashbox = useSelector((state) => state.cashbox.data);
+
   const [favicon, setFavicon] = useState("");
-  const cashboxIsOpen = cashbox.is_open === "Открыто";
 
   const parts = auth?.clientType?.default_page
     ? auth?.clientType?.default_page?.split("/")
@@ -189,6 +184,10 @@ const OldRouter = ({ resetQueryClient }) => {
 
   return (
     <Routes>
+      <Route path="ai-agent">
+        <Route path=":id" element={<AiAgent />} />
+        <Route path="" element={<AiAgent />} />
+      </Route>
       <Route
         path="/"
         element={
@@ -304,11 +303,6 @@ const OldRouter = ({ resetQueryClient }) => {
             <Route path="create" element={<OpenFaasFunctionForm />} />
             <Route path=":functionId" element={<OpenFaasFunctionForm />} />
             <Route path="github/create" element={<GithubMicrofrontendForm />} />
-          </Route>
-
-          <Route path=":appId/tables">
-            <Route index element={<TablesPage />} />
-            <Route path="create" element={<MicrofrontendForm />} />
           </Route>
 
           <Route path=":appId/resources">
@@ -437,18 +431,6 @@ const OldRouter = ({ resetQueryClient }) => {
         </Route>
 
         <Route path="settings">
-          <Route
-            index
-            element={<Navigate to={"/settings/constructor/apps"} />}
-          />
-          <Route path="constructor/apps" element={<AppsPage />} />
-          <Route path="constructor/apps/create" element={<AppsForm />} />
-          <Route path="constructor/apps/:appId" element={<AppsForm />} />
-
-          <Route path="constructor/tables">
-            <Route index element={<TablesPage />} />
-          </Route>
-
           <Route
             path="constructor/apps/:appId/objects/create"
             element={<ConstructorTablesFormPage />}

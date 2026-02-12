@@ -143,11 +143,6 @@ export const useBoardViewProps = ({
     }
   };
 
-  // const navigateToSettingsPage = () => {
-  //   const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
-  //   navigate(url);
-  // };
-
   const updateView = (tabs) => {
     const computedData = {
       ...view,

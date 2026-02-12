@@ -194,9 +194,9 @@ const NewObjectsPage = () => {
   };
 
   const renderView = {
-    "CALENDAR HOUR": (props) => (
-      <CalendarHourView {...defaultProps} {...props} />
-    ),
+    // "CALENDAR HOUR": (props) => (
+    //   <CalendarHourView {...defaultProps} {...props} />
+    // ),
     GANTT: (props) => <GanttView {...defaultProps} {...props} />,
     DEFAULT: (props) => (
       <ViewsComponent

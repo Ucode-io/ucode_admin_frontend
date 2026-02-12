@@ -5,7 +5,6 @@ import { ArrowBackIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import PermissionWrapperV2 from "@/components/PermissionWrapper/PermissionWrapperV2";
 import { useHeaderProps } from "./useHeaderProps";
 import { TableActions } from "../TableActions";
-import { AIButton } from "../AIButton";
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import { ScreenOptions } from "../ScreenOptions";
 import { AiProjectsModal } from "@/components/AiProjectsModal";

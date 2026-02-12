@@ -110,11 +110,6 @@ const CalendarView = ({
   const lastUpdatedDate = dateFormat(lastDate, 1);
   const firstUpdatedDate = dateFormat(firstDate, 0);
 
-  const navigateToSettingsPage = () => {
-    const url = `/settings/constructor/apps/${appId}/objects/${menuItem?.table_id}/${menuItem?.data?.table.slug}`;
-    navigate(url);
-  };
-
   const startWeek = (date) => {
     const currentDayOfWeek = date.getDay();
     const start = new Date(date);

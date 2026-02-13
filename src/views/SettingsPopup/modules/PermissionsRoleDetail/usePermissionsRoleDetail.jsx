@@ -106,18 +106,20 @@ export const usePermissionsRoleDetail = () => {
       });
   };
 
-  const getCustomList = () => {
+  const getCustomList = (parentId = "", earlyReturn) => {
     if (activeRoleId && activeClientType?.id) {
       setIsMenuListLoading(true);
 
-      request
+      return request
         .get(
-          `/custom-permission/accesses?role_id=${activeRoleId}&client_type_id=${activeClientType?.id}`,
+          `/custom-permission/accesses?role_id=${activeRoleId}&client_type_id=${activeClientType?.id}&parent_id=${parentId}`,
         )
         .then((res) => {
+          if (earlyReturn) return res?.permissions;
           setCustom({
             custom: res?.permissions,
           });
+          return res?.permissions;
         })
         .catch((err) => {
           console.error(err);
@@ -323,5 +325,6 @@ export const usePermissionsRoleDetail = () => {
     updateCustomPermissions,
     createCustom,
     handleDelete,
+    getCustomList,
   };
 };

@@ -59,4 +59,6 @@ const RectangleIconButton = forwardRef(
   }
 );
 
+RectangleIconButton.displayName = "RectangleIconButton";
+
 export default RectangleIconButton;

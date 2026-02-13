@@ -67,8 +67,7 @@ import { generateLangaugeText } from "../../utils/generateLanguageText";
 import { isJSONParsable } from "../../utils/isJsonValid";
 import { getAllFromDB } from "../../utils/languageDB";
 import AddOrganization from "./AddOrganization";
-// import AppSidebar from "./AppSidebarComponentV2";
-import DocsChatwootModal from "./DocsChatwootModal";
+// import AppSidebar from "./AppSidebarComponent";
 import DynamicConnections from "./DynamicConnections";
 import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
@@ -983,12 +982,6 @@ const LayoutSidebar = ({
                 </Box>
               </SidebarActionTooltip>
             </>
-
-            <DocsChatwootModal
-              sidebarIsOpen={sidebarIsOpen}
-              getActionProps={getActionProps}
-              permissions={permissions}
-            />
           </Flex>
         )}
 

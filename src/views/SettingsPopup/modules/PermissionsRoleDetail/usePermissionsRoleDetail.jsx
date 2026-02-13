@@ -161,7 +161,9 @@ export const usePermissionsRoleDetail = () => {
     //   }
     return request.post("/custom-permission", data).then(() => {
       if (!data.parent_id) {
-        setCustom((prev) => ({ custom: [...prev.custom, data] }));
+        setCustom((prev) => ({
+          custom: prev?.custom?.length ? [...prev.custom, data] : [data],
+        }));
       }
     });
   };

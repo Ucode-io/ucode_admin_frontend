@@ -86,6 +86,7 @@ export const PermissionsRoleDetail = () => {
     updateCustomPermissions,
     handleDelete,
     createCustom,
+    getCustomList,
   } = usePermissionsRoleDetail();
   const auth = useSelector((state) => state.auth);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -257,6 +258,7 @@ export const PermissionsRoleDetail = () => {
               handleDelete={handleDelete}
               createCustom={createCustom}
               activeClientType={activeClientType}
+              getCustomList={getCustomList}
             />
           )}
           {isCreateRoleModalOpen && (

@@ -37,6 +37,7 @@ const Permissions = ({
   activeClientType,
   createCustom,
   handleDelete,
+  getCustomList,
 }) => {
   const [modalData, setModalData] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -790,21 +791,13 @@ const Permissions = ({
           setSelectedRow(null);
         }}
         onSubmit={(data) => {
-          createCustom(data).then(() => {
+          createCustom(data).then(async () => {
             if (selectedRow) {
-              // Re-fetch children for the parent
-              import("@/utils/request").then(({ default: request }) => {
-                request
-                  .get(
-                    `/custom-permission/accesses?role_id=${activeRoleId}&client_type_id=${activeClientType?.id}&parent_id=${selectedRow.custom_permission_id}`,
-                  )
-                  .then((res) => {
-                    setValue(
-                      `${selectedRow._formPath}.children`,
-                      res?.permissions || [],
-                    );
-                  });
-              });
+              const result = await getCustomList(
+                selectedRow.custom_permission_id,
+                true,
+              );
+              setValue(`${selectedRow._formPath}.children`, result || []);
             }
           });
         }}

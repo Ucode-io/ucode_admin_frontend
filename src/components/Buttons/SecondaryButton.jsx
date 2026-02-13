@@ -17,4 +17,6 @@ const SecondaryButton = forwardRef(
   )
 );
 
+SecondaryButton.displayName = "SecondaryButton";
+
 export default SecondaryButton;

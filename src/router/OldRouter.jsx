@@ -2,16 +2,10 @@ import ReloadRelations from "@/components/ReloadRelations";
 import GithubMicrofrontendForm from "@/views/Constructor/Microfrontend/GithubMicrofrontendForm";
 import {lazy, Suspense, useMemo, useState} from "react";
 import {useSelector} from "react-redux";
-import {Navigate, Route, Routes, useLocation} from "react-router-dom";
-import Chat from "../components/Chat";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import KeepAliveWrapper from "../components/KeepAliveWrapper";
 import ActivityFeedPage from "../components/LayoutSidebar/Components/ActivityFeedButton/components/Activity.jsx";
-import ApiEndpoint from "../components/LayoutSidebar/Components/Api";
-import ApiEndpointDetail from "../components/LayoutSidebar/Components/Api/Components/ApiEndpointDetail";
 import Template from "../components/LayoutSidebar/Components/Documents/Components/Template";
-import Note from "../components/LayoutSidebar/Components/Documents/Note";
-import EmailPage from "../components/LayoutSidebar/Components/Email";
-import EmailDetailPage from "../components/LayoutSidebar/Components/Email/EmailDetailPage";
 import FunctionsDetail from "../components/LayoutSidebar/Components/Functions/FunctionsDetail";
 import MicroservicePage from "../components/LayoutSidebar/Components/MicroService";
 import MinioPage from "../components/LayoutSidebar/Components/Minio";
@@ -22,15 +16,12 @@ import ProjectSettingPage from "../components/LayoutSidebar/Components/Project";
 import Queries from "../components/LayoutSidebar/Components/Query";
 import VariableResources from "../components/LayoutSidebar/Components/Resources/VariableResource";
 import VariableResourceForm from "../components/LayoutSidebar/Components/Resources/VariableResourceForm";
-import Scenarios from "../components/LayoutSidebar/Components/Scenario";
 import PageFallback from "../components/PageFallback";
 import ReloadPage from "../components/ReloadComponent/index";
 import ReloadWrapper from "../components/ReloadWrapper";
 import LoginMicrofrontend from "../layouts/AuthLayout/LoginMicrofrontend";
 import MainLayout from "../layouts/MainLayout";
-import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
-import ApiKeysForm from "../views/ApiKeys/ApiKeysForm.jsx";
-import ApiKeyPage from "../views/ApiKeys/index.jsx";
+import { useLoginMicrofrontendQuery } from "../services/loginMicrofrontendService";
 import Invite from "../views/Auth/Invite";
 import LoginDesign from "../views/Auth/LoginDesign";
 import CompanyPage from "../views/Company";
@@ -53,7 +44,6 @@ import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
 import ObjectsPage from "../views/Objects";
 import ObjectsFormPage from "../views/Objects/ObjectsFormPage";
 import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
-import PivotTableView from "../views/Objects/PivotTableView";
 import PermissionDetail from "../views/Permissions";
 import RoleDetail from "../views/Permissions/Roles/Detail";
 import ProjectPage from "../views/Projects";
@@ -214,9 +204,6 @@ const OldRouter = ({ resetQueryClient }) => {
 
           <Route path=":appId" element={<div></div>} />
 
-          <Route path=":appId/chat" element={<Chat />}>
-            <Route path=":chat_id" element={<Chat />} />
-          </Route>
           <Route path=":appId/backet/:minioId">
             <Route index element={<MinioPage />} />
             <Route path=":fileId" element={<MinioSinglePage />} />
@@ -236,11 +223,6 @@ const OldRouter = ({ resetQueryClient }) => {
             <Route index element={<SmsPage />} />
             <Route path="create" element={<SmsFormPage />} />
             <Route path=":redirectId" element={<SmsFormPage />} />
-          </Route>
-          <Route path=":appId/api-key">
-            <Route index element={<ApiKeyPage />} />
-            <Route path="create" element={<ApiKeysForm />} />
-            <Route path=":apiKeyId" element={<ApiKeysForm />} />
           </Route>
           <Route path=":appId/environments">
             <Route index element={<EnvironmentPage />} />
@@ -266,10 +248,6 @@ const OldRouter = ({ resetQueryClient }) => {
           <Route
             path=":appId/report-setting/:reportSettingsId"
             element={<ReportSettings />}
-          />
-          <Route
-            path=":appId/pivot-template/:pivotTemplateId"
-            element={<PivotTableView />}
           />
 
           <Route path=":appId/user-page/:userMenuId">
@@ -323,17 +301,8 @@ const OldRouter = ({ resetQueryClient }) => {
             <Route index element={<DatabasePage />} />
             <Route path="configuration" element={<DatabaseConfiguration />} />
           </Route>
-          <Route path=":appId/scenario/:categoryId">
-            <Route index element={<Scenarios />} />
-            <Route path=":scenarioId" element={<Scenarios />} />
-          </Route>
           <Route path=":appId/micro-service">
             <Route index element={<MicroservicePage />} />
-          </Route>
-          <Route path=":appId/email-setting">
-            <Route index element={<EmailPage />} />
-            <Route path="create" element={<EmailDetailPage />} />
-            <Route path=":emailId" element={<EmailDetailPage />} />
           </Route>
           <Route path=":appId/project-setting">
             <Route index element={<ProjectSettingPage />} />
@@ -353,15 +322,6 @@ const OldRouter = ({ resetQueryClient }) => {
             <Route path=":queryId" element={<Queries />} />
             <Route path="create" element={<Queries />} />
           </Route>
-          <Route path=":appId/api-endpoints">
-            <Route path=":categoryId">
-              <Route path="create" element={<ApiEndpoint />} />
-              <Route path=":endpointId">
-                <Route index element={<ApiEndpoint />} />
-                <Route path="preview" element={<ApiEndpointDetail />} />
-              </Route>
-            </Route>
-          </Route>
           <Route path=":appId/variable-resources">
             <Route index element={<VariableResources />} />
             <Route path="create" element={<VariableResourceForm />} />
@@ -369,10 +329,6 @@ const OldRouter = ({ resetQueryClient }) => {
           </Route>
 
           <Route path=":appId/docs">
-            <Route path="note/:folderId">
-              <Route path="create" element={<Note />} />
-              <Route path=":noteId" element={<Note />} />
-            </Route>
             <Route path="template/:folderId">
               <Route path="create" element={<Template />} />
               <Route path=":templateId" element={<Template />} />

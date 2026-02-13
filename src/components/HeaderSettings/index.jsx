@@ -1,12 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import BackButton from "../BackButton";
 import IconGenerator from "../IconPicker/IconGenerator";
-import ProfilePanel from "../ProfilePanel";
 import styles from "./style.module.scss";
 import { Tooltip } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import RectangleIconButton from "../Buttons/RectangleIconButton";
-import NewProfilePanel from "../ProfilePanel/NewProfileMenu";
 const HeaderSettings = ({
   title = "",
   subtitle,
@@ -66,7 +62,6 @@ const HeaderSettings = ({
             </RectangleIconButton>
           </Tooltip>
           <AppSelector />
-          <NewProfilePanel />
         </div>
       )} */}
     </div>

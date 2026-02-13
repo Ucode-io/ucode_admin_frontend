@@ -84,6 +84,7 @@ export const PermissionsRoleDetail = () => {
     getValues,
     activeRoleId,
     updateCustomPermissions,
+    handleDelete,
     createCustom,
   } = usePermissionsRoleDetail();
   const auth = useSelector((state) => state.auth);
@@ -253,6 +254,7 @@ export const PermissionsRoleDetail = () => {
               activeRoleId={activeRoleId}
               getValues={getValues}
               updateCustomPermissions={updateCustomPermissions}
+              handleDelete={handleDelete}
               createCustom={createCustom}
               activeClientType={activeClientType}
             />

@@ -36,6 +36,7 @@ const Permissions = ({
   updateCustomPermissions,
   activeClientType,
   createCustom,
+  handleDelete,
 }) => {
   const [modalData, setModalData] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -700,6 +701,23 @@ const Permissions = ({
                           ) || "Custom permissions"}
                         </Box>
                       </CTableCell>
+                      <CTableCell rowSpan={2} colSpan={1}>
+                        <Box
+                          color="#475467"
+                          fontSize="12px"
+                          fontWeight={500}
+                          lineHeight="18px"
+                          display="flex"
+                          justifyContent="center"
+                          alignItems="center"
+                        >
+                          {generateLangaugeText(
+                            permissionLan,
+                            i18n?.language,
+                            "Delete",
+                          ) || "Delete"}
+                        </Box>
+                      </CTableCell>
                     </CTableHeadRow>
                     <CTableHeadRow>
                       <CTableCell>
@@ -749,8 +767,10 @@ const Permissions = ({
                         activeRoleId={activeRoleId}
                         activeClientType={activeClientType}
                         handleUpdate={handleUpdate}
+                        handleDelete={handleDelete}
                         setIsAddModalOpen={setIsAddModalOpen}
                         setSelectedRow={setSelectedRow}
+                        getValues={getValues}
                       />
                     ))}
                   </CTableBody>

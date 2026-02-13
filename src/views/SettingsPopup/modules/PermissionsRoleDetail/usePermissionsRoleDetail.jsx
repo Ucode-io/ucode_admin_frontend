@@ -71,6 +71,15 @@ export const usePermissionsRoleDetail = () => {
   });
   const [isMenuListLoading, setIsMenuListLoading] = useState([]);
 
+  const handleDelete = (item) => {
+    request
+      .delete(`/custom-permission/${item.custom_permission_id}`)
+      .then(() => {
+        dispatch(showAlert("Successfully deleted", "success"));
+        getCustomList();
+      });
+  };
+
   const getMenuList = () => {
     setIsMenuListLoading(true);
 
@@ -313,5 +322,6 @@ export const usePermissionsRoleDetail = () => {
     custom,
     updateCustomPermissions,
     createCustom,
+    handleDelete,
   };
 };

@@ -798,6 +798,8 @@ const Permissions = ({
                 true,
               );
               setValue(`${selectedRow._formPath}.children`, result || []);
+            } else {
+              getCustomList();
             }
           });
         }}

@@ -41,9 +41,6 @@ import Microfrontend from "../views/Microfrontend";
 import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
 import ObjectsPage from "../views/Objects";
 import ObjectsFormPage from "../views/Objects/ObjectsFormPage";
-import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
-import PermissionDetail from "../views/Permissions";
-import RoleDetail from "../views/Permissions/Roles/Detail";
 import ProjectPage from "../views/Projects";
 import ProjectForm from "../views/Projects/ProjectFormPage";
 import RedirectPage from "../views/Redirect";
@@ -237,20 +234,11 @@ const OldRouter = ({ resetQueryClient }) => {
           />
 
           <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
-          <Route
-            path=":appId/report-setting/:reportSettingsId"
-            element={<ReportSettings />}
-          />
 
           <Route path=":appId/user-page/:userMenuId">
             <Route index element={<ClientUserPage />} />
             <Route path="create" element={<ClientUserForm />} />
             <Route path=":userId" element={<ClientUserForm />} />
-          </Route>
-
-          <Route path=":appId/permission/:clientId">
-            <Route index element={<PermissionDetail />} />
-            <Route path="role/:roleId" element={<RoleDetail />} />
           </Route>
 
           <Route path=":appId/microfrontend">

@@ -13,9 +13,7 @@ import {TabPanel, Tabs} from "react-tabs";
 import constructorTableService from "../../services/constructorTableService";
 import {useMenuGetByIdQuery} from "../../services/menuService";
 import {store} from "../../store";
-import {listToMap, listToMapWithoutRel} from "../../utils/listToMap";
-import CalendarHourView from "./CalendarHourView";
-import GanttView from "./GanttView";
+import { listToMap, listToMapWithoutRel } from "../../utils/listToMap";
 import ViewsWithGroups from "./ViewsWithGroups";
 import {NewUiViewsWithGroups} from "@/views/table-redesign/views-with-groups";
 import {Button, ChakraProvider, Image, Text} from "@chakra-ui/react";
@@ -186,10 +184,6 @@ const ObjectsPage = () => {
   };
 
   const renderView = {
-    "CALENDAR HOUR": (props) => (
-      <CalendarHourView {...defaultProps} {...props} />
-    ),
-    GANTT: (props) => <GanttView {...defaultProps} {...props} />,
     DEFAULT: (props) => (
       <ViewsComponent
         tableInfo={tableInfo}

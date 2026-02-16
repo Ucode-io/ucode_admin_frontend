@@ -15,7 +15,6 @@ import { ContentTitle } from "../../components/ContentTitle";
 import { Box, Button, CircularProgress } from "@mui/material";
 import clsx from "clsx";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
-import ChartDb from "../../../ChartDb";
 import ExternalDatabases from "./ExternalDatabases";
 import { useState } from "react";
 import { useQuery } from "react-query";
@@ -73,7 +72,6 @@ export const Models = () => {
       <Tabs>
         <TabList style={{ borderBottom: "none", marginBottom: "10px" }}>
           <Tab style={{ padding: "10px" }}>Models</Tab>
-          <Tab style={{ padding: "10px" }}>ChartDB</Tab>
           {/* <Tab style={{padding: "10px"}}>External Databases</Tab> */}
         </TabList>
         <TabPanel>
@@ -183,11 +181,6 @@ export const Models = () => {
               </CTable>
             </TableCard>
           </div>
-        </TabPanel>
-        <TabPanel>
-          <Box sx={{ height: "585px" }}>
-            <ChartDb />
-          </Box>
         </TabPanel>
 
         {/* <TabPanel>

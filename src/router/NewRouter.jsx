@@ -41,8 +41,6 @@ import DatabasePage from "../views/DataBase";
 import DatabaseConfiguration from "../views/DataBase/Configuration";
 import DocumentTemplateDetail from "../views/DocumentTemplates/Detail/index.jsx";
 import DocumentTemplates from "../views/DocumentTemplates/index.jsx";
-import EnvironmentPage from "../views/Environments";
-import EnvironmentForm from "../views/Environments/EnvironmentFormPage";
 import Connections from "../views/Matrix/Connections";
 import Microfrontend from "../views/Microfrontend";
 import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
@@ -65,7 +63,6 @@ import RegisterFormPageDesign from "../views/Auth/components/RegisterFormPageDes
 import { ClientTypes } from "@/views/client-types";
 import LanguageControl from "../components/LayoutSidebar/Components/LanguageControl";
 import LayoutSettings from "../views/Objects/LayoutSettings";
-import ChartDb from "../views/ChartDb";
 import NewObjectsFormPage from "../views/Objects/NewObjectsFormPage";
 // import NewObjectsPage from "../views/Objects/NewObjectsPage";
 import DocView from "../views/Objects/DocView";
@@ -243,11 +240,6 @@ const NewRouter = ({ resetQueryClient }) => {
             <Route path="create" element={<SmsFormPage />} />
             <Route path=":redirectId" element={<SmsFormPage />} />
           </Route>
-          <Route path=":menuId/environments">
-            <Route index element={<EnvironmentPage />} />
-            <Route path="create" element={<EnvironmentForm />} />
-            <Route path=":envId" element={<EnvironmentForm />} />
-          </Route>
           <Route path=":menuId/company">
             <Route index element={<CompanyPage />} />
             <Route path=":companyId" element={<CompanyForm />} />
@@ -289,10 +281,6 @@ const NewRouter = ({ resetQueryClient }) => {
 
           <Route path=":appId/website">
             <Route index element={<WebsitePage />} />
-          </Route>
-
-          <Route path=":appId/chartDb">
-            <Route index element={<ChartDb />} />
           </Route>
 
           <Route path=":appId/openfaas-functions">

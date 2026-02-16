@@ -45,10 +45,6 @@ import DocumentTemplates from "../views/DocumentTemplates/index.jsx";
 import Connections from "../views/Matrix/Connections";
 import Microfrontend from "../views/Microfrontend";
 import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
-import ObjectsFormPage from "../views/Objects/ObjectsFormPage";
-import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
-import PermissionDetail from "../views/Permissions";
-import RoleDetail from "../views/Permissions/Roles/Detail";
 import ProjectPage from "../views/Projects";
 import ProjectForm from "../views/Projects/ProjectFormPage";
 import RedirectPage from "../views/Redirect";
@@ -64,8 +60,6 @@ import RegisterFormPageDesign from "../views/Auth/components/RegisterFormPageDes
 import { ClientTypes } from "@/views/client-types";
 import LanguageControl from "../components/LayoutSidebar/Components/LanguageControl";
 import LayoutSettings from "../views/Objects/LayoutSettings";
-import NewObjectsFormPage from "../views/Objects/NewObjectsFormPage";
-// import NewObjectsPage from "../views/Objects/NewObjectsPage";
 import DocView from "../views/Objects/DocView";
 import { Views } from "@/views/views";
 import { AiAgent } from "@/views/AiAgent";
@@ -257,20 +251,11 @@ const NewRouter = ({ resetQueryClient }) => {
           />
 
           <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
-          <Route
-            path=":appId/report-setting/:reportSettingsId"
-            element={<ReportSettings />}
-          />
 
           <Route path=":appId/user-page/:userMenuId">
             <Route index element={<ClientUserPage />} />
             <Route path="create" element={<ClientUserForm />} />
             <Route path=":userId" element={<ClientUserForm />} />
-          </Route>
-
-          <Route path=":menuId/permission/:clientId">
-            <Route index element={<PermissionDetail />} />
-            <Route path="role/:roleId" element={<RoleDetail />} />
           </Route>
 
           <Route path=":appId/microfrontend">
@@ -348,10 +333,6 @@ const NewRouter = ({ resetQueryClient }) => {
           </Route>
 
           <Route path=":menuId" element={<Views />} />
-          {/* <Route
-            path=":menuId"
-            element={<ReloadWrapper component={NewObjectsPage} />}
-          /> */}
           <Route path=":menuId/templates" element={<DocumentTemplates />} />
 
           <Route path=":menuId/object/:tableSlug/docs" element={<DocView />} />
@@ -366,32 +347,22 @@ const NewRouter = ({ resetQueryClient }) => {
             element={<DocumentTemplateDetail />}
           />
 
-          <Route
+          {/* <Route
             path=":menuId/detail/create"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />
               </KeepAliveWrapper>
             }
-          />
-          <Route
-            path=":menuId/detail"
-            element={
-              <KeepAliveWrapper>
-                {/* <ObjectsFormPage /> */}
-                <NewObjectsFormPage />
-              </KeepAliveWrapper>
-            }
-          />
-          <Route
+          /> */}
+          {/* <Route
             path=":menuId/detail/:appId/:tableSlug/:id"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />
-                {/* <NewObjectsFormPage /> */}
               </KeepAliveWrapper>
             }
-          />
+          /> */}
 
           <Route
             path=":menuId/customize/:id"

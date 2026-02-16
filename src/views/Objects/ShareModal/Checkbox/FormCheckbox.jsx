@@ -1,5 +1,5 @@
-import { Checkbox } from "@mui/material";
 import { Controller } from "react-hook-form";
+import { Checkbox } from "@mui/material";
 
 const FormCheckbox = ({
   control,

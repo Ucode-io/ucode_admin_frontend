@@ -353,6 +353,8 @@ const BlockItem = ({
           data-cy="three-dots-button"
           key={element.id}
           style={{
+            width: "100%",
+            alignItems: "center",
             marginTop: "2px",
             marginBottom: "2px",
             borderRadius: "8px",
@@ -367,7 +369,10 @@ const BlockItem = ({
             clickHandler(e);
           }}
         >
-          <div className="label">
+          <div
+            className="label"
+            style={{ width: "100%", display: "flex", alignItems: "center" }}
+          >
             {element?.type === "USER" && (
               <PersonIcon
                 style={{

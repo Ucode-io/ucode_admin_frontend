@@ -9,7 +9,7 @@ import {saveGroupedToDB} from "../../utils/languageDB";
 
 export const loginAction = createAsyncThunk(
   "auth/login",
-  async (data, {dispatch}) => {
+  async (data, { dispatch, rejectWithValue }) => {
     try {
       const res = await authService.login(data);
       dispatch(
@@ -18,7 +18,7 @@ export const loginAction = createAsyncThunk(
           project_id: data.project_id,
           environment_ids: data?.environment_ids,
           currencies: data?.currencies,
-        })
+        }),
       );
       dispatch(companyActions.setCompanyId(res?.user?.company_id));
       dispatch(companyActions.setProjectId(data.project_id));
@@ -83,8 +83,8 @@ export const loginAction = createAsyncThunk(
 
       // dispatch(cashboxActions.setData(cashboxData))
     } catch (error) {
-      throw new Error(error);
+      return rejectWithValue(error.response?.data || error.message);
       // dispatch(showAlert('Username or password is incorrect'))
     }
-  }
+  },
 );

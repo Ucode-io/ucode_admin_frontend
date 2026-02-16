@@ -213,18 +213,18 @@ const LoginFormDesign = ({
           computeCompanyElement(res?.companies ?? "");
           localStorage.setItem(
             "new_router",
-            res?.companies?.[0]?.projects?.[0]?.new_router || "false"
+            res?.companies?.[0]?.projects?.[0]?.new_router || "false",
           );
           localStorage.setItem(
             "newUi",
-            res?.companies?.[0]?.projects?.[0]?.new_design || false
+            res?.companies?.[0]?.projects?.[0]?.new_design || false,
           );
           res?.companies?.[0]?.projects?.[0]?.new_layout
             ? localStorage.setItem("detailPage", "SidePeek")
             : localStorage.setItem("detailPage", "");
           localStorage.setItem(
             "newLayout",
-            res?.companies?.[0]?.projects?.[0]?.new_layout || false
+            res?.companies?.[0]?.projects?.[0]?.new_layout || false,
           );
         } else {
           dispatch(showAlert("The company does not exist", "error"));
@@ -234,6 +234,7 @@ const LoginFormDesign = ({
       })
       .catch((err) => {
         setLoading(false);
+        setGoogleAuth(null);
       });
   };
 
@@ -314,7 +315,7 @@ const LoginFormDesign = ({
     }
   };
 
-  const onSubmitDialog = (values) => {
+  const onSubmitDialog = async (values) => {
     const data = {
       ...values,
       type: values?.phone
@@ -330,20 +331,30 @@ const LoginFormDesign = ({
       ?.find((item) => item?.id === selectedProjectID)
       ?.resource_environments?.map((el) => el?.environment_id);
     const computedEnv = computedEnvironments?.find(
-      (item) => item?.value === selectedEnvID
+      (item) => item?.value === selectedEnvID,
     );
     const currencies = companies[0]?.projects?.find(
-      (item) => item?.id === selectedProjectID
+      (item) => item?.id === selectedProjectID,
     )?.currencies;
 
     dispatch(authActions.setStatus(computedEnv?.access_type));
-    dispatch(
-      loginAction({
-        ...data,
-        environment_ids: computedProject,
-        currencies: currencies,
-      })
-    );
+
+    try {
+      const result = await dispatch(
+        loginAction({
+          ...data,
+          environment_ids: computedProject,
+          currencies: currencies,
+        }),
+      ).unwrap();
+      console.log("Успешный вход:", result);
+    } catch (e) {
+      console.error("Ошибка при сабмите:", e);
+      setLoading(false);
+      setIsUserId(null);
+      setCompanies([]);
+      // Здесь можно показать уведомление пользователю (Toast, Alert)
+    }
   };
 
   const computeCompanyElement = (company) => {

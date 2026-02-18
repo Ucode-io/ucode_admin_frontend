@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { Skeleton } from "@mui/material";
 import CellRelationFormElementNew from "./CellRelationFormElementNew";
+import CSelect from "@/components/AppUniversalSelect/CSelect";
 
 const CellManyToManyRelationElement = lazy(
   () => import("./CellManyToManyRelationElement"),
@@ -100,6 +101,21 @@ const CellElementGeneratorForRelation = ({
     }
   }, [row, computedSlug, defaultValue]);
 
+  const autoFilters = field?.attributes?.auto_filters;
+
+  const autoFiltersValue = useMemo(() => {
+    const result = {};
+    autoFilters?.forEach((item) => {
+      const autoFilterFromCellValue = rowData?.find(
+        (rowItem) => rowItem?.slug === item?.field_from,
+      )?.value;
+
+      const key = item?.field_to;
+      if (key) result[key] = autoFilterFromCellValue;
+    });
+    return result;
+  }, [autoFilters, rowData]);
+
   const renderInputValues = {
     LOOKUP: () => {
       return newColumn ? (
@@ -113,7 +129,7 @@ const CellElementGeneratorForRelation = ({
             />
           }
         >
-          <CellRelationFormElementForNewColumn
+          <CSelect
             field={field}
             index={index}
             control={control}
@@ -129,17 +145,19 @@ const CellElementGeneratorForRelation = ({
           />
         </Suspense>
       ) : (
-        <CellRelationFormElementNew
+        <CSelect
           row={row}
           index={index}
           field={field}
           control={control}
           isTableView={isTableView}
+          variant={isTableView ? "table" : "standard"}
           name={computedSlug}
           disabled={isDisabled}
           isBlackBg={isBlackBg}
           setFormValue={setFormValue}
           updateObject={updateObject}
+          value={row?.[field.slug]}
           handleChange={handleChange}
           defaultValue={defaultValue}
           newUi={newUi}
@@ -149,6 +167,7 @@ const CellElementGeneratorForRelation = ({
           handleOnClose={handleOnClose}
           autoFocus={autoFocus}
           rowData={rowData}
+          autoFiltersValue={autoFiltersValue}
         />
       );
     },

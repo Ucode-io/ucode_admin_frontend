@@ -14,11 +14,11 @@ import HFInternationPhone from "@/components/FormElementsOptimization/HFInternat
 import HFModalMap from "@/components/FormElementsOptimization/HFModalMap";
 import HFMultiFile from "@/components/FormElementsOptimization/HFMultiFile";
 import HFMultiImage from "@/components/FormElementsOptimization/HFMultiImage";
-import HFMultipleAutocomplete from "@/components/FormElementsOptimization/HFMultipleAutocomplete";
+
 import HFNumberField from "@/components/FormElementsOptimization/HFNumberField";
 import HFPhotoUpload from "@/components/FormElementsOptimization/HFPhotoUpload";
 import HFQrFieldComponent from "@/components/FormElementsOptimization/HFQrFieldOptimization";
-import HFStatusField from "@/components/FormElementsOptimization/HFStatusField";
+
 
 import HFTextField from "@/components/FormElementsOptimization/HFTextField";
 import HFTextFieldWithMask from "@/components/FormElementsOptimization/HFTextFieldWithMask";
@@ -45,6 +45,7 @@ import { MultiSelectDisplay } from "./DisplayFields/MultiSelectDisplay";
 import { SingleLineDisplay } from "./DisplayFields/SingleLineDisplay";
 import { FloatDisplay } from "./DisplayFields/FloatDisplay";
 import formatWithSpaces from "@/utils/formatWithSpace";
+import CSelect from "@/components/AppUniversalSelect/CSelect";
 
 export const getFieldByType = ({
   control,
@@ -236,8 +237,11 @@ export const getFieldByType = ({
       TEXT: <ElementText row={row} value={autofillValue} />,
       BUTTON: <HFButtonField row={row} isTableView={true} />,
       STATUS: isEditing ? (
-        <HFStatusField
+        <CSelect
+          type="status"
+          variant={isTableView ? "table" : "standard"}
           row={row}
+          value={row?.value}
           newUi={newUi}
           disabled={row?.attributes?.disabled}
           handleChange={handleChange}
@@ -323,23 +327,46 @@ export const getFieldByType = ({
           fieldsList={fields}
         />
       ),
-      MULTISELECT: isEditing ? (
-        <HFMultipleAutocomplete
-          disabled={isDisabled}
-          isFormEdit
-          isNewTableView={true}
-          width="100%"
-          required={required}
-          placeholder={row.attributes?.placeholder}
-          newUi={newUi}
-          handleChange={handleChange}
-          onClose={backDisplay}
-          row={row}
-          defaultOpen
-        />
-      ) : (
-        <MultiSelectDisplay row={row} onClick={handleClickField} />
+      MULTISELECT: (
+        <>
+          {isEditing ? (
+            <CSelect
+              type="multi"
+              row={row}
+              value={row?.value}
+              isMulti={row.attributes?.is_multiselect} // Флаг из атрибутов
+              disabled={isDisabled}
+              variant="table" // Для компактного стиля в таблице
+              placeholder={row.attributes?.placeholder}
+              handleChange={handleChange}
+              onClose={backDisplay}
+              defaultOpen={true}
+            />
+          ) : (
+            <MultiSelectDisplay row={row} onClick={handleClickField} />
+          )}
+        </>
       ),
+      //  isEditing ? (
+      //   <>
+
+      //     <HFMultipleAutocomplete
+      //       disabled={isDisabled}
+      //       isFormEdit
+      //       isNewTableView={true}
+      //       width="100%"
+      //       required={required}
+      //       placeholder={row.attributes?.placeholder}
+      //       newUi={newUi}
+      //       handleChange={handleChange}
+      //       onClose={backDisplay}
+      //       row={row}
+      //       defaultOpen
+      //     />
+      //   </>
+      // ) : (
+      //   <MultiSelectDisplay row={row} onClick={handleClickField} />
+      // ),
       NUMBER: isEditing ? (
         <HFNumberField
           disabled={isDisabled}

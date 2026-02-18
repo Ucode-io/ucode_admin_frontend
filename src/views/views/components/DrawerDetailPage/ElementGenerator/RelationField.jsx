@@ -191,6 +191,8 @@ const AutoCompleteElement = ({
     }),
   };
 
+  console.log({ tableSlug, relationTableSlug });
+
   const queryFn = () => {
     if (!tableSlug) return null;
     const requestData = {
@@ -358,8 +360,11 @@ const AutoCompleteElement = ({
 
   const getValueData = async () => {
     try {
-      const id = state?.[`${tableSlug}_id`] || value;
-      const res = await constructorObjectService.getById(tableSlug, id);
+      const id = state?.[`${tableSlug || relationTableSlug}_id`] || value;
+      const res = await constructorObjectService.getById(
+        tableSlug || relationTableSlug,
+        id,
+      );
       const data = res?.data?.response;
 
       if (data && data.prepayment_balance) {

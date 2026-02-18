@@ -14,7 +14,10 @@ import useDebounce from "@/hooks/useDebounce";
 import Select from "react-select";
 import { Box, Tooltip } from "@mui/material";
 import IconGenerator from "@/components/IconPicker/IconGenerator";
-import { getRelationFieldTabsLabel } from "@/utils/getRelationFieldLabel";
+import {
+  getRelationFieldTabsLabel,
+  getRelationFieldTabsLabelLang,
+} from "@/utils/getRelationFieldLabel";
 import { showAlert } from "@/store/alert/alert.thunk";
 import { useViewContext } from "@/providers/ViewProvider";
 
@@ -134,6 +137,8 @@ const AutoCompleteElement = ({
   const { state } = useLocation();
   const languages = useSelector((state) => state.languages.list);
   const isSettings = window.location.pathname?.includes("settings/constructor");
+
+  const { tableSlug: viewTableSlug } = useViewContext();
 
   const customStyles = {
     control: (provided) => ({
@@ -354,10 +359,7 @@ const AutoCompleteElement = ({
   const getValueData = async () => {
     try {
       const id = state?.[`${tableSlug || relationTableSlug}_id`] || value;
-      const res = await constructorObjectService.getById(
-        tableSlug || relationTableSlug,
-        id,
-      );
+      const res = await constructorObjectService.getById(tableSlug || relationTableSlug, id);
       const data = res?.data?.response;
 
       if (data && data.prepayment_balance) {
@@ -655,7 +657,6 @@ const AutoCompleteElement = ({
             inputChangeHandler(e);
           }}
           getOptionLabel={(option) => {
-            console.log({ option, computedViewFields });
             return computedViewFields?.map((el) => {
               if (field?.attributes?.enable_multi_language) {
                 return `${option[`${el}_${activeLang ?? i18n?.language}`] ?? option[`${el}`]} `;

@@ -258,6 +258,8 @@ const AutoCompleteElement = ({
     return result;
   }, [field?.view_fields, debouncedValue]);
 
+  console.log({ searchedMap, autoFiltersValue });
+
   const queryFn = (pageProp) => {
     if (!field?.table_slug) return null;
     const requestData = {

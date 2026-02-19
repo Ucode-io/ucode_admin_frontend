@@ -46,6 +46,8 @@ import { SingleLineDisplay } from "./DisplayFields/SingleLineDisplay";
 import { FloatDisplay } from "./DisplayFields/FloatDisplay";
 import formatWithSpaces from "@/utils/formatWithSpace";
 import CSelect from "@/components/AppUniversalSelect/CSelect";
+import HFStatusField from "@/components/FormElementsOptimization/HFStatusField";
+import HFMultipleAutocomplete from "@/components/FormElementsOptimization/HFMultipleAutocomplete";
 
 export const getFieldByType = ({
   control,
@@ -237,11 +239,8 @@ export const getFieldByType = ({
       TEXT: <ElementText row={row} value={autofillValue} />,
       BUTTON: <HFButtonField row={row} isTableView={true} />,
       STATUS: isEditing ? (
-        <CSelect
-          type="status"
-          variant={isTableView ? "table" : "standard"}
+        <HFStatusField
           row={row}
-          value={row?.value}
           newUi={newUi}
           disabled={row?.attributes?.disabled}
           handleChange={handleChange}
@@ -330,17 +329,18 @@ export const getFieldByType = ({
       MULTISELECT: (
         <>
           {isEditing ? (
-            <CSelect
-              type="multi"
-              row={row}
-              value={row?.value}
-              isMulti={row.attributes?.is_multiselect} // Флаг из атрибутов
+            <HFMultipleAutocomplete
               disabled={isDisabled}
-              variant="table" // Для компактного стиля в таблице
+              isFormEdit
+              isNewTableView={true}
+              width="100%"
+              required={required}
               placeholder={row.attributes?.placeholder}
+              newUi={newUi}
               handleChange={handleChange}
               onClose={backDisplay}
-              defaultOpen={true}
+              row={row}
+              defaultOpen
             />
           ) : (
             <MultiSelectDisplay row={row} onClick={handleClickField} />

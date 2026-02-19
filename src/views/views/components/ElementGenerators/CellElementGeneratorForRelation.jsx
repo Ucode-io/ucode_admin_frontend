@@ -129,7 +129,7 @@ const CellElementGeneratorForRelation = ({
             />
           }
         >
-          <CSelect
+          <CellRelationFormElementForNewColumn
             field={field}
             index={index}
             control={control}
@@ -145,7 +145,7 @@ const CellElementGeneratorForRelation = ({
           />
         </Suspense>
       ) : (
-        <CSelect
+        <CellRelationFormElementForNewColumn
           row={row}
           index={index}
           field={field}

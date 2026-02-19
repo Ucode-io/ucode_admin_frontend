@@ -13,8 +13,6 @@ export const MultiSelectDisplay = ({ row, onClick = () => {} }) => {
   const hasIcon = row.attributes?.has_icon;
   const isMultiSelect = row.attributes?.is_multiselect;
 
-  console.log({ row });
-
   const value = row?.value;
 
   const computedValue = useMemo(() => {

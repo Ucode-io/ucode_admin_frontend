@@ -70,8 +70,13 @@ const StatusMenuList = (props) => {
               {group.options.map((opt) => (
                 <div
                   key={opt.value}
-                  onClick={() => {
-                    props.setValue(opt, "set-value");
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    props.selectOption(opt);
+                  }}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                   }}
                   style={{
                     fontSize: "12.8px",
@@ -647,6 +652,29 @@ const CSelectBase = ({
     return <components.Option {...props} />;
   };
 
+  const handleSelectChange = (newValue) => {
+    if (isMulti || isMultiselectType) {
+      const val = newValue?.map((n) => n.guid || n.slug || n.value);
+      const last = newValue[newValue.length - 1];
+      if (last && (last.value === "NEW" || last.__isNew__)) {
+        handleCreateOption(last.inputValue);
+        return;
+      }
+      onChange(val, newValue);
+    } else {
+      const val = newValue
+        ? newValue.guid ||
+          newValue.slug ||
+          newValue.value ||
+          newValue?.label ||
+          newValue?.[`label_${i18n.language}`]
+        : null;
+      onChange(val, newValue);
+    }
+    if (updateObject) updateObject();
+    if (!isMulti && !isMultiselectType) onClose();
+  };
+
   return (
     <>
       <div
@@ -757,23 +785,7 @@ const CSelectBase = ({
             getOptionValue={(opt) =>
               opt.guid || opt.value || opt.slug || opt.id
             }
-            onChange={(newValue) => {
-              if (isMulti || isMultiselectType) {
-                const val = newValue?.map((n) => n.guid || n.slug || n.value);
-                const last = newValue[newValue.length - 1];
-                if (last && (last.value === "NEW" || last.__isNew__)) {
-                  handleCreateOption(last.inputValue);
-                  return;
-                }
-                onChange(val, newValue);
-              } else {
-                const val = newValue
-                  ? newValue.guid || newValue.slug || newValue.value
-                  : null;
-                onChange(val, newValue);
-              }
-              if (updateObject) updateObject();
-            }}
+            onChange={handleSelectChange}
             components={{
               ...(isStatusType
                 ? {
@@ -782,6 +794,7 @@ const CSelectBase = ({
                         {...menuListProps}
                         type={currentField?.type}
                         field={currentField}
+                        onChange={onChange}
                       />
                     ),
                   }

@@ -49,7 +49,8 @@ import {
 } from "./hf-datePickers";
 import HFIconPicker from "./hf-iconPicker";
 import HFInternationalPhone from "./hf-internationalPhone";
-import CSelect from "@/components/AppUniversalSelect/CSelect";
+import HFMultipleAutocomplete from "./hf-multiselectField";
+import HFStatusField from "./hf-statusField";
 import { HFVideoUpload } from "./hf-videoUploadField";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import cls from "./field-generator.styles.module.scss";
@@ -58,18 +59,18 @@ import HFSwitch from "@/components/FormElements/HFSwitch";
 import { BackendFormulaDisplay } from "../../ElementGenerators/DisplayFields/BackendFormulaDisplay";
 // import RelationField from "./RelationField";
 
-
+const RelationField = lazy(() => import("./RelationField"));
 
 function DrawerFieldGenerator({
   field,
   control,
-  watch = () => { },
+  watch = () => {},
   drawerDetail,
   isDisabled,
   activeLang = "",
   inviteModal = false,
-  setFormValue = () => { },
-  updateObject = () => { },
+  setFormValue = () => {},
+  updateObject = () => {},
   errors,
   isRequired,
 }) {
@@ -149,7 +150,7 @@ function DrawerFieldGenerator({
             </>
           }
         >
-          <CSelect
+          <RelationField
             placeholder={placeholderField}
             updateObject={updateObject}
             disabled={isDisabled}
@@ -285,10 +286,10 @@ function DrawerFieldGenerator({
 
     case "STATUS":
       return (
-        <CSelect
-          type="status"
+        <HFStatusField
           placeholder={placeholderField}
           disabled={isDisabled}
+          drawerDetail={drawerDetail}
           control={control}
           name={computedSlug}
           field={field}
@@ -298,8 +299,7 @@ function DrawerFieldGenerator({
 
     case "MULTISELECT":
       return (
-        <CSelect
-          type="multiselect"
+        <HFMultipleAutocomplete
           disabled={isDisabled}
           control={control}
           name={computedSlug}

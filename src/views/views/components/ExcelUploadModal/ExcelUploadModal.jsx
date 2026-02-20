@@ -111,7 +111,9 @@ export const ExcelUploadModal = ({ fieldsMap, handleClose, tableSlug : tableSlug
     return (
       options?.map((el) => ({
         value: el.id,
-        label: `${field.label ?? ""} (${el.label})`,
+        label:
+          field?.attributes?.[`label_${i18n?.language}`] ??
+          `${field.label ?? ""} (${el.label})`,
       })) ?? []
     );
   };
@@ -148,7 +150,7 @@ export const ExcelUploadModal = ({ fieldsMap, handleClose, tableSlug : tableSlug
                     {generateLangaugeText(
                       lang,
                       i18n.language,
-                      "Import pop-up content"
+                      "Import pop-up content",
                     )}
                   </p>
                   <input
@@ -178,7 +180,7 @@ export const ExcelUploadModal = ({ fieldsMap, handleClose, tableSlug : tableSlug
                   {fields
                     ?.sort(
                       (first, second) =>
-                        (second.required === true) - (first.required === true)
+                        (second.required === true) - (first.required === true),
                     )
                     .map((item, index) => (
                       <div key={item} className={styles.select_body_layer}>
@@ -192,14 +194,14 @@ export const ExcelUploadModal = ({ fieldsMap, handleClose, tableSlug : tableSlug
                                 control={control}
                                 options={viewFieldsToOptions(
                                   item?.view_fields,
-                                  item
+                                  item,
                                 )}
                                 width={"250px"}
                               />
                             ) : (
                               <input
                                 type="text"
-                                value={`${item?.label}${
+                                value={`${item?.attributes?.[`label_${i18n?.language}`] || item?.label}${
                                   item?.required ? "*" : ""
                                 }`}
                                 placeholder=""

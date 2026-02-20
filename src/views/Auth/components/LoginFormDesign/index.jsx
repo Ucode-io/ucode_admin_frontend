@@ -5,7 +5,7 @@ import {useQuery} from "react-query";
 import PhoneLogin from "./PhoneLogin";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
-import {Box, Dialog} from "@mui/material";
+import { Box, Button, Dialog } from "@mui/material";
 import classes from "./style.module.scss";
 import {useTranslation} from "react-i18next";
 import ForgotPassword from "./ForgotPassword";
@@ -21,13 +21,10 @@ import authService from "../../../../services/auth/authService";
 import companyService from "../../../../services/companyService";
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import connectionServiceV2 from "../../../../services/auth/connectionService";
-import FireBaseOtp from "./PhoneLogin/FireBaseOtp";
-import {RecaptchaVerifier, signInWithPhoneNumber} from "firebase/auth";
-import {auth} from "./firebase";
 import {showAlert} from "../../../../store/alert/alert.thunk";
 import RecoverPassword from "../RecoverPassword";
-import {companyActions} from "../../../../store/company/company.slice";
-import { useNavigate } from "react-router-dom";
+import { companyActions } from "../../../../store/company/company.slice";
+import DynamicFields from "../DynamicFields";
 
 // const firebaseConfig = {
 //   apiKey: "AIzaSyAI2P6BcpeVdkt7G_xRe3mYiQ4Ek0cU2pM",
@@ -49,6 +46,7 @@ const LoginFormDesign = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+  const [projectListDialogOpen, setProjectListDialogOpen] = useState(false);
   const [isUserId, setIsUserId] = useState();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
@@ -75,7 +73,7 @@ const LoginFormDesign = ({
   const selectedEnvID = watch("environment_id");
   const getFormValue = watch();
 
-  const { data: computedConnections = [], isLoading } = useQuery(
+  const { data: computedConnections = [] } = useQuery(
     [
       "GET_CONNECTION_LIST",
       { "project-id": selectedProjectID },
@@ -89,7 +87,7 @@ const LoginFormDesign = ({
           client_type_id: selectedClientTypeID,
           "user-id": isUserId,
         },
-        { "environment-id": selectedEnvID }
+        { "environment-id": selectedEnvID },
       );
     },
     {
@@ -103,8 +101,11 @@ const LoginFormDesign = ({
       onError: () => {
         setLoading(false);
       },
-    }
+    },
   );
+
+  const [connectionOptions, setConnectionOptions] = useState([]);
+  const [tempData, setTempData] = useState({});
 
   //=======COMPUTE COMPANIES
   const computedCompanies = useMemo(() => {
@@ -157,7 +158,7 @@ const LoginFormDesign = ({
   const register = (data) => {
     authService
       .register(data)
-      .then((res) => {
+      .then(() => {
         setIndex(0);
       })
       .catch(() => {
@@ -165,10 +166,28 @@ const LoginFormDesign = ({
       });
   };
 
+  const defaultLogin = async (data) => {
+    try {
+      await dispatch(
+        loginAction({
+          ...data,
+          setProjectListDialogOpen,
+          setConnectionOptions,
+          setTempData,
+        }),
+      ).unwrap();
+    } catch (e) {
+      setLoading(false);
+      setIsUserId(null);
+      setCompanies([]);
+    }
+  };
+
   const onSubmit = (values) => {
     setLoading(true);
     if (selectedTabIndex === 0) {
-      getCompany(values);
+      // getCompany(values);
+      defaultLogin(values);
     }
     if (selectedTabIndex === 1) {
       if (codeAppValue?.sms_id) {
@@ -232,7 +251,7 @@ const LoginFormDesign = ({
 
         if (index === 1) register(values);
       })
-      .catch((err) => {
+      .catch(() => {
         setLoading(false);
         setGoogleAuth(null);
       });
@@ -340,20 +359,18 @@ const LoginFormDesign = ({
     dispatch(authActions.setStatus(computedEnv?.access_type));
 
     try {
-      const result = await dispatch(
+      await dispatch(
         loginAction({
           ...data,
-          environment_ids: computedProject,
+          isSubmitDialog: true,
           currencies: currencies,
+          tempData,
         }),
       ).unwrap();
-      console.log("Успешный вход:", result);
     } catch (e) {
-      console.error("Ошибка при сабмите:", e);
       setLoading(false);
       setIsUserId(null);
       setCompanies([]);
-      // Здесь можно показать уведомление пользователю (Toast, Alert)
     }
   };
 
@@ -500,12 +517,12 @@ const LoginFormDesign = ({
   }, [connectionCheck, getFormValue?.tables]);
 
   return (
-    <Box sx={{height: "100%"}}>
+    <Box sx={{ height: "100%" }}>
       {Boolean(
         formType !== "REGISTER" &&
           formType !== "OTP" &&
           formType !== "FORGOT_PASSWORD" &&
-          formType !== "EMAIL_OTP"
+          formType !== "EMAIL_OTP",
       ) && (
         <>
           <h1 className={classes.title}>
@@ -523,10 +540,11 @@ const LoginFormDesign = ({
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
           <Tabs
-            style={{height: "100%"}}
+            style={{ height: "100%" }}
             selected={selectedTabIndex}
             direction={"ltr"}
-            onSelect={(index) => setSelectedTabIndex(index)}>
+            onSelect={(index) => setSelectedTabIndex(index)}
+          >
             {formType === "OTP" ? (
               <PhoneOtpInput
                 watch={watch}
@@ -546,27 +564,31 @@ const LoginFormDesign = ({
                   marginTop: "20px",
                   display: "flex",
                   flexDirection: "column",
-                }}>
+                }}
+              >
                 <TabList>
                   <Tab
                     onClick={() => setFormType("LOGIN")}
-                    style={{padding: "10px 8px 10px 8px"}}>
+                    style={{ padding: "10px 8px 10px 8px" }}
+                  >
                     {t("login")}
                   </Tab>
                   <Tab
                     onClick={() => setFormType("phone")}
-                    style={{padding: "10px 12px 10px 12px"}}>
+                    style={{ padding: "10px 12px 10px 12px" }}
+                  >
                     {t("phone")}
                   </Tab>
                   <Tab
                     onClick={() => setFormType("email")}
-                    style={{padding: "10px 12px 10px 12px"}}>
+                    style={{ padding: "10px 12px 10px 12px" }}
+                  >
                     {t("email.address")}
                   </Tab>
                 </TabList>
 
-                <div className={classes.formArea} style={{marginTop: "10px"}}>
-                  <TabPanel style={{height: "calc(100% - 50px)"}}>
+                <div className={classes.formArea} style={{ marginTop: "10px" }}>
+                  <TabPanel style={{ height: "calc(100% - 50px)" }}>
                     <LoginTab
                       loading={loading}
                       setFormType={setFormType}
@@ -601,6 +623,49 @@ const LoginFormDesign = ({
       )}
 
       <Dialog
+        open={projectListDialogOpen}
+        onClose={() => setProjectListDialogOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        PaperProps={{
+          style: {
+            padding: "30px",
+            width: "550px",
+            maxHeight: "70vh",
+            borderRadius: "12px",
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+          },
+        }}
+        BackdropProps={{
+          style: {
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backdropFilter: "blur(5px)",
+          },
+        }}
+      >
+        <Box>
+          {connectionOptions?.map((connection, idx) => (
+            <DynamicFields
+              key={connection?.guid}
+              table={computedConnections}
+              connection={connection}
+              index={idx}
+              control={control}
+              setValue={setValue}
+              watch={watch}
+              options={connection?.options}
+              companies={companies}
+              selectedCollection={selectedCollection}
+              setSelectedCollection={setSelectedCollection}
+            />
+          ))}
+        </Box>
+        <Button variant="contained" onClick={handleSubmit(onSubmitDialog)}>
+          Submit
+        </Button>
+      </Dialog>
+
+      <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
@@ -619,7 +684,8 @@ const LoginFormDesign = ({
             backgroundColor: "rgba(0, 0, 0, 0.5)",
             backdropFilter: "blur(5px)",
           },
-        }}>
+        }}
+      >
         <LoginCompaniesList
           computedProjects={computedProjects}
           computedCompanies={computedCompanies}
@@ -640,13 +706,14 @@ const LoginFormDesign = ({
       {formType === "RESET_PASSWORD" && (
         <SecondaryButton
           size="large"
-          style={{marginTop: "20px"}}
+          style={{ marginTop: "20px" }}
           type="button"
           onClick={() => {
             formType === "RESET_PASSWORD"
               ? setFormType("LOGIN")
               : setFormType("RESET_PASSWORD");
-          }}>
+          }}
+        >
           Back to login
         </SecondaryButton>
       )}

@@ -1,4 +1,5 @@
-import {store} from "../../store";
+import requestV3 from "@/utils/requestV3";
+import { store } from "../../store";
 import authRequestV2 from "../../utils/authRequest";
 import request from "../../utils/request";
 import requestAuth from "../../utils/requestAuth";
@@ -9,11 +10,11 @@ const authStore = store.getState().auth;
 const authService = {
   login: (data) =>
     requestAuthV2.post(`/login`, data, {
-      headers: {"environment-id": data.environment_id},
+      headers: { "environment-id": data.environment_id },
     }),
   sendFcmToken: (data) =>
     request.post(`/notification/user-fcmtoken`, data, {
-      headers: {"environment-id": data.environment_id},
+      headers: { "environment-id": data.environment_id },
     }),
   multiCompanyLogin: (data) => requestAuthV2.post("/multi-company/login", data),
   register: (data) => requestAuth.post("/company", data),
@@ -24,7 +25,9 @@ const authService = {
     requestAuth.put(`/v2/user/reset-password`, data),
   refreshToken: (data) => requestAuthV2.put(`/refresh`, data),
   updateToken: (data, params) =>
-    authRequestV2.put(`/refresh`, data, {params: {for_env: params?.for_env}}),
+    authRequestV2.put(`/refresh`, data, {
+      params: { for_env: params?.for_env },
+    }),
   sendCode: (data) => requestAuth.post(`/send-code`, data),
   verifyCode: (sms_id, otp, data) =>
     requestAuth.post(`/verify/${sms_id}/${otp}`, data),
@@ -37,11 +40,13 @@ const authService = {
   getUserById: (user_id, params) =>
     requestAuthV2.get(`user/${user_id}`, {
       params,
-      headers: {"environment-id": authStore.environmentId},
+      headers: { "environment-id": authStore.environmentId },
     }),
   resetPasswordProfile: (data) => requestAuthV2.put("/reset-password", data),
   sendCodeApp: (data) => requestAuthV2.post(`/send-code-app`, data),
   sendAccessToken: (data) => requestAuthV2.post(`/auth/logout`, data),
+  defaultLogin: (data) =>
+    requestAuth.post("/v3/multicompany/default-login", data),
 };
 
 export default authService;

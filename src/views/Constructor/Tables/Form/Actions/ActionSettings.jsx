@@ -1,29 +1,23 @@
-import {Close} from "@mui/icons-material";
-import {Box, IconButton} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useForm, useWatch} from "react-hook-form";
-import {useQuery, useQueryClient} from "react-query";
-import {useParams} from "react-router-dom";
+import { Close } from "@mui/icons-material";
+import { Box, IconButton } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useQuery, useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
 import PrimaryButton from "../../../../../components/Buttons/PrimaryButton";
 import FRow from "../../../../../components/FormElements/FRow";
 import HFAutocomplete from "../../../../../components/FormElements/HFAutocomplete";
-import HFIconPicker from "../../../../../components/FormElements/HFIconPicker";
 import HFTextField from "../../../../../components/FormElements/HFTextField";
 import HFSwitch from "../../../../../components/FormElements/HFSwitch";
 import constructorCustomEventService from "../../../../../services/constructorCustomEventService";
-import listToOptions from "../../../../../utils/listToOptions";
-import request from "../../../../../utils/request";
 import styles from "./style.module.scss";
-import HFSelect from "../../../../../components/FormElements/HFSelect";
 import TableActions from "./TableActions";
-import requestV2 from "../../../../../utils/requestV2";
-import {useSelector} from "react-redux";
-import {useTranslation} from "react-i18next";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import constructorFunctionService from "../../../../../services/constructorFunctionService";
 import useDebounce from "../../../../../hooks/useDebounce";
-import {useMicrofrontendListQuery} from "../../../../../services/microfrontendService";
+import { useMicrofrontendListQuery } from "../../../../../services/microfrontendService";
 import HFReactSelect from "../../../../../components/FormElements/HFReactSelect";
-import { useViewContext } from "../../../../../providers/ViewProvider";
 
 const actionTypeList = [
   { label: "HTTP", value: "HTTP" },
@@ -48,9 +42,9 @@ const typeList = [
 ];
 
 const ActionSettings = ({
-  closeSettingsBlock = () => {},
-  onUpdate = () => {},
-  onCreate = () => {},
+  closeSettingsBlock = () => { },
+  onUpdate = () => { },
+  onCreate = () => { },
   action,
   formType,
   height,
@@ -63,7 +57,10 @@ const ActionSettings = ({
   const languages = useSelector((state) => state.languages.list);
   const [loader, setLoader] = useState(false);
   const [debounceValue, setDebouncedValue] = useState("");
-  const [functionType, setFunctionType] = useState("");
+
+  const limit = 10;
+
+  const [offset, setOffset] = useState(0);
 
   const { handleSubmit, control, reset, watch, setValue } = useForm({
     defaultValues: {
@@ -73,37 +70,60 @@ const ActionSettings = ({
 
   const action_type = watch("action_type");
 
-  const { data: functions = [] } = useQuery(
-    ["GET_FUNCTIONS_LIST", debounceValue],
+  const [functionList, setFunctionList] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+
+  useEffect(() => {
+    setOffset(0);
+    setHasMore(true);
+  }, [debounceValue]);
+
+  useQuery(
+    ["GET_FUNCTIONS_LIST", debounceValue, offset],
     () => {
       return constructorFunctionService.getListV2({
         search: debounceValue,
         function_id: action?.functions?.[0]?.id,
+        limit,
+        offset,
       });
     },
     {
+      enabled: hasMore || offset === 0,
       onError: (err) => {
         console.log("ERR =>", err);
       },
-      select: (res) => {
-        return res.functions?.map((el) => ({
+      onSuccess: (res) => {
+        const newFuncs = res.functions?.map((el) => ({
           value: el["id"],
           label: el["name"],
           type: "Functions",
           functionType: el?.type,
-        }));
+        })) || [];
+
+        if (newFuncs.length < limit) {
+          setHasMore(false);
+        } else {
+          setHasMore(true);
+        }
+
+        if (offset === 0) {
+          setFunctionList(newFuncs);
+        } else {
+          setFunctionList((prev) => [...prev, ...newFuncs]);
+        }
       },
     }
   );
 
   const computedFunction = useMemo(() => {
-    return functions?.find((item) => item?.value === watch("event_path"));
-  }, [functions, watch("event_path")]);
+    return functionList?.find((item) => item?.value === watch("event_path"));
+  }, [functionList, watch("event_path")]);
 
   const { data: microfrontend } = useMicrofrontendListQuery();
 
   const microfrontendOptions = useMemo(() => {
-    return microfrontend?.functions?.map((item, index) => ({
+    return microfrontend?.functions?.map((item) => ({
       label: item.name,
       value: item.id,
       type: "Micro frontend",
@@ -113,7 +133,7 @@ const ActionSettings = ({
 
   const functionsOptions = [
     ...(microfrontendOptions || []),
-    ...(functions || []),
+    ...(functionList || []),
   ];
 
   const createAction = (data) => {
@@ -134,7 +154,7 @@ const ActionSettings = ({
 
     constructorCustomEventService
       .update(data, tableSlug)
-      .then((res) => {
+      .then(() => {
         modalAction && queryClient.refetchQueries("GET_ACTIONS_LIST");
         closeSettingsBlock();
         onUpdate(data);
@@ -187,6 +207,7 @@ const ActionSettings = ({
               >
                 {languages?.map((lang) => (
                   <HFTextField
+                    key={lang?.slug}
                     name={`attributes.label_${lang?.slug}`}
                     control={control}
                     placeholder={`Label (${lang?.slug})`}
@@ -206,7 +227,18 @@ const ActionSettings = ({
                 disabled={false}
                 required
                 // groupBy={(option) => option?.type}
-                customChange={(value) => setFunctionType(value?.functionType)}
+                ListboxProps={{
+                  onScroll: (e) => {
+                    const listboxNode = e.currentTarget;
+                    if (
+                      listboxNode.scrollTop + listboxNode.clientHeight >=
+                        listboxNode.scrollHeight - 1 &&
+                      hasMore
+                    ) {
+                      setOffset((prev) => prev + limit);
+                    }
+                  },
+                }}
               />
             </FRow>
             {computedFunction?.functionType === "WORKFLOW" && (
@@ -216,7 +248,7 @@ const ActionSettings = ({
                   name="path"
                   control={control}
                   placeholder="Path"
-                  options={functions}
+                  options={functionList}
                   fullWidth
                 />
               </FRow>

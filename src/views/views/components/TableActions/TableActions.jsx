@@ -81,7 +81,13 @@ export const TableActions = ({tableLan, tableSlug = ""}) => {
         color="#344054"
         borderRadius="8px"
       >
-        <Image h={"18px"} src="/img/lighting.svg" alt="settings" />
+        <Image
+          w={"18px"}
+          h={"18px"}
+          flexShrink={0}
+          src="/img/lighting.svg"
+          alt="settings"
+        />
       </Button>
 
       <Modal

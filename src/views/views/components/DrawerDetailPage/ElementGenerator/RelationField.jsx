@@ -361,10 +361,7 @@ const AutoCompleteElement = ({
   const getValueData = async () => {
     try {
       const id = state?.[`${tableSlug || relationTableSlug}_id`] || value;
-      const res = await constructorObjectService.getById(
-        tableSlug || relationTableSlug,
-        id,
-      );
+      const res = await constructorObjectService.getById(tableSlug || relationTableSlug, id);
       const data = res?.data?.response;
 
       if (data && data.prepayment_balance) {
@@ -663,7 +660,6 @@ const AutoCompleteElement = ({
             inputChangeHandler(e);
           }}
           getOptionLabel={(option) => {
-            console.log({ option, computedViewFields });
             return computedViewFields?.map((el) => {
               if (field?.attributes?.enable_multi_language) {
                 return `${option[`${el}_${activeLang ?? i18n?.language}`] ?? option[`${el}`]} `;

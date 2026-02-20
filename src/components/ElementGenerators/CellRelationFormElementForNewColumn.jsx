@@ -227,15 +227,7 @@ const AutoCompleteElement = ({
         additionalValues?.flat();
     }
 
-    return constructorObjectService.getListV2(
-      field?.table_slug,
-      {
-        data: requestData,
-      },
-      {
-        language_setting: i18n?.language,
-      },
-    );
+    return constructorObjectService.getItems(field?.table_slug);
   };
 
   const query = new URLSearchParams(window.location.search);

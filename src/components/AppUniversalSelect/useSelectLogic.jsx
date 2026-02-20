@@ -5,7 +5,6 @@ import constructorObjectService from "@/services/constructorObjectService";
 import request from "@/utils/request";
 import { pageToOffset } from "@/utils/pageToOffset";
 import useDebounce from "@/hooks/useDebounce";
-import { useTranslation } from "react-i18next";
 import { useViewContext } from "@/providers/ViewProvider";
 
 export const useSelectLogic = ({
@@ -15,7 +14,6 @@ export const useSelectLogic = ({
   type,
   rowData,
 }) => {
-  const { i18n } = useTranslation();
   const { view } = useViewContext();
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -125,15 +123,18 @@ export const useSelectLogic = ({
         count: res?.data?.count || 0,
       };
     } else {
-      const res = await constructorObjectService.getListV2(
-        tableSlug,
-        {
-          data: requestData,
-        },
-        {
-          language_setting: i18n?.language,
-        },
-      );
+      // const res = await constructorObjectService.getListV2(
+      //   tableSlug,
+      //   {
+      //     data: requestData,
+      //   },
+      //   {
+      //     language_setting: i18n?.language,
+      //   },
+      // );
+
+      const res = await constructorObjectService.getItems(tableSlug);
+
       return {
         options: res?.data?.response || [],
         count: res?.data?.count || 0,

@@ -1,9 +1,9 @@
-import {Close} from "@mui/icons-material";
-import {Box, IconButton} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useForm} from "react-hook-form";
-import {useQuery, useQueryClient} from "react-query";
-import {useParams} from "react-router-dom";
+import { Close } from "@mui/icons-material";
+import { Box, IconButton } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useQuery, useQueryClient } from "react-query";
+import { useParams } from "react-router-dom";
 import PrimaryButton from "@/components/Buttons/PrimaryButton";
 import FRow from "@/components/FormElements/FRow";
 import HFAutocomplete from "@/components/FormElements/HFAutocomplete";
@@ -12,11 +12,11 @@ import HFSwitch from "@/components/FormElements/HFSwitch";
 import constructorCustomEventService from "@/services/constructorCustomEventService";
 import cls from "./styles.module.scss";
 // import TableActions from "./TableActions";
-import {useSelector} from "react-redux";
-import {useTranslation} from "react-i18next";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import constructorFunctionService from "@/services/constructorFunctionService";
 import useDebounce from "@/hooks/useDebounce";
-import {useMicrofrontendListQuery} from "@/services/microfrontendService";
+import { useMicrofrontendListQuery } from "@/services/microfrontendService";
 import HFReactSelect from "@/components/FormElements/HFReactSelect";
 import { ActionsList } from "../ActionsList";
 
@@ -58,7 +58,6 @@ export const ActionSettings = ({
   const languages = useSelector((state) => state.languages.list);
   const [loader, setLoader] = useState(false);
   const [debounceValue, setDebouncedValue] = useState("");
-  const [functionType, setFunctionType] = useState("");
 
   const { handleSubmit, control, reset, watch, setValue } = useForm({
     defaultValues: {
@@ -68,37 +67,64 @@ export const ActionSettings = ({
 
   const action_type = watch("action_type");
 
-  const { data: functions = [] } = useQuery(
-    ["GET_FUNCTIONS_LIST", debounceValue],
+  const [functionList, setFunctionList] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+
+  const limit = 10;
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    setOffset(0);
+    setHasMore(true);
+  }, [debounceValue]);
+
+  useQuery(
+    ["GET_FUNCTIONS_LIST", debounceValue, offset],
     () => {
       return constructorFunctionService.getListV2({
         search: debounceValue,
         function_id: action?.functions?.[0]?.id,
+        limit,
+        offset,
       });
     },
     {
+      enabled: hasMore || offset === 0,
       onError: (err) => {
         console.log("ERR =>", err);
       },
-      select: (res) => {
-        return res.functions?.map((el) => ({
-          value: el["id"],
-          label: el["name"],
-          type: "Functions",
-          functionType: el?.type,
-        }));
+      onSuccess: (res) => {
+        const newFuncs =
+          res.functions?.map((el) => ({
+            value: el["id"],
+            label: el["name"],
+            type: "Functions",
+            functionType: el?.type,
+          })) || [];
+
+        if (newFuncs.length < limit) {
+          setHasMore(false);
+        } else {
+          setHasMore(true);
+        }
+
+        if (offset === 0) {
+          setFunctionList(newFuncs);
+        } else {
+          setFunctionList((prev) => [...prev, ...newFuncs]);
+        }
       },
-    }
+    },
   );
 
   const computedFunction = useMemo(() => {
-    return functions?.find((item) => item?.value === watch("event_path"));
-  }, [functions, watch("event_path")]);
+    return functionList?.find((item) => item?.value === watch("event_path"));
+  }, [functionList, watch("event_path")]);
 
   const { data: microfrontend } = useMicrofrontendListQuery();
 
   const microfrontendOptions = useMemo(() => {
-    return microfrontend?.functions?.map((item, index) => ({
+    return microfrontend?.functions?.map((item) => ({
       label: item.name,
       value: item.id,
       type: "Micro frontend",
@@ -108,7 +134,7 @@ export const ActionSettings = ({
 
   const functionsOptions = [
     ...(microfrontendOptions || []),
-    ...(functions || []),
+    ...(functionList || []),
   ];
 
   const createAction = (data) => {
@@ -129,7 +155,7 @@ export const ActionSettings = ({
 
     constructorCustomEventService
       .update(data, tableSlug)
-      .then((res) => {
+      .then(() => {
         modalAction && queryClient.refetchQueries("GET_ACTIONS_LIST");
         closeSettingsBlock();
         onUpdate(data);
@@ -143,7 +169,7 @@ export const ActionSettings = ({
       label:
         values?.attributes?.[`label_${i18n.language}`] ??
         Object.values(values?.attributes).find(
-          (item) => typeof item === "string"
+          (item) => typeof item === "string",
         ),
     };
     if (formType === "CREATE") createAction(computedValues);
@@ -202,7 +228,18 @@ export const ActionSettings = ({
                 disabled={false}
                 required
                 // groupBy={(option) => option?.type}
-                customChange={(value) => setFunctionType(value?.functionType)}
+                ListboxProps={{
+                  onScroll: (e) => {
+                    const listboxNode = e.currentTarget;
+                    if (
+                      listboxNode.scrollTop + listboxNode.clientHeight >=
+                          listboxNode.scrollHeight - 1 &&
+                      hasMore
+                    ) {
+                      setOffset((prev) => prev + limit);
+                    }
+                  },
+                }}
               />
             </FRow>
             {computedFunction?.functionType === "WORKFLOW" && (
@@ -212,7 +249,7 @@ export const ActionSettings = ({
                   name="path"
                   control={control}
                   placeholder="Path"
-                  options={functions}
+                  options={functionList}
                   fullWidth
                 />
               </FRow>

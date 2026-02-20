@@ -21,6 +21,7 @@ const DynamicFields = ({
   const selectedClientTypeID = watch("client_type");
   const selectedEnvID = watch("environment_id");
 
+
   const computedConnections = useMemo(() => {
     return (
       options?.map((item) => ({

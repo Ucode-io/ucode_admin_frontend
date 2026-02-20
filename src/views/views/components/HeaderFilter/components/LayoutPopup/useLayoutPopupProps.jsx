@@ -45,6 +45,7 @@ export const useLayoutPopupProps = ({ onClose, control, mainForm, open }) => {
   const onSubmit = async (data) => {
     const computedData = {
       ...data,
+      label: data?.attributes?.label || data?.label,
       id: data?.id,
       show_in_menu: true,
     };

@@ -119,9 +119,10 @@ const palette = {
   dark: {
     ...COMMON,
     secondary: { ...DARK_SECONDARY, contrastText: '#fff' },
-    text: { primary: '#fff', secondary: GREY[500], disabled: GREY[600] },
-    background: { paper: GREY[800], default: GREY[900], neutral: GREY[500_16] },
-    action: { active: GREY[500], ...COMMON.action }
+    // Notion-inspired dark mode colors
+    text: { primary: '#ffffffcf', secondary: '#ffffff71', disabled: '#ffffff3d' },
+    background: { paper: '#202020', default: '#191919', neutral: '#2f2f2f' },
+    action: { active: '#9b9b9b', ...COMMON.action }
   }
 };
 

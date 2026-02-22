@@ -17,12 +17,35 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
 import {FolderCreateModal} from "./components/FolderCreateModal";
 import {TAB_COMPONENTS} from "../../utils/constants/settingsPopup";
+import {useSelector} from "react-redux";
+import {selectThemeMode} from "../../store/theme/theme.slice";
 
-const TabTitle = ({tab, children, ...props}) => {
+// Dark mode colors - Notion inspired
+const darkColors = {
+  bgPrimary: "#191919",
+  bgSecondary: "#202020",
+  bgTertiary: "#2f2f2f",
+  bgHover: "#363636",
+  textPrimary: "#ffffffcf",
+  textSecondary: "#ffffff71",
+  border: "#ffffff14",
+  iconColor: "#9b9b9b",
+};
+
+const TabTitle = ({tab, children, isDark, ...props}) => {
   return (
     <Flex columnGap="8px" cursor="pointer" {...props}>
-      {tab?.icon && tab?.icon}
-      <Typography className={cls.tabItemTitle} flexGrow={1} variant="p">
+      {tab?.icon && (
+        <Box sx={{ color: isDark ? darkColors.iconColor : "inherit", display: "flex", alignItems: "center" }}>
+          {tab?.icon}
+        </Box>
+      )}
+      <Typography 
+        className={cls.tabItemTitle} 
+        flexGrow={1} 
+        variant="p"
+        sx={{ color: isDark ? darkColors.textPrimary : "rgb(55, 53, 47)" }}
+      >
         {children}
       </Typography>
     </Flex>
@@ -30,6 +53,9 @@ const TabTitle = ({tab, children, ...props}) => {
 };
 
 export const SettingsPopup = ({open, onClose}) => {
+  const themeMode = useSelector(selectThemeMode);
+  const isDark = themeMode === "dark";
+  
   const {
     handleClose,
     tabs,
@@ -69,16 +95,27 @@ export const SettingsPopup = ({open, onClose}) => {
             borderRadius: "12px !important",
             maxWidth: "1150px !important",
             width: "100% !important",
+            backgroundColor: isDark ? darkColors.bgPrimary : "#fff",
           },
         }}>
-        <DialogContent className={cls.dialogContent} sx={{padding: 0}}>
-          <Box className={cls.content}>
-            <Box className={cls.leftBarWrapper}>
+        <DialogContent className={cls.dialogContent} sx={{padding: 0, backgroundColor: isDark ? darkColors.bgPrimary : "#fff"}}>
+          <Box className={cls.content} sx={{ backgroundColor: isDark ? darkColors.bgPrimary : "#fff" }}>
+            <Box 
+              className={cls.leftBarWrapper}
+              sx={{
+                backgroundColor: isDark ? darkColors.bgSecondary : "#fbfbfa",
+                borderRight: isDark ? `1px solid ${darkColors.border}` : "none",
+              }}
+            >
               <Box className={cls.leftBar}>
                 {tabs.map((tab, index) => {
                   return (
                     <Box mb="20px" key={index}>
-                      <Typography className={cls.leftBarTitle} variant="h2">
+                      <Typography 
+                        className={cls.leftBarTitle} 
+                        variant="h2"
+                        sx={{ color: isDark ? darkColors.textSecondary : "rgba(55, 53, 47, 0.65)" }}
+                      >
                         {tab?.title ?? tab?.label}
                       </Typography>
                       {tab?.tabs?.map((tab, tabIndex) => {
@@ -89,6 +126,7 @@ export const SettingsPopup = ({open, onClose}) => {
                                 sx={{
                                   boxShadow: "none !important",
                                   backgroundColor: "transparent !important",
+                                  color: isDark ? darkColors.textPrimary : "inherit",
                                   "& .MuiPaper-root": {
                                     boxShadow: "none !important",
                                   },
@@ -103,18 +141,19 @@ export const SettingsPopup = ({open, onClose}) => {
                                 }}
                               >
                                 <AccordionSummary
-                                  expandIcon={<ExpandMoreIcon />}
+                                  expandIcon={<ExpandMoreIcon sx={{ color: isDark ? darkColors.iconColor : "inherit" }} />}
                                   aria-controls="panel1-content"
                                   id="panel1-header"
                                   sx={{
                                     borderRadius: "4px",
                                     "&:hover": {
-                                      backgroundColor:
-                                        "rgba(55, 53, 47, 0.06) !important",
+                                      backgroundColor: isDark 
+                                        ? darkColors.bgHover 
+                                        : "rgba(55, 53, 47, 0.06) !important",
                                     },
                                   }}
                                 >
-                                  <TabTitle tab={tab}>{tab?.title}</TabTitle>
+                                  <TabTitle tab={tab} isDark={isDark}>{tab?.title}</TabTitle>
                                 </AccordionSummary>
                                 <AccordionDetails>
                                   {tab?.children?.map((child) => (
@@ -125,12 +164,20 @@ export const SettingsPopup = ({open, onClose}) => {
                                         sx={{
                                           backgroundColor:
                                             child?.guid === activeChildId
-                                              ? "rgba(55, 53, 47, 0.06)"
+                                              ? (isDark ? darkColors.bgHover : "rgba(55, 53, 47, 0.06)")
                                               : "transparent",
+                                          color: isDark ? darkColors.textPrimary : "rgb(55, 53, 47)",
+                                          "&::after": {
+                                            backgroundColor: isDark ? darkColors.textSecondary : "#344054",
+                                          },
+                                          "&:hover": {
+                                            backgroundColor: isDark ? darkColors.bgHover : "rgba(55, 53, 47, 0.06)",
+                                          },
                                         }}
                                       >
                                         <TabTitle
                                           tab={child}
+                                          isDark={isDark}
                                           onClick={() => {
                                             child?.type === "MINIO_FOLDER"
                                               ? handleFilesClick(child)
@@ -146,9 +193,10 @@ export const SettingsPopup = ({open, onClose}) => {
                                     <button
                                       className={cls.addClientTypeBtn}
                                       onClick={handleOpenClientTypeModal}
+                                      style={{ color: isDark ? darkColors.textSecondary : "#d0d5dd" }}
                                     >
                                       <span>
-                                        <span className={cls.addIcon}>
+                                        <span className={cls.addIcon} style={{ color: isDark ? darkColors.iconColor : "rgb(55, 53, 47)" }}>
                                           <AddIcon />
                                         </span>
                                         <span>Add client type</span>
@@ -165,8 +213,16 @@ export const SettingsPopup = ({open, onClose}) => {
                                 onClick={() => handleChangeTab(tab?.key)}
                                 alignItems="center"
                                 key={tabIndex}
+                                sx={{
+                                  "&:hover": {
+                                    backgroundColor: isDark ? darkColors.bgHover : "rgba(55, 53, 47, 0.06)",
+                                  },
+                                  backgroundColor: activeTab === tab?.key 
+                                    ? (isDark ? darkColors.bgHover : "rgba(55, 53, 47, 0.06)") 
+                                    : "transparent",
+                                }}
                               >
-                                <TabTitle tab={tab}>{tab?.title}</TabTitle>
+                                <TabTitle tab={tab} isDark={isDark}>{tab?.title}</TabTitle>
                               </Flex>
                             )}
                           </Box>
@@ -181,7 +237,12 @@ export const SettingsPopup = ({open, onClose}) => {
               className={clsx(cls.rightContent, {
                 [cls.smPadding]:
                   tab === TAB_COMPONENTS.PERMISSIONS.PERMISSIONS_DETAIL,
-              })}>
+              })}
+              sx={{
+                backgroundColor: isDark ? darkColors.bgPrimary : "#fff",
+                color: isDark ? darkColors.textPrimary : "inherit",
+              }}
+            >
               {isValidElement(tabComponents[activeTab])
                 ? tabComponents[activeTab]
                 : (tabComponents[activeTab]?.[tab] ??

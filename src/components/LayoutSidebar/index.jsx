@@ -8,6 +8,20 @@ import {useCompanyListQuery} from "@/services/companyService";
 import {useEnvironmentListQuery} from "@/services/environmentService";
 import {authActions} from "@/store/auth/auth.slice";
 import {companyActions} from "@/store/company/company.slice";
+import {selectThemeMode} from "@/store/theme/theme.slice";
+
+// Dark mode colors - Notion inspired
+const darkColors = {
+  bgPrimary: "#191919",
+  bgSecondary: "#202020",
+  bgTertiary: "#2f2f2f",
+  bgHover: "#363636",
+  textPrimary: "#ffffffcf",
+  textSecondary: "#ffffff71",
+  border: "#ffffff14",
+  borderLight: "#ffffff29",
+  iconColor: "#9b9b9b",
+};
 import { AccordionButton, AccordionIcon, SearchIcon } from "@chakra-ui/icons";
 import {
   Accordion,
@@ -121,6 +135,10 @@ const LayoutSidebar = ({
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const subMenuIsOpen = useSelector((state) => state.main.subMenuIsOpen);
   const projectId = store.getState().company.projectId;
+  
+  // Dark mode support
+  const themeMode = useSelector(selectThemeMode);
+  const isDark = themeMode === "dark";
 
   const { i18n } = useTranslation();
   const dispatch = useDispatch();
@@ -488,10 +506,11 @@ const LayoutSidebar = ({
         position="relative"
         w={sidebarIsOpen ? SIDEBAR_OPENED_WIDTH : SIDEBAR_CLOSED_WIDTH}
         flexDirection="column"
-        transition="width 200ms ease-out"
-        borderRight="1px solid #EAECF0"
-        bg={menuStyle?.background ?? "#fff"}
+        transition="width 200ms ease-out, background-color 200ms ease-out"
+        borderRight={isDark ? `1px solid ${darkColors.border}` : "1px solid #EAECF0"}
+        bg={isDark ? darkColors.bgSecondary : (menuStyle?.background ?? "#fff")}
         h={`calc(100vh - ${isWarningActive || projectInfo?.status === "inactive" ? 32 : 0}px )`}
+        color={isDark ? darkColors.textPrimary : "inherit"}
       >
         <Flex
           position="absolute"
@@ -500,12 +519,12 @@ const LayoutSidebar = ({
           h={25}
           alignItems="center"
           justifyContent="center"
-          border="1px solid #e5e5e5"
+          border={isDark ? `1px solid ${darkColors.borderLight}` : "1px solid #e5e5e5"}
           borderRadius="50%"
           top={27}
           right={0}
           transform={sidebarIsOpen ? "translateX(50%)" : "translateX(60%)"}
-          bg="#fff"
+          bg={isDark ? darkColors.bgTertiary : "#fff"}
           cursor="pointer"
           onClick={() =>
             dispatch(mainActions.setSettingsSidebarIsOpen(!sidebarIsOpen))
@@ -528,6 +547,7 @@ const LayoutSidebar = ({
             profileSettingLan={profileSettingLan}
             handleOpenProfileModal={handleOpenProfileModal}
             resetQueryClient={resetQueryClient}
+            isDark={isDark}
           />
         </Flex>
 
@@ -536,6 +556,7 @@ const LayoutSidebar = ({
           maxH={`calc(100vh - ${sidebarIsOpen ? 85 : 240}px)`}
           overflowY="auto"
           overflowX="hidden"
+          bg={isDark ? darkColors.bgSecondary : "transparent"}
         >
           {Array.isArray(menuList) && (
             <div
@@ -1429,6 +1450,7 @@ const Header = ({
   profileSettingLan,
   handleOpenProfileModal,
   resetQueryClient,
+  isDark = false,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -1540,8 +1562,8 @@ const Header = ({
             alignItems="center"
             p={5}
             borderRadius={8}
-            bg="#fff"
-            _hover={{ bg: "#EAECF0" }}
+            bg={isDark ? darkColors.bgSecondary : "#fff"}
+            _hover={{ bg: isDark ? darkColors.bgHover : "#EAECF0" }}
             cursor="pointer"
             onClick={() => (!isOpen ? onOpen() : null)}
             onMouseEnter={() => (!sidebarIsOpen ? onOpen() : null)}
@@ -1578,7 +1600,7 @@ const Header = ({
             <Box
               pl={30}
               whiteSpace="nowrap"
-              color="#344054"
+              color={isDark ? darkColors.textPrimary : "#344054"}
               fontSize={13}
               fontWeight={500}
               overflow="hidden"
@@ -1587,15 +1609,15 @@ const Header = ({
               {projectInfo?.title}
             </Box>
             <KeyboardArrowDownIcon
-              style={{ marginLeft: "10px", fontSize: 20 }}
+              style={{ marginLeft: "10px", fontSize: 20, color: isDark ? darkColors.iconColor : "inherit" }}
             />
           </Flex>
         </PopoverTrigger>
         <PopoverContent
           w="300px"
-          bg="#fff"
+          bg={isDark ? darkColors.bgSecondary : "#fff"}
           borderRadius={8}
-          border="1px solid #EAECF0"
+          border={isDark ? `1px solid ${darkColors.border}` : "1px solid #EAECF0"}
           outline="none"
           boxShadow="0px 8px 8px -4px #10182808, 0px 20px 24px -4px #10182814"
           zIndex={999}

@@ -2,7 +2,7 @@ import {CssBaseline, createTheme} from "@mui/material";
 import {ThemeProvider} from "@mui/styles";
 import {useEffect, useState} from "react";
 import Favicon from "react-favicon";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {Outlet, useLocation, useParams} from "react-router-dom";
 import LayoutSidebar from "../../components/LayoutSidebar";
 import {useProjectGetByIdQuery} from "../../services/projectService";
@@ -18,11 +18,23 @@ import {ToastContainer} from "react-toastify";
 import {iconCategoryActions} from "../../store/IconCategory/iconCategory.slice";
 import AddingGroup from "./AddingGroup";
 import { settingsModalActions } from "@/store/settingsModal/settingsModal.slice";
+import { selectThemeMode } from "@/store/theme/theme.slice";
+
+// Dark mode colors - Notion inspired
+const darkColors = {
+  bgPrimary: "#191919",
+  bgContent: "#191919",
+  textPrimary: "#ffffffcf",
+};
 
 const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
   const dispatch = useDispatch();
   const { appId } = useParams();
   const projectId = store.getState().company.projectId;
+  
+  // Dark mode support
+  const themeMode = useSelector(selectThemeMode);
+  const isDark = themeMode === "dark";
 
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
   const location = useLocation();
@@ -118,6 +130,12 @@ const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
     }
   }, []);
 
+  // Content area styles for dark mode
+  const contentStyle = isDark ? {
+    backgroundColor: darkColors.bgContent,
+    color: darkColors.textPrimary,
+  } : {};
+
   return (
     <>
       <ThemeProvider theme={theme} defaultMode="dark">
@@ -128,6 +146,7 @@ const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
         />
         <div
           className={`${isWarningActive || (projectInfo?.status === "inactive" && !location?.pathname?.includes("constructor")) ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}
+          style={isDark ? { backgroundColor: darkColors.bgPrimary } : {}}
         >
           {favicon && <Favicon url={favicon} />}
           <LayoutSidebar
@@ -145,6 +164,7 @@ const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
                 ? styles.contentLayout
                 : styles.content
             }
+            style={contentStyle}
           >
             <Outlet />
             <ToastContainer hideProgressBar />

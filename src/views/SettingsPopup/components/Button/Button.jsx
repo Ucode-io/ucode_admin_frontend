@@ -1,7 +1,33 @@
 import clsx from 'clsx'
+import { useSelector } from 'react-redux'
+import { selectThemeMode } from '../../../../store/theme/theme.slice'
 import cls from './styles.module.scss'
 
-export const Button = ({ children, className, primary, loading, ...props }) => {
+const darkColors = {
+  bgSecondary: "#202020",
+  bgHover: "#363636",
+  textPrimary: "#ffffffcf",
+  border: "#ffffff29",
+  primary: "#2383e2",
+};
 
-  return <button className={clsx(cls.button, className, { [cls.primary]: primary, [cls.loading]: loading })} {...props}>{children}</button>
+export const Button = ({ children, className, primary, loading, ...props }) => {
+  const themeMode = useSelector(selectThemeMode);
+  const isDark = themeMode === "dark";
+  
+  const darkStyle = isDark && !primary ? {
+    backgroundColor: darkColors.bgSecondary,
+    borderColor: darkColors.border,
+    color: darkColors.textPrimary,
+  } : {};
+
+  return (
+    <button 
+      className={clsx(cls.button, className, { [cls.primary]: primary, [cls.loading]: loading, [cls.dark]: isDark && !primary })} 
+      style={darkStyle}
+      {...props}
+    >
+      {children}
+    </button>
+  );
 }

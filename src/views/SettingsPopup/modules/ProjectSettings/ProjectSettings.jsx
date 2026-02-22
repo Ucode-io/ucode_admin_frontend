@@ -13,8 +13,24 @@ import {Flex} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import Language from "./Language";
+import ThemeToggle from "./ThemeToggle";
+import {useSelector} from "react-redux";
+import {selectThemeMode} from "../../../../store/theme/theme.slice";
+
+// Dark mode colors
+const darkColors = {
+  bgPrimary: "#191919",
+  bgSecondary: "#202020",
+  bgTertiary: "#2f2f2f",
+  textPrimary: "#ffffffcf",
+  textSecondary: "#ffffff71",
+  border: "#ffffff14",
+};
 
 export const ProjectSettings = () => {
+  const themeMode = useSelector(selectThemeMode);
+  const isDark = themeMode === "dark";
+  
   const {
     handleClose,
     i18n,
@@ -59,26 +75,40 @@ export const ProjectSettings = () => {
       <Flex
         h={"52px"}
         mb={"20px"}
-        borderBottom={"1px solid #eee"}
+        borderBottom={isDark ? `1px solid ${darkColors.border}` : "1px solid #eee"}
         justifyContent={"space-between"}>
-        <ContentTitle style={{borderBottom: "none"}} subtitle={watch("title")}>
+        <ContentTitle style={{borderBottom: "none", color: isDark ? darkColors.textPrimary : "inherit"}} subtitle={watch("title")}>
           {generateLangaugeText(lang, i18n?.language, "Project Settings") ||
             "Project settings"}
         </ContentTitle>
-        <Language languageOptions={languageOptions} />
+        <Flex align="center">
+          <ThemeToggle />
+          <Language languageOptions={languageOptions} />
+        </Flex>
       </Flex>
       <Flex alignItems="flex-end" mb="48px">
         <HFAvatarUpload
           size="xs"
-          defaultImage={<div className={cls.avatar}>Logo</div>}
+          defaultImage={
+            <div 
+              className={cls.avatar} 
+              style={{ 
+                backgroundColor: isDark ? darkColors.bgTertiary : undefined,
+                color: isDark ? darkColors.textPrimary : undefined,
+                border: isDark ? `1px solid ${darkColors.border}` : undefined,
+              }}
+            >
+              Logo
+            </div>
+          }
           control={control}
           name="logo"
         />
         <Box className={cls.nameWrapper}>
-          <p className={cls.name}>
+          <p className={cls.name} style={{ color: isDark ? darkColors.textSecondary : undefined }}>
             {generateLangaugeText(lang, i18n?.language, "Name") || "Name"}
           </p>
-          <Field register={register} name="title" type="text" />
+          <Field register={register} name="title" type="text" isDark={isDark} />
         </Box>
       </Flex>
 

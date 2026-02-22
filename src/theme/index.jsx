@@ -1,12 +1,6 @@
 import PropTypes from 'prop-types';
-import { useMemo } from 'react';
-// material
-// import { CssBaseline } from '@material-ui/core';
-// import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-// import StyledEngineProvider from '@material-ui/core/StyledEngineProvider';
-// hooks
-// import useSettings from '../hooks/useSettings';
-//
+import { useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import shape from './shape';
 import palette from './palette';
 import typography from './typography';
@@ -16,14 +10,24 @@ import componentsOverride from './overrides';
 import shadows, { customShadows } from './shadows';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { StyledEngineProvider } from '@mui/material/styles';
-import { ruRU } from '@mui/material/locale'
+import { ruRU } from '@mui/material/locale';
+import { selectThemeMode } from '../store/theme/theme.slice';
 
 ThemeConfig.propTypes = {
   children: PropTypes.node
 };
 
 export default function ThemeConfig({ children }) {
-  const isLight = true
+  const themeMode = useSelector(selectThemeMode);
+  const isLight = themeMode === 'light';
+
+  // Apply theme attribute to document for CSS dark mode styles
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', themeMode);
+    // Notion-inspired dark mode colors
+    document.body.style.backgroundColor = isLight ? '#ffffff' : '#191919';
+    document.body.style.color = isLight ? '#212B36' : '#ffffffcf';
+  }, [themeMode, isLight]);
 
   const themeOptions = useMemo(
     () => (

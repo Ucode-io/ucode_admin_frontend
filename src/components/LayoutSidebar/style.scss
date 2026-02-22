@@ -1,5 +1,17 @@
 $main-color: #0365f2;
 
+// Dark mode variables - Notion inspired
+$dark-bg-primary: #191919;
+$dark-bg-secondary: #202020;
+$dark-bg-tertiary: #2f2f2f;
+$dark-bg-hover: #363636;
+$dark-bg-input: #252525;
+$dark-bg-active: #2383e2;
+$dark-text-primary: #ffffffcf;
+$dark-text-secondary: #ffffff71;
+$dark-primary-light: #529cca;
+$dark-border: #ffffff14;
+
 .extra {
   cursor: pointer;
 }
@@ -10,10 +22,15 @@ $main-color: #0365f2;
   height: 100vh;
   background-color: #fff;
   border-right: 1px solid rgba(192, 192, 192, 0.562);
-  transition-property: width;
+  transition-property: width, background-color, border-color;
   transition-timing-function: linear;
   transition-duration: 0.3s;
   overflow: hidden;
+
+  [data-theme="dark"] & {
+    background-color: $dark-bg-secondary;
+    border-right-color: $dark-border;
+  }
 
   &::-webkit-scrollbar-thumb {
     width: 0 !important;
@@ -110,6 +127,10 @@ $main-color: #0365f2;
     cursor: default;
     border: 0;
     column-gap: 5px;
+    
+    [data-theme="dark"] & {
+      color: $dark-text-secondary;
+    }
 
     &:hover {
       background-color: #a8a8a81a;
@@ -117,6 +138,10 @@ $main-color: #0365f2;
       .extra_icon {
         display: block !important;
         cursor: pointer;
+      }
+      
+      [data-theme="dark"] & {
+        background-color: $dark-bg-hover !important;
       }
     }
 
@@ -137,6 +162,15 @@ $main-color: #0365f2;
         background-color: #fff;
         color: #0365f2;
       }
+      
+      [data-theme="dark"] & {
+        background-color: $dark-bg-active !important;
+        color: #fff !important;
+        
+        .open-label, .label, p {
+          color: #fff !important;
+        }
+      }
     }
 
     &.active-with-child {
@@ -145,6 +179,19 @@ $main-color: #0365f2;
 
       .extra_icon {
         display: none;
+      }
+      
+      [data-theme="dark"] & {
+        color: $dark-primary-light !important;
+        background-color: transparent !important;
+        
+        &:hover {
+          background-color: $dark-bg-hover !important;
+        }
+        
+        .open-label, .label {
+          color: $dark-primary-light !important;
+        }
       }
     }
 
@@ -179,6 +226,10 @@ $main-color: #0365f2;
       align-items: center;
       // column-gap: 8px;
       color: #a8a8a8;
+      
+      [data-theme="dark"] & {
+        color: $dark-text-secondary !important;
+      }
     }
 
     .label {
@@ -192,6 +243,10 @@ $main-color: #0365f2;
       // column-gap: 8px;
       color: #a8a8a8;
       justify-content: center;
+      
+      [data-theme="dark"] & {
+        color: $dark-text-secondary !important;
+      }
     }
 
     .icon_group {
@@ -290,6 +345,10 @@ $main-color: #0365f2;
           cursor: default;
           border: 0;
           column-gap: 5px;
+          
+          [data-theme="dark"] & {
+            color: $dark-text-secondary;
+          }
 
           &:hover {
             background-color: #a8a8a81a;
@@ -297,6 +356,10 @@ $main-color: #0365f2;
             .extra_icon {
               display: flex !important;
               cursor: pointer;
+            }
+            
+            [data-theme="dark"] & {
+              background-color: $dark-bg-hover !important;
             }
           }
 
@@ -312,6 +375,15 @@ $main-color: #0365f2;
               background-color: #fff;
               color: #0365f2;
             }
+            
+            [data-theme="dark"] & {
+              background-color: $dark-bg-active !important;
+              color: #fff !important;
+              
+              .label, p {
+                color: #fff !important;
+              }
+            }
           }
 
           &.active-with-child {
@@ -325,6 +397,19 @@ $main-color: #0365f2;
 
             .extra_icon {
               display: none;
+            }
+            
+            [data-theme="dark"] & {
+              color: $dark-primary-light !important;
+              background-color: transparent !important;
+              
+              &:hover {
+                background-color: $dark-bg-hover !important;
+              }
+              
+              .label {
+                color: $dark-primary-light !important;
+              }
             }
           }
 
@@ -358,6 +443,10 @@ $main-color: #0365f2;
             display: flex;
             align-items: center;
             // column-gap: 8px;
+            
+            [data-theme="dark"] & {
+              color: $dark-text-secondary !important;
+            }
           }
 
           .icon_group {
@@ -386,6 +475,10 @@ $main-color: #0365f2;
           padding-top: 4px;
           // margin-top: -2px;
           // margin-left: 10px;
+          
+          [data-theme="dark"] & {
+            background-color: $dark-bg-tertiary !important;
+          }
 
           .nav-element {
             margin-bottom: 10px;
@@ -476,6 +569,11 @@ $main-color: #0365f2;
   flex-direction: column;
   justify-content: center;
 
+  [data-theme="dark"] & {
+    background: $dark-bg-secondary;
+    color: $dark-text-primary;
+  }
+
   li {
     column-gap: 6px;
     padding: 5px;
@@ -493,12 +591,20 @@ $main-color: #0365f2;
 
     &:hover {
       background-color: #6e8bb714;
+
+      [data-theme="dark"] & {
+        background-color: $dark-bg-hover;
+      }
     }
   }
 
   h3 {
     font-weight: normal;
     font-size: 14px;
+
+    [data-theme="dark"] & {
+      color: $dark-text-primary;
+    }
   }
 }
 

@@ -102,6 +102,7 @@ import {
 import { viewsActions } from "@/store/views/view.slice";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import { AiProjectsModal } from "../AiProjectsModal";
+import "./style.scss";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
 

@@ -330,9 +330,20 @@ export const TreeNode = ({
         )}
       </div>
 
-      {/* Рекурсивные дети */}
-      {isFolder && isOpen && (
-        <div style={{ marginTop: 2 }}>
+      {/* Рекурсивные дети с анимацией открытия/закрытия */}
+      {isFolder && (
+        <div
+          style={{
+            marginTop: 2,
+            maxHeight: isOpen ? 800 : 0,
+            overflow: "hidden",
+            opacity: isOpen ? 1 : 0,
+            transform: isOpen ? "translateY(0)" : "translateY(-4px)",
+            transition:
+              "max-height 160ms ease-out, opacity 160ms ease-out, transform 160ms ease-out",
+            pointerEvents: isOpen ? "auto" : "none",
+          }}
+        >
           <SortableContext
             id={node.id}
             items={children.map((c) => c.id)}

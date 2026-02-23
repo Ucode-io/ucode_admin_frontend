@@ -171,7 +171,10 @@ const LoginFormDesign = ({
       await dispatch(
         loginAction({
           ...data,
-          setProjectListDialogOpen,
+          setProjectListDialogOpen: (val) => {
+            setProjectListDialogOpen(val);
+            setLoading(false);
+          },
           setConnectionOptions,
           setTempData,
         }),
@@ -346,9 +349,6 @@ const LoginFormDesign = ({
             : undefined,
       sms_id: codeAppValue?.sms_id,
     };
-    const computedProject = companies[0]?.projects
-      ?.find((item) => item?.id === selectedProjectID)
-      ?.resource_environments?.map((el) => el?.environment_id);
     const computedEnv = computedEnvironments?.find(
       (item) => item?.value === selectedEnvID,
     );
@@ -625,82 +625,178 @@ const LoginFormDesign = ({
       <Dialog
         open={projectListDialogOpen}
         onClose={() => setProjectListDialogOpen(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+        aria-labelledby="multi-company-dialog-title"
+        aria-describedby="multi-company-dialog-description"
         PaperProps={{
           style: {
-            padding: "30px",
-            width: "550px",
+            padding: "24px 28px 20px",
+            width: "560px",
             maxHeight: "70vh",
-            borderRadius: "12px",
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+            borderRadius: "14px",
+            boxShadow:
+              "0px 18px 45px rgba(15, 23, 42, 0.18), 0px 0px 0px 1px rgba(148, 163, 184, 0.35)",
           },
         }}
         BackdropProps={{
           style: {
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            backdropFilter: "blur(5px)",
+            backgroundColor: "rgba(15, 23, 42, 0.55)",
+            backdropFilter: "blur(6px)",
           },
         }}
       >
-        <Box>
-          {connectionOptions?.map((connection, idx) => (
-            <DynamicFields
-              key={connection?.guid}
-              table={computedConnections}
-              connection={connection}
-              index={idx}
-              control={control}
-              setValue={setValue}
-              watch={watch}
-              options={connection?.options}
-              companies={companies}
-              selectedCollection={selectedCollection}
-              setSelectedCollection={setSelectedCollection}
-            />
-          ))}
+        <Box display="flex" flexDirection="column" gap={2}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={1}
+          >
+            <Box
+              id="multi-company-dialog-title"
+              fontSize="18px"
+              fontWeight={600}
+              color="#0f172a"
+            >
+              Multi company
+            </Box>
+          </Box>
+
+          <Box
+            id="multi-company-dialog-description"
+            mt={1}
+            mb={1}
+            fontSize="13px"
+            color="#64748b"
+          >
+            Choose which workspace configuration you want to use for this login.
+          </Box>
+
+          <Box
+            mt={1}
+            p={2}
+            borderRadius="10px"
+            border="1px solid #e2e8f0"
+            bgcolor="#f8fafc"
+            sx={{
+              maxHeight: "320px",
+              overflowY: "auto",
+            }}
+          >
+            <Box display="flex" flexDirection="column" gap={1.5}>
+              {connectionOptions?.map((connection, idx) => (
+                <DynamicFields
+                  key={connection?.guid}
+                  table={computedConnections}
+                  connection={connection}
+                  index={idx}
+                  control={control}
+                  setValue={setValue}
+                  watch={watch}
+                  options={connection?.options}
+                  companies={companies}
+                  selectedCollection={selectedCollection}
+                  setSelectedCollection={setSelectedCollection}
+                />
+              ))}
+            </Box>
+          </Box>
+
+          <Box
+            mt={3}
+            display="flex"
+            justifyContent="flex-end"
+            gap={1.5}
+          >
+            <Button
+              variant="text"
+              color="inherit"
+              onClick={() => setProjectListDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleSubmit(onSubmitDialog)}
+            >
+              Continue
+            </Button>
+          </Box>
         </Box>
-        <Button variant="contained" onClick={handleSubmit(onSubmitDialog)}>
-          Submit
-        </Button>
       </Dialog>
 
       <Dialog
         open={open}
         onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+        aria-labelledby="company-dialog-title"
+        aria-describedby="company-dialog-description"
         PaperProps={{
           style: {
-            padding: "30px",
-            width: "550px",
+            padding: "24px 28px 22px",
+            width: "560px",
             maxHeight: "70vh",
-            borderRadius: "12px",
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+            borderRadius: "14px",
+            boxShadow:
+              "0px 18px 45px rgba(15, 23, 42, 0.18), 0px 0px 0px 1px rgba(148, 163, 184, 0.35)",
           },
         }}
         BackdropProps={{
           style: {
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            backdropFilter: "blur(5px)",
+            backgroundColor: "rgba(15, 23, 42, 0.55)",
+            backdropFilter: "blur(6px)",
           },
         }}
       >
-        <LoginCompaniesList
-          computedProjects={computedProjects}
-          computedCompanies={computedCompanies}
-          computedEnvironments={computedEnvironments}
-          computedClientTypes={computedClientTypes}
-          computedConnections={computedConnections}
-          selectedCollection={selectedCollection}
-          companies={companies}
-          loading={loading}
-          control={control}
-          watch={watch}
-          setValue={setValue}
-          handleSubmit={handleSubmit(onSubmitDialog)}
-          setSelectedCollection={setSelectedCollection}
-        />
+        <Box display="flex" flexDirection="column" gap={2}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={1}
+          >
+            <Box
+              id="company-dialog-title"
+              fontSize="18px"
+              fontWeight={600}
+              color="#0f172a"
+            >
+              Select workspace
+            </Box>
+          </Box>
+
+          <Box
+            id="company-dialog-description"
+            mt={1}
+            mb={1.5}
+            fontSize="13px"
+            color="#64748b"
+          >
+            Pick a company, project and environment to continue.
+          </Box>
+
+          <Box
+            mt={1}
+            sx={{
+              maxHeight: "360px",
+              overflowY: "auto",
+            }}
+          >
+            <LoginCompaniesList
+              computedProjects={computedProjects}
+              computedCompanies={computedCompanies}
+              computedEnvironments={computedEnvironments}
+              computedClientTypes={computedClientTypes}
+              computedConnections={computedConnections}
+              selectedCollection={selectedCollection}
+              companies={companies}
+              loading={loading}
+              control={control}
+              watch={watch}
+              setValue={setValue}
+              handleSubmit={handleSubmit(onSubmitDialog)}
+              setSelectedCollection={setSelectedCollection}
+            />
+          </Box>
+        </Box>
       </Dialog>
 
       {formType === "RESET_PASSWORD" && (

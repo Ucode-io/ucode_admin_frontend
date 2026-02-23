@@ -239,12 +239,13 @@ export const getFieldByType = ({
       TEXT: <ElementText row={row} value={autofillValue} />,
       BUTTON: <HFButtonField row={row} isTableView={true} />,
       STATUS: isEditing ? (
-        <HFStatusField
+        <CSelect
           row={row}
           newUi={newUi}
           disabled={row?.attributes?.disabled}
           handleChange={handleChange}
           onClose={backDisplay}
+          variant="table"
           defaultOpen
         />
       ) : (

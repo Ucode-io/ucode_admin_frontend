@@ -632,6 +632,7 @@ const LoginFormDesign = ({
             padding: "24px 28px 20px",
             width: "560px",
             maxHeight: "70vh",
+            // height: "100%",
             borderRadius: "14px",
             boxShadow:
               "0px 18px 45px rgba(15, 23, 42, 0.18), 0px 0px 0px 1px rgba(148, 163, 184, 0.35)",
@@ -670,43 +671,25 @@ const LoginFormDesign = ({
           >
             Choose which workspace configuration you want to use for this login.
           </Box>
-
-          <Box
-            mt={1}
-            p={2}
-            borderRadius="10px"
-            border="1px solid #e2e8f0"
-            bgcolor="#f8fafc"
-            sx={{
-              maxHeight: "320px",
-              overflowY: "auto",
-            }}
-          >
-            <Box display="flex" flexDirection="column" gap={1.5}>
-              {connectionOptions?.map((connection, idx) => (
-                <DynamicFields
-                  key={connection?.guid}
-                  table={computedConnections}
-                  connection={connection}
-                  index={idx}
-                  control={control}
-                  setValue={setValue}
-                  watch={watch}
-                  options={connection?.options}
-                  companies={companies}
-                  selectedCollection={selectedCollection}
-                  setSelectedCollection={setSelectedCollection}
-                />
-              ))}
-            </Box>
+          <Box display="flex" flexDirection="column" gap={1.5}>
+            {connectionOptions?.map((connection, idx) => (
+              <DynamicFields
+                key={connection?.guid}
+                table={computedConnections}
+                connection={connection}
+                index={idx}
+                control={control}
+                setValue={setValue}
+                watch={watch}
+                options={connection?.options}
+                companies={companies}
+                selectedCollection={selectedCollection}
+                setSelectedCollection={setSelectedCollection}
+              />
+            ))}
           </Box>
 
-          <Box
-            mt={3}
-            display="flex"
-            justifyContent="flex-end"
-            gap={1.5}
-          >
+          <Box mt={3} display="flex" justifyContent="flex-end" gap={1.5}>
             <Button
               variant="text"
               color="inherit"
@@ -714,10 +697,7 @@ const LoginFormDesign = ({
             >
               Cancel
             </Button>
-            <Button
-              variant="contained"
-              onClick={handleSubmit(onSubmitDialog)}
-            >
+            <Button variant="contained" onClick={handleSubmit(onSubmitDialog)}>
               Continue
             </Button>
           </Box>

@@ -85,6 +85,7 @@ import { SidebarList } from "./SidebarList";
 import { AiProjectsModal } from "../AiProjectsModal";
 import { Container } from "react-smooth-dnd";
 import AppSidebar from "./AppSidebarComponentV2";
+import "./style.scss";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
 

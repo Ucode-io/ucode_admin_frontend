@@ -1,6 +1,6 @@
 // ! README:
-// ? tabs is required and used for looping. TYPEOF --- Array
-// ? tabIndex is required and used for identifying which tab is active. TYPEOF --- Number
+// ? tabs is required and used for looping. TYPEOF --- Array 
+// ? tabIndex is required and used for identifying which tab is active. TYPEOF --- Number 
 import "./style.scss"
 const CustomTabs = ({ tabs, tabIndex = 1, setTabIndex = () => {} }) => {
   return (
@@ -20,7 +20,7 @@ const CustomTabs = ({ tabs, tabIndex = 1, setTabIndex = () => {} }) => {
           </div>
         ))}
     </div>
-  )
+  );
 }
 
 export default CustomTabs

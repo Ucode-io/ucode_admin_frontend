@@ -26,8 +26,7 @@ import SummarySectionValue from "./SummarySection/SummarySectionValue";
 import FormCustomActionButton from "./components/CustomActionsButton/FormCustomActionButtons";
 import FormPageBackButton from "./components/FormPageBackButton";
 import styles from "./style.module.scss";
-import {useTranslation} from "react-i18next";
-import DividentWayll from "./DividentWayll";
+import { useTranslation } from "react-i18next";
 import {useGetLang} from "../../hooks/useGetLang";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 
@@ -364,40 +363,6 @@ const ObjectsFormPage = ({
       <Footer
         extra={
           <>
-            {projectId === "0f111e78-3a93-4bec-945a-2a77e0e0a82d" &&
-              (tableSlug === "investors" || tableSlug === "legal_entities") && (
-                <PrimaryButton
-                  onClick={() => {
-                    localStorage.setItem("idFromParams", itemId);
-                    localStorage.setItem(
-                      "tableSlugFromParam",
-                      selectedView?.table_slug,
-                    );
-                    navigate(microPath);
-                  }}
-                >
-                  Пополнить баланс
-                </PrimaryButton>
-              )}
-
-            {projectId === "0f111e78-3a93-4bec-945a-2a77e0e0a82d" &&
-              tableSlug === "projects" && (
-                <>
-                  <DividentWayll />
-                  <PrimaryButton
-                    onClick={() => {
-                      localStorage.setItem("idFromParams", itemId);
-                      localStorage.setItem(
-                        "tableSlugFromParam",
-                        tableSlugFromParam,
-                      );
-                      navigate(microPathCloseMonth);
-                    }}
-                  >
-                    Закрытия месяца
-                  </PrimaryButton>
-                </>
-              )}
             <SecondaryButton
               onClick={() => (modal ? handleClose() : clickHandler())}
               color="error"

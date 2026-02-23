@@ -15,7 +15,7 @@ import {
   CTableRow,
 } from "../../../../components/CTable";
 import TableCard from "../../../../components/TableCard";
-import FormCheckbox from "../../../Permissions/Roles/Detail/Permissions/Components/Checkbox/FormCheckbox";
+import FormCheckbox from "../Checkbox/FormCheckbox";
 
 function FieldPermission({
   control,
@@ -114,7 +114,7 @@ function FieldPermission({
             </CTableHead>
             <CTableBody columnsCount={3}>
               {fieldPermissions?.map((item, index) => (
-                <CTableRow>
+                <CTableRow key={index}>
                   <CTableCell>{item?.label}</CTableCell>
                   <CTableCell width={20}>
                     <Box sx={{ justifyContent: "center", display: "flex" }}>

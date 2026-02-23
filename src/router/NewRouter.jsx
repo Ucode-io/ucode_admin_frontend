@@ -9,15 +9,9 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-import Chat from "../components/Chat";
 import KeepAliveWrapper from "../components/KeepAliveWrapper";
 import ActivityFeedPage from "../components/LayoutSidebar/Components/ActivityFeedButton/components/Activity.jsx";
-import ApiEndpoint from "../components/LayoutSidebar/Components/Api";
-import ApiEndpointDetail from "../components/LayoutSidebar/Components/Api/Components/ApiEndpointDetail";
 import Template from "../components/LayoutSidebar/Components/Documents/Components/Template";
-import Note from "../components/LayoutSidebar/Components/Documents/Note";
-import EmailPage from "../components/LayoutSidebar/Components/Email";
-import EmailDetailPage from "../components/LayoutSidebar/Components/Email/EmailDetailPage";
 import FunctionsDetail from "../components/LayoutSidebar/Components/Functions/FunctionsDetail";
 import MicroservicePage from "../components/LayoutSidebar/Components/MicroService";
 import MinioPage from "../components/LayoutSidebar/Components/Minio";
@@ -28,22 +22,16 @@ import ProjectSettingPage from "../components/LayoutSidebar/Components/Project";
 import Queries from "../components/LayoutSidebar/Components/Query";
 import VariableResources from "../components/LayoutSidebar/Components/Resources/VariableResource";
 import VariableResourceForm from "../components/LayoutSidebar/Components/Resources/VariableResourceForm";
-import Scenarios from "../components/LayoutSidebar/Components/Scenario";
 import PageFallback from "../components/PageFallback";
 import ReloadPage from "../components/ReloadComponent/index";
 // import ReloadWrapper from "../components/ReloadWrapper";
 import LoginMicrofrontend from "../layouts/AuthLayout/LoginMicrofrontend";
 import MainLayout from "../layouts/MainLayout";
-import {useLoginMicrofrontendQuery} from "../services/loginMicrofrontendService";
-import ApiKeysForm from "../views/ApiKeys/ApiKeysForm.jsx";
-import ApiKeyPage from "../views/ApiKeys/index.jsx";
+import { useLoginMicrofrontendQuery } from "../services/loginMicrofrontendService";
 import Invite from "../views/Auth/Invite";
 import LoginDesign from "../views/Auth/LoginDesign";
 import CompanyPage from "../views/Company";
 import CompanyForm from "../views/Company/CompanyFormPage";
-import TablesPage from "../views/Constructor/AllTables";
-import AppsPage from "../views/Constructor/Apps";
-import AppsForm from "../views/Constructor/Apps/AppsForm";
 import MicrofrontendPage from "../views/Constructor/Microfrontend";
 import MicrofrontendForm from "../views/Constructor/Microfrontend/MicrofrontendForm";
 import OpenFaasFunctionPage from "../views/Constructor/OpenFaasFunction/index.jsx";
@@ -54,16 +42,9 @@ import DatabasePage from "../views/DataBase";
 import DatabaseConfiguration from "../views/DataBase/Configuration";
 import DocumentTemplateDetail from "../views/DocumentTemplates/Detail/index.jsx";
 import DocumentTemplates from "../views/DocumentTemplates/index.jsx";
-import EnvironmentPage from "../views/Environments";
-import EnvironmentForm from "../views/Environments/EnvironmentFormPage";
 import Connections from "../views/Matrix/Connections";
 import Microfrontend from "../views/Microfrontend";
 import MicrofrontendPlayground from "../views/MicrofrontendPlayground";
-import ObjectsFormPage from "../views/Objects/ObjectsFormPage";
-import ReportSettings from "../views/Objects/PivotTable/ReportSettings";
-import PivotTableView from "../views/Objects/PivotTableView";
-import PermissionDetail from "../views/Permissions";
-import RoleDetail from "../views/Permissions/Roles/Detail";
 import ProjectPage from "../views/Projects";
 import ProjectForm from "../views/Projects/ProjectFormPage";
 import RedirectPage from "../views/Redirect";
@@ -79,9 +60,6 @@ import RegisterFormPageDesign from "../views/Auth/components/RegisterFormPageDes
 import { ClientTypes } from "@/views/client-types";
 import LanguageControl from "../components/LayoutSidebar/Components/LanguageControl";
 import LayoutSettings from "../views/Objects/LayoutSettings";
-import ChartDb from "../views/ChartDb";
-import NewObjectsFormPage from "../views/Objects/NewObjectsFormPage";
-// import NewObjectsPage from "../views/Objects/NewObjectsPage";
 import DocView from "../views/Objects/DocView";
 import { Views } from "@/views/views";
 import { AiAgent } from "@/views/AiAgent";
@@ -237,9 +215,6 @@ const NewRouter = ({ resetQueryClient }) => {
             element={<Microfrontend />}
           />
 
-          <Route path=":menuId/chat" element={<Chat />}>
-            <Route path=":chat_id" element={<Chat />} />
-          </Route>
           <Route path=":menuId/backet/:minioId">
             <Route index element={<MinioPage />} />
             <Route path=":fileId" element={<MinioSinglePage />} />
@@ -260,16 +235,6 @@ const NewRouter = ({ resetQueryClient }) => {
             <Route path="create" element={<SmsFormPage />} />
             <Route path=":redirectId" element={<SmsFormPage />} />
           </Route>
-          <Route path=":menuId/api-key">
-            <Route index element={<ApiKeyPage />} />
-            <Route path="create" element={<ApiKeysForm />} />
-            <Route path=":apiKeyId" element={<ApiKeysForm />} />
-          </Route>
-          <Route path=":menuId/environments">
-            <Route index element={<EnvironmentPage />} />
-            <Route path="create" element={<EnvironmentForm />} />
-            <Route path=":envId" element={<EnvironmentForm />} />
-          </Route>
           <Route path=":menuId/company">
             <Route index element={<CompanyPage />} />
             <Route path=":companyId" element={<CompanyForm />} />
@@ -286,24 +251,11 @@ const NewRouter = ({ resetQueryClient }) => {
           />
 
           <Route path=":appId/web-page/:webPageId" element={<WebPage />} />
-          <Route
-            path=":appId/report-setting/:reportSettingsId"
-            element={<ReportSettings />}
-          />
-          <Route
-            path=":appId/pivot-template/:pivotTemplateId"
-            element={<PivotTableView />}
-          />
 
           <Route path=":appId/user-page/:userMenuId">
             <Route index element={<ClientUserPage />} />
             <Route path="create" element={<ClientUserForm />} />
             <Route path=":userId" element={<ClientUserForm />} />
-          </Route>
-
-          <Route path=":menuId/permission/:clientId">
-            <Route index element={<PermissionDetail />} />
-            <Route path="role/:roleId" element={<RoleDetail />} />
           </Route>
 
           <Route path=":appId/microfrontend">
@@ -317,10 +269,6 @@ const NewRouter = ({ resetQueryClient }) => {
             <Route index element={<WebsitePage />} />
           </Route>
 
-          <Route path=":appId/chartDb">
-            <Route index element={<ChartDb />} />
-          </Route>
-
           <Route path=":appId/openfaas-functions">
             <Route index element={<OpenFaasFunctionPage />} />
             <Route path="create" element={<OpenFaasFunctionForm />} />
@@ -329,7 +277,6 @@ const NewRouter = ({ resetQueryClient }) => {
           </Route>
 
           <Route path=":appId/tables">
-            <Route index element={<TablesPage />} />
             <Route path="create" element={<MicrofrontendForm />} />
           </Route>
 
@@ -351,17 +298,8 @@ const NewRouter = ({ resetQueryClient }) => {
             <Route index element={<DatabasePage />} />
             <Route path="configuration" element={<DatabaseConfiguration />} />
           </Route>
-          <Route path=":appId/scenario/:categoryId">
-            <Route index element={<Scenarios />} />
-            <Route path=":scenarioId" element={<Scenarios />} />
-          </Route>
           <Route path=":appId/micro-service">
             <Route index element={<MicroservicePage />} />
-          </Route>
-          <Route path=":appId/email-setting">
-            <Route index element={<EmailPage />} />
-            <Route path="create" element={<EmailDetailPage />} />
-            <Route path=":emailId" element={<EmailDetailPage />} />
           </Route>
           <Route path=":appId/project-setting">
             <Route index element={<ProjectSettingPage />} />
@@ -381,15 +319,6 @@ const NewRouter = ({ resetQueryClient }) => {
             <Route path=":queryId" element={<Queries />} />
             <Route path="create" element={<Queries />} />
           </Route>
-          <Route path=":appId/api-endpoints">
-            <Route path=":categoryId">
-              <Route path="create" element={<ApiEndpoint />} />
-              <Route path=":endpointId">
-                <Route index element={<ApiEndpoint />} />
-                <Route path="preview" element={<ApiEndpointDetail />} />
-              </Route>
-            </Route>
-          </Route>
           <Route path=":appId/variable-resources">
             <Route index element={<VariableResources />} />
             <Route path="create" element={<VariableResourceForm />} />
@@ -397,10 +326,6 @@ const NewRouter = ({ resetQueryClient }) => {
           </Route>
 
           <Route path=":appId/docs">
-            <Route path="note/:folderId">
-              <Route path="create" element={<Note />} />
-              <Route path=":noteId" element={<Note />} />
-            </Route>
             <Route path="template/:folderId">
               <Route path="create" element={<Template />} />
               <Route path=":templateId" element={<Template />} />
@@ -408,10 +333,6 @@ const NewRouter = ({ resetQueryClient }) => {
           </Route>
 
           <Route path=":menuId" element={<Views />} />
-          {/* <Route
-            path=":menuId"
-            element={<ReloadWrapper component={NewObjectsPage} />}
-          /> */}
           <Route path=":menuId/templates" element={<DocumentTemplates />} />
 
           <Route path=":menuId/object/:tableSlug/docs" element={<DocView />} />
@@ -426,32 +347,22 @@ const NewRouter = ({ resetQueryClient }) => {
             element={<DocumentTemplateDetail />}
           />
 
-          <Route
+          {/* <Route
             path=":menuId/detail/create"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />
               </KeepAliveWrapper>
             }
-          />
-          <Route
-            path=":menuId/detail"
-            element={
-              <KeepAliveWrapper>
-                {/* <ObjectsFormPage /> */}
-                <NewObjectsFormPage />
-              </KeepAliveWrapper>
-            }
-          />
-          <Route
+          /> */}
+          {/* <Route
             path=":menuId/detail/:appId/:tableSlug/:id"
             element={
               <KeepAliveWrapper>
                 <ObjectsFormPage />
-                {/* <NewObjectsFormPage /> */}
               </KeepAliveWrapper>
             }
-          />
+          /> */}
 
           <Route
             path=":menuId/customize/:id"
@@ -469,13 +380,6 @@ const NewRouter = ({ resetQueryClient }) => {
             index
             element={<Navigate to={"/settings/constructor/apps"} />}
           />
-          <Route path="constructor/apps" element={<AppsPage />} />
-          <Route path="constructor/apps/create" element={<AppsForm />} />
-          <Route path="constructor/apps/:appId" element={<AppsForm />} />
-
-          <Route path="constructor/tables">
-            <Route index element={<TablesPage />} />
-          </Route>
 
           <Route
             path="constructor/apps/:appId/objects/create"

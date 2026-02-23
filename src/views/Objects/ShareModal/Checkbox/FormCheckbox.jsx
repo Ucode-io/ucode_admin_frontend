@@ -5,6 +5,9 @@ const FormCheckbox = ({
   control,
   required = false,
   name,
+  inputProps = {},
+  disabled = false,
+  inputLeftElement,
   defaultValue = false,
   children,
   ...props

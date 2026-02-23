@@ -8,12 +8,11 @@ import {useCompanyListQuery} from "@/services/companyService";
 import {useEnvironmentListQuery} from "@/services/environmentService";
 import {authActions} from "@/store/auth/auth.slice";
 import {companyActions} from "@/store/company/company.slice";
-import { AccordionButton, AccordionIcon, SearchIcon } from "@chakra-ui/icons";
+import { AccordionButton, AccordionIcon } from "@chakra-ui/icons";
 import {
   Accordion,
   AccordionItem,
   AccordionPanel,
-  background,
   Box,
   Button,
   ChakraBaseProvider,
@@ -29,9 +28,6 @@ import {
 import {
   Logout,
   AssistantOutlined,
-  Add,
-  Edit,
-  Delete,
 } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -40,15 +36,10 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import LogoutIcon from "@mui/icons-material/Logout";
 import {
   Dialog,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
   Modal,
-  Typography,
 } from "@mui/material";
 import { differenceInCalendarDays, parseISO } from "date-fns";
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import InlineSVG from "react-inlinesvg";
@@ -68,13 +59,10 @@ import WikiFolderCreateModal from "../../layouts/MainLayout/WikiFolderCreateModa
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
 import connectionServiceV2 from "../../services/auth/connectionService";
 import menuService, { useMenuGetByIdQuery } from "../../services/menuService";
-import { useMenuSettingGetByIdQuery } from "../../services/menuSettingService";
 import menuSettingsService from "../../services/menuSettingsService";
 import projectService, {
   useProjectGetByIdQuery,
   useProjectListQuery,
-  useProjectsAllSettingQuery,
-  useProjectUpdateMutation,
 } from "../../services/projectService";
 import { store } from "../../store";
 import { languagesActions } from "../../store/globalLanguages/globalLanguages.slice";
@@ -86,7 +74,8 @@ import { generateLangaugeText } from "../../utils/generateLanguageText";
 import { isJSONParsable } from "../../utils/isJsonValid";
 import { getAllFromDB } from "../../utils/languageDB";
 import AddOrganization from "./AddOrganization";
-import AppSidebar from "./AppSidebarComponent";
+// import { AIMenu, useAIChat } from "../ProfilePanel/AIChat";
+import AppSidebar from "./AppSidebarComponentV2";
 import DynamicConnections from "./DynamicConnections";
 import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
@@ -94,13 +83,13 @@ import TableCreateModal from "../../layouts/MainLayout/TableCreateModal";
 import TemplateMenu from "../../layouts/MainLayout/TemplateMenu";
 import TemplateSelection from "../../layouts/MainLayout/TemplateMenu/TemplateSelection";
 import { SettingsIcon, TranslateIcon } from "../../utils/constants/icons";
-import { useGetLang } from "@/hooks/useGetLang";
 import {
   SIDEBAR_CLOSED_WIDTH,
   SIDEBAR_OPENED_WIDTH,
 } from "@/utils/constants/main";
 import { viewsActions } from "@/store/views/view.slice";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
+import { SidebarList } from "./SidebarList";
 import { AiProjectsModal } from "../AiProjectsModal";
 import "./style.scss";
 
@@ -112,7 +101,8 @@ const LayoutSidebar = ({
   handleOpenProfileModal = () => {},
   resetQueryClient = () => {},
 }) => {
-  const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
+  const isNewRouter = localStorage.getItem("new_router") === "true";
+  const [updateSearchParam] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
   const { appId } = useParams();
   const location = useLocation();
@@ -129,7 +119,6 @@ const LayoutSidebar = ({
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [menuList, setMenuList] = useState();
   const [menuDraggable, setMenuDraggable] = useState(false);
-  const [isMenuListLoading, setIsMenuListLoading] = useState(false);
   const [tableModal, setTableModalOpen] = useState(false);
   const [linkTableModal, setLinkTableModal] = useState(false);
   const [microfrontendModal, setMicrofrontendModalOpen] = useState(false);
@@ -140,7 +129,7 @@ const LayoutSidebar = ({
   const [child, setChild] = useState();
   const [element, setElement] = useState();
   const [subSearchText, setSubSearchText] = useState();
-  const [menu, setMenu] = useState({ event: "", type: "", root: false });
+  const [menu, setMenu] = useState(null);
   const openSidebarMenu = Boolean(menu?.event);
   const { data: projectInfo } = useProjectGetByIdQuery({
     projectId,
@@ -162,7 +151,7 @@ const LayoutSidebar = ({
     dispatch(mainActions.setSubMenuIsOpen(val));
   };
 
-  const { data: menuById } = useMenuGetByIdQuery({
+  useMenuGetByIdQuery({
     menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
   });
 
@@ -244,8 +233,6 @@ const LayoutSidebar = ({
   };
 
   const getMenuList = () => {
-    setIsMenuListLoading(true);
-
     menuSettingsService
       .getList({
         parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
@@ -267,15 +254,11 @@ const LayoutSidebar = ({
           return !excludedIds.includes(id) && permission;
         });
         setMenuList(computedMenus);
-        setIsMenuListLoading(false);
       })
       .catch((error) => {
-        setIsMenuListLoading(false);
         console.log("error", error);
       })
-      .finally(() => {
-        setIsMenuListLoading(false);
-      });
+      .finally(() => {});
   };
 
   const deleteFolder = (element) => {
@@ -296,7 +279,7 @@ const LayoutSidebar = ({
       });
   };
 
-  const { isLoadingUser } = useQuery(
+  useQuery(
     ["GET_CLIENT_TYPE_LIST", appId],
     () => {
       return clientTypeServiceV2.getList();
@@ -382,10 +365,6 @@ const LayoutSidebar = ({
   }, [menuList]);
 
   useEffect(() => {
-    setSelectedApp(menuList?.find((item) => item?.id === appId));
-  }, []);
-
-  useEffect(() => {
     if (
       selectedApp?.type === "FOLDER" ||
       (selectedApp?.type === "USER_FOLDER" && pinIsEnabled)
@@ -393,13 +372,13 @@ const LayoutSidebar = ({
       setSubMenuIsOpen(true);
   }, [selectedApp]);
 
-  const { loader: menuLoader } = useMenuGetByIdQuery({
-    menuId: searchParams.get("menuId"),
-    queryParams: {
-      enabled: Boolean(searchParams.get("menuId")),
-      onSuccess: (res) => {},
-    },
-  });
+  // const { loader: menuLoader } = useMenuGetByIdQuery({
+  //   menuId: searchParams.get("menuId"),
+  //   queryParams: {
+  //     enabled: Boolean(searchParams.get("menuId")),
+  //     onSuccess: (res) => {},
+  //   },
+  // });
 
   const itemConditionalProps = {};
   if (!sidebarIsOpen) {
@@ -536,6 +515,7 @@ const LayoutSidebar = ({
           overflowY="auto"
           overflowX="hidden"
         >
+          <></>
           {Array.isArray(menuList) && (
             <div
               className="menu-element"
@@ -543,47 +523,73 @@ const LayoutSidebar = ({
                 dispatch(mainActions.setSidebarHighlightedMenu(null))
               }
             >
-              <Container
-                dragHandleSelector=".column-drag-handle"
-                groupName="main-menu"
-                onDrop={onDrop}
-                getChildPayload={(index) => menuList[index]}
-              >
-                {menuList.map((element, index) => (
-                  <AppSidebar
-                    index={index}
-                    child={child}
-                    key={index}
-                    childMenu={childMenu}
-                    setSelectedFolder={setSelectedFolder}
-                    setChildMenu={setChildMenu}
-                    element={element}
-                    sidebarIsOpen={sidebarIsOpen}
-                    setElement={setElement}
-                    setSubMenuIsOpen={setSubMenuIsOpen}
-                    subMenuIsOpen={subMenuIsOpen}
-                    handleOpenNotify={handleOpenNotify}
-                    setSelectedApp={setSelectedApp}
+              {isNewRouter ? (
+                <ChakraBaseProvider theme={theme}>
+                  <SidebarList
+                    menuList={menuList}
+                    setMenuList={setMenuList}
                     selectedApp={selectedApp}
-                    // menuTemplate={menuTemplate}
-                    menuLanguages={menuLanguages}
-                    setMenuItem={setMenuItem}
-                    menuItem={menuItem}
-                    selectedFolder={selectedFolder}
-                    openFolderCreateModal={openFolderCreateModal}
-                    setFolderModalType={setFolderModalType}
-                    setTableModal={setTableModal}
-                    setLinkedTableModal={setLinkedTableModal}
-                    setSubSearchText={setSubSearchText}
-                    menuStyle={menuStyle}
-                    languageData={languageData}
-                    subSearchText={subSearchText}
-                    menuDraggable={menuDraggable}
-                    setMenuDraggable={setMenuDraggable}
+                    setSelectedFolder={setSelectedFolder}
+                    setSelectedApp={setSelectedApp}
                     getMenuList={getMenuList}
+                    menu={menu}
+                    setMenu={setMenu}
+                    handlers={{
+                      setMicrofrontendModal,
+                      openFolderCreateModal,
+                      openTableCreateModal,
+                      deleteFolder,
+                      setTableModal,
+                      setWebsiteModalLink,
+                      setFolderModalType,
+                      setTemplatePopover,
+                      handleOpenNotify,
+                    }}
                   />
-                ))}
-              </Container>
+                </ChakraBaseProvider>
+              ) : (
+                <Container
+                  dragHandleSelector=".column-drag-handle"
+                  groupName="main-menu"
+                  onDrop={onDrop}
+                  getChildPayload={(index) => menuList[index]}
+                >
+                  {menuList.map((element, index) => (
+                    <AppSidebar
+                      index={index}
+                      child={child}
+                      key={index}
+                      childMenu={childMenu}
+                      setSelectedFolder={setSelectedFolder}
+                      setChildMenu={setChildMenu}
+                      element={element}
+                      sidebarIsOpen={sidebarIsOpen}
+                      setElement={setElement}
+                      setSubMenuIsOpen={setSubMenuIsOpen}
+                      subMenuIsOpen={subMenuIsOpen}
+                      handleOpenNotify={handleOpenNotify}
+                      setSelectedApp={setSelectedApp}
+                      selectedApp={selectedApp}
+                      // menuTemplate={menuTemplate}
+                      menuLanguages={menuLanguages}
+                      setMenuItem={setMenuItem}
+                      menuItem={menuItem}
+                      selectedFolder={selectedFolder}
+                      openFolderCreateModal={openFolderCreateModal}
+                      setFolderModalType={setFolderModalType}
+                      setTableModal={setTableModal}
+                      setLinkedTableModal={setLinkedTableModal}
+                      setSubSearchText={setSubSearchText}
+                      menuStyle={menuStyle}
+                      languageData={languageData}
+                      subSearchText={subSearchText}
+                      menuDraggable={menuDraggable}
+                      setMenuDraggable={setMenuDraggable}
+                      getMenuList={getMenuList}
+                    />
+                  ))}
+                </Container>
+              )}
 
               {Boolean(permissions?.menu_button) && (
                 <SidebarAppTooltip id="create" title="Create">
@@ -1564,20 +1570,13 @@ const Header = ({
   );
 };
 
-const ProfilePanel = ({
-  onClose = () => {},
-  menuLanguages,
-  handleOpenProfileModal,
-}) => {
+const ProfilePanel = ({ menuLanguages, handleOpenProfileModal }) => {
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
-  const lang = useGetLang("Setting");
   const [currentLangIndex, setCurrentLangIndex] = useState(0);
 
   const languages = useSelector((state) => state.languages.list);
 
-  const projectId = store.getState().company.projectId;
-  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
   // const languages = projectInfo?.language;
 
   const changeLanguage = (lang) => {
@@ -1594,7 +1593,6 @@ const ProfilePanel = ({
     changeLanguage(languages[nextIndex]?.slug);
   };
 
-  const navigate = useNavigate();
   const state = useSelector((state) => state.auth);
   return (
     <Box p={"12px"} borderBottom={"1px solid #eee"}>
@@ -1667,8 +1665,7 @@ const ProfilePanel = ({
 const ProfileBottom = ({ projectInfo, menuLanguages, resetQueryClient }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const projectId = useSelector((state) => state.company.projectId);
+  const { onClose } = useDisclosure();
   const accessToken = useSelector((state) => state.auth?.token);
 
   const popoverRef = useRef();
@@ -1727,7 +1724,7 @@ const ProfileBottom = ({ projectInfo, menuLanguages, resetQueryClient }) => {
   }, [languages?.length]);
 
   const logoutClickHandler = () => {
-    authService.sendAccessToken({ access_token: accessToken }).then((res) => {
+    authService.sendAccessToken({ access_token: accessToken }).then(() => {
       indexedDB.deleteDatabase("SearchTextDB");
       indexedDB.deleteDatabase("ChartDB");
       navigate("/");
@@ -1851,7 +1848,7 @@ const Companies = ({
   getConnections = () => {},
 }) => {
   const dispatch = useDispatch();
-  const {isOpen, onOpen, onClose} = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [text, setText] = useState("");
   const [companyId, setCompanyId] = useState("");
   const [loading, setLoading] = useState(false);
@@ -1861,8 +1858,8 @@ const Companies = ({
 
   const authStore = store.getState().auth;
   const companiesQuery = useCompanyListQuery({
-    params: {owner_id: authStore?.userInfo?.id},
-    queryParams: {enabled: Boolean(userId)},
+    params: { owner_id: authStore?.userInfo?.id },
+    queryParams: { enabled: Boolean(userId) },
   });
   const companies = companiesQuery.data?.companies ?? [];
 
@@ -1873,7 +1870,7 @@ const Companies = ({
         company_id: companyId,
         title: text,
       })
-      .then((res) => {
+      .then(() => {
         setLoading(false);
         queryClient.refetchQueries("COMPANY");
         onClose();
@@ -1905,7 +1902,8 @@ const Companies = ({
                 ".addIcon": {
                   display: "block",
                 },
-              }}>
+              }}
+            >
               <Flex w={"100%"} justifyContent={"space-between"}>
                 <Flex alignItems={"center"} gap={"10px"}>
                   <Flex
@@ -1917,29 +1915,31 @@ const Companies = ({
                     bg="#15B79E"
                     fontSize={18}
                     fontWeight={500}
-                    color="#fff">
+                    color="#fff"
+                  >
                     {company?.name?.[0]?.toUpperCase()}
                   </Flex>
                   <Box fontSize={12} fontWeight={500} color="#101828">
                     {company?.name}
                   </Box>
                 </Flex>
-                {
-                  roleInfo?.name === DEFAULT_ADMIN && <Flex gap={"6px"}>
-                  <Box
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onOpen();
-                      setCompanyId(company?.id);
-                    }}
-                    display={"none"}
-                    className="addIcon"
-                    h={"19px"}>
-                    <AddIcon style={{color: "#4f5a6c"}} />
-                  </Box>
-                  <AccordionIcon ml="auto" fontSize="20px" />
-                </Flex>
-                }
+                {roleInfo?.name === DEFAULT_ADMIN && (
+                  <Flex gap={"6px"}>
+                    <Box
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onOpen();
+                        setCompanyId(company?.id);
+                      }}
+                      display={"none"}
+                      className="addIcon"
+                      h={"19px"}
+                    >
+                      <AddIcon style={{ color: "#4f5a6c" }} />
+                    </Box>
+                    <AccordionIcon ml="auto" fontSize="20px" />
+                  </Flex>
+                )}
               </Flex>
             </AccordionButton>
             <Projects
@@ -1982,42 +1982,36 @@ const Companies = ({
               color={"#fff"}
               fontSize={"14px"}
               margin="8px 0 0 0"
-              borderRadius={"6px"}>
+              borderRadius={"6px"}
+            >
               Save
             </Button>
           </Box>
         </Box>
       </Dialog>
-      {
-        roleInfo?.name === DEFAULT_ADMIN && <AddOrganization />
-      }
+      {roleInfo?.name === DEFAULT_ADMIN && <AddOrganization />}
     </Box>
   );
 };
 
-const Projects = ({
-  company,
-  onSelectEnvironment = () => {},
-  setEnvirId,
-  getConnections = () => {},
-}) => {
+const Projects = ({ company, setEnvirId, getConnections = () => {} }) => {
   const [projectID, setProjectID] = useState("");
   const projectsQuery = useProjectListQuery({
-    params: {company_id: company?.id},
-    queryParams: {enabled: Boolean(company?.id)},
+    params: { company_id: company?.id },
+    queryParams: { enabled: Boolean(company?.id) },
   });
   const projects = projectsQuery.data?.projects ?? [];
 
   const environmentsQuery = useEnvironmentListQuery({
-    params: {project_id: projectID},
-    queryParams: {enabled: Boolean(projectID)},
+    params: { project_id: projectID },
+    queryParams: { enabled: Boolean(projectID) },
   });
 
   const environments = environmentsQuery?.data?.environments;
 
   useEffect(() => {
     const computedEnv = environments?.find(
-      (item) => item?.name === "Production"
+      (item) => item?.name === "Production",
     );
 
     if (Boolean(computedEnv?.project_id)) {
@@ -2026,13 +2020,13 @@ const Projects = ({
       setEnvirId(computedEnv);
     } else {
       getConnections(
-        Array.isArray(environments) ? environments?.[0] : environments
+        Array.isArray(environments) ? environments?.[0] : environments,
       );
       // onSelectEnvironment(
       //   Array.isArray(environments) ? environments?.[0] : environments
       // );
       setEnvirId(
-        Array.isArray(environments) ? environments?.[0] : environments
+        Array.isArray(environments) ? environments?.[0] : environments,
       );
     }
   }, [projectID, environments?.length]);
@@ -2052,7 +2046,8 @@ const Projects = ({
               borderRadius={6}
               background={"none"}
               border={"none"}
-              _hover={{bg: "#EAECF0"}}>
+              _hover={{ bg: "#EAECF0" }}
+            >
               <Flex
                 w={20}
                 h={20}
@@ -2062,7 +2057,8 @@ const Projects = ({
                 bg="#15B79E"
                 fontSize={18}
                 fontWeight={500}
-                color="#fff">
+                color="#fff"
+              >
                 {project.title?.[0]?.toUpperCase()}
               </Flex>
               <Box fontSize={12} fontWeight={500} color="#101828">

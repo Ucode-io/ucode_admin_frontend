@@ -1,7 +1,7 @@
 import axios from "axios";
-import {useEffect, useMemo, useState} from "react";
-import {useQuery} from "react-query";
-import HFSelect from "../../../components/FormElements/HFSelect";
+import { useEffect, useMemo, useState } from "react";
+import { useQuery } from "react-query";
+import SearchableSelect from "./LoginFormDesign/SearchableSelect";
 import classes from "../style.module.scss";
 
 const DynamicFields = ({
@@ -31,9 +31,8 @@ const DynamicFields = ({
     );
   }, [options, connection]);
 
-  const url = `${
-    import.meta.env.VITE_AUTH_BASE_URL_V2
-  }/get-connection-options/${connection?.guid}/${userId}`;
+  const url = `${import.meta.env.VITE_AUTH_BASE_URL_V2
+    }/get-connection-options/${connection?.guid}/${userId}`;
 
   const data = {
     data: {
@@ -87,18 +86,14 @@ const DynamicFields = ({
   return (
     <div className={classes.formRow}>
       <p className={classes.label}>{table.label}</p>
-      <HFSelect
+      <SearchableSelect
         control={control}
         name={`tables.${index}.object_id`}
-        size="large"
-        fullWidth
         options={computedConnections}
         placeholder={connection?.view_slug}
         required
-        onChange={(e, val) => {
-          console.log("e", e);
-          setSelectedCollection(e);
-          // setValue(`tables[${index}].table_slug`, connection?.table_slug);
+        onChange={(val) => {
+          setSelectedCollection(val);
         }}
       />
     </div>

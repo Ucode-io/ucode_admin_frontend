@@ -72,8 +72,12 @@ export const ActivityFeedColors = (name) => {
       return "#f93e3e";
     case "UPDATE PERMISSION":
       return "#fca130";
+    case "EXPORT EXCEL":
+      return "#ff872e";
+    case "IMPORT EXCEL":
+      return "#ffc939";
     default:
-      return "-";
+      return "#49cc90";
   }
 };
 export const ActivityFeedBackground = (name) => {

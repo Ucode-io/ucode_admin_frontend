@@ -190,7 +190,6 @@ export const TreeNode = ({
 
   useEffect(() => {
     const onWindowClick = (e) => {
-      console.log(e.target.closest(`[data-id="${node.id}"]`));
       if (!e.target.closest(`[data-id="${node.id}"]`)) {
         setMenuOpen(false);
       }

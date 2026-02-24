@@ -243,8 +243,6 @@ const AutoCompleteElement = ({
     return result;
   }, [autoFilters, rowData, value]);
 
-  console.log("autoFiltersValue update", { autoFiltersValue, rowData });
-
   const queryClient = useQueryClient();
 
   const searchedMap = useMemo(() => {
@@ -257,8 +255,6 @@ const AutoCompleteElement = ({
     });
     return result;
   }, [field?.view_fields, debouncedValue]);
-
-  console.log({ searchedMap, autoFiltersValue });
 
   const queryFn = (pageProp) => {
     if (!field?.table_slug) return null;

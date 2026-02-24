@@ -5,7 +5,7 @@ import {useQuery} from "react-query";
 import PhoneLogin from "./PhoneLogin";
 import {useForm} from "react-hook-form";
 import {useDispatch} from "react-redux";
-import {Box, Dialog} from "@mui/material";
+import { Box, Button, Dialog } from "@mui/material";
 import classes from "./style.module.scss";
 import {useTranslation} from "react-i18next";
 import ForgotPassword from "./ForgotPassword";
@@ -21,13 +21,10 @@ import authService from "../../../../services/auth/authService";
 import companyService from "../../../../services/companyService";
 import SecondaryButton from "../../../../components/Buttons/SecondaryButton";
 import connectionServiceV2 from "../../../../services/auth/connectionService";
-import FireBaseOtp from "./PhoneLogin/FireBaseOtp";
-import {RecaptchaVerifier, signInWithPhoneNumber} from "firebase/auth";
-import {auth} from "./firebase";
 import {showAlert} from "../../../../store/alert/alert.thunk";
 import RecoverPassword from "../RecoverPassword";
-import {companyActions} from "../../../../store/company/company.slice";
-import { useNavigate } from "react-router-dom";
+import { companyActions } from "../../../../store/company/company.slice";
+import DynamicFields from "../DynamicFields";
 
 // const firebaseConfig = {
 //   apiKey: "AIzaSyAI2P6BcpeVdkt7G_xRe3mYiQ4Ek0cU2pM",
@@ -49,6 +46,7 @@ const LoginFormDesign = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+  const [projectListDialogOpen, setProjectListDialogOpen] = useState(false);
   const [isUserId, setIsUserId] = useState();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState([]);
@@ -75,7 +73,7 @@ const LoginFormDesign = ({
   const selectedEnvID = watch("environment_id");
   const getFormValue = watch();
 
-  const { data: computedConnections = [], isLoading } = useQuery(
+  const { data: computedConnections = [] } = useQuery(
     [
       "GET_CONNECTION_LIST",
       { "project-id": selectedProjectID },
@@ -89,7 +87,7 @@ const LoginFormDesign = ({
           client_type_id: selectedClientTypeID,
           "user-id": isUserId,
         },
-        { "environment-id": selectedEnvID }
+        { "environment-id": selectedEnvID },
       );
     },
     {
@@ -103,8 +101,11 @@ const LoginFormDesign = ({
       onError: () => {
         setLoading(false);
       },
-    }
+    },
   );
+
+  const [connectionOptions, setConnectionOptions] = useState([]);
+  const [tempData, setTempData] = useState({});
 
   //=======COMPUTE COMPANIES
   const computedCompanies = useMemo(() => {
@@ -157,7 +158,7 @@ const LoginFormDesign = ({
   const register = (data) => {
     authService
       .register(data)
-      .then((res) => {
+      .then(() => {
         setIndex(0);
       })
       .catch(() => {
@@ -165,10 +166,31 @@ const LoginFormDesign = ({
       });
   };
 
+  const defaultLogin = async (data) => {
+    try {
+      await dispatch(
+        loginAction({
+          ...data,
+          setProjectListDialogOpen: (val) => {
+            setProjectListDialogOpen(val);
+            setLoading(false);
+          },
+          setConnectionOptions,
+          setTempData,
+        }),
+      ).unwrap();
+    } catch (e) {
+      setLoading(false);
+      setIsUserId(null);
+      setCompanies([]);
+    }
+  };
+
   const onSubmit = (values) => {
     setLoading(true);
     if (selectedTabIndex === 0) {
-      getCompany(values);
+      // getCompany(values);
+      defaultLogin(values);
     }
     if (selectedTabIndex === 1) {
       if (codeAppValue?.sms_id) {
@@ -232,7 +254,7 @@ const LoginFormDesign = ({
 
         if (index === 1) register(values);
       })
-      .catch((err) => {
+      .catch(() => {
         setLoading(false);
         setGoogleAuth(null);
       });
@@ -327,9 +349,6 @@ const LoginFormDesign = ({
             : undefined,
       sms_id: codeAppValue?.sms_id,
     };
-    const computedProject = companies[0]?.projects
-      ?.find((item) => item?.id === selectedProjectID)
-      ?.resource_environments?.map((el) => el?.environment_id);
     const computedEnv = computedEnvironments?.find(
       (item) => item?.value === selectedEnvID,
     );
@@ -340,20 +359,18 @@ const LoginFormDesign = ({
     dispatch(authActions.setStatus(computedEnv?.access_type));
 
     try {
-      const result = await dispatch(
+      await dispatch(
         loginAction({
           ...data,
-          environment_ids: computedProject,
+          isSubmitDialog: true,
           currencies: currencies,
+          tempData,
         }),
       ).unwrap();
-      console.log("Успешный вход:", result);
     } catch (e) {
-      console.error("Ошибка при сабмите:", e);
       setLoading(false);
       setIsUserId(null);
       setCompanies([]);
-      // Здесь можно показать уведомление пользователю (Toast, Alert)
     }
   };
 
@@ -500,12 +517,12 @@ const LoginFormDesign = ({
   }, [connectionCheck, getFormValue?.tables]);
 
   return (
-    <Box sx={{height: "100%"}}>
+    <Box sx={{ height: "100%" }}>
       {Boolean(
         formType !== "REGISTER" &&
           formType !== "OTP" &&
           formType !== "FORGOT_PASSWORD" &&
-          formType !== "EMAIL_OTP"
+          formType !== "EMAIL_OTP",
       ) && (
         <>
           <h1 className={classes.title}>
@@ -523,10 +540,11 @@ const LoginFormDesign = ({
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
           <Tabs
-            style={{height: "100%"}}
+            style={{ height: "100%" }}
             selected={selectedTabIndex}
             direction={"ltr"}
-            onSelect={(index) => setSelectedTabIndex(index)}>
+            onSelect={(index) => setSelectedTabIndex(index)}
+          >
             {formType === "OTP" ? (
               <PhoneOtpInput
                 watch={watch}
@@ -546,27 +564,31 @@ const LoginFormDesign = ({
                   marginTop: "20px",
                   display: "flex",
                   flexDirection: "column",
-                }}>
+                }}
+              >
                 <TabList>
                   <Tab
                     onClick={() => setFormType("LOGIN")}
-                    style={{padding: "10px 8px 10px 8px"}}>
+                    style={{ padding: "10px 8px 10px 8px" }}
+                  >
                     {t("login")}
                   </Tab>
                   <Tab
                     onClick={() => setFormType("phone")}
-                    style={{padding: "10px 12px 10px 12px"}}>
+                    style={{ padding: "10px 12px 10px 12px" }}
+                  >
                     {t("phone")}
                   </Tab>
                   <Tab
                     onClick={() => setFormType("email")}
-                    style={{padding: "10px 12px 10px 12px"}}>
+                    style={{ padding: "10px 12px 10px 12px" }}
+                  >
                     {t("email.address")}
                   </Tab>
                 </TabList>
 
-                <div className={classes.formArea} style={{marginTop: "10px"}}>
-                  <TabPanel style={{height: "calc(100% - 50px)"}}>
+                <div className={classes.formArea} style={{ marginTop: "10px" }}>
+                  <TabPanel style={{ height: "calc(100% - 50px)" }}>
                     <LoginTab
                       loading={loading}
                       setFormType={setFormType}
@@ -601,52 +623,173 @@ const LoginFormDesign = ({
       )}
 
       <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+        open={projectListDialogOpen}
+        onClose={() => setProjectListDialogOpen(false)}
+        aria-labelledby="multi-company-dialog-title"
+        aria-describedby="multi-company-dialog-description"
         PaperProps={{
           style: {
-            padding: "30px",
-            width: "550px",
+            padding: "24px 28px 20px",
+            width: "560px",
             maxHeight: "70vh",
-            borderRadius: "12px",
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+            // height: "100%",
+            borderRadius: "14px",
+            boxShadow:
+              "0px 18px 45px rgba(15, 23, 42, 0.18), 0px 0px 0px 1px rgba(148, 163, 184, 0.35)",
           },
         }}
         BackdropProps={{
           style: {
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            backdropFilter: "blur(5px)",
+            backgroundColor: "rgba(15, 23, 42, 0.55)",
+            backdropFilter: "blur(6px)",
           },
-        }}>
-        <LoginCompaniesList
-          computedProjects={computedProjects}
-          computedCompanies={computedCompanies}
-          computedEnvironments={computedEnvironments}
-          computedClientTypes={computedClientTypes}
-          computedConnections={computedConnections}
-          selectedCollection={selectedCollection}
-          companies={companies}
-          loading={loading}
-          control={control}
-          watch={watch}
-          setValue={setValue}
-          handleSubmit={handleSubmit(onSubmitDialog)}
-          setSelectedCollection={setSelectedCollection}
-        />
+        }}
+      >
+        <Box display="flex" flexDirection="column" gap={2}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={1}
+          >
+            <Box
+              id="multi-company-dialog-title"
+              fontSize="18px"
+              fontWeight={600}
+              color="#0f172a"
+            >
+              Multi company
+            </Box>
+          </Box>
+
+          <Box
+            id="multi-company-dialog-description"
+            mt={1}
+            mb={1}
+            fontSize="13px"
+            color="#64748b"
+          >
+            Choose which workspace configuration you want to use for this login.
+          </Box>
+          <Box display="flex" flexDirection="column" gap={1.5}>
+            {connectionOptions?.map((connection, idx) => (
+              <DynamicFields
+                key={connection?.guid}
+                table={computedConnections}
+                connection={connection}
+                index={idx}
+                control={control}
+                setValue={setValue}
+                watch={watch}
+                options={connection?.options}
+                companies={companies}
+                selectedCollection={selectedCollection}
+                setSelectedCollection={setSelectedCollection}
+              />
+            ))}
+          </Box>
+
+          <Box mt={3} display="flex" justifyContent="flex-end" gap={1.5}>
+            <Button
+              variant="text"
+              color="inherit"
+              onClick={() => setProjectListDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="contained" onClick={handleSubmit(onSubmitDialog)}>
+              Continue
+            </Button>
+          </Box>
+        </Box>
+      </Dialog>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="company-dialog-title"
+        aria-describedby="company-dialog-description"
+        PaperProps={{
+          style: {
+            padding: "24px 28px 22px",
+            width: "560px",
+            maxHeight: "70vh",
+            borderRadius: "14px",
+            boxShadow:
+              "0px 18px 45px rgba(15, 23, 42, 0.18), 0px 0px 0px 1px rgba(148, 163, 184, 0.35)",
+          },
+        }}
+        BackdropProps={{
+          style: {
+            backgroundColor: "rgba(15, 23, 42, 0.55)",
+            backdropFilter: "blur(6px)",
+          },
+        }}
+      >
+        <Box display="flex" flexDirection="column" gap={2}>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={1}
+          >
+            <Box
+              id="company-dialog-title"
+              fontSize="18px"
+              fontWeight={600}
+              color="#0f172a"
+            >
+              Select workspace
+            </Box>
+          </Box>
+
+          <Box
+            id="company-dialog-description"
+            mt={1}
+            mb={1.5}
+            fontSize="13px"
+            color="#64748b"
+          >
+            Pick a company, project and environment to continue.
+          </Box>
+
+          <Box
+            mt={1}
+            sx={{
+              maxHeight: "360px",
+              overflowY: "auto",
+            }}
+          >
+            <LoginCompaniesList
+              computedProjects={computedProjects}
+              computedCompanies={computedCompanies}
+              computedEnvironments={computedEnvironments}
+              computedClientTypes={computedClientTypes}
+              computedConnections={computedConnections}
+              selectedCollection={selectedCollection}
+              companies={companies}
+              loading={loading}
+              control={control}
+              watch={watch}
+              setValue={setValue}
+              handleSubmit={handleSubmit(onSubmitDialog)}
+              setSelectedCollection={setSelectedCollection}
+            />
+          </Box>
+        </Box>
       </Dialog>
 
       {formType === "RESET_PASSWORD" && (
         <SecondaryButton
           size="large"
-          style={{marginTop: "20px"}}
+          style={{ marginTop: "20px" }}
           type="button"
           onClick={() => {
             formType === "RESET_PASSWORD"
               ? setFormType("LOGIN")
               : setFormType("RESET_PASSWORD");
-          }}>
+          }}
+        >
           Back to login
         </SecondaryButton>
       )}

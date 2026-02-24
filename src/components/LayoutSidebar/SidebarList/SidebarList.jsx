@@ -4,7 +4,6 @@ import { useSidebarListProps } from "./useSidebarListProps";
 export const SidebarList = ({
   menuList,
   setMenuList,
-  getMenuList,
   handlers,
   setSelectedFolder,
   selectedApp,
@@ -12,11 +11,7 @@ export const SidebarList = ({
   menu,
   setMenu,
 }) => {
-  const { getMenuLabel, menuChilds } = useSidebarListProps({
-    menuList,
-    setMenuList,
-    getMenuList,
-  });
+  const { getMenuLabel, menuChilds } = useSidebarListProps();
 
   return (
     <SortableSidebarTree

@@ -241,7 +241,28 @@ const LayoutSidebar = ({
     setTemplatePopover(null);
   };
 
-  const getMenuList = () => {
+  const menuChilds = useSelector((state) => state?.menuAccordion?.menuChilds);
+
+  function computeMenuChildren(id, children = []) {
+    const updated = { ...menuChilds };
+
+    updated[id] = { open: true, children };
+
+    dispatch(menuAccordionActions.toggleMenuChilds(updated));
+  }
+
+  const getMenuList = (parentId) => {
+    if (parentId) {
+      menuSettingsService
+        .getList({
+          parent_id: parentId,
+        })
+        .then((res) => {
+          computeMenuChildren(parentId, res?.menus);
+        });
+      return;
+    }
+
     menuSettingsService
       .getList({
         parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",

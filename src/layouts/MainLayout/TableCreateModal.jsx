@@ -161,7 +161,6 @@ const TableCreateModal = ({
           getMenuList();
           closeModal();
         }
-        console.log({res})
         dispatch(permissionsActions.setPermissionsForNewTable({
           table_slug: res?.slug,
         }))

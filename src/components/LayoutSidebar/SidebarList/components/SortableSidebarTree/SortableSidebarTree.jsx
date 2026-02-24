@@ -107,7 +107,6 @@ export const SortableSidebarTree = ({
     dispatch(groupFieldActions.clearViews());
 
     if (node?.type !== "FOLDER") {
-      navigate(`/${id}`);
       newClickHandler({
         el: node,
         element: node,

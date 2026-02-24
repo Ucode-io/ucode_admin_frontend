@@ -303,9 +303,9 @@ export const TreeNode = ({
               <CustomTooltip node={node} title="Create folder">
                 <IconButton
                   size="small"
-                  onClick={() => {
+                  onClick={(e) => {
                     setSelectedFolder(node);
-                    /* Логика добавления */
+                    handleOpenNotify(e, "CREATE_TO_FOLDER");
                   }}
                 >
                   <AddIcon sx={{ fontSize: 18 }} />

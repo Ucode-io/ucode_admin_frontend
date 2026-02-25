@@ -219,6 +219,8 @@ export const useFieldPopoverProps = ({
   const onSubmit = (values) => {
     const data = {
       ...values,
+      autofill_table: values?.attributes.autofill_table,
+      autofill_field: values?.attributes.autofill_field,
       attributes: {
         ...values?.attributes,
         number_of_rounds: parseInt(values?.attributes?.number_of_rounds),

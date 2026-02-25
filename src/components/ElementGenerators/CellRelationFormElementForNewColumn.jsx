@@ -435,6 +435,7 @@ const AutoCompleteElement = ({
     const val = value;
     setValue(val?.value || null);
     setLocalValue(val);
+    console.log(field?.attributes);
 
     if (!field?.attributes?.autofill) return;
 
@@ -442,6 +443,7 @@ const AutoCompleteElement = ({
       const setName = name.split(".");
       setName.pop();
       setName.push(field_to);
+      console.log(setName);
       setFormValue(setName.join("."), get(val, field_from));
     });
   };

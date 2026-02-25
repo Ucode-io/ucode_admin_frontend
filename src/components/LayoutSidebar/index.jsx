@@ -292,7 +292,9 @@ const LayoutSidebar = ({
         } else {
           setChildMenu(element);
           setSelectedFolder(null);
+          setMenu(null);
           queryClient.refetchQueries(["MENU_CHILD"]);
+          if (element.type !== "FOLDER") getMenuList(element?.parent_id);
         }
       })
       .catch((err) => {

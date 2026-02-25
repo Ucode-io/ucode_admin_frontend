@@ -51,6 +51,18 @@ export const Environment = () => {
       .then((res) => {
         dispatch(companyActions.setProjectId(environment.project_id));
         store.dispatch(authActions.setTokens(res));
+        store.dispatch(
+          authActions.updateRoleInfo({
+            key: "id",
+            value: res?.role?.id,
+          }),
+        );
+        store.dispatch(
+          authActions.updateClientType({
+            key: "id",
+            value: res?.client_type?.id,
+          }),
+        );
         navigate("/");
         window.location.reload();
       })

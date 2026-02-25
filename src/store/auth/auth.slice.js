@@ -110,6 +110,12 @@ export const { actions: authActions, reducer: authReducer } = createSlice({
     updateUser(state, { payload }) {
       state.userInfo[payload.key] = payload.value;
     },
+    updateRoleInfo(state, { payload }) {
+      state.roleInfo[payload.key] = payload.value;
+    },
+    updateClientType(state, { payload }) {
+      state.clientType[payload.key] = payload.value;
+    },
     updateEnvId(state, { payload }) {
       state.environmentId = payload ?? "";
     },

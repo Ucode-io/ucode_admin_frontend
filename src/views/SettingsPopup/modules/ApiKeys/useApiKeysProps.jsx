@@ -14,9 +14,10 @@ export const useApiKeysProps = () => {
   const dispatch = useDispatch();
   const list = useSelector((state) => state.application.list);
   const loader = useSelector((state) => state.application.loader);
-  const projectId = useSelector((state) => state.auth.projectId);
+  const projectId = useSelector((state) => state.company.projectId);
   const clientTypeId = useSelector((state) => state.auth.clientType.id);
-  const envId = useSelector((state) => state?.auth?.environmentId);
+  // const envId = useSelector((state) => state?.auth?.environmentId);
+  const envId = useSelector((state) => state?.company?.environmentId);
   const roleId = useSelector((state) => state.auth.roleInfo.id);
   const inputRef = useRef();
   const [apiKeys, setApiKeys] = useState();
@@ -25,7 +26,7 @@ export const useApiKeysProps = () => {
 
   const navigateToEditForm = (id) => {
     dispatch(
-      settingsModalActions.setTab(TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL)
+      settingsModalActions.setTab(TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL),
     );
     dispatch(settingsModalActions.setApiKeyId(id));
     dispatch(settingsModalActions.setEdit(true));
@@ -39,7 +40,7 @@ export const useApiKeysProps = () => {
 
   const navigateToForm = (id) => {
     dispatch(
-      settingsModalActions.setTab(TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL)
+      settingsModalActions.setTab(TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL),
     );
     dispatch(settingsModalActions.setApiKeyId(id));
     dispatch(settingsModalActions.setView(true));
@@ -49,7 +50,7 @@ export const useApiKeysProps = () => {
 
   const navigateToCreateForm = () => {
     dispatch(
-      settingsModalActions.setTab(TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL)
+      settingsModalActions.setTab(TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL),
     );
     dispatch(settingsModalActions.setCreate(true));
     // setSearchParams({ tab: TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL, create: true });

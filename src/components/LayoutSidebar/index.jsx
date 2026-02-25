@@ -25,13 +25,19 @@ import {
   useDisclosure,
   useOutsideClick,
 } from "@chakra-ui/react";
-import { Logout, AssistantOutlined } from "@mui/icons-material";
+import {
+  Logout,
+  AssistantOutlined,
+} from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { Dialog, Modal } from "@mui/material";
+import {
+  Dialog,
+  Modal,
+} from "@mui/material";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -67,7 +73,8 @@ import { generateLangaugeText } from "../../utils/generateLanguageText";
 import { isJSONParsable } from "../../utils/isJsonValid";
 import { getAllFromDB } from "../../utils/languageDB";
 import AddOrganization from "./AddOrganization";
-// import AppSidebar from "./AppSidebarComponent";
+// import { AIMenu, useAIChat } from "../ProfilePanel/AIChat";
+import AppSidebar from "./AppSidebarComponentV2";
 import DynamicConnections from "./DynamicConnections";
 import FolderModal from "./FolderModalComponent";
 import ButtonsMenu from "./MenuButtons";
@@ -84,7 +91,6 @@ import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import { SidebarList } from "./SidebarList";
 import { AiProjectsModal } from "../AiProjectsModal";
 import { Container } from "react-smooth-dnd";
-import AppSidebar from "./AppSidebarComponentV2";
 import "./style.scss";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
@@ -226,7 +232,28 @@ const LayoutSidebar = ({
     setTemplatePopover(null);
   };
 
-  const getMenuList = () => {
+  const menuChilds = useSelector((state) => state?.menuAccordion?.menuChilds);
+
+  function computeMenuChildren(id, children = []) {
+    const updated = { ...menuChilds };
+
+    updated[id] = { open: true, children };
+
+    dispatch(menuAccordionActions.toggleMenuChilds(updated));
+  }
+
+  const getMenuList = (parentId) => {
+    if (parentId) {
+      menuSettingsService
+        .getList({
+          parent_id: parentId,
+        })
+        .then((res) => {
+          computeMenuChildren(parentId, res?.menus);
+        });
+      return;
+    }
+
     menuSettingsService
       .getList({
         parent_id: "c57eedc3-a954-4262-a0af-376c65b5a284",
@@ -329,9 +356,6 @@ const LayoutSidebar = ({
     }
   };
 
-  // const setSidebarIsOpen = (val) => {
-  //   dispatch(mainActions.setSettingsSidebarIsOpen(val));
-  // };
   // useEffect(() => {
   //   if (menuTemplate?.icon_style === "MODERN") {
   //     setSidebarIsOpen(false);

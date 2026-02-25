@@ -11,7 +11,7 @@ const newClickHandler = ({
   menuChilds,
   coontrolAccordionAction,
   setElement = () => {},
-  setSubMenuIsOpen,
+  setSubMenuIsOpen = () => {},
   refetch = () => {},
 }) => {
   if (element?.id === "USERS_MENU_ITEM_ID") {
@@ -74,6 +74,8 @@ const newClickHandler = ({
       `/${element?.id}/web-page/${element?.data?.webpage?.id}?menuId=${element?.id}`,
     );
     setSubMenuIsOpen(false);
+  } else {
+    navigate(`/${el?.id}`);
   }
 };
 

@@ -125,7 +125,7 @@ const AutoCompleteElement = ({
   objectIdFromJWT,
   relationView,
 }) => {
-  const {view} = useViewContext()
+  const { view } = useViewContext();
   const { navigateToForm } = useTabRouter();
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
@@ -141,7 +141,7 @@ const AutoCompleteElement = ({
   const autoFilters = field?.attributes?.auto_filters;
   const { i18n } = useTranslation();
   const languages = useSelector((state) => state.languages.list)?.map(
-    (el) => el.slug
+    (el) => el.slug,
   );
   const isRequired = field?.attributes?.required;
 
@@ -227,14 +227,19 @@ const AutoCompleteElement = ({
         additionalValues?.flat();
     }
 
-    return constructorObjectService.getItems(field?.table_slug);
+    return constructorObjectService.getListV2(
+      field?.table_slug,
+      { data: requestData },
+      {
+        language_setting: i18n?.language,
+      },
+    );
   };
 
   const query = new URLSearchParams(window.location.search);
   const itemId = query.get("p");
 
   const openedItemValue = useMemo(() => {
-
     const openedItemOption = allOptions?.find((item) => item?.guid === itemId);
 
     if (relationView && openedItemOption) {
@@ -264,7 +269,7 @@ const AutoCompleteElement = ({
               field?.view_fields?.map((field) => field.slug) ??
               field?.attributes?.view_fields?.map((field) => field.slug),
           },
-        }
+        },
       );
     },
     {
@@ -288,7 +293,7 @@ const AutoCompleteElement = ({
           ]);
         }
       },
-    }
+    },
   );
 
   const { data: optionsFromLocale } = useQuery(
@@ -330,23 +335,30 @@ const AutoCompleteElement = ({
 
   const computedOptions = useMemo(() => {
     let uniqueObjects = Array.from(
-      new Set(allOptions?.map(JSON.stringify))
+      new Set(allOptions?.map(JSON.stringify)),
     ).map(JSON.parse);
 
-    if(field?.table_slug === "client_type") {
-      return uniqueObjects?.filter((item) => (
-        item?.table_slug === view?.table_slug
-      )).map((option) => ({
-        label: option?.attributes?.enable_multi_language
-          ? getRelationFieldTabsLabelLang(field, option)
-          : getRelationFieldTabsLabel(field, option, i18n?.language, languages),
-        value: option?.guid,
-      })) ?? []
+    if (field?.table_slug === "client_type") {
+      return (
+        uniqueObjects
+          ?.filter((item) => item?.table_slug === view?.table_slug)
+          .map((option) => ({
+            label: option?.attributes?.enable_multi_language
+              ? getRelationFieldTabsLabelLang(field, option)
+              : getRelationFieldTabsLabel(
+                  field,
+                  option,
+                  i18n?.language,
+                  languages,
+                ),
+            value: option?.guid,
+          })) ?? []
+      );
     }
 
     if (field?.attributes?.object_id_from_jwt && objectIdFromJWT) {
       uniqueObjects = uniqueObjects?.filter(
-        (el) => el?.guid === objectIdFromJWT
+        (el) => el?.guid === objectIdFromJWT,
       );
     }
 
@@ -426,7 +438,7 @@ const AutoCompleteElement = ({
 
   useEffect(() => {
     const matchingOption = allOptions?.find(
-      (item) => item?.table_slug === field?.table_slug
+      (item) => item?.table_slug === field?.table_slug,
     );
 
     if (matchingOption) {

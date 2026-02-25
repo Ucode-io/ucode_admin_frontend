@@ -60,6 +60,7 @@ const WebsiteModal = ({
       .then(() => {
         if (selectedFolder?.id) {
           queryClient.refetchQueries(["MENU_CHILD"], selectedFolder?.id);
+          getMenuList(selectedFolder?.id);
           closeModal();
         } else {
           getMenuList();

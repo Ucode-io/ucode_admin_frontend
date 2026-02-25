@@ -136,9 +136,7 @@ export const Environment = () => {
                     className={cls.btnSync}
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (e.target.checked) {
-                        onSelectEnvironment(element);
-                      }
+                      onSelectEnvironment(element);
                     }}>
                     <span>
                       <SyncIcon color="inherit" />

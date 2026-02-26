@@ -13,13 +13,13 @@ import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import authService from "../../../../services/auth/authService";
-import { store } from "../../../../store";
 import { authActions } from "../../../../store/auth/auth.slice";
 import { companyActions } from "../../../../store/company/company.slice";
 import { Button } from "../../components/Button";
 import cls from "./styles.module.scss";
 import SyncIcon from "@mui/icons-material/Sync";
 import { menuAccordionActions } from "@/store/menus/menus.slice";
+import { permissionsActions } from "@/store/permissions/permissions.slice";
 
 export const Environment = () => {
   const {
@@ -51,20 +51,23 @@ export const Environment = () => {
       .updateToken({ ...params, env_id: environment.id }, { ...params })
       .then((res) => {
         dispatch(companyActions.setProjectId(environment.project_id));
-        store.dispatch(authActions.setTokens(res));
-        store.dispatch(
+        dispatch(authActions.setTokens(res));
+        dispatch(authActions.setPermission({ permissions: res?.permissions }));
+        dispatch(permissionsActions.setPermissions(res?.permissions));
+        dispatch(
           authActions.updateRoleInfo({
             key: "id",
             value: res?.role?.id,
           }),
         );
-        store.dispatch(
+        dispatch(
           authActions.updateClientType({
             key: "id",
             value: res?.client_type?.id,
           }),
         );
-        store.dispatch(menuAccordionActions.resetMenu());
+        dispatch(menuAccordionActions.resetMenu());
+
         navigate("/");
         window.location.reload();
       })

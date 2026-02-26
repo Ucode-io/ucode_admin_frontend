@@ -311,7 +311,7 @@ const ButtonsMenu = ({
         )}
         {menuType === "TABLE" && (
           <Box className="menu">
-            {element.parent_id === "c57eedc3-a954-4262-a0af-376c65b5a282" && (
+            {element?.parent_id === "c57eedc3-a954-4262-a0af-376c65b5a282" && (
               <>
                 <MenuItemComponent
                   icon={<DriveFileMoveIcon size={13} />}

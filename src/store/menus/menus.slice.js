@@ -17,5 +17,10 @@ export const { actions: menuAccordionActions, reducer: menuAccordionReducer } =
           open: !state.menuChilds?.[id]?.open,
         };
       },
+      resetMenu: () => {
+        return {
+          menuChilds: {},
+        };
+      },
     },
   });

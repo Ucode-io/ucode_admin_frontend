@@ -1,31 +1,21 @@
 import {useDispatch, useSelector} from "react-redux";
-import {useLocation, useNavigate} from "react-router-dom";
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useState } from "react";
 import apiKeyService from "@/services/apiKey.service";
-import fileService from "@/services/fileService";
-import exportToJsonService from "@/services/exportToJson";
-import { useSettingsPopupContext } from "../../providers";
 import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
 import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 
 export const useApiKeysProps = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
   const dispatch = useDispatch();
   const list = useSelector((state) => state.application.list);
-  const loader = useSelector((state) => state.application.loader);
-  const projectId = useSelector((state) => state.auth.projectId);
+  const projectId = useSelector((state) => state.company.projectId);
   const clientTypeId = useSelector((state) => state.auth.clientType.id);
-  const envId = useSelector((state) => state?.auth?.environmentId);
+  const envId = useSelector((state) => state?.company?.environmentId);
   const roleId = useSelector((state) => state.auth.roleInfo.id);
-  const inputRef = useRef();
   const [apiKeys, setApiKeys] = useState();
-
-  const { setSearchParams } = useSettingsPopupContext();
 
   const navigateToEditForm = (id) => {
     dispatch(
-      settingsModalActions.setTab(TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL)
+      settingsModalActions.setTab(TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL),
     );
     dispatch(settingsModalActions.setApiKeyId(id));
     dispatch(settingsModalActions.setEdit(true));
@@ -39,7 +29,7 @@ export const useApiKeysProps = () => {
 
   const navigateToForm = (id) => {
     dispatch(
-      settingsModalActions.setTab(TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL)
+      settingsModalActions.setTab(TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL),
     );
     dispatch(settingsModalActions.setApiKeyId(id));
     dispatch(settingsModalActions.setView(true));
@@ -49,7 +39,7 @@ export const useApiKeysProps = () => {
 
   const navigateToCreateForm = () => {
     dispatch(
-      settingsModalActions.setTab(TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL)
+      settingsModalActions.setTab(TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL),
     );
     dispatch(settingsModalActions.setCreate(true));
     // setSearchParams({ tab: TAB_COMPONENTS.API_KEYS.API_KEYS_DETAIL, create: true });
@@ -81,23 +71,23 @@ export const useApiKeysProps = () => {
     getList();
   }, []);
 
-  const inputChangeHandler = (e) => {
-    const file = e.target.files[0];
+  // const inputChangeHandler = (e) => {
+  //   const file = e.target.files[0];
 
-    const data = new FormData();
-    data.append("file", file);
+  //   const data = new FormData();
+  //   data.append("file", file);
 
-    fileService.upload(data).then((res) => {
-      fileSend(res?.filename);
-    });
-  };
+  //   fileService.upload(data).then((res) => {
+  //     fileSend(res?.filename);
+  //   });
+  // };
 
-  const fileSend = (value) => {
-    exportToJsonService.uploadToJson({
-      file_name: value,
-      // app_id: appId,
-    });
-  };
+  // const fileSend = (value) => {
+  //   exportToJsonService.uploadToJson({
+  //     file_name: value,
+  //     // app_id: appId,
+  //   });
+  // };
 
   const URLFILE = window.location.origin + "/apikeys.zip";
   const downloadUrl = (url) => {

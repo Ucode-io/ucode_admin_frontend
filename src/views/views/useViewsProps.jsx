@@ -197,7 +197,7 @@ export const useViewsProps = ({ isRelationView }) => {
   };
 
   useProjectGetByIdQuery({
-    projectId,
+    projectId: projectId || undefined,
     queryParams: {
       enabled:
         !Boolean(projectId && projectInfo) ||

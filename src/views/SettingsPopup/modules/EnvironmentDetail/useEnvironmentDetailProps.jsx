@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import { useGetLang } from "../../../../hooks/useGetLang";
-import { useSettingsPopupContext } from "../../providers";
 import { useEnvironmentCreateMutation, useEnvironmentGetByIdQuery, useEnvironmentUpdateMutation } from "../../../../services/environmentService";
 import { useForm } from "react-hook-form";
 import { store } from "../../../../store";
@@ -14,8 +13,6 @@ export const useEnvironmentDetailProps = () => {
   const { i18n } = useTranslation();
 
   const dispatch = useDispatch();
-
-  const { searchParams, setSearchParams } = useSettingsPopupContext();
 
   const projectId = store.getState().company.projectId;
   const companyId = store.getState().company?.companyId;
@@ -39,7 +36,7 @@ export const useEnvironmentDetailProps = () => {
     dispatch(settingsModalActions.resetParams());
   };
 
-  const { isLoading } = useEnvironmentGetByIdQuery({
+  useEnvironmentGetByIdQuery({
     envId: envId,
     queryParams: {
       enabled: Boolean(envId),

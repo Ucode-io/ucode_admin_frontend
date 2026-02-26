@@ -1,11 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { useGetLang } from "../../../../hooks/useGetLang"
 import { useQueryClient } from "react-query";
-import { useLocation, useNavigate } from "react-router-dom";
 import { store } from "../../../../store";
 import { useEnvironmentDeleteMutation, useEnvironmentListQuery } from "../../../../services/environmentService";
 import { showAlert } from "../../../../store/alert/alert.thunk";
-import { useSettingsPopupContext } from "../../providers";
 import { TAB_COMPONENTS } from "@/utils/constants/settingsPopup";
 import { useDispatch } from "react-redux";
 import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
@@ -15,8 +13,6 @@ export const useEnvironmentProps = () => {
   const lang = useGetLang("Setting");
 
   const dispatch = useDispatch();
-
-  const { setSearchParams } = useSettingsPopupContext();
 
   const queryClient = useQueryClient();
   const projectId = store.getState().company.projectId;
@@ -29,11 +25,11 @@ export const useEnvironmentProps = () => {
     // setSearchParams({ tab: TAB_COMPONENTS.ENVIRONMENTS.EDIT_ENVIRONMENT, envId: id });
   };
 
-  const navigateToCreateForm = (e) => {
+  const navigateToCreateForm = () => {
     dispatch(
       settingsModalActions.setTab(
-        TAB_COMPONENTS.ENVIRONMENTS.CREATE_ENVIRONMENT
-      )
+        TAB_COMPONENTS.ENVIRONMENTS.CREATE_ENVIRONMENT,
+      ),
     );
     // setSearchParams({ tab: TAB_COMPONENTS.ENVIRONMENTS.CREATE_ENVIRONMENT });
   };
@@ -45,13 +41,12 @@ export const useEnvironmentProps = () => {
       },
     });
 
-  const { mutateAsync: deleteEnv, isLoading: createLoading } =
-    useEnvironmentDeleteMutation({
-      onSuccess: () => {
-        queryClient.refetchQueries(["ENVIRONMENT"]);
-        store.dispatch(showAlert("Успешно", "success"));
-      },
-    });
+  const { mutateAsync: deleteEnv } = useEnvironmentDeleteMutation({
+    onSuccess: () => {
+      queryClient.refetchQueries(["ENVIRONMENT"]);
+      store.dispatch(showAlert("Успешно", "success"));
+    },
+  });
 
   const deleteEnvironment = (id) => {
     deleteEnv(id);

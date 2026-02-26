@@ -19,6 +19,7 @@ import {companyActions} from "../../../../store/company/company.slice";
 import {Button} from "../../components/Button";
 import cls from "./styles.module.scss";
 import SyncIcon from "@mui/icons-material/Sync";
+import { menuAccordionActions } from "@/store/menus/menus.slice";
 
 export const Environment = () => {
   const {
@@ -63,6 +64,7 @@ export const Environment = () => {
             value: res?.client_type?.id,
           }),
         );
+        store.dispatch(menuAccordionActions.resetMenu());
         navigate("/");
         window.location.reload();
       })

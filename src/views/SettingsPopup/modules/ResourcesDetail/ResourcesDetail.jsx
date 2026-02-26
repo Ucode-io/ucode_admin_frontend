@@ -1,14 +1,13 @@
-import {useEffect} from "react";
-import {useState} from "react";
-import {useForm} from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   useLocation,
   useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import {Box, Button, CircularProgress} from "@mui/material";
-import {useEnvironmentsListQuery} from "@/services/environmentService";
+import { Box, Button, CircularProgress } from "@mui/material";
+import { useEnvironmentsListQuery } from "@/services/environmentService";
 import resourceService, {
   useCreateResourceMutationV1,
   useResourceConfigureMutation,
@@ -21,28 +20,30 @@ import resourceService, {
   useResourceUpdateMutation,
   useResourceUpdateMutationV2,
 } from "@/services/resourceService";
-import {store} from "@/store";
+import { store } from "@/store";
 import ResourceeEnvironments from "./ResourceEnvironment";
 import Form from "./Form";
-import {resourceTypes} from "@/utils/resourceConstants";
+import { resourceTypes } from "@/utils/resourceConstants";
 import resourceVariableService from "@/services/resourceVariableService";
-import {useDispatch, useSelector} from "react-redux";
-import {showAlert} from "@/store/alert/alert.thunk";
-import {useGithubLoginMutation} from "@/services/githubService";
+import { useDispatch, useSelector } from "react-redux";
+import { showAlert } from "@/store/alert/alert.thunk";
+import {
+  useGithubLoginMutation,
+  useGitlabLoginMutation,
+} from "@/services/githubService";
 import GitForm from "./GitForm";
 import ClickHouseForm from "./ClickHouseForm";
-import {useQuery, useQueryClient} from "react-query";
-import {useGitlabLoginMutation} from "@/services/githubService";
+import { useQuery, useQueryClient } from "react-query";
 import GitLabForm from "./GitlabForm";
-import {useTranslation} from "react-i18next";
-import {getAllFromDB} from "@/utils/languageDB";
-import {generateLangaugeText} from "@/utils/generateLanguageText";
-import {ContentTitle} from "../../components/ContentTitle";
-import {useSettingsPopupContext} from "../../providers";
-import {GreyLoader} from "../../../../components/Loaders/GreyLoader";
-import {SMSType} from "./SMSType";
+import { useTranslation } from "react-i18next";
+import { getAllFromDB } from "@/utils/languageDB";
+import { generateLangaugeText } from "@/utils/generateLanguageText";
+import { ContentTitle } from "../../components/ContentTitle";
+import { useSettingsPopupContext } from "../../providers";
+import { GreyLoader } from "../../../../components/Loaders/GreyLoader";
+import { SMSType } from "./SMSType";
 import PostgresCreate from "./PostgresCreate";
-import {settingsModalActions} from "../../../../store/settingsModal/settingsModal.slice";
+import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 import TransCoder from "./TransCoder";
 
 export const ResourcesDetail = ({
@@ -60,7 +61,7 @@ export const ResourcesDetail = ({
 
   // const resourceId = settingSearchParams.get("resourceId");
   // const resourceType = settingSearchParams.get("resourceType");
-  const projectId = useSelector((state) => state?.auth?.projectId);
+  const projectId = useSelector((state) => state.company.projectId);
 
   const resourceType = useSelector((state) => state.settingsModal.resourceType);
   const resourceId = useSelector((state) => state.settingsModal.resourceId);
@@ -76,12 +77,12 @@ export const ResourcesDetail = ({
   const company = store.getState().company;
   const authStore = store.getState().auth;
   const dispatch = useDispatch();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const [settingLan, setSettingLan] = useState(null);
 
   const isEditPage = !!resourceId;
 
-  const {control, reset, handleSubmit, setValue, watch} = useForm({
+  const { control, reset, handleSubmit, setValue, watch } = useForm({
     defaultValues: {
       name: "",
       variables: variables?.variables,
@@ -95,7 +96,7 @@ export const ResourcesDetail = ({
     },
   });
 
-  const {isLoading} = useResourceGetByIdQueryV2({
+  const { isLoading } = useResourceGetByIdQueryV2({
     id: resourceId,
     params: {
       type: resourceType,
@@ -109,13 +110,13 @@ export const ResourcesDetail = ({
       onSuccess: (res) => {
         reset(res);
         setSelectedEnvironment(
-          res.environments?.filter((env) => env.is_configured)
+          res.environments?.filter((env) => env.is_configured),
         );
       },
     },
   });
 
-  const {data: clickHouseList} = useQuery(
+  const { data: clickHouseList } = useQuery(
     ["GET_OBJECT_LIST"],
     () => {
       return resourceService.getListClickHouse({
@@ -138,10 +139,10 @@ export const ResourcesDetail = ({
           })) ?? []
         );
       },
-    }
+    },
   );
 
-  const {isLoadingClickH} = useResourceGetByIdClickHouse({
+  const { isLoadingClickH } = useResourceGetByIdClickHouse({
     id: resourceId,
     params: {
       type: resourceType,
@@ -155,7 +156,7 @@ export const ResourcesDetail = ({
     },
   });
 
-  const {data: projectEnvironments} = useEnvironmentsListQuery({
+  const { data: projectEnvironments } = useEnvironmentsListQuery({
     params: {
       project_id: projectId,
     },
@@ -168,7 +169,7 @@ export const ResourcesDetail = ({
     },
   });
 
-  const {isLoading: formLoading} = useResourceEnvironmentGetByIdQuery({
+  const { isLoading: formLoading } = useResourceEnvironmentGetByIdQuery({
     id: selectedEnvironment?.[0]?.resource_environment_id,
     queryParams: {
       cacheTime: false,
@@ -176,8 +177,8 @@ export const ResourcesDetail = ({
       onSuccess: (res) => {
         const isDefault = Boolean(
           res.environments?.find(
-            (env) => env.id === selectedEnvironment?.[0].id
-          )?.default
+            (env) => env.id === selectedEnvironment?.[0].id,
+          )?.default,
         );
         reset({
           ...res,
@@ -187,14 +188,14 @@ export const ResourcesDetail = ({
     },
   });
 
-  const {mutate: createResource, isLoading: createLoading} =
+  const { mutate: createResource, isLoading: createLoading } =
     useResourceCreateMutation({
       onSuccess: () => {
         navigate(-1);
       },
     });
 
-  const {mutate: createResourceV2, isLoading: createLoadingV2} =
+  const { mutate: createResourceV2, isLoading: createLoadingV2 } =
     useResourceCreateMutationV2({
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
@@ -217,7 +218,7 @@ export const ResourcesDetail = ({
     }
   };
 
-  const {mutate: createResourceV1, isLoading: createLoadingV1} =
+  const { mutate: createResourceV1, isLoading: createLoadingV1 } =
     useCreateResourceMutationV1({
       onSuccess: () => {
         dispatch(showAlert("Successfully created", "success"));
@@ -227,7 +228,7 @@ export const ResourcesDetail = ({
       },
     });
 
-  const {mutate: configureResource, isLoading: configureLoading} =
+  const { mutate: configureResource, isLoading: configureLoading } =
     useResourceConfigureMutation({
       onSuccess: () => {
         setSelectedEnvironment(null);
@@ -235,14 +236,14 @@ export const ResourcesDetail = ({
       },
     });
 
-  const {mutate: updateResource, isLoading: updateLoading} =
+  const { mutate: updateResource, isLoading: updateLoading } =
     useResourceUpdateMutation({
       onSuccess: () => {
         setSelectedEnvironment(null);
       },
     });
 
-  const {mutate: updateResourceV2, isLoading: updateLoadingV2} =
+  const { mutate: updateResourceV2, isLoading: updateLoadingV2 } =
     useResourceUpdateMutationV2({
       onSuccess: () => {
         dispatch(showAlert("Resources are updated!", "success"));
@@ -251,26 +252,26 @@ export const ResourcesDetail = ({
       },
     });
 
-  const {mutate: reconnectResource, isLoading: reconnectLoading} =
+  const { mutate: reconnectResource, isLoading: reconnectLoading } =
     useResourceReconnectMutation(
-      {projectId: projectId},
+      { projectId: projectId },
       {
         onSuccess: () => {},
-      }
+      },
     );
 
-  const {mutate: githubLogin, isLoading: githubLoginIsLoading} =
+  const { mutate: githubLogin, isLoading: githubLoginIsLoading } =
     useGithubLoginMutation({
       onSuccess: (res) => {
-        setSearchParams({access_token: res.access_token});
+        setSearchParams({ access_token: res.access_token });
       },
       onError: () => {},
     });
 
-  const {mutate: gitlabLogin, isLoading: gitlabLoginIsLoading} =
+  const { mutate: gitlabLogin, isLoading: gitlabLoginIsLoading } =
     useGitlabLoginMutation({
       onSuccess: (res) => {
-        setSearchParams({access_token: res.access_token});
+        setSearchParams({ access_token: res.access_token });
         setSelectedGitlab(res);
       },
       onError: () => {},
@@ -279,8 +280,8 @@ export const ResourcesDetail = ({
   useEffect(() => {
     const code = searchParams.get("code");
     if (Boolean(code)) {
-      if (code?.length <= 20) githubLogin({code});
-      else if (code?.length > 20) gitlabLogin({code});
+      if (code?.length <= 20) githubLogin({ code });
+      else if (code?.length > 20) gitlabLogin({ code });
     }
   }, [searchParams.get("code")]);
 
@@ -336,7 +337,6 @@ export const ResourcesDetail = ({
 
     const computedValues2Gitlab = {
       ...values,
-      project_id: authStore?.projectId,
       type: values?.resource_type,
       company_id: company?.companyId,
       project_id: projectId,
@@ -370,11 +370,11 @@ export const ResourcesDetail = ({
       client_type_id: authStore?.clientType?.id,
       company_id: company?.companyId,
       node_type: "LOW",
-      project_id: authStore?.projectId,
+      project_id: projectId,
       resource: {
         is_configured: true,
         node_type: "LOW",
-        project_id: authStore?.projectId,
+        project_id: projectId,
         resource_type: 2,
         title: "Light",
       },
@@ -396,7 +396,7 @@ export const ResourcesDetail = ({
         name: values?.name,
         type: values?.type || undefined,
         id: values?.id,
-        settings: {...values?.settings},
+        settings: { ...values?.settings },
       });
       resourceVariableService
         .updateV2({
@@ -453,14 +453,14 @@ export const ResourcesDetail = ({
   useEffect(() => {
     if (variables?.type !== "REST") return;
     const matchingResource = resourceTypes.find(
-      (type) => type?.label?.toLowerCase() === variables?.type?.toLowerCase()
+      (type) => type?.label?.toLowerCase() === variables?.type?.toLowerCase(),
     );
 
     if (matchingResource) {
       setValue("resource_type", matchingResource.value);
       setValue(
         "variables",
-        variables?.variables?.filter((item) => item?.id)
+        variables?.variables?.filter((item) => item?.id),
       );
     }
   }, [variables]);
@@ -509,8 +509,12 @@ export const ResourcesDetail = ({
   }
 
   return (
-    <Box className="scrollbarNone" sx={{height: "670px", overflow: "hidden"}}>
-      <form style={{height: "100%"}} flex={1} onSubmit={handleSubmit(onSubmit)}>
+    <Box className="scrollbarNone" sx={{ height: "670px", overflow: "hidden" }}>
+      <form
+        style={{ height: "100%" }}
+        flex={1}
+        onSubmit={handleSubmit(onSubmit)}
+      >
         {resourceType === "SMS" ? (
           <SMSType
             settingLan={settingLan}
@@ -541,18 +545,20 @@ export const ResourcesDetail = ({
               onBackClick={() => {
                 backBtn();
               }}
-              style={{marginBottom: 0}}>
+              style={{ marginBottom: 0 }}
+            >
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
-                }}>
+                }}
+              >
                 <span>
                   {generateLangaugeText(
                     settingLan,
                     i18n?.language,
-                    "Resource settings"
+                    "Resource settings",
                   ) || "Resource settings"}
                 </span>
                 <Box>
@@ -574,7 +580,8 @@ export const ResourcesDetail = ({
                           background: "#007aff",
                         },
                       }}
-                      isLoading={createLoading}>
+                      isLoading={createLoading}
+                    >
                       {loading ? (
                         <CircularProgress
                           style={{
@@ -587,7 +594,7 @@ export const ResourcesDetail = ({
                         generateLangaugeText(
                           settingLan,
                           i18n?.language,
-                          "Save"
+                          "Save",
                         ) || "Save"
                       )}
                     </Button>
@@ -604,12 +611,13 @@ export const ResourcesDetail = ({
                         hidden={!isEditPage}
                         color={"success"}
                         variant="contained"
-                        onClick={() => reconnectResource({id: resourceId})}
-                        isLoading={reconnectLoading}>
+                        onClick={() => reconnectResource({ id: resourceId })}
+                        isLoading={reconnectLoading}
+                      >
                         {generateLangaugeText(
                           settingLan,
                           i18n?.language,
-                          "Reconnect"
+                          "Reconnect",
                         ) || "Reconnect"}
                       </Button>
                     ))}
@@ -617,7 +625,7 @@ export const ResourcesDetail = ({
               </Box>
             </ContentTitle>
 
-            <Box sx={{display: "flex"}}>
+            <Box sx={{ display: "flex" }}>
               {/* {isEditPage && (
                 <ResourceeEnvironments
                   control={control}
@@ -626,7 +634,7 @@ export const ResourcesDetail = ({
                 />
               )} */}
               {formLoading || isLoading ? (
-                <Box sx={{maxWidth: "289px", width: "100%"}}>
+                <Box sx={{ maxWidth: "289px", width: "100%" }}>
                   <GreyLoader />
                 </Box>
               ) : resourceType === "GITHUB" ? (

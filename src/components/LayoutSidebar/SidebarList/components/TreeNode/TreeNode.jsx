@@ -95,6 +95,9 @@ export const TreeNode = ({
   const isFolder = node.type === "FOLDER";
   const isOpen = menuChilds?.[node.id]?.open;
   const children = menuChilds?.[node.id]?.children || [];
+  const filteredChildren = children.filter(
+    (child) => child.data?.permission?.read,
+  );
 
   const iconSize =
     menuStyle?.icon_size === "SMALL"
@@ -345,10 +348,10 @@ export const TreeNode = ({
         >
           <SortableContext
             id={node.id}
-            items={children.map((c) => c.id)}
+            items={filteredChildren.map((c) => c.id)}
             strategy={verticalListSortingStrategy}
           >
-            {children.map((child) => (
+            {filteredChildren.map((child) => (
               <TreeNode
                 key={child.id}
                 node={child}

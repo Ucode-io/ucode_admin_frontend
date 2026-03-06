@@ -43,7 +43,7 @@ function NewResourceDetail({handleClose = () => {}}) {
 
   const resourceId = settingSearchParams.get("resourceId");
   const resourceType = settingSearchParams.get("resourceType");
-  const projectId = useSelector((state) => state?.auth?.projectId);
+  const projectId = useSelector((state) => state.company.projectId);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();

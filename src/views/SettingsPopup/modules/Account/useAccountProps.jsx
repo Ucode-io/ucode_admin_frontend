@@ -8,6 +8,7 @@ import userService from "@/services/auth/userService";
 import sessionService from "@/services/sessionService";
 import { authActions } from "../../../../store/auth/auth.slice";
 import { useSettingsPopupContext } from "../../providers";
+import { store } from "@/store/index";
 
 export const useAccountProps = () => {
   const { t } = useTranslation();
@@ -20,7 +21,7 @@ export const useAccountProps = () => {
   const clientType = useSelector((state) => state?.auth?.clientType);
   const userId = useSelector((state) => state?.auth?.userId);
 
-  const projectId = useSelector((state) => state?.auth?.projectId);
+  const projectId = store.getState().company.projectId;
   const userInfo = useSelector((state) => state?.auth?.userInfo);
   const userData = useSelector((state) => state?.auth?.user_data);
   const envId = useSelector((state) => state?.auth);

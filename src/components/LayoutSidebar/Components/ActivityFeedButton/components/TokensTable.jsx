@@ -6,10 +6,7 @@ import {
   CTableHead,
   CTableRow,
 } from "../../../../CTable";
-import Tag from "../../../../Tag";
-import {ActivityFeedColors} from "../../../../Status";
 import style from "../style.module.scss";
-import {store} from "../../../../../store";
 import {useEffect, useState} from "react";
 import ActivitySinglePage from "./ActivitySinglePage";
 import EmptyDataComponent from "../../../../EmptyDataComponent";
@@ -17,30 +14,18 @@ import {Backdrop} from "@mui/material";
 import RingLoaderWithWrapper from "../../../../Loaders/RingLoader/RingLoaderWithWrapper";
 import {format} from "date-fns";
 import apiKeyService from "../../../../../services/apiKey.service";
-import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const TokensTable = ({
-  setHistories,
   type = "withoutPadding",
-  requestType = "GLOBAL",
-  apiKey,
   actionByVisible = true,
-  dateFilters,
   mainForm,
 }) => {
-  const company = store.getState().company;
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
-  const [id, setId] = useState(null);
-  const [pageCount, setPageCount] = useState(1);
+  const [pageCount] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const projectId = useSelector((state) => state.auth.projectId);
   const [data, setData] = useState([]);
-
-  const openDrawer = (id) => {
-    setId(id);
-    setDrawerIsOpen(true);
-  };
 
   const closeDrawer = () => {
     setDrawerIsOpen(false);
@@ -66,7 +51,10 @@ const TokensTable = ({
 
   if (data?.length === 0)
     return (
-      <Backdrop sx={{zIndex: (theme) => theme.zIndex.drawer + 999}} open={true}>
+      <Backdrop
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 999 }}
+        open={true}
+      >
         <RingLoaderWithWrapper />
       </Backdrop>
     );
@@ -78,7 +66,8 @@ const TokensTable = ({
           removableHeight={false}
           count={pageCount}
           page={currentPage}
-          setCurrentPage={setCurrentPage}>
+          setCurrentPage={setCurrentPage}
+        >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell width={130}>Client Id</CTableCell>
@@ -98,7 +87,8 @@ const TokensTable = ({
                   //   }}
                   style={{
                     width: "80px",
-                  }}>
+                  }}
+                >
                   <CTableCell>{(currentPage - 1) * 10 + index + 1}</CTableCell>
                   <CTableCell>{element?.client_id}</CTableCell>
                   <CTableCell>

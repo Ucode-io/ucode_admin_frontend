@@ -1,24 +1,22 @@
-import { useGetLang } from "@/hooks/useGetLang"
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { endOfMonth, startOfMonth } from "date-fns";
-import { useSettingsPopupContext } from "../../providers";
 import apiKeyService from "../../../../services/apiKey.service";
 import roleServiceV2 from "../../../../services/roleServiceV2";
 import { useParams } from "react-router-dom";
 import clientTypeServiceV2 from "../../../../services/auth/clientTypeServiceV2";
 import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
+import { store } from "@/store/index";
 
 export const useApiKeysDetail = () => {
   const dispatch = useDispatch();
   const { appId } = useParams();
-
-  const lang = useGetLang("Setting");
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const authStore = useSelector((state) => state.auth);
+  const projectId = store.getState().company.projectId;
 
   const [date, setDate] = useState({
     $gte: startOfMonth(new Date()),
@@ -29,28 +27,17 @@ export const useApiKeysDetail = () => {
   const [inputValue, setInputValue] = useState("");
 
   const [btnLoader, setBtnLoader] = useState();
-  const [role, setRole] = useState([]);
 
-  const [histories, setHistories] = useState([]);
-
-  const [clientType, setClientType] = useState([]);
   const [platformList, setPlatformList] = useState([]);
 
-  const { searchParams, setSearchParams } = useSettingsPopupContext();
-
-  // const apiKeyId = searchParams.get("apiKeyId");
-  // const view = searchParams.get("view");
-  // const edit = searchParams.get("edit");
-  // const create = searchParams.get("create");
-
   const { apiKeyId, view, edit, create } = useSelector(
-    (state) => state.settingsModal
+    (state) => state.settingsModal,
   );
 
   const mainForm = useForm({
     defaultValues: {
       environment_id: authStore.environmentId,
-      project_id: authStore.projectId,
+      project_id: projectId,
       client_type_id: authStore.clientType.id,
       role_id: authStore.roleInfo.id,
     },
@@ -64,7 +51,7 @@ export const useApiKeysDetail = () => {
 
   const getById = () => {
     apiKeyService
-      .getById(authStore.projectId, apiKeyId)
+      .getById(projectId, apiKeyId)
       .then((res) => {
         mainForm.reset(res);
         mainForm.setValue("client_platform_id", res?.client_platform?.id);
@@ -75,14 +62,9 @@ export const useApiKeysDetail = () => {
   };
 
   const getClientTypeList = () => {
-    clientTypeServiceV2
-      .getList({})
-      .then((res) => {
-        setClientType(res.data);
-      })
-      .catch((err) => {
-        console.log("exportToJson error", err);
-      });
+    clientTypeServiceV2.getList({}).catch((err) => {
+      console.log("exportToJson error", err);
+    });
   };
 
   const getClientPlatformList = () => {
@@ -91,8 +73,8 @@ export const useApiKeysDetail = () => {
         res?.client_platforms?.map((item) => ({
           label: item?.name,
           value: item?.id,
-        }))
-      )
+        })),
+      ),
     );
   };
 
@@ -100,9 +82,6 @@ export const useApiKeysDetail = () => {
     roleServiceV2
       .getList({
         clienty_type_id: mainForm.watch("client_type_id"),
-      })
-      .then((res) => {
-        setRole(res.data);
       })
       .catch((err) => {
         console.log("exportToJson error", err);
@@ -113,7 +92,7 @@ export const useApiKeysDetail = () => {
     setBtnLoader(true);
 
     apiKeyService
-      .create(authStore.projectId, data)
+      .create(projectId, data)
       .then(() => {
         dispatch(settingsModalActions.resetParams());
         getRoleList();
@@ -125,7 +104,7 @@ export const useApiKeysDetail = () => {
     setBtnLoader(true);
 
     apiKeyService
-      .update(authStore.projectId, apiKeyId, {
+      .update(projectId, apiKeyId, {
         ...data,
       })
       .then(() => {
@@ -164,7 +143,6 @@ export const useApiKeysDetail = () => {
     onSubmit,
     apiKeyId,
     btnLoader,
-    setHistories,
     view,
     edit,
     create,

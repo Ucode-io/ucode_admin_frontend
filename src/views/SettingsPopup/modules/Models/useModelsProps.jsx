@@ -22,7 +22,7 @@ export const useModelsProps = () => {
     setPage(page);
   };
 
-  const projectId = useSelector((state) => state.auth.projectId);
+  const projectId = useSelector((state) => state.company.projectId);
   const queryClient = useQueryClient();
 
   const { data: tables } = useTablesListQuery({

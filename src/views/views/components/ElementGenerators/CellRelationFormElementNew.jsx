@@ -277,14 +277,14 @@ const AutoCompleteElement = ({
         additionalValues?.flat();
     }
 
-    return constructorObjectService.getListV2(
+    return constructorObjectService.getItems(
       field?.table_slug,
-      {
-        data: requestData,
-      },
-      {
-        language_setting: i18n?.language,
-      },
+      // {
+      //   data: requestData,
+      // },
+      // {
+      //   language_setting: i18n?.language,
+      // },
     );
   };
 

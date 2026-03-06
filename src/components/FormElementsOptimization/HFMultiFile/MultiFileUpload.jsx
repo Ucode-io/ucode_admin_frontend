@@ -261,6 +261,8 @@ function MultiFileUpload({
 
           <div className={styles.imageContainer}>
             {value &&
+              Array.isArray(value) &&
+              value?.length > 0 &&
               value?.map((item) => (
                 <div
                   key={item}

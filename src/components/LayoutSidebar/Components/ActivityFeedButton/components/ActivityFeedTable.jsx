@@ -23,7 +23,6 @@ import RingLoaderWithWrapper from "../../../../Loaders/RingLoader/RingLoaderWith
 import {format} from "date-fns";
 
 const ActivityFeedTable = ({
-  setHistories,
   type = "withoutPadding",
   requestType = "GLOBAL",
   apiKey,
@@ -62,13 +61,12 @@ const ActivityFeedTable = ({
       },
       queryParams: {
         onSuccess: (res) => {
-          setHistories(res);
           setPageCount(Math.ceil(res?.count / 10));
         },
       },
     });
 
-  const {data: history, isLoading: versionHistoryByIdLoader} =
+  const { data: history, isLoading: versionHistoryByIdLoader } =
     useVersionHistoryByIdQuery({
       envId: company.environmentId,
       id: id,
@@ -79,7 +77,10 @@ const ActivityFeedTable = ({
 
   if (versionHistoryLoader)
     return (
-      <Backdrop sx={{zIndex: (theme) => theme.zIndex.drawer + 999}} open={true}>
+      <Backdrop
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 999 }}
+        open={true}
+      >
         <RingLoaderWithWrapper />
       </Backdrop>
     );
@@ -92,7 +93,8 @@ const ActivityFeedTable = ({
           removableHeight={false}
           count={pageCount}
           page={currentPage}
-          setCurrentPage={setCurrentPage}>
+          setCurrentPage={setCurrentPage}
+        >
           <CTableHead>
             <CTableCell width={10}>№</CTableCell>
             <CTableCell width={130}>Action</CTableCell>
@@ -103,7 +105,8 @@ const ActivityFeedTable = ({
           <CTableBody
             loader={false}
             columnsCount={5}
-            dataLength={histories?.histories?.length}>
+            dataLength={histories?.histories?.length}
+          >
             {histories?.histories?.map((element, index) => {
               return (
                 <CTableRow
@@ -115,7 +118,8 @@ const ActivityFeedTable = ({
                   }}
                   style={{
                     width: "80px",
-                  }}>
+                  }}
+                >
                   <CTableCell>{(currentPage - 1) * 10 + index + 1}</CTableCell>
                   <CTableCell>
                     <Tag
@@ -125,7 +129,8 @@ const ActivityFeedTable = ({
                       style={{
                         background: `${ActivityFeedColors(element?.action_type)}`,
                       }}
-                      className={style.tag}>
+                      className={style.tag}
+                    >
                       {element?.action_type?.charAt(0).toUpperCase() +
                         element?.action_type.slice(1).toLowerCase()}
                     </Tag>

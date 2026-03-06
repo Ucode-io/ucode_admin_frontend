@@ -15,7 +15,7 @@ export const loginAction = createAsyncThunk(
       let loginData = {};
 
       if (data?.isSubmitDialog) {
-        loginData = await await authService.login({
+        loginData = await authService.login({
           password: data?.password,
           username: data?.username,
           tables: data?.tables,

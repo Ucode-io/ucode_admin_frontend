@@ -338,6 +338,7 @@ const LoginFormDesign = ({
   };
 
   const onSubmitDialog = async (values) => {
+    console.log("values", values);
     const data = {
       ...values,
       type: values?.phone

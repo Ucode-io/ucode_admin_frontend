@@ -31,12 +31,13 @@ export async function buildProjectFromFiles(files, env) {
 
   const defaultExternals = [
     "react",
+    "react/jsx-runtime",
     "react-dom",
     "react-dom/client",
     "react-router-dom",
     "react-dom/server",
     "axios",
-    "lucide-react"
+    "lucide-react",
   ];
 
   const allExternals = [...new Set([...Object.keys(externalDepsMap), ...defaultExternals])];
@@ -80,6 +81,7 @@ export async function buildProjectFromFiles(files, env) {
     platform: "browser",
     plugins: [virtualFsPlugin(fs)],
     external: allExternals,
+    jsx: "automatic",
     define: {
       "process.env.NODE_ENV": '"development"',
       "import.meta.env": JSON.stringify(env),

@@ -8,17 +8,18 @@ export function generatePreviewHtml(bundledCode, dependenciesMap = {}) {
   const depsParam = `?deps=react@${REACT_VERSION},react-dom@${REACT_VERSION}`;
   
   const imports = {
-    "react": `https://esm.sh/react@${REACT_VERSION}`,
+    react: `https://esm.sh/react@${REACT_VERSION}`,
+    "react/jsx-runtime": `https://esm.sh/react@${REACT_VERSION}/jsx-runtime`,
     "react-dom": `https://esm.sh/react-dom@${REACT_VERSION}`,
     "react-dom/client": `https://esm.sh/react-dom@${REACT_VERSION}/client`,
     "react-dom/server": `https://esm.sh/react-dom@${REACT_VERSION}/server`,
 
     "react-router-dom": `https://esm.sh/react-router-dom@6.3.0${depsParam}`,
-    
+
     "lucide-react": `https://esm.sh/lucide-react@0.294.0${depsParam}`,
-    
-    "axios": "https://esm.sh/axios@1.6.0",
-    "clsx": "https://esm.sh/clsx",
+
+    axios: "https://esm.sh/axios@1.6.0",
+    clsx: "https://esm.sh/clsx",
     "tailwind-merge": "https://esm.sh/tailwind-merge",
   };
 

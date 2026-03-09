@@ -1,5 +1,5 @@
-import {Box} from "@mui/material";
-import {useSelector} from "react-redux";
+import { Box } from "@mui/material";
+import { useSelector } from "react-redux";
 
 import style from "./style.module.scss";
 import {
@@ -9,19 +9,19 @@ import {
   useSearchParams,
 } from "react-router-dom";
 
-import {useForm} from "react-hook-form";
-import {useQueryClient} from "react-query";
+import { useForm } from "react-hook-form";
+import { useQueryClient } from "react-query";
 import DescriptionIcon from "@mui/icons-material/Description";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import MinioSinglePageHeader from "./MinioSinglePageHeader";
 import menuService from "../../../services/menuService";
-import {store} from "../../../store";
+import { store } from "../../../store";
 import {
   useFileDeleteMutation,
   useFileGetByIdQuery,
   useFileUpdateMutation,
 } from "../../../services/fileService";
-import {showAlert} from "../../../store/alert/alert.thunk";
+import { showAlert } from "../../../store/alert/alert.thunk";
 import MinioForm from "./MInioForm";
 const cdnURL = import.meta.env.VITE_CDN_BASE_URL;
 
@@ -43,13 +43,13 @@ const FilesSinglePage = () => {
     }
   }, []);
 
-  const {fileId} = useParams();
+  const { fileId } = useParams();
 
   const fileID = fileId || searchParams.get("fileId");
 
-  const {control, watch, reset, getValues} = useForm({});
+  const { control, watch, reset, getValues } = useForm({});
 
-  const {mutate: updateFile, isLoading: updateLoading} = useFileUpdateMutation({
+  const { mutate: updateFile, isLoading: updateLoading } = useFileUpdateMutation({
     onSuccess: () => {
       queryClient.refetchQueries(["MINIO_OBJECT"]);
       store.dispatch(showAlert("Успешно", "success"));
@@ -57,7 +57,7 @@ const FilesSinglePage = () => {
     },
   });
 
-  const {mutate: deleteFile, isLoading: deleteLoading} = useFileDeleteMutation({
+  const { mutate: deleteFile, isLoading: deleteLoading } = useFileDeleteMutation({
     onSuccess: () => {
       store.dispatch(showAlert("Успешно", "success"));
       queryClient.refetchQueries(["MINIO_OBJECT"]);
@@ -70,10 +70,10 @@ const FilesSinglePage = () => {
   };
 
   const onSubmit = (data) => {
-    updateFile({...getValues(), id: file?.id});
+    updateFile({ ...getValues(), id: file?.id });
   };
 
-  const {data: file, isLoading} = useFileGetByIdQuery({
+  const { data: file, isLoading } = useFileGetByIdQuery({
     fileId: fileID,
     queryParams: {
       enabled: Boolean(fileID),

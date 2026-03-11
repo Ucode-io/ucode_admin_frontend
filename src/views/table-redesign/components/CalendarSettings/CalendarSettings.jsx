@@ -50,7 +50,6 @@ export const CalendarSettings = ({
     };
     constructorViewService.update(tableSlug, computedValues).then(() => {
       queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
-      console.log("first");
       onBackClick();
     });
   };

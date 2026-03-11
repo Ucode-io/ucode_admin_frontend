@@ -98,6 +98,7 @@ import { SortIcon } from "../../utils/constants/icons";
 import { SortPopover } from "./components/SortPopover";
 import clsx from "clsx";
 import { AiProjectsModal } from "@/components/AiProjectsModal";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
 const DrawerFormDetailPage = lazy(
   () => import("../Objects/DrawerDetailPage/DrawerFormDetailPage"),
@@ -320,7 +321,6 @@ export const NewUiViewsWithGroups = ({
   );
 
   const columnsForSearch = useMemo(() => {
-    console.log({ fieldsMap });
     return Object.values(fieldsMap)?.filter(
       (el) =>
         el?.type === "SINGLE_LINE" ||
@@ -1924,6 +1924,11 @@ const FilterPopover = ({
   const [search, setSearch] = useState("");
   const { i18n } = useTranslation();
 
+  const filteredVisibleColumns = visibleColumns?.filter(
+    (col) =>
+      col.type !== FIELD_TYPES.MULTI_IMAGE && col.type !== FIELD_TYPES.PHOTO,
+  );
+
   return (
     <Popover>
       <PopoverTrigger>{children}</PopoverTrigger>
@@ -1946,7 +1951,7 @@ const FilterPopover = ({
         </InputGroup>
         <FiltersSwitch
           view={view}
-          visibleColumns={visibleColumns}
+          visibleColumns={filteredVisibleColumns}
           refetchViews={refetchViews}
           search={search}
           tableSlug={tableSlug}

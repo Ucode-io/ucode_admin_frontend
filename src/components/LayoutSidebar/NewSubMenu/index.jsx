@@ -101,10 +101,6 @@ function NewSubMenu({
                     dragHandleSelector=".column-drag-handle"
                     groupName="main-menu"
                     getChildPayload={(index) => {
-                      console.log(
-                        "LL",
-                        menuChilds?.[element?.id]?.children[index],
-                      );
                       return menuChilds?.[element?.id]?.children[index];
                     }}
                     onDrop={onDrop}

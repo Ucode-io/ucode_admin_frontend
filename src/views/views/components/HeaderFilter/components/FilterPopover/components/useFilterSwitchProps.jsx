@@ -3,6 +3,7 @@ import { useUpdateViewMutation } from "@/services/viewsService/views.service";
 import { filterActions } from "@/store/filter/filter.slice";
 import { quickFiltersActions } from "@/store/filter/quick_filter";
 import { mainActions } from "@/store/main/main.slice";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -16,15 +17,7 @@ export const useFilterSwitchProps = ({ search }) => {
 
   const [queryParameters] = useSearchParams();
 
-  const {
-    view,
-    visibleColumns,
-    tableSlug,
-    isRelationView,
-    refetchViews,
-  } = useViewContext();
-
-  const columnsIds = visibleColumns?.map((item) => item?.id);
+  const { view, visibleColumns, tableSlug, refetchViews } = useViewContext();
 
   const quickFilters = view?.attributes?.quick_filters ?? [];
 
@@ -37,20 +30,26 @@ export const useFilterSwitchProps = ({ search }) => {
     column?.attributes?.[`label_${i18n.language}`] || column.label;
 
   const allColumns = useMemo(() => {
-    const cols = visibleColumns?.map(column => (
-      {
+    const cols = visibleColumns
+      ?.map((column) => ({
         ...column,
-        is_checked: quickFiltersIds?.includes(column?.id)
-      }
-    ));
+        is_checked: quickFiltersIds?.includes(column?.id),
+      }))
+      .filter(
+        (col) =>
+          col.type !== FIELD_TYPES.MULTI_IMAGE &&
+          col.type !== FIELD_TYPES.PHOTO,
+      );
 
-    cols?.sort((item1, item2) => item2?.is_checked - item1?.is_checked)
+    cols?.sort((item1, item2) => item2?.is_checked - item1?.is_checked);
 
-    if(search) {
-      return cols?.filter((item) => getLabel(item)?.toLowerCase().includes(search.toLowerCase()))
+    if (search) {
+      return cols?.filter((item) =>
+        getLabel(item)?.toLowerCase().includes(search.toLowerCase()),
+      );
     }
 
-    return cols
+    return cols;
   }, [view, quickFilters, search, visibleColumns]);
 
   const updateViewMutation = useUpdateViewMutation(

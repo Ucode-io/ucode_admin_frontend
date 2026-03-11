@@ -73,7 +73,6 @@ const AddDataColumn = React.memo(
     useEffect(() => {
       const handleKeyDown = (event) => {
         const activeEl = document.activeElement;
-        console.log("activeElactiveElactiveEl", activeEl);
         const isTextInput =
           activeEl?.tagName === "INPUT" || activeEl?.tagName === "TEXTAREA";
         const isContentEditable = activeEl?.isContentEditable;

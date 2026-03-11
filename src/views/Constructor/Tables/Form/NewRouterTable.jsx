@@ -234,26 +234,6 @@ const NewRouterTable = () => {
     });
   };
 
-  // const createType = async (data) => {
-  //   await menuSettingsService
-  //     .create({
-  //       parent_id:
-  //         menuItem?.id || appId || "c57eedc3-a954-4262-a0af-376c65b5a284",
-  //       type: "TABLE",
-  //       table_id: data?.id,
-  //       label: data?.label,
-  //       attributes: data?.attributes,
-  //       icon: data?.icon,
-  //     })
-  //     .then(() => {
-  //       queryClient.refetchQueries(["MENU"], menuItem?.id);
-  //       navigate(-1);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
-
   const createConstructorTable = (data) => {
     setBtnLoader(true);
 
@@ -305,7 +285,6 @@ const NewRouterTable = () => {
       show_in_menu: true,
       menu_id: menuItem?.id || appId || "c57eedc3-a954-4262-a0af-376c65b5a284",
     };
-    console.log(computedData);
 
     // if (data?.id) {
     //   updateConstructorTable(computedData);

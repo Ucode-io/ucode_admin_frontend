@@ -68,7 +68,6 @@ const HFTextFieldPassword = ({
         ...rules,
       }}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
-        console.log({ error });
         return (
           <TextField
             size="small"

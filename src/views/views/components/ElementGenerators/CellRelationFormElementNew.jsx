@@ -342,8 +342,6 @@ const AutoCompleteElement = ({
     return uniqueObjects ?? [];
   }, [allOptions, autoFilters, isFetching]);
 
-  console.log("computedOptionscomputedOptions", computedOptions, allOptions);
-
   const computedValue = useMemo(() => {
     const findedOption = allOptions?.find((el) => el?.guid === value);
     return findedOption ? [findedOption] : [];

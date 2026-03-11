@@ -57,7 +57,6 @@ function ModalDetailPage({
     dispatch(detailDrawerActions.setDrawerTabIndex(0));
     dispatch(detailDrawerActions.closeDrawer());
     updateQueryWithoutRerender("p", null);
-    console.log({ oldViewId });
     if (oldViewId) {
       updateQueryWithoutRerender("v", oldViewId);
     }

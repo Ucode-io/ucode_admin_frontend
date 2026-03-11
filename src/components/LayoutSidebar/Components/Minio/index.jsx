@@ -1,17 +1,17 @@
-import {Box} from "@mui/material";
+import { Box } from "@mui/material";
 import style from "./style.module.scss";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import MinioHeader from "./components/MinioHeader";
 import MinioFilterBlock from "./components/MinioFilterBlock";
-import {useMinioObjectListQuery} from "../../../../services/fileService";
+import { useMinioObjectListQuery } from "../../../../services/fileService";
 import FileUploadModal from "./components/FileUploadModal";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import MinioFiles from "./components/Miniofiles";
-import {store} from "../../../../store";
-import {useSearchParams} from "react-router-dom";
+import { store } from "../../../../store";
+import { useSearchParams } from "react-router-dom";
 import menuService from "../../../../services/menuService";
 
-const MinioPage = ({modal = false}) => {
+const MinioPage = ({ modal = false }) => {
   const [searchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
@@ -36,18 +36,46 @@ const MinioPage = ({modal = false}) => {
   const [fileModalIsOpen, setFileModalIsOpen] = useState(null);
   const [size, setSize] = useState(style.miniocontainersmall);
   const [sort, setSort] = useState("asc");
+  const [offset, setOffset] = useState(0);
+  const [list, setList] = useState([]);
+  const limit = 20;
+
   const company = store.getState().company;
 
-  const {data: minios, isLoading} = useMinioObjectListQuery({
+  useEffect(() => {
+    setOffset(0);
+    setList([]);
+  }, [menuItem?.attributes?.path, company.projectId]);
+
+  const { data: minios, isLoading } = useMinioObjectListQuery({
     params: {
       folder_name: menuItem?.attributes?.path,
       // sort: sort,
       project_id: company.projectId,
+      limit,
+      offset,
     },
     queryParams: {
-      onSuccess: (res) => {},
+      onSuccess: (res) => {
+        setList((prev) => (offset === 0 ? res?.files || [] : [...prev, ...(res?.files || [])]));
+      },
     },
   });
+
+  useEffect(() => {
+    const handleScroll = (e) => {
+      const { scrollHeight, scrollTop, clientHeight } = e.target.documentElement;
+      if (
+        scrollHeight - (scrollTop + clientHeight) < 100 &&
+        list?.length < minios?.count &&
+        !isLoading
+      ) {
+        setOffset((prev) => prev + limit);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [list?.length, minios?.count, isLoading]);
 
   const openModal = () => {
     setFileModalIsOpen(true);
@@ -63,7 +91,7 @@ const MinioPage = ({modal = false}) => {
 
   const selectAllCards = () => {
     if (!selectAll) {
-      setSelectedCards(minios?.objects);
+      setSelectedCards(list);
     } else {
       setSelectedCards([]);
     }
@@ -76,7 +104,7 @@ const MinioPage = ({modal = false}) => {
         <MinioHeader
           menuItem={menuItem}
           openModal={openModal}
-          minios={minios}
+          minios={{ ...minios, files: list }}
           selectedCards={selectedCards}
         />
 
@@ -92,7 +120,7 @@ const MinioPage = ({modal = false}) => {
         />
         <MinioFiles
           modal={modal}
-          minios={minios}
+          minios={{ ...minios, files: list }}
           setSelectedCards={setSelectedCards}
           selectedCards={selectedCards}
           size={size}

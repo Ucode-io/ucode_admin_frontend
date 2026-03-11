@@ -221,7 +221,7 @@ const RecursiveBlock = ({
       return false;
     }
   }
-  if (level > 1) console.log({ child, element });
+
   return (
     <Box sx={{ padding: `0 0 0 ${level * 10}px` }} style={{ marginBottom: 5 }}>
       <BlockItem

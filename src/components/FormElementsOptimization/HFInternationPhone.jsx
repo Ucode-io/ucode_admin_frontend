@@ -70,7 +70,6 @@ const HFInternationPhone = ({
       onBlur={(e) => {
         const next = e.relatedTarget;
         if (next?.attributes?.class?.value !== "PhoneInputCountrySelect") {
-          console.log(e.target.value);
           onBlur(e);
         }
       }}

@@ -27,11 +27,9 @@ const CAutoCompleteSelect = ({
         options={options}
         value={computedValue}
         onChange={(e, value) => {
-          console.log("onINputtttt", value, e);
           onChange(value);
         }}
         getOptionLabel={(option) => option.label}
-        // onSelect={(e, val) => console.log("VAL ==>", e.target.value)}
         isOptionEqualToValue={(option, value) => option.value === value.value}
         // sx={{ width: 300 }}
         {...props}

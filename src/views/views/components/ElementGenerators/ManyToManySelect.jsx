@@ -64,7 +64,6 @@ const ManyToManySelect = memo(
       remove(index);
 
       if (filteredGuid?.length === 0) {
-        console.log("entered 1");
         appendInput();
         append({});
       }

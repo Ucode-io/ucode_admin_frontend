@@ -26,8 +26,13 @@ export const loginAction = createAsyncThunk(
           project_id: data?.tempData?.project,
         });
       } else {
-        loginData = await authService.defaultLogin(data);
-        data?.setTempData(loginData);
+        try {
+          loginData = await authService.defaultLogin(data);
+          data?.setTempData(loginData);
+        } catch (e) {
+          return rejectWithValue(e);
+        }
+        
       }
 
       const res = data?.isSubmitDialog ? loginData : loginData?.response;

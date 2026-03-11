@@ -83,7 +83,6 @@ const InviteDynamicFields = ({
         placeholder={connection?.view_slug}
         required
         onChange={(e, val) => {
-          console.log("e", e);
           //   setSelectedCollection(e);
           setValue(`tables[${index}].table_slug`, connection?.table_slug);
         }}

@@ -150,7 +150,8 @@ const FieldsBlock = ({
       <div className={styles.settingsBlockBody}>
         <Tabs
           selectedIndex={selectedSettingsTab}
-          onSelect={setSelectedSettingsTab}>
+          onSelect={setSelectedSettingsTab}
+        >
           <TabList>
             <Tab>Form fields</Tab>
             <Tab>Relation tabs</Tab>
@@ -163,13 +164,14 @@ const FieldsBlock = ({
               <Container
                 groupName="1"
                 onDrop={onDrop}
-                dropPlaceholder={{className: "drag-row-drop-preview"}}
+                dropPlaceholder={{ className: "drag-row-drop-preview" }}
                 getChildPayload={(i) => ({
                   ...allFields[i],
                   field_name: allFields[i]?.label ?? allFields[i]?.title,
-                })}>
+                })}
+              >
                 {allFields?.map((field) => (
-                  <Draggable key={field.id} style={{overflow: "visible"}}>
+                  <Draggable key={field.id} style={{ overflow: "visible" }}>
                     <div className={styles.sectionFieldRow}>
                       <FormElementGenerator
                         field={field}
@@ -191,14 +193,18 @@ const FieldsBlock = ({
               <Container
                 groupName="1"
                 onDrop={onDrop}
-                dropPlaceholder={{className: "drag-row-drop-preview"}}
+                dropPlaceholder={{ className: "drag-row-drop-preview" }}
                 getChildPayload={(i) => ({
                   ...unusedRelations[i],
                   field_name: unusedRelations[i]?.label ?? "no title",
                   relation_type: unusedRelations[i].type,
-                })}>
+                })}
+              >
                 {unusedRelations?.map((relation, relationIndex) => (
-                  <Draggable key={relationIndex} style={{overflow: "visible"}}>
+                  <Draggable
+                    key={relationIndex}
+                    style={{ overflow: "visible" }}
+                  >
                     <div className={styles.sectionFieldRow}>
                       <FormElementGenerator
                         field={relation}
@@ -218,14 +224,17 @@ const FieldsBlock = ({
               <Container
                 groupName="table_relation"
                 onDrop={onDrop}
-                dropPlaceholder={{className: "drag-row-drop-preview"}}
-                getChildPayload={(i) => tableRelations[i]}>
+                dropPlaceholder={{ className: "drag-row-drop-preview" }}
+                getChildPayload={(i) => tableRelations[i]}
+              >
                 {tableRelations?.map((relation) => (
                   <Draggable
                     key={relation.id}
-                    style={{overflow: "visible", width: "fit-content"}}>
+                    style={{ overflow: "visible", width: "fit-content" }}
+                  >
                     <div
-                      className={`${styles.sectionFieldRow} ${styles.relation}`}>
+                      className={`${styles.sectionFieldRow} ${styles.relation}`}
+                    >
                       {relation?.attributes?.[`label_to_${i18n?.language}`] ||
                         relation.title ||
                         relation[relation.relatedTableSlug]?.label}
@@ -241,21 +250,24 @@ const FieldsBlock = ({
               <Container
                 groupName="section_tabs"
                 onDrop={onDrop}
-                dropPlaceholder={{className: "drag-row-drop-preview"}}
-                getChildPayload={(i) => unusedTableRelations[i]}>
+                dropPlaceholder={{ className: "drag-row-drop-preview" }}
+                getChildPayload={(i) => unusedTableRelations[i]}
+              >
                 {sectionTabs?.map((tab, index) => {
                   if (tab.type === "section")
                     return (
                       <Draggable
                         key={index}
-                        style={{overflow: "visible", width: "fit-content"}}>
+                        style={{ overflow: "visible", width: "fit-content" }}
+                      >
                         <div
                           className={`${styles.sectionFieldRow} ${styles.relation}`}
                           style={{
                             display: "flex",
                             flexDirection: "column",
                             gap: "6px",
-                          }}>
+                          }}
+                        >
                           {/* <OutlinedInput
                             value={tab.label}
                             onClick={(e) => e.stopPropagation()}
@@ -272,12 +284,13 @@ const FieldsBlock = ({
 
                           {languages?.map((language) => (
                             <HFTextField
+                              key={language.slug}
                               control={mainForm.control}
                               name={`layouts.${selectedLayoutIndex}.tabs.${index}.attributes.label_${language.slug}`}
                               size="small"
                               placeholder={`Label (${language.slug})`}
                               variant="outlined"
-                              style={{width: 200}}
+                              style={{ width: 200 }}
                             />
                           ))}
 
@@ -291,8 +304,9 @@ const FieldsBlock = ({
 
                 <Button
                   onClick={() =>
-                    appendSectionTab({type: "section", id: generateGUID()})
-                  }>
+                    appendSectionTab({ type: "section", id: generateGUID() })
+                  }
+                >
                   <Add />
                   Add Section tab
                 </Button>
@@ -304,37 +318,34 @@ const FieldsBlock = ({
               <Container
                 groupName="1"
                 onDrop={onDrop}
-                dropPlaceholder={{className: "drag-row-drop-preview"}}
-                getChildPayload={(i) => tabRelationTabs[i]}>
-                {tabRelationTabs?.map(
-                  (relation, index) => (
-                    console.log("relationrelation", relation),
-                    (
-                      <Draggable
-                        key={relation.id}
-                        style={{overflow: "visible", width: "100%"}}>
-                        <div className={styles.draggableContainer}>
-                          <table className={styles.relationTable}>
-                            <thead>
-                              <tr>
-                                <th style={{width: "50px"}}>№</th>
-                                <th>
-                                  {relation[relation.relatedTableSlug]?.label}
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>{index + 1}</td>
-                                <td>{""}</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </Draggable>
-                    )
-                  )
-                )}
+                dropPlaceholder={{ className: "drag-row-drop-preview" }}
+                getChildPayload={(i) => tabRelationTabs[i]}
+              >
+                {tabRelationTabs?.map((relation, index) => (
+                  <Draggable
+                    key={relation.id}
+                    style={{ overflow: "visible", width: "100%" }}
+                  >
+                    <div className={styles.draggableContainer}>
+                      <table className={styles.relationTable}>
+                        <thead>
+                          <tr>
+                            <th style={{ width: "50px" }}>№</th>
+                            <th>
+                              {relation[relation.relatedTableSlug]?.label}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>{index + 1}</td>
+                            <td>{""}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </Draggable>
+                ))}
               </Container>
             </div>
           </TabPanel>

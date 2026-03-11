@@ -19,6 +19,7 @@ import { iconsList } from "@/utils/constants/iconsList";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import { useDispatch, useSelector } from "react-redux";
 import { menuActions } from "@/store/menuItem/menuItem.slice";
+import { useParams } from "react-router-dom";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 
@@ -55,6 +56,10 @@ export const TreeNode = ({
   setMenu,
 }) => {
   const { i18n } = useTranslation();
+
+  const params = useParams();
+
+  const isActiveMenu = (params.menuId || params.appId) === node.id;
 
   const dispatch = useDispatch();
   const sidebarIsOpen = useSelector(
@@ -130,7 +135,9 @@ export const TreeNode = ({
         ? "#f1f5ff"
         : showActions // Подсветка остается, пока открыто меню
           ? "#f5f5f5"
-          : "transparent",
+          : isActiveMenu
+            ? "#f5f5f5"
+            : "transparent",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",

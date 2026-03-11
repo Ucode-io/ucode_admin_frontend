@@ -180,6 +180,7 @@ const LoginFormDesign = ({
         }),
       ).unwrap();
     } catch (e) {
+      dispatch(showAlert(e?.data?.description, "error"));
       setLoading(false);
       setIsUserId(null);
       setCompanies([]);
@@ -272,7 +273,7 @@ const LoginFormDesign = ({
         setFormType("OTP");
       })
       .catch((err) => {
-        console.log("eerrrrrrr", err);
+        console.error(err);
       });
   };
 
@@ -338,7 +339,6 @@ const LoginFormDesign = ({
   };
 
   const onSubmitDialog = async (values) => {
-    console.log("values", values);
     const data = {
       ...values,
       type: values?.phone
@@ -467,7 +467,7 @@ const LoginFormDesign = ({
       });
     }
   }, [computedConnections]);
-  // console.log("computedCompanies", computedClientTypes);
+
   useEffect(() => {
     if (computedCompanies?.length === 1) {
       setValue("company_id", computedCompanies?.[0]?.value);

@@ -224,17 +224,6 @@ export const useFormulaFieldProps = ({
   useEffect(() => {
     let result = watch("attributes.formula") || "";
 
-    // if (result) {
-    //   fieldsList.forEach(({ attributes, label, slug }) => {
-    //     const currentLabel = attributes?.[`label_${i18n?.language}`] || label;
-
-    //     console.log(currentLabel, slug);
-
-    //     const regex = new RegExp(`\\b${slug}\\b`, "gi");
-    //     result = result.replace(regex, currentLabel);
-    //   });
-    // }
-
     setEditorValue(result ?? "");
   }, []);
 

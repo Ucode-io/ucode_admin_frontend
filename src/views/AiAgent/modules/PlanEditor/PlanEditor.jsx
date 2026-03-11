@@ -54,7 +54,6 @@ const PlanEditor = ({ plan, setPlan, onSubmit }) => {
       [`${activeTab}_plan`]: currentMd,
     };
 
-    console.log("Current Plan:", updatedPlan);
     if (onSubmit) onSubmit(updatedPlan);
   };
 

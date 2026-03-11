@@ -13,14 +13,13 @@ const DateFilter = ({
   field,
   withTime = false,
 }) => {
-  console.log({ defaultValue });
   const start = parseDateFromString(defaultValue?.$gte);
   const end = parseDateFromString(defaultValue?.$lte);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
 
   const [range, setRange] = useState([start, end]);
   const [startTime, setStartTime] = useState(
-    start ? format(start, "HH:mm") : ""
+    start ? format(start, "HH:mm") : "",
   );
   const [endTime, setEndTime] = useState(end ? format(end, "HH:mm") : "");
 
@@ -63,7 +62,8 @@ const DateFilter = ({
         <Chip
           field={field}
           showCloseIcon={rangeSelected}
-          onClearButtonClick={onClearButtonClick}>
+          onClearButtonClick={onClearButtonClick}
+        >
           {rangeSelected
             ? `${format(start, "dd.MM.yyyy")} ~ ${format(end, "dd.MM.yyyy")}`
             : field?.attributes?.[`label_${i18n?.language}`]}
@@ -71,7 +71,8 @@ const DateFilter = ({
       </PopoverTrigger>
       <PopoverContent
         w="fit-content"
-        style={{outline: "none", boxShadow: "none"}}>
+        style={{ outline: "none", boxShadow: "none" }}
+      >
         <DatePicker
           type="range"
           allowSingleDateInRange

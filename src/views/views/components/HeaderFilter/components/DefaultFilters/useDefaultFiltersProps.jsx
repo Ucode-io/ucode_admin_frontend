@@ -24,7 +24,6 @@ export const useDefaultFiltersProps = ({ handleClosePopover }) => {
   const isChanged = useRef(false);
 
   const updateDefaultFilter = () => {
-    console.log(isChanged.current);
     if (isChanged.current) {
       const attributes = {
         ...activeTable?.attributes,
@@ -58,7 +57,6 @@ export const useDefaultFiltersProps = ({ handleClosePopover }) => {
   });
 
   const handleChange = (value, name) => {
-    console.log({ value, name });
     isChanged.current = true;
 
     if (value?.length === 0 || !value) {

@@ -89,8 +89,6 @@ const DrawerRelationTable = ({
     return relations?.find((el) => el?.id === selectedTab?.relation_id);
   }, [relations, selectedTab]);
 
-  console.log({ getRelatedTabeSlug });
-
   const relatedTableSlug = getRelatedTabeSlug?.relatedTable;
 
   const { fields, remove, update } = useFieldArray({

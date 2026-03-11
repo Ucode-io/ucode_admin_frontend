@@ -233,7 +233,7 @@ const ResourceButton = ({
 };
 
 const getElementIcon = (element) => {
-  console.log("elementelementelement", element);
+
   switch (element) {
     case "mongodb":
       return <img src="/img/mongodb.svg" alt="" />;

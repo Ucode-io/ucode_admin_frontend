@@ -133,7 +133,6 @@ const HomePage = ({ prompt, setPrompt, onSubmit }) => {
 
   const handleSend = () => {
     if (!prompt.trim()) return;
-    console.log("User Prompt:", prompt);
     onSubmit({ images: images.map((img) => img.url) });
     setPrompt("");
     setShowSuggestions(false);

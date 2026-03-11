@@ -462,7 +462,6 @@ export const useBoardViewProps = ({
     const isLastElementInViewport = isInViewportOrScrolledToTop(lastCard);
 
     const boardDataLength = Object.values(boardData).flat().length;
-    console.log({ lastCard, count, boardDataLength });
 
     if (isLastElementInViewport && !loadingData && boardDataLength < count) {
       setOffset((prev) => prev + limit);

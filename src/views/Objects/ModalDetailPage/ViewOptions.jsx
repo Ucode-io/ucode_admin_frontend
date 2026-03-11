@@ -156,7 +156,6 @@ const ViewOptions = ({
 
       await constructorViewService.update(tableSlug, viewData);
 
-      console.log("first", relationView, viewsList);
       if (relationView && viewsList?.length > 1) {
         return queryClient.refetchQueries(["GET_TABLE_VIEWS_LIST_RELATION"]);
       } else {

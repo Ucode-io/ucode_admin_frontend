@@ -100,7 +100,7 @@ const RecursiveTable = ({
                     )
                   ) : null}
 
-                  <Box onClick={() => console.log("clicked")}>
+                  <Box>
                     <GroupCellElementGenerator
                       field={column}
                       row={element}

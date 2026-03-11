@@ -470,8 +470,6 @@ export const Group = ({
       ? column.relation_id
       : column.id;
 
-    console.log({ id });
-
     mutation.mutate({
       ...view,
       attributes: {

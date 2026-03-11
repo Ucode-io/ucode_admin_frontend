@@ -53,7 +53,6 @@ function OldDrawerFormDetailPage({
   );
 
   useEffect(() => {
-    console.log({ data });
     setSections(data?.tabs?.[0]?.sections || []);
   }, [data]);
 

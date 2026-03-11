@@ -20,32 +20,32 @@ async function generateToken(data) {
 }
 
 const Editor = ({ onDownLoad, id: idFromProps, url }) => {
-  console.log('url ==>', url)
-
-  const localId = useId()
+  const localId = useId();
   const [token, setToken] = useState(null);
 
-  const id = idFromProps ?? localId
+  const id = idFromProps ?? localId;
 
   const editorInstance = window.DocEditor?.instances?.[id];
 
   const config = useMemo(() => {
     return {
-      "document": {
-        "fileType": "docx",
-        "key": id,
-        "title": " ",
-        "url": url ?? "https://cdn-api.ucode.run/docs/9533890a-d5d8-4adc-8573-f60bb76c2e3c.docx",
+      document: {
+        fileType: "docx",
+        key: id,
+        title: " ",
+        url:
+          url ??
+          "https://cdn-api.ucode.run/docs/9533890a-d5d8-4adc-8573-f60bb76c2e3c.docx",
       },
-      "documentType": "word",
-      "editorConfig": {
-        "mode": "edit",
-        "customization": {
-          "autosave": false,
+      documentType: "word",
+      editorConfig: {
+        mode: "edit",
+        customization: {
+          autosave: false,
         },
       },
-    }
-  }, [url, id])
+    };
+  }, [url, id]);
 
   useEffect(() => {
     const generate = async () => {
@@ -56,19 +56,17 @@ const Editor = ({ onDownLoad, id: idFromProps, url }) => {
     generate();
   }, [config]);
 
-  console.log("TOKEN123 ==>", token)
-
-  useEffect(() =>{
+  useEffect(() => {
     return () => {
-      editorInstance?.destroyEditor()
-    }
-  }, [])
+      editorInstance?.destroyEditor();
+    };
+  }, []);
 
   // const onCreateTemplateClick = () => {
   //   editorInstance.downloadAs('docx')
   // };
 
-  if(!token) return null
+  if (!token) return null;
 
   return (
     <>
@@ -84,7 +82,7 @@ const Editor = ({ onDownLoad, id: idFromProps, url }) => {
             //   handleEditorReady(editor);
             // },
             onDownloadAs: (e) => {
-              onDownLoad(e)
+              onDownLoad(e);
             },
           },
         }}

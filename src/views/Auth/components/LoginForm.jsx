@@ -229,7 +229,7 @@ const LoginForm = ({setIndex, index, setFormType, formType}) => {
         setCodeAppValue(res);
       })
       .catch((err) => {
-        console.log("eerrrrrrr", err);
+        console.error(err);
       });
   };
 

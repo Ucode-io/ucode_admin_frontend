@@ -27,7 +27,6 @@ const CAutoCompleteSelect = ({
         options={options}
         value={computedValue}
         onChange={(e, value) => {
-          console.log("onINputtttt", value, e);
           onChange(value);
         }}
         getOptionLabel={(option) => option.label}

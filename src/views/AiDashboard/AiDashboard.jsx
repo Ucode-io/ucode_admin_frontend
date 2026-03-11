@@ -19,8 +19,6 @@ export const AiDashboard = () => {
     }
   );
 
-  console.log(data?.url)
-
   const link = data?.url
     ? `https://${data?.url}/assets/remoteEntry.js`
     : undefined;

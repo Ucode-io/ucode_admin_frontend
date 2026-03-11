@@ -1,10 +1,9 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {useQuery} from "react-query";
-import Select from "react-select";
+import Select, { components } from "react-select";
 import constructorObjectService from "../../../../services/constructorObjectService";
 import {getRelationFieldTabsLabel} from "../../../../utils/getRelationFieldLabel";
-import {Box} from "@mui/material";
-import {components} from "react-select";
+import { Box } from "@mui/material";
 import LaunchIcon from "@mui/icons-material/Launch";
 import useTabRouter from "../../../../hooks/useTabRouter";
 import {useParams, useSearchParams} from "react-router-dom";
@@ -154,7 +153,6 @@ const LookupCellEditor = (props) => {
   };
 
   const handleClickToEdit = () => {
-    console.log("entereddddd");
     if (!disabled) {
       setEditing(true);
       setOpenOnEdit(true);
@@ -212,7 +210,7 @@ const LookupCellEditor = (props) => {
   );
 
   const inputChangeHandler = useDebounce((val) => setSearchText(val), 500);
-  console.log("editingeditingeditingediting", editing);
+
   return (
     <>
       <Box

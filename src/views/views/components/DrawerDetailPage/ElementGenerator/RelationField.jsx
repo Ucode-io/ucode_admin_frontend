@@ -189,8 +189,6 @@ const AutoCompleteElement = ({
     }),
   };
 
-  console.log({ tableSlug, relationTableSlug });
-
   const queryFn = () => {
     if (!tableSlug) return null;
     const requestData = {

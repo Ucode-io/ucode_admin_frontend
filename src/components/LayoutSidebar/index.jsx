@@ -1432,7 +1432,6 @@ const Header = ({
         { "Environment-id": env?.id },
       )
       .then((res) => {
-        console.log("ressssssssssssssssss", res?.data?.response);
         const connections = res?.data?.response;
         setConnections(connections);
         if (!connections?.length) {

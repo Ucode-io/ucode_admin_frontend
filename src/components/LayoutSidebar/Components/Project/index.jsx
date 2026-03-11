@@ -122,7 +122,6 @@ const ProjectSettingPage = () => {
   );
 
   const onSubmit = (values) => {
-    console.log("Dfdfdf");
     updateProject({
       ...values,
       timezone: filteredTimezone.map((item) => ({

@@ -7,8 +7,6 @@ import "./index.scss";
 
 const Viewer = ({ url }) => {
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
-
-  console.log({ workerUrl });
   return (
     <Worker workerUrl={workerUrl}>
       <div style={{ height: "calc(100vh - 130px)" }} className="PDF-viewer">

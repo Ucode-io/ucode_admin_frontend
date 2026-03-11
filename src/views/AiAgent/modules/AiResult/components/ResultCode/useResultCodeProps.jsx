@@ -99,7 +99,6 @@ export const useResultCodeProps = ({ monacoRef, editorRef, files, handleUpdateCo
   };
 
   const jumpToCode = (file, lineNumber) => {
-    console.log({ file, lineNumber });
     openFile(file.path);
     setActiveFile(file.path);
     // setIsSearchOpen(false);

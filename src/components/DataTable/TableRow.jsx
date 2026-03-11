@@ -71,13 +71,15 @@ const TableRow = ({
                 left: "0",
                 backgroundColor: "#F6F6F6",
                 zIndex: "1",
-              }}>
+              }}
+            >
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                }}>
+                }}
+              >
                 <Button
                   onClick={() => {
                     onRowClick(row, rowIndex);
@@ -85,13 +87,15 @@ const TableRow = ({
                   className="first_button"
                   style={{
                     minWidth: "max-content",
-                  }}>
+                  }}
+                >
                   <OpenInFullIcon />
                 </Button>
 
                 <span
                   className="data_table__row_number"
-                  style={{width: "35px"}}>
+                  style={{ width: "35px" }}
+                >
                   {limit === "all"
                     ? rowIndex + 1
                     : (currentPage - 1) * limit + rowIndex + 1}
@@ -104,11 +108,11 @@ const TableRow = ({
                     style={{
                       display:
                         selectedObjectsForDelete?.find(
-                          (item) => item?.guid === row?.guid
+                          (item) => item?.guid === row?.guid,
                         ) && "block",
                     }}
                     checked={selectedObjectsForDelete?.find(
-                      (item) => item?.guid === row?.guid
+                      (item) => item?.guid === row?.guid,
                     )}
                     onChange={() => {
                       changeSetDelete(row);
@@ -135,7 +139,7 @@ const TableRow = ({
                       padding: "0 5px",
                       position: `${
                         tableSettings?.[pageName]?.find(
-                          (item) => item?.id === virtualColumn?.id
+                          (item) => item?.id === virtualColumn?.id,
                         )?.isStiky ||
                         view?.attributes?.fixedColumns?.[virtualColumn?.id]
                           ? "sticky"
@@ -148,7 +152,7 @@ const TableRow = ({
                         : "0",
                       backgroundColor: `${
                         tableSettings?.[pageName]?.find(
-                          (item) => item?.id === virtualColumn?.id
+                          (item) => item?.id === virtualColumn?.id,
                         )?.isStiky ||
                         view?.attributes?.fixedColumns?.[virtualColumn?.id]
                           ? "#F6F6F6"
@@ -156,13 +160,14 @@ const TableRow = ({
                       }`,
                       zIndex: `${
                         tableSettings?.[pageName]?.find(
-                          (item) => item?.id === virtualColumn?.id
+                          (item) => item?.id === virtualColumn?.id,
                         )?.isStiky ||
                         view?.attributes?.fixedColumns?.[virtualColumn?.id]
                           ? "1"
                           : "0"
                       }`,
-                    }}>
+                    }}
+                  >
                     {isTableView ? (
                       <TableDataForm
                         relOptions={relOptions}
@@ -188,7 +193,7 @@ const TableRow = ({
                       <CellElementGenerator field={virtualColumn} row={row} />
                     )}
                   </CTableCell>
-                )
+                ),
             )}
             <td
               style={{
@@ -204,7 +209,8 @@ const TableRow = ({
                 backgroundColor: `${"#fff"}`,
                 zIndex: `${"0"}`,
                 borderLeft: "1px solid #eee",
-              }}>
+              }}
+            >
               <div
                 style={{
                   display: "flex",
@@ -212,13 +218,15 @@ const TableRow = ({
                   padding: "3px",
                   justifyContent: "center",
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <CTableCell
                   style={{
                     padding: 0,
                     borderRight: "none",
                     borderBottom: "none",
-                  }}>
+                  }}
+                >
                   <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
                     <RectangleIconButton
                       color="error"
@@ -226,7 +234,8 @@ const TableRow = ({
                         row.guid
                           ? onDeleteClick(row, rowIndex)
                           : remove(rowIndex)
-                      }>
+                      }
+                    >
                       <Delete color="error" />
                     </RectangleIconButton>
                   </PermissionWrapperV2>
@@ -251,13 +260,15 @@ const TableRow = ({
               left: "0",
               backgroundColor: "#F6F6F6",
               zIndex: "1",
-            }}>
+            }}
+          >
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-              }}>
+              }}
+            >
               <Button
                 onClick={() => {
                   onRowClick(row, rowIndex);
@@ -265,11 +276,15 @@ const TableRow = ({
                 className="first_button"
                 style={{
                   minWidth: "max-content",
-                }}>
+                }}
+              >
                 <OpenInFullIcon />
               </Button>
 
-              <span className="data_table__row_number" style={{width: "35px"}}>
+              <span
+                className="data_table__row_number"
+                style={{ width: "35px" }}
+              >
                 {limit === "all"
                   ? rowIndex + 1
                   : (currentPage - 1) * limit + rowIndex + 1}
@@ -294,7 +309,7 @@ const TableRow = ({
                     padding: "0 5px",
                     position: `${
                       tableSettings?.[pageName]?.find(
-                        (item) => item?.id === virtualColumn?.id
+                        (item) => item?.id === virtualColumn?.id,
                       )?.isStiky ||
                       view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "sticky"
@@ -305,7 +320,7 @@ const TableRow = ({
                       : "0",
                     backgroundColor: `${
                       tableSettings?.[pageName]?.find(
-                        (item) => item?.id === virtualColumn?.id
+                        (item) => item?.id === virtualColumn?.id,
                       )?.isStiky ||
                       view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "#F6F6F6"
@@ -313,13 +328,14 @@ const TableRow = ({
                     }`,
                     zIndex: `${
                       tableSettings?.[pageName]?.find(
-                        (item) => item?.id === virtualColumn?.id
+                        (item) => item?.id === virtualColumn?.id,
                       )?.isStiky ||
                       view?.attributes?.fixedColumns?.[virtualColumn?.id]
                         ? "1"
                         : "0"
                     }`,
-                  }}>
+                  }}
+                >
                   {isTableView ? (
                     <TableDataForm
                       relOptions={relOptions}
@@ -345,7 +361,7 @@ const TableRow = ({
                     <CellElementGenerator field={virtualColumn} row={row} />
                   )}
                 </CTableCell>
-              )
+              ),
           )}
           <td
             style={{
@@ -362,7 +378,8 @@ const TableRow = ({
               backgroundColor: `${"#fff"}`,
               zIndex: `${"0"}`,
               borderLeft: "1px solid #eee",
-            }}>
+            }}
+          >
             <div
               style={{
                 display: "flex",
@@ -370,19 +387,22 @@ const TableRow = ({
                 padding: "3px",
                 justifyContent: "center",
                 alignItems: "center",
-              }}>
+              }}
+            >
               <CTableCell
                 style={{
                   padding: 0,
                   borderRight: "none",
                   borderBottom: "none",
-                }}>
+                }}
+              >
                 <PermissionWrapperV2 tableSlug={tableSlug} type="delete">
                   <RectangleIconButton
                     color="error"
                     onClick={() =>
                       row.guid ? onDeleteClick(row, rowIndex) : remove(rowIndex)
-                    }>
+                    }
+                  >
                     <Delete color="error" />
                   </RectangleIconButton>
                 </PermissionWrapperV2>
@@ -397,7 +417,8 @@ const TableRow = ({
         <CTableRow
           onClick={() => {
             onChecked(row?.guid);
-          }}>
+          }}
+        >
           <CTableCell
             align="center"
             className="data_table__number_cell"
@@ -408,26 +429,31 @@ const TableRow = ({
               left: "0",
               backgroundColor: "#F6F6F6",
               zIndex: "1",
-            }}>
+            }}
+          >
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-              }}>
+              }}
+            >
               <Button
                 onClick={() => {
-                  console.log("ssssssss", row);
                   onRowClick(row, rowIndex);
                 }}
                 className="first_button"
                 style={{
                   minWidth: "max-content",
-                }}>
+                }}
+              >
                 <OpenInFullIcon />
               </Button>
 
-              <span className="data_table__row_number" style={{width: "35px"}}>
+              <span
+                className="data_table__row_number"
+                style={{ width: "35px" }}
+              >
                 {limit === "all"
                   ? rowIndex + 1
                   : (currentPage - 1) * limit + rowIndex + 1}
@@ -450,7 +476,7 @@ const TableRow = ({
                 padding: "0 5px",
                 position: `${
                   tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
+                    (item) => item?.id === column?.id,
                   )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                     ? "sticky"
                     : "relative"
@@ -460,19 +486,20 @@ const TableRow = ({
                   : "0",
                 backgroundColor: `${
                   tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
+                    (item) => item?.id === column?.id,
                   )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                     ? "#F6F6F6"
                     : "#fff"
                 }`,
                 zIndex: `${
                   tableSettings?.[pageName]?.find(
-                    (item) => item?.id === column?.id
+                    (item) => item?.id === column?.id,
                   )?.isStiky || view?.attributes?.fixedColumns?.[column?.id]
                     ? "1"
                     : "0"
                 }`,
-              }}>
+              }}
+            >
               <TableDataForm
                 relOptions={relOptions}
                 isTableView={isTableView}
@@ -506,7 +533,8 @@ const TableRow = ({
                     redirectUrl: window.location.pathname,
                   },
                 });
-              }}>
+              }}
+            >
               <Delete color="error" />
             </RectangleIconButton>
           </PermissionWrapperV2>

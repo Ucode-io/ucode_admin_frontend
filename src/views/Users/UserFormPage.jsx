@@ -57,7 +57,7 @@ const ClientUserForm = () => {
       project_id: company.projectId,
     },
   });
-  const {isLoading} = useUserGetByIdQuery({
+  const { isLoading } = useUserGetByIdQuery({
     userId: userId,
     params: {
       "client-type-id": userMenuId,
@@ -65,7 +65,6 @@ const ClientUserForm = () => {
     queryParams: {
       enabled: Boolean(userId),
       onSuccess: (res) => {
-        console.log("ressssssssss", res);
         mainForm.reset(res);
       },
     },

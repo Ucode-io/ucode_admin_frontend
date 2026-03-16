@@ -90,14 +90,7 @@ export const useAiResultProps = ({
   }
 
   const tabContent = {
-    app: (
-      <ResultApp
-        monaco={monacoRef.current}
-        ref={generatedUiRef}
-        srcDoc={srcDoc}
-        loading={loading}
-      />
-    ),
+    app: <ResultApp srcDoc={srcDoc} loading={loading} />,
     code: (
       <ResultCode
         editorRef={editorRef}

@@ -2,12 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { generatedUiActions } from "@/store/generatedUi/generatedUi.slice";
 import mcpService from "@/services/mcp/mcp.service";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { editorActions } from "@/store/codeEditor/codeEditor.slice";
 
 export const useAiAgentProps = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const { state } = useLocation();
+
+  const isGenerateDashboard = state?.isGenerateDashboard || false;
 
   const generatedUiData = useSelector((state) => state.generatedUi.generatedUi);
 
@@ -23,8 +27,10 @@ export const useAiAgentProps = () => {
 
   const [plan, setPlan] = useState({});
 
-  const files = generatedUiData?.project_files || [];
-  const env = generatedUiData?.project_env;
+  const files = generatedUiData?.project_files || generatedUiData?.files || [];
+  const env = generatedUiData?.project_env || generatedUiData?.env || {};
+  // const files = project?.project_files || project?.files || [];
+  // const env = project?.project_env || project?.env || {};
   const projectId = generatedUiData?.id;
 
   const handleUpdateCode = (changedFiles) => {
@@ -111,6 +117,34 @@ export const useAiAgentProps = () => {
   };
 
   useEffect(() => {
+    dispatch(generatedUiActions.setGeneratedUi());
+    if (isGenerateDashboard && (!files || !files?.length)) {
+      (async () => {
+        setIsLoading(true);
+        setIsPlanning(true);
+        try {
+          const response = await fetch(
+            "https://grammar-acne-locked-clark.trycloudflare.com/generate-dashboard",
+            {
+              method: "POST",
+              body: JSON.stringify({ type: "mongo" }),
+              headers: { "Content-Type": "application/json" },
+            },
+          );
+          const data = await response.json();
+          console.log(data?.code);
+          dispatch(generatedUiActions.setGeneratedUi(JSON.parse(data?.code)));
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setIsLoading(false);
+          setIsPlanning(false);
+        }
+      })();
+    }
+  }, []);
+
+  useEffect(() => {
     if (id) {
       mcpService.getProject(id).then((res) => {
         dispatch(generatedUiActions.setGeneratedUi(res));
@@ -132,12 +166,13 @@ export const useAiAgentProps = () => {
     setPrompt,
     env,
     handleUpdateCode,
-    hasProject: !!id,
+    hasProject: true,
     chatVisible,
     setChatVisible,
     plan,
     setPlan,
     generateProjectWithPlan,
     isPlanning,
+    isGenerateDashboard,
   };
 };

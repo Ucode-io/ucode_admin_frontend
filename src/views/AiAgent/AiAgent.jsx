@@ -25,6 +25,7 @@ export const AiAgent = () => {
     setPlan,
     generateProjectWithPlan,
     isPlanning,
+    isGenerateDashboard,
   } = useAiAgentProps();
 
   const hasPlan = plan && (plan.frontend_plan || plan.backend_plan);
@@ -37,7 +38,7 @@ export const AiAgent = () => {
       )}
       <div className={cls.container}>
         {hasProject ? (
-          !chatVisible ? (
+          !chatVisible && !isGenerateDashboard ? (
             <MoveablePromptInput
               value={prompt}
               setValue={setPrompt}

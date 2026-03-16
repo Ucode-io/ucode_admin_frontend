@@ -106,6 +106,7 @@ const LayoutSidebar = ({
   const [menuItem, setMenuItem] = useState(null);
   const { appId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const pinIsEnabled = useSelector((state) => state.main.pinIsEnabled);
   const subMenuIsOpen = useSelector((state) => state.main.subMenuIsOpen);
@@ -154,15 +155,6 @@ const LayoutSidebar = ({
   useMenuGetByIdQuery({
     menuId: "c57eedc3-a954-4262-a0af-376c65b5a284",
   });
-
-  // const {data: menuTemplate} = useMenuSettingGetByIdQuery({
-  //   params: {
-  //     template_id:
-  //       menuById?.attributes?.menu_settings_id ||
-  //       "f922bb4c-3c4e-40d4-95d5-c30b7d8280e3",
-  //   },
-  //   menuId: "adea69cd-9968-4ad0-8e43-327f6600abfd",
-  // });
 
   const menuStyle = {};
   const permissions = useSelector((state) => state.auth.globalPermissions);
@@ -358,14 +350,6 @@ const LayoutSidebar = ({
     }
   };
 
-  // useEffect(() => {
-  //   if (menuTemplate?.icon_style === "MODERN") {
-  //     setSidebarIsOpen(false);
-  //   } else {
-  //     setSidebarIsOpen(true);
-  //   }
-  // }, [menuTemplate]);
-
   useEffect(() => {
     if (!hasFetchedOnce) {
       getMenuList();
@@ -394,14 +378,6 @@ const LayoutSidebar = ({
     )
       setSubMenuIsOpen(true);
   }, [selectedApp]);
-
-  // const { loader: menuLoader } = useMenuGetByIdQuery({
-  //   menuId: searchParams.get("menuId"),
-  //   queryParams: {
-  //     enabled: Boolean(searchParams.get("menuId")),
-  //     onSuccess: (res) => {},
-  //   },
-  // });
 
   const itemConditionalProps = {};
   if (!sidebarIsOpen) {
@@ -663,28 +639,7 @@ const LayoutSidebar = ({
 
               {userRoleName === DEFAULT_ADMIN && (
                 <Box mt={46}>
-                  <Flex
-                    position="relative"
-                    h={30}
-                    mx={8}
-                    mb={4}
-                    alignItems="center"
-                    whiteSpace="nowrap"
-                    borderRadius={6}
-                    color="#475467"
-                    fontSize={14}
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                    _hover={{
-                      bg: "#EAECF0",
-                      ".accordionFolderIcon": {
-                        display: "none",
-                      },
-                      ".accordionIcon": {
-                        display: "block",
-                      },
-                    }}
-                    cursor="pointer"
+                  <MenuItemWrapper
                     onMouseLeave={
                       sidebarIsOpen
                         ? undefined
@@ -766,29 +721,8 @@ const LayoutSidebar = ({
                       </Flex>
                     </SidebarActionTooltip>
                     <span></span>
-                  </Flex>
-                  <Flex
-                    position="relative"
-                    h={30}
-                    mx={8}
-                    mb={4}
-                    alignItems="center"
-                    whiteSpace="nowrap"
-                    borderRadius={6}
-                    color="#475467"
-                    fontSize={14}
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                    _hover={{
-                      bg: "#EAECF0",
-                      ".accordionFolderIcon": {
-                        display: "none",
-                      },
-                      ".accordionIcon": {
-                        display: "block",
-                      },
-                    }}
-                    cursor="pointer"
+                  </MenuItemWrapper>
+                  <MenuItemWrapper
                     onMouseLeave={
                       sidebarIsOpen
                         ? undefined
@@ -818,62 +752,12 @@ const LayoutSidebar = ({
                             height="20"
                             color="rgba(55, 53, 47, 0.85)"
                           />
-                          {/* <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          x="0px"
-                          y="0px"
-                          width="20"
-                          height="20"
-                          viewBox="0,0,256,256"
-                        >
-                          <g
-                            fill="rgba(55, 53, 47, 0.85)"
-                            fillRule="nonzero"
-                            stroke="none"
-                            strokeWidth="1"
-                            strokeLinecap="butt"
-                            strokeLinejoin="miter"
-                            strokeMiterlimit="10"
-                            strokeDasharray=""
-                            strokeDashoffset="0"
-                            fontFamily="none"
-                            fontWeight="none"
-                            fontSize="none"
-                            textAnchor="none"
-                            style={{ mixBlendMode: "normal" }}
-                          >
-                            <g transform="scale(10.66667,10.66667)">
-                              <path d="M10.49023,2c-0.479,0 -0.88847,0.33859 -0.98047,0.80859l-0.33398,1.71484c-0.82076,0.31036 -1.57968,0.74397 -2.24609,1.29102l-1.64453,-0.56641c-0.453,-0.156 -0.95141,0.03131 -1.19141,0.44531l-1.50781,2.61328c-0.239,0.415 -0.15202,0.94186 0.20898,1.25586l1.31836,1.14648c-0.06856,0.42135 -0.11328,0.8503 -0.11328,1.29102c0,0.44072 0.04472,0.86966 0.11328,1.29102l-1.31836,1.14648c-0.361,0.314 -0.44798,0.84086 -0.20898,1.25586l1.50781,2.61328c0.239,0.415 0.73841,0.60227 1.19141,0.44727l1.64453,-0.56641c0.6662,0.54671 1.42571,0.97884 2.24609,1.28906l0.33398,1.71484c0.092,0.47 0.50147,0.80859 0.98047,0.80859h3.01953c0.479,0 0.88847,-0.33859 0.98047,-0.80859l0.33399,-1.71484c0.82076,-0.31036 1.57968,-0.74397 2.24609,-1.29102l1.64453,0.56641c0.453,0.156 0.95141,-0.03031 1.19141,-0.44531l1.50781,-2.61523c0.239,-0.415 0.15202,-0.93991 -0.20898,-1.25391l-1.31836,-1.14648c0.06856,-0.42135 0.11328,-0.8503 0.11328,-1.29102c0,-0.44072 -0.04472,-0.86966 -0.11328,-1.29102l1.31836,-1.14648c0.361,-0.314 0.44798,-0.84086 0.20898,-1.25586l-1.50781,-2.61328c-0.239,-0.415 -0.73841,-0.60227 -1.19141,-0.44727l-1.64453,0.56641c-0.6662,-0.54671 -1.42571,-0.97884 -2.24609,-1.28906l-0.33399,-1.71484c-0.092,-0.47 -0.50147,-0.80859 -0.98047,-0.80859zM12,8c2.209,0 4,1.791 4,4c0,2.209 -1.791,4 -4,4c-2.209,0 -4,-1.791 -4,-4c0,-2.209 1.791,-4 4,-4z"></path>
-                            </g>
-                          </g>
-                        </svg> */}
                         </Box>
                         {sidebarIsOpen ? <span>Settings</span> : null}
                       </Flex>
                     </SidebarActionTooltip>
-                  </Flex>
-                  <Flex
-                    position="relative"
-                    h={30}
-                    mx={8}
-                    mb={4}
-                    alignItems="center"
-                    whiteSpace="nowrap"
-                    borderRadius={6}
-                    color="#475467"
-                    fontSize={14}
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                    _hover={{
-                      bg: "#EAECF0",
-                      ".accordionFolderIcon": {
-                        display: "none",
-                      },
-                      ".accordionIcon": {
-                        display: "block",
-                      },
-                    }}
-                    cursor="pointer"
+                  </MenuItemWrapper>
+                  <MenuItemWrapper
                     onMouseLeave={
                       sidebarIsOpen
                         ? undefined
@@ -892,9 +776,6 @@ const LayoutSidebar = ({
                             sidebarIsOpen ? "flex-start" : "center"
                           }
                           gap={8}
-                          // onClick={() => {
-                          //   handleAiAgentClick();
-                          // }}
                           {...getActionProps("ai-agent")}
                         >
                           <Box
@@ -909,7 +790,45 @@ const LayoutSidebar = ({
                         </Flex>
                       </AiProjectsModal>
                     </SidebarActionTooltip>
-                  </Flex>
+                  </MenuItemWrapper>
+                  <MenuItemWrapper
+                    onMouseLeave={
+                      sidebarIsOpen
+                        ? undefined
+                        : () =>
+                            dispatch(
+                              mainActions.setSidebarHighlightedAction(null),
+                            )
+                    }
+                  >
+                    <SidebarActionTooltip
+                      id="generate-dashboard"
+                      title="Generate Dashboard"
+                    >
+                      <Flex
+                        w={sidebarIsOpen ? "100%" : 36}
+                        alignItems="center"
+                        justifyContent={sidebarIsOpen ? "flex-start" : "center"}
+                        gap={8}
+                        onClick={() => {
+                          navigate("/ai-agent", {
+                            state: { isGenerateDashboard: true },
+                          });
+                        }}
+                        {...getActionProps("generate-dashboard")}
+                      >
+                        <Box
+                          pl={sidebarIsOpen ? "5px" : 0}
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                        >
+                          <AssistantOutlined />
+                        </Box>
+                        {sidebarIsOpen ? <span>Generate Dashboard</span> : null}
+                      </Flex>
+                    </SidebarActionTooltip>
+                  </MenuItemWrapper>
                 </Box>
               )}
             </div>
@@ -1113,234 +1032,6 @@ const LayoutSidebar = ({
       {menuSettingModal && (
         <MenuSettingModal closeModal={closeMenuSettingModal} />
       )}
-
-      {/* <Modal
-        open={isProjectsModalOpen}
-        onClose={() => setIsProjectsModalOpen(false)}
-      >
-        <Box
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            backgroundColor: "#fff",
-            borderRadius: "12px",
-            outline: "none",
-            width: 400,
-            padding: "20px",
-            boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
-            textAlign: "center",
-          }}
-        >
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <Typography variant="h6">Select Project</Typography>
-            <button onClick={() => navigate("/ai-agent")}>
-              <span
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  color: "#2d6ce5",
-                }}
-              >
-                <Add />
-                <span>Add new project</span>
-              </span>
-            </button>
-          </Box>
-          <List>
-            {aiProjects?.map((project) => (
-              <ListItem
-                key={project.id}
-                sx={{
-                  cursor: "pointer",
-                  "&:hover": {
-                    backgroundColor: "rgba(0, 0, 0, 0.1)",
-                  },
-                  borderRadius: "4px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-                onClick={() => handleNavigateToProject(project.id)}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    justifyContent: "flex-start",
-                  }}
-                >
-                  <ListItemText primary={project.title} />
-                  <ListItemText style={{ fontSize: "12px", color: "#888888" }}>
-                    {project.description}
-                  </ListItemText>
-                </Box>
-                <Popover
-                  id={"simple-popover"}
-                  // open={projectSettingsOpen}
-                  anchorEl={projectEditAnchorEl}
-                  onClose={() => setProjectEditAnchorEl(null)}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                  }}
-                >
-                  <PopoverTrigger>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenProjectSettings(e);
-                      }}
-                      _hover={{
-                        backgroundColor: "rgba(255, 255, 255, 0.87)",
-                      }}
-                      style={{
-                        width: "20px",
-                        height: "20px",
-                        transform: "rotate(90deg)",
-                        borderRadius: "6px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <BsThreeDots />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      gap="6px"
-                      sx={{
-                        padding: "4px",
-                        backgroundColor: "#fff",
-                        borderRadius: "6px",
-                        boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.1)",
-                      }}
-                    >
-                      <Button
-                        style={{
-                          display: "flex",
-                          borderRadius: "4px",
-                          padding: "2px",
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingProject(project);
-                        }}
-                        _hover={{
-                          backgroundColor: "rgba(0, 0, 0, 0.1) !important",
-                        }}
-                      >
-                        <Edit htmlColor="#8F8E8B" />
-                      </Button>
-                      <Button
-                        style={{
-                          display: "flex",
-                          borderRadius: "4px",
-                          padding: "2px",
-                        }}
-                        // onClick={() => handleDeleteProject(project.id)}
-                        _hover={{
-                          backgroundColor: "rgba(0, 0, 0, 0.1) !important",
-                        }}
-                      >
-                        <Delete htmlColor="rgb(255 76 76)" />
-                      </Button>
-                    </Box>
-                  </PopoverContent>
-                </Popover>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Modal>
-      <Modal open={!!editingProject} onClose={() => setEditingProject(null)}>
-        <Box
-          onSubmit={handleUpdateProject}
-          as="form"
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            backgroundColor: "#fff",
-            borderRadius: "12px",
-            outline: "none",
-            width: 400,
-            padding: "16px 16px 10px",
-            boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
-            textAlign: "center",
-          }}
-        >
-          <Box display="flex" flexDirection="column" gap="16px">
-            <label
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-              }}
-            >
-              <span style={{ color: "#8F8E8B" }}>Title</span>
-              <input
-                style={{
-                  width: "100%",
-                  outline: "none",
-                  border: "none",
-                  borderBottom: "1px solid #ccc",
-                }}
-                placeholder="Project title"
-                defaultValue={editingProject?.title}
-                id="title"
-              />
-            </label>
-            <label
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-              }}
-            >
-              <span style={{ color: "#8F8E8B" }}>Description</span>
-              <input
-                style={{
-                  width: "100%",
-                  outline: "none",
-                  border: "none",
-                  borderBottom: "1px solid #ccc",
-                }}
-                placeholder="Project description"
-                defaultValue={editingProject?.description}
-                id="description"
-              />
-            </label>
-          </Box>
-          <Box display="flex" justifyContent="flex-end">
-            <Button
-              type="submit"
-              style={{
-                marginTop: "20px",
-                backgroundColor: "#007BFF",
-                color: "#fff",
-                border: "none",
-                borderRadius: "6px",
-                padding: "8px 16px",
-                cursor: "pointer",
-              }}
-            >
-              Apply changes
-            </Button>
-          </Box>
-        </Box>
-      </Modal> */}
-
       <ChakraBaseProvider theme={theme}>
         <InviteModal
           isOpen={isOpenInviteModal}
@@ -1350,6 +1041,37 @@ const LayoutSidebar = ({
         />
       </ChakraBaseProvider>
     </>
+  );
+};
+
+const MenuItemWrapper = ({ children, onMouseLeave }) => {
+  return (
+    <Flex
+      position="relative"
+      h={30}
+      mx={8}
+      mb={4}
+      alignItems="center"
+      whiteSpace="nowrap"
+      borderRadius={6}
+      color="#475467"
+      fontSize={14}
+      overflow="hidden"
+      textOverflow="ellipsis"
+      _hover={{
+        bg: "#EAECF0",
+        ".accordionFolderIcon": {
+          display: "none",
+        },
+        ".accordionIcon": {
+          display: "block",
+        },
+      }}
+      cursor="pointer"
+      onMouseLeave={onMouseLeave}
+    >
+      {children}
+    </Flex>
   );
 };
 

@@ -72,9 +72,14 @@ function MultiImageUpload({
 
     const data = new FormData();
     data.append("file", file);
+
+    const fileExt = file?.name?.split(".")?.pop()?.toUpperCase();
+    const sendFormat = fileExt || field?.attributes?.format;
+
     fileService
       .folderUpload(data, {
-        folder_name: "media",
+        folder_name: field?.attributes?.path || "media",
+        format: sendFormat,
       })
       .then((res) => {
         onChange([

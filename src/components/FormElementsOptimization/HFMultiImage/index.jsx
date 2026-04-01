@@ -1,4 +1,4 @@
-import {FormHelperText} from "@mui/material";
+import { FormHelperText } from "@mui/material";
 import MultiImageUpload from "./MultiImageUpload";
 import { useState } from "react";
 
@@ -9,7 +9,7 @@ const HFMultiImage = ({
   disabled = false,
   isTableView = false,
   drawerDetail = false,
-  updateObject = () => {},
+  updateObject = () => { },
   newUi,
   handleChange,
   row,

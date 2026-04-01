@@ -92,15 +92,15 @@ const ImageUpload = ({
     const data = new FormData();
     data.append("file", file);
 
-      const fileExt = file?.name?.split(".")?.pop()?.toUpperCase();
-      const sendFormat = fileExt === "WEBP" ? "PHOTO" : fileExt || field?.attributes?.format;
+    const fileExt = file?.name?.split(".")?.pop()?.toUpperCase();
+    const sendFormat = fileExt || field?.attributes?.format;
 
-      fileService
-        .folderUpload(data, {
-          folder_name: field?.attributes?.path,
-          format: sendFormat,
-          ratio: field?.attributes?.ratio,
-        })
+    fileService
+      .folderUpload(data, {
+        folder_name: field?.attributes?.path,
+        format: sendFormat,
+        ratio: field?.attributes?.ratio,
+      })
       .then((res) => {
         onChange(import.meta.env.VITE_CDN_BASE_URL + res?.link);
         handleClose();

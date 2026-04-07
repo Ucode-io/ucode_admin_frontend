@@ -1,4 +1,4 @@
-import {ChevronDownIcon} from "@chakra-ui/icons";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -19,26 +19,26 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
-import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import {generateLangaugeText} from "../../../utils/generateLanguageText";
-import {useTranslation} from "react-i18next";
-import {Controller, useForm, useWatch} from "react-hook-form";
+import React, { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { generateLangaugeText } from "../../../utils/generateLanguageText";
+import { useTranslation } from "react-i18next";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import styles from "./style.module.scss";
-import {Select} from "chakra-react-select";
-import {useClientTypesQuery} from "../../client-types/utils";
-import {useRoleListQuery} from "../../../services/roleServiceV2";
-import {Visibility, VisibilityOff} from "@mui/icons-material";
+import { Select } from "chakra-react-select";
+import { useClientTypesQuery } from "../../client-types/utils";
+import { useRoleListQuery } from "../../../services/roleServiceV2";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import PhoneNumberInput from "react-phone-number-input";
 import {
   useUserCreateMutation,
   useUserGetByIdQuery,
 } from "../../../services/auth/userService";
-import {useDispatch, useSelector} from "react-redux";
-import {useSearchParams} from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import LinkIcon from "@mui/icons-material/Link";
-import {showAlert} from "../../../store/alert/alert.thunk";
-import {ToastContainer, toast} from "react-toastify";
+import { showAlert } from "../../../store/alert/alert.thunk";
+import { ToastContainer, toast } from "react-toastify";
 
 function InviteModal({
   userInviteLan,
@@ -51,7 +51,7 @@ function InviteModal({
 }) {
   const dispatch = useDispatch();
   const finalRef = useRef(null);
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const mainForm = useForm();
   const [loading, setLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
@@ -83,7 +83,7 @@ function InviteModal({
     setLoading(true);
     const value = {
       ...data,
-      role_id: data?.role_id?.guid,
+      role_id: data?.role_id?.guid || data?.role_id,
       client_type_id:
         typeof data?.client_type_id === "string"
           ? data.client_type_id
@@ -104,7 +104,7 @@ function InviteModal({
     },
     queryParams: {
       enabled: Boolean(guid),
-      onSuccess: (data) => {},
+      onSuccess: (data) => { },
     },
   });
 
@@ -160,7 +160,7 @@ function InviteModal({
           borderRadius={8}
           onClick={() => {
             onOpen();
-            setSearchParams({invite: true});
+            setSearchParams({ invite: true });
           }}>
           {generateLangaugeText(userInviteLan, i18n?.language, "Invite") ||
             "Invite"}
@@ -175,7 +175,7 @@ function InviteModal({
             <ModalCloseButton />
             <Button onClick={copyToClipboard} className={styles.copyButton}>
               <LinkIcon
-                style={{transform: "rotate(140deg)", color: "#A09F9D"}}
+                style={{ transform: "rotate(140deg)", color: "#A09F9D" }}
               />
               Invite Link
             </Button>
@@ -215,7 +215,7 @@ function InviteModal({
                     <Controller
                       name="phone"
                       control={mainForm.control}
-                      render={({field}) => (
+                      render={({ field }) => (
                         <Box
                           mt={2}
                           px={"0px"}
@@ -242,8 +242,8 @@ function InviteModal({
                               borderRight: "1px solid",
                               borderColor: "inherit",
                               bg: "transparent",
-                              _hover: {bg: "gray.50"},
-                              _focus: {outline: "none"},
+                              _hover: { bg: "gray.50" },
+                              _focus: { outline: "none" },
                               backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23757575'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e")`,
                               backgroundRepeat: "no-repeat",
                               backgroundPosition: "right 0.5rem center",
@@ -252,7 +252,7 @@ function InviteModal({
                             ".PhoneInputInput": {
                               border: "none !important",
                               boxShadow: "none !important",
-                              _focus: {boxShadow: "none !important"},
+                              _focus: { boxShadow: "none !important" },
                             },
                           }}>
                           <PhoneNumberInput
@@ -314,13 +314,13 @@ const PasswordInput = forwardRef(
             <Visibility
               onClick={() => setShow(!show)}
               cursor="pointer"
-              style={{color: "#667085"}}
+              style={{ color: "#667085" }}
             />
           ) : (
             <VisibilityOff
               onClick={() => setShow(!show)}
               cursor="pointer"
-              style={{color: "#667085"}}
+              style={{ color: "#667085" }}
             />
           )}
         </InputRightElement>
@@ -329,7 +329,7 @@ const PasswordInput = forwardRef(
   }
 );
 
-const EmailComponent = ({form, placeholder = "Email", guid}) => {
+const EmailComponent = ({ form, placeholder = "Email", guid }) => {
   const errors = form.formState.errors;
   return (
     <Box mt={2}>
@@ -345,7 +345,7 @@ const EmailComponent = ({form, placeholder = "Email", guid}) => {
   );
 };
 
-const LoginForm = ({form, placeholder = "", guid}) => {
+const LoginForm = ({ form, placeholder = "", guid }) => {
   const [changePassword, setChangePassword] = useState(false);
   const errors = form.formState.errors;
   const [searchParams] = useSearchParams();
@@ -356,7 +356,7 @@ const LoginForm = ({form, placeholder = "", guid}) => {
         <Input
           placeholder="Login"
           size="lg"
-          {...form.register("login", {required: true})}
+          {...form.register("login", { required: true })}
           isInvalid={errors?.name}
         />
       </Box>
@@ -383,7 +383,7 @@ const LoginForm = ({form, placeholder = "", guid}) => {
             <PasswordInput
               placeholder="Enter new password"
               size="lg"
-              {...form.register("new_password", {required: true})}
+              {...form.register("new_password", { required: true })}
               isInvalid={errors?.password}
             />
           </Box>
@@ -394,7 +394,7 @@ const LoginForm = ({form, placeholder = "", guid}) => {
   );
 };
 
-const TypesComponent = ({form}) => {
+const TypesComponent = ({ form }) => {
   return (
     <Box
       sx={{
@@ -425,7 +425,7 @@ const TypesComponent = ({form}) => {
   );
 };
 
-const UserType = ({control, placeholder = "", form}) => {
+const UserType = ({ control, placeholder = "", form }) => {
   const clientTypesQuery = useClientTypesQuery();
   const clientTypes = clientTypesQuery.data?.data?.response ?? [];
 
@@ -445,14 +445,14 @@ const UserType = ({control, placeholder = "", form}) => {
     <Controller
       name="client_type_id"
       control={control}
-      render={({field}) => (
+      render={({ field }) => (
         <Select
           placeholder={placeholder}
           value={value}
           onChange={field.onChange}
           options={clientTypes}
-          getOptionLabel={({name}) => name}
-          getOptionValue={({guid}) => guid}
+          getOptionLabel={({ name }) => name}
+          getOptionValue={({ guid }) => guid}
           menuPlacement="top"
           size="lg"
         />
@@ -461,13 +461,13 @@ const UserType = ({control, placeholder = "", form}) => {
   );
 };
 
-const Role = ({control, placeholder = "", form}) => {
-  const clientTypeId = useWatch({control, name: "client_type_id"});
+const Role = ({ control, placeholder = "", form }) => {
+  const clientTypeId = useWatch({ control, name: "client_type_id" });
   const id =
     typeof clientTypeId === "string" ? clientTypeId : clientTypeId?.guid;
   const rolesQuery = useRoleListQuery({
-    params: id ? {"client-type-id": id} : {},
-    queryParams: {enabled: Boolean(id)},
+    params: id ? { "client-type-id": id } : {},
+    queryParams: { enabled: Boolean(id) },
   });
   const roles = rolesQuery.data?.data?.response ?? [];
 
@@ -484,14 +484,14 @@ const Role = ({control, placeholder = "", form}) => {
     <Controller
       name="role_id"
       control={control}
-      render={({field}) => (
+      render={({ field }) => (
         <Select
           placeholder={placeholder}
           value={value}
           onChange={field.onChange}
           options={roles}
-          getOptionLabel={({name}) => name}
-          getOptionValue={({guid}) => guid}
+          getOptionLabel={({ name }) => name}
+          getOptionValue={({ guid }) => guid}
           menuPlacement="top"
           size="lg"
         />

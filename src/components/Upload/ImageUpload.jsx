@@ -92,10 +92,13 @@ const ImageUpload = ({
     const data = new FormData();
     data.append("file", file);
 
+    const fileExt = file?.name?.split(".")?.pop()?.toUpperCase();
+    const sendFormat = fileExt || field?.attributes?.format;
+
     fileService
       .folderUpload(data, {
         folder_name: field?.attributes?.path,
-        format: field?.attributes?.format,
+        format: sendFormat,
         ratio: field?.attributes?.ratio,
       })
       .then((res) => {
@@ -226,9 +229,14 @@ const ImageUpload = ({
 
       formData.append("file", blob, filename);
 
+      console.log("field format", field?.attributes?.format)
+
+      const fileExt = fileRef.current?.name?.split(".")?.pop()?.toUpperCase();
+      const sendFormat = fileExt === "WEBP" ? "PHOTO" : fileExt || field?.attributes?.format;
+
       const res = await fileService.folderUpload(formData, {
         folder_name: field?.attributes?.path,
-        format: field?.attributes?.format,
+        format: sendFormat,
         ratio: field?.attributes?.ratio,
       });
 
@@ -589,9 +597,9 @@ const ImageUpload = ({
               }}
               aspect={false}
               onComplete={onCropComplete}
-              // aspect={field?.attributes?.ratio || 1}
-              // onZoomChange={setZoom}
-              // onCropComplete={onCropComplete}
+            // aspect={field?.attributes?.ratio || 1}
+            // onZoomChange={setZoom}
+            // onCropComplete={onCropComplete}
             >
               <img
                 src={imageSrc}

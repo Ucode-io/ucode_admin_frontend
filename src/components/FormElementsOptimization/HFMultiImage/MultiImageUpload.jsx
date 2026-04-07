@@ -35,6 +35,7 @@ function MultiImageUpload({
   newUi,
   disabled,
   drawerDetail = false,
+  field,
 }) {
   const [uploadImg, setUploadImg] = useState(false);
   const [fullScreen, setFullScreen] = useState("");
@@ -78,8 +79,12 @@ function MultiImageUpload({
         const data = new FormData();
         data.append("file", file);
 
+        const fileExt = file?.name?.split(".")?.pop()?.toUpperCase();
+        const sendFormat = fileExt || field?.attributes?.format;
+
         const res = await fileService.folderUpload(data, {
-          folder_name: "media",
+          folder_name: field?.attributes?.path || "media",
+          format: sendFormat,
         });
 
         const imageUrl = import.meta.env.VITE_CDN_BASE_URL + res?.link;

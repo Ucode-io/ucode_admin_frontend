@@ -3,7 +3,7 @@ import {
   useUserGetByIdQuery,
   useUserUpdateMutation,
 } from "@/services/auth/userService";
-import {useRoleListQuery} from "@/services/roleServiceV2";
+import { useRoleListQuery } from "@/services/roleServiceV2";
 import {
   Box,
   Button,
@@ -24,24 +24,24 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
-import {Visibility, VisibilityOff} from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import LinkIcon from "@mui/icons-material/Link";
-import {Select} from "chakra-react-select";
-import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import {Controller, useForm, useWatch} from "react-hook-form";
+import { Select } from "chakra-react-select";
+import React, { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import PhoneNumberInput from "react-phone-number-input";
-import {useQuery} from "react-query";
-import {useSelector} from "react-redux";
-import {useSearchParams} from "react-router-dom";
-import {toast} from "react-toastify";
+import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import useDebounce from "../../hooks/useDebounce";
 import clientTypeServiceV2 from "../../services/auth/clientTypeServiceV2";
-import {useFieldsListQuery} from "../../services/constructorFieldService";
+import { useFieldsListQuery } from "../../services/constructorFieldService";
 import userService from "../../services/userService";
 import DrawerFieldGenerator from "../../views/Objects/DrawerDetailPage/ElementGenerator/DrawerFieldGenerator";
 import styles from "./style.module.scss";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import {useProjectGetByIdQuery} from "../../services/projectService";
+import { useProjectGetByIdQuery } from "../../services/projectService";
 import ConnectionsInvite from "./ConnectionsInvite";
 import MaterialUIProvider from "../../providers/MaterialUIProvider";
 
@@ -107,11 +107,10 @@ function InviteModal({
   });
 
   const onSubmit = (data) => {
-    console.log({ data });
     setLoading(true);
     const value = {
       ...data,
-      role_id: data?.role_id?.guid,
+      role_id: data?.role_id,
       client_type_id:
         typeof data?.client_type_id === "string"
           ? data.client_type_id
@@ -133,7 +132,7 @@ function InviteModal({
     },
     queryParams: {
       enabled: Boolean(guid),
-      onSuccess: (data) => {},
+      onSuccess: (data) => { },
     },
   });
 
@@ -480,8 +479,8 @@ const LoginForm = ({
   userId = "",
   allowPassword = "",
   guid,
-  checkUser = () => {},
-  setAllowPassword = () => {},
+  checkUser = () => { },
+  setAllowPassword = () => { },
 }) => {
   const [changePassword, setChangePassword] = useState(false);
   const errors = mainForm.formState.errors;
@@ -789,7 +788,7 @@ const Role = ({ control, placeholder = "", form, disabledRoleOptionName }) => {
   );
 };
 
-const UserInfo = ({form, disabledOptionName}) => {
+const UserInfo = ({ form, disabledOptionName }) => {
   return (
     <Box>
       <Box
@@ -820,7 +819,7 @@ const UserInfo = ({form, disabledOptionName}) => {
   );
 };
 
-const Statuses = ({control, placeholder = "", form}) => {
+const Statuses = ({ control, placeholder = "", form }) => {
   const options = [
     {
       label: "Active",
@@ -852,14 +851,14 @@ const Statuses = ({control, placeholder = "", form}) => {
     <Controller
       name="status"
       control={control}
-      render={({field}) => (
+      render={({ field }) => (
         <Select
           placeholder={placeholder}
           value={value}
           onChange={(e) => field.onChange(e?.value)}
           options={options}
-          getOptionLabel={({label}) => label}
-          getOptionValue={({value}) => value}
+          getOptionLabel={({ label }) => label}
+          getOptionValue={({ value }) => value}
           menuPlacement="top"
           size="lg"
           defaultValue={options[0]}

@@ -1,11 +1,11 @@
-import React, {lazy, Suspense, useEffect, useRef} from "react";
+import React, { lazy, Suspense, useEffect, useRef } from "react";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import "react-quill/dist/quill.snow.css";
 import FRowMultiLine from "./FRowMultiLine";
 import "./reactQuill.scss";
-import {Quill} from "react-quill";
-import {useDispatch} from "react-redux";
-import {showAlert} from "../../store/alert/alert.thunk";
+import { Quill } from "react-quill";
+import { useDispatch } from "react-redux";
+import { showAlert } from "../../store/alert/alert.thunk";
 import DOMPurify from "dompurify";
 
 const ReactQuill = lazy(() => import("react-quill"));
@@ -18,7 +18,7 @@ const HFTextEditor = ({
   disabled = false,
   placeholder = "",
   radius = "12px",
-  setInnerValue = () => {},
+  setInnerValue = () => { },
   innerValue,
   row,
 }) => {
@@ -112,6 +112,12 @@ const HFTextEditor = ({
       "span",
       "br",
       "img",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
     ],
     ALLOWED_ATTR: ["href", "style", "target", "src", "width", "height", "alt"],
   });

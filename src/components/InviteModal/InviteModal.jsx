@@ -482,7 +482,7 @@ const LoginForm = ({
   checkUser = () => { },
   setAllowPassword = () => { },
 }) => {
-  const [changePassword, setChangePassword] = useState(false);
+  const [changePassword, setChangePassword] = useState(true);
   const errors = mainForm.formState.errors;
   const [searchParams] = useSearchParams();
   const [login, setLogin] = useState("");

@@ -346,7 +346,7 @@ const EmailComponent = ({ form, placeholder = "Email", guid }) => {
 };
 
 const LoginForm = ({ form, placeholder = "", guid }) => {
-  const [changePassword, setChangePassword] = useState(false);
+  const [changePassword, setChangePassword] = useState(true);
   const errors = form.formState.errors;
   const [searchParams] = useSearchParams();
 

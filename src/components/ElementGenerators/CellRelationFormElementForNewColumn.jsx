@@ -261,9 +261,6 @@ const AutoCompleteElement = ({
     return constructorObjectService.getItemData(
       field?.table_slug,
       { ...requestData },
-      // {
-      //   language_setting: i18n?.language,
-      // },
     );
   };
 

@@ -247,12 +247,6 @@ const AutoCompleteElement = ({
     if (!field?.table_slug) return null;
 
     const requestData = {
-      ...autoFiltersValue,
-      additional_request: {
-        additional_field: "guid",
-      },
-
-      view_fields: field?.view_fields?.map((f) => f.slug),
       search: debouncedValue.trim(),
       limit: 10,
       offset: pageToOffset(pageProp || page, 10),
@@ -264,9 +258,9 @@ const AutoCompleteElement = ({
         additionalValues?.flat();
     }
 
-    return constructorObjectService.getItems(
+    return constructorObjectService.getItemData(
       field?.table_slug,
-      // { data: requestData },
+      { ...requestData },
       // {
       //   language_setting: i18n?.language,
       // },

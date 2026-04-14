@@ -123,10 +123,12 @@ const VideoUpload = ({
     const data = new FormData();
     data.append("file", file);
 
-    fileService
-      .upload(data)
+      fileService
+      .folderUpload(data, {
+        folder_name:  "media",
+      })
       .then((res) => {
-        onChange(import.meta.env.VITE_CDN_BASE_URL + "ucode/" + res.filename);
+        onChange(import.meta.env.VITE_CDN_BASE_URL + res.link);
       })
       .finally(() => setLoading(false));
   };

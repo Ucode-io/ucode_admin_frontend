@@ -135,11 +135,13 @@ const VideoUpload = ({
     data.append("file", file);
 
     fileService
-      .upload(data)
-      .then((res) => {
-        onChange(import.meta.env.VITE_CDN_BASE_URL + "ucode/" + res.filename);
-      })
-      .finally(() => setLoading(false));
+         .folderUpload(data, {
+           folder_name:  "media",
+         })
+         .then((res) => {
+           onChange(import.meta.env.VITE_CDN_BASE_URL + res.link);
+         })
+         .finally(() => setLoading(false));
   };
 
   const closeButtonHandler = (e) => {
@@ -154,7 +156,6 @@ const VideoUpload = ({
       fileName: value?.split?.("_")?.[1] ?? "",
     });
   };
-
   return (
     <>
       <div className={className} style={{ textAlign: "left" }}>

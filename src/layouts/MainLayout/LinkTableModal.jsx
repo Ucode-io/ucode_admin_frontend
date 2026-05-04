@@ -1,21 +1,26 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import {Box, Card, Modal, Typography} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useForm} from "react-hook-form";
-import {useQueryClient} from "react-query";
-import {useParams, useSearchParams} from "react-router-dom";
+import { Box, Card, Modal, Typography } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useQueryClient } from "react-query";
+import { useParams, useSearchParams } from "react-router-dom";
 import SaveButton from "../../components/Buttons/SaveButton";
 import constructorTableService from "../../services/constructorTableService";
 import menuSettingsService from "../../services/menuSettingsService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HFAutocomplete from "../../components/FormElements/HFAutocomplete";
-import {useTranslation} from "react-i18next";
-import {useSelector} from "react-redux";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import menuService from "../../services/menuService";
 
-const LinkTableModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
-  const {projectId} = useParams();
+const LinkTableModal = ({
+  closeModal,
+  loading,
+  selectedFolder,
+  getMenuList,
+}) => {
+  const { projectId } = useParams();
   const queryClient = useQueryClient();
   const [tables, setTables] = useState();
   const languages = useSelector((state) => state.languages.list);
@@ -23,7 +28,7 @@ const LinkTableModal = ({closeModal, loading, selectedFolder, getMenuList}) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
 
-  const {control, handleSubmit, reset, watch} = useForm();
+  const { control, handleSubmit, reset, watch } = useForm();
 
   const tableOptions = useMemo(() => {
     return tables?.tables?.map((item, index) => ({

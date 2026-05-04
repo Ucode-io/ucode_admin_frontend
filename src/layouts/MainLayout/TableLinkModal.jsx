@@ -1,17 +1,17 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import {Box, Card, Modal, Typography} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useForm} from "react-hook-form";
-import {useQueryClient} from "react-query";
-import {useParams, useSearchParams} from "react-router-dom";
+import { Box, Card, CircularProgress, Modal, Typography } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useQueryClient } from "react-query";
+import { useParams, useSearchParams } from "react-router-dom";
 import SaveButton from "../../components/Buttons/SaveButton";
 import constructorTableService from "../../services/constructorTableService";
 import menuSettingsService from "../../services/menuSettingsService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
 import HFAutocomplete from "../../components/FormElements/HFAutocomplete";
-import {useTranslation} from "react-i18next";
-import {useSelector} from "react-redux";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import menuService from "../../services/menuService";
 import { CloseButton } from "../../components/CloseButton";
 import cls from "./style.module.scss";
@@ -30,6 +30,11 @@ const TableLinkModal = ({
   const [tables, setTables] = useState();
   const languages = useSelector((state) => state.languages.list);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingData, setIsFetchingData] = useState(
+    // Start in loading state immediately if we're in edit mode so the form
+    // doesn't flash empty before the API response arrives.
+    () => selectedFolder?.type === "TABLE",
+  );
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [menuItem, setMenuItem] = useState(null);
@@ -111,7 +116,8 @@ const TableLinkModal = ({
   };
 
   useEffect(() => {
-    if (selectedFolder?.type === "TABLE")
+    if (selectedFolder?.type === "TABLE") {
+      setIsFetchingData(true);
       menuSettingsService
         .getById(selectedFolder.id, projectId)
         .then((res) => {
@@ -119,7 +125,11 @@ const TableLinkModal = ({
         })
         .catch((err) => {
           console.log(err);
+        })
+        .finally(() => {
+          setIsFetchingData(false);
         });
+    }
   }, [selectedFolder]);
 
   useEffect(() => {
@@ -147,8 +157,18 @@ const TableLinkModal = ({
             <CloseButton onClick={closeModal} />
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="form">
-            <Box display={"flex"} flexDirection={"column"} gap={"16px"}>
+          {isFetchingData ? (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              minHeight={120}
+            >
+              <CircularProgress size={32} />
+            </Box>
+          ) : (
+            <form onSubmit={handleSubmit(onSubmit)} className="form">
+              <Box display={"flex"} flexDirection={"column"} gap={"16px"}>
               <Box>
                 <TextFieldWithMultiLanguage
                   control={control}
@@ -209,6 +229,7 @@ const TableLinkModal = ({
               />
             </div>
           </form>
+          )}
         </Card>
       </Modal>
     </div>

@@ -4,10 +4,10 @@ import {
   SidebarAppTooltip,
 } from "@/components/LayoutSidebar/sidebar-app-tooltip";
 import authService from "@/services/auth/authService";
-import {useCompanyListQuery} from "@/services/companyService";
-import {useEnvironmentListQuery} from "@/services/environmentService";
-import {authActions} from "@/store/auth/auth.slice";
-import {companyActions} from "@/store/company/company.slice";
+import { useCompanyListQuery } from "@/services/companyService";
+import { useEnvironmentListQuery } from "@/services/environmentService";
+import { authActions } from "@/store/auth/auth.slice";
+import { companyActions } from "@/store/company/company.slice";
 import { AccordionButton, AccordionIcon } from "@chakra-ui/icons";
 import {
   Accordion,
@@ -25,19 +25,13 @@ import {
   useDisclosure,
   useOutsideClick,
 } from "@chakra-ui/react";
-import {
-  Logout,
-  AssistantOutlined,
-} from "@mui/icons-material";
+import { Logout, AssistantOutlined } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import LogoutIcon from "@mui/icons-material/Logout";
-import {
-  Dialog,
-  Modal,
-} from "@mui/material";
+import { Dialog, Modal } from "@mui/material";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -186,6 +180,10 @@ const LayoutSidebar = ({
 
   const setTableModal = () => {
     setTableModalOpen(true);
+    // Close the context menu before opening the modal.
+    // Without this, MUI's dual focus/scroll management between the open
+    // Menu and the new Modal causes the sidebar to jump to the top.
+    setMenu(null);
   };
   const closeTableModal = () => {
     setTableModalOpen(null);
@@ -1048,7 +1046,11 @@ const LayoutSidebar = ({
         {tableModal && (
           <TableLinkModal
             closeModal={closeTableModal}
-            selectedFolder={selectedFolder}
+            // When editing a TABLE item, `element` holds the clicked TABLE
+            // (set via setElement in folderSettings/MenuIcon onClick).
+            // `selectedFolder` holds the parent folder — only use it for
+            // create operations where element is not a TABLE.
+            selectedFolder={element?.type === "TABLE" ? element : selectedFolder}
             getMenuList={getMenuList}
           />
         )}
@@ -1114,233 +1116,6 @@ const LayoutSidebar = ({
         <MenuSettingModal closeModal={closeMenuSettingModal} />
       )}
 
-      {/* <Modal
-        open={isProjectsModalOpen}
-        onClose={() => setIsProjectsModalOpen(false)}
-      >
-        <Box
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            backgroundColor: "#fff",
-            borderRadius: "12px",
-            outline: "none",
-            width: 400,
-            padding: "20px",
-            boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
-            textAlign: "center",
-          }}
-        >
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <Typography variant="h6">Select Project</Typography>
-            <button onClick={() => navigate("/ai-agent")}>
-              <span
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  color: "#2d6ce5",
-                }}
-              >
-                <Add />
-                <span>Add new project</span>
-              </span>
-            </button>
-          </Box>
-          <List>
-            {aiProjects?.map((project) => (
-              <ListItem
-                key={project.id}
-                sx={{
-                  cursor: "pointer",
-                  "&:hover": {
-                    backgroundColor: "rgba(0, 0, 0, 0.1)",
-                  },
-                  borderRadius: "4px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-                onClick={() => handleNavigateToProject(project.id)}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    justifyContent: "flex-start",
-                  }}
-                >
-                  <ListItemText primary={project.title} />
-                  <ListItemText style={{ fontSize: "12px", color: "#888888" }}>
-                    {project.description}
-                  </ListItemText>
-                </Box>
-                <Popover
-                  id={"simple-popover"}
-                  // open={projectSettingsOpen}
-                  anchorEl={projectEditAnchorEl}
-                  onClose={() => setProjectEditAnchorEl(null)}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                  }}
-                >
-                  <PopoverTrigger>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenProjectSettings(e);
-                      }}
-                      _hover={{
-                        backgroundColor: "rgba(255, 255, 255, 0.87)",
-                      }}
-                      style={{
-                        width: "20px",
-                        height: "20px",
-                        transform: "rotate(90deg)",
-                        borderRadius: "6px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <BsThreeDots />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      gap="6px"
-                      sx={{
-                        padding: "4px",
-                        backgroundColor: "#fff",
-                        borderRadius: "6px",
-                        boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.1)",
-                      }}
-                    >
-                      <Button
-                        style={{
-                          display: "flex",
-                          borderRadius: "4px",
-                          padding: "2px",
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingProject(project);
-                        }}
-                        _hover={{
-                          backgroundColor: "rgba(0, 0, 0, 0.1) !important",
-                        }}
-                      >
-                        <Edit htmlColor="#8F8E8B" />
-                      </Button>
-                      <Button
-                        style={{
-                          display: "flex",
-                          borderRadius: "4px",
-                          padding: "2px",
-                        }}
-                        // onClick={() => handleDeleteProject(project.id)}
-                        _hover={{
-                          backgroundColor: "rgba(0, 0, 0, 0.1) !important",
-                        }}
-                      >
-                        <Delete htmlColor="rgb(255 76 76)" />
-                      </Button>
-                    </Box>
-                  </PopoverContent>
-                </Popover>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Modal>
-      <Modal open={!!editingProject} onClose={() => setEditingProject(null)}>
-        <Box
-          onSubmit={handleUpdateProject}
-          as="form"
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            backgroundColor: "#fff",
-            borderRadius: "12px",
-            outline: "none",
-            width: 400,
-            padding: "16px 16px 10px",
-            boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
-            textAlign: "center",
-          }}
-        >
-          <Box display="flex" flexDirection="column" gap="16px">
-            <label
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-              }}
-            >
-              <span style={{ color: "#8F8E8B" }}>Title</span>
-              <input
-                style={{
-                  width: "100%",
-                  outline: "none",
-                  border: "none",
-                  borderBottom: "1px solid #ccc",
-                }}
-                placeholder="Project title"
-                defaultValue={editingProject?.title}
-                id="title"
-              />
-            </label>
-            <label
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-              }}
-            >
-              <span style={{ color: "#8F8E8B" }}>Description</span>
-              <input
-                style={{
-                  width: "100%",
-                  outline: "none",
-                  border: "none",
-                  borderBottom: "1px solid #ccc",
-                }}
-                placeholder="Project description"
-                defaultValue={editingProject?.description}
-                id="description"
-              />
-            </label>
-          </Box>
-          <Box display="flex" justifyContent="flex-end">
-            <Button
-              type="submit"
-              style={{
-                marginTop: "20px",
-                backgroundColor: "#007BFF",
-                color: "#fff",
-                border: "none",
-                borderRadius: "6px",
-                padding: "8px 16px",
-                cursor: "pointer",
-              }}
-            >
-              Apply changes
-            </Button>
-          </Box>
-        </Box>
-      </Modal> */}
-
       <ChakraBaseProvider theme={theme}>
         <InviteModal
           isOpen={isOpenInviteModal}
@@ -1352,7 +1127,6 @@ const LayoutSidebar = ({
     </>
   );
 };
-
 
 const Header = ({
   sidebarIsOpen,

@@ -1,10 +1,10 @@
-import {Box, Skeleton} from "@mui/material";
+import { Box, Skeleton } from "@mui/material";
 import React from "react";
-import {useQueryClient} from "react-query";
-import {useSelector} from "react-redux";
+import { useQueryClient } from "react-query";
+import { useSelector } from "react-redux";
 import { Container, Draggable } from "react-smooth-dnd";
 import menuService from "../../../services/menuService";
-import {applyDrag} from "../../../utils/applyDrag";
+import { applyDrag } from "../../../utils/applyDrag";
 import RecursiveBlock from "../SidebarRecursiveBlock/RecursiveBlockComponent";
 import "./style.scss";
 
@@ -26,6 +26,7 @@ function NewSubMenu({
   languageData = [],
   element,
   folderItem,
+  selectedFolder,
   getMenuList = () => {},
   setSelectedFolder = () => {},
   setSelectedApp = () => {},
@@ -35,10 +36,10 @@ function NewSubMenu({
   const projectSettingLan = languageData?.find((el) => el?.key === "Setting");
 
   const onDrop = (dropResult) => {
-    const {removedIndex, addedIndex, payload} = dropResult;
+    const { removedIndex, addedIndex, payload } = dropResult;
 
     if (removedIndex == null && typeof addedIndex === "number" && payload) {
-      const addedData = {...payload};
+      const addedData = { ...payload };
       addedData.parent_id = element?.id;
 
       if (addedData) {
@@ -124,7 +125,9 @@ function NewSubMenu({
                               setSubMenuIsOpen={setSubMenuIsOpen}
                               menuStyle={menuStyleNew}
                               index={index}
+                              isSubmenu={true}
                               selectedApp={selectedApp}
+                              selectedFolder={selectedFolder}
                               setSelectedFolder={setSelectedFolder}
                               buttonProps={{ className: "highlight-on-hover" }}
                               setSelectedApp={setSelectedApp}

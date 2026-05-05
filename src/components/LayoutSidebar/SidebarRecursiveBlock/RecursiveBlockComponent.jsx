@@ -116,9 +116,6 @@ const RecursiveBlock = ({
       : element?.id === menuItem?.id;
 
   const clickHandler = (e) => {
-    // Don't clear selectedApp when inside a submenu accordion — it would
-    // trigger a cascade of re-renders across all sidebar instances and
-    // lose the parent folder's selection state.
     if (!isSubmenu) {
       setSelectedApp(null);
     }

@@ -128,7 +128,7 @@ export const AddCardComponent = ({
   } = useAddCardComponent({ watch, setVerifyCard });
 
   const [clientSecret, setClientSecret] = useState(null);
-  const [tabIndex, setTabIndex] = useState(1);
+  const [tabIndex, setTabIndex] = useState(0);
   const [amount, setAmount] = useState("");
 
   const handleTabChange = (index) => {
@@ -137,20 +137,20 @@ export const AddCardComponent = ({
 
   const isFirstRequestStripe = useRef(true);
 
-  useEffect(() => {
-    if (tabIndex === 1 && isFirstRequestStripe.current) {
-      isFirstRequestStripe.current = false;
+  // useEffect(() => {
+  //   if (tabIndex === 1 && isFirstRequestStripe.current) {
+  //     isFirstRequestStripe.current = false;
 
-      request
-        .post("/payment/intent", {
-          amount: 1200,
-          currency: "usd",
-        })
-        .then((data) => {
-          setClientSecret(data.client_secret);
-        });
-    }
-  }, [tabIndex]);
+  //     request
+  //       .post("/payment/intent", {
+  //         amount: 1200,
+  //         currency: "usd",
+  //       })
+  //       .then((data) => {
+  //         setClientSecret(data.client_secret);
+  //       });
+  //   }
+  // }, [tabIndex]);
 
   return (
     <Box sx={{ maxWidth: "100%", p: 3 }}>
@@ -327,114 +327,124 @@ export const AddCardComponent = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {cards?.map((card, index) => (
-              <TableRow
-                key={index}
-                sx={{
-                  "& .MuiTableCell-root": {
-                    borderBottom: "1px solid #EAECF0",
-                    ":first-of-type": {
-                      paddingLeft: "15px",
-                    },
-                    ":last-of-type": {
-                      paddingRight: "15px",
-                    },
-                  },
-                }}
-                onClick={() => handleCardSelect(index, card)}
-              >
-                <TableCell sx={{ fontSize: "14px", padding: "8px 8px" }}>
-                  <Radio
-                    checked={selectedCard === index}
-                    onChange={() => handleCardSelect(index, card)}
-                    sx={{
-                      padding: 0,
-                      "& .MuiSvgIcon-root": {
-                        fontSize: 20,
+            {cards
+              ?.filter((card) => card.type !== "VISA")
+              .map((card, index) => (
+                <TableRow
+                  key={index}
+                  sx={{
+                    "& .MuiTableCell-root": {
+                      borderBottom: "1px solid #EAECF0",
+                      ":first-of-type": {
+                        paddingLeft: "15px",
                       },
-                    }}
-                  />
-                </TableCell>
-                <TableCell sx={{ fontSize: "14px", padding: "8px 8px" }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1.5,
-                    }}
-                  >
-                    {card?.type === "VISA" ? (
-                      <img
-                        src="/img/visa.svg"
-                        alt="VISA"
-                        width={40}
-                        height={24}
-                      />
-                    ) : card?.type === "HUMO" ? (
-                      <img
-                        src="/img/humo.svg"
-                        alt="HUMO"
-                        width={40}
-                        height={24}
-                      />
-                    ) : card?.type === "UZCARD" ? (
-                      <img
-                        src="/img/uzc.svg"
-                        alt="UZCARD"
-                        width={40}
-                        height={24}
-                      />
-                    ) : (
-                      <img
-                        src="/img/mastercard.svg"
-                        alt="Mastercard"
-                        width={40}
-                        height={24}
-                      />
-                    )}
+                      ":last-of-type": {
+                        paddingRight: "15px",
+                      },
+                    },
+                  }}
+                  onClick={() => handleCardSelect(index, card)}
+                >
+                  <TableCell sx={{ fontSize: "14px", padding: "8px 8px" }}>
+                    <Radio
+                      checked={selectedCard === index}
+                      onChange={() => handleCardSelect(index, card)}
+                      sx={{
+                        padding: 0,
+                        "& .MuiSvgIcon-root": {
+                          fontSize: 20,
+                        },
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "14px", padding: "8px 8px" }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1.5,
+                      }}
+                    >
+                      {card?.type === "VISA" ? (
+                        <img
+                          src="/img/visa.svg"
+                          alt="VISA"
+                          width={40}
+                          height={24}
+                        />
+                      ) : card?.type === "HUMO" ? (
+                        <img
+                          src="/img/humo.svg"
+                          alt="HUMO"
+                          width={40}
+                          height={24}
+                        />
+                      ) : card?.type === "UZCARD" ? (
+                        <img
+                          src="/img/uzc.svg"
+                          alt="UZCARD"
+                          width={40}
+                          height={24}
+                        />
+                      ) : (
+                        <img
+                          src="/img/mastercard.svg"
+                          alt="Mastercard"
+                          width={40}
+                          height={24}
+                        />
+                      )}
+                      <Typography
+                        sx={{
+                          fontSize: "14px",
+                          fontWeight: 500,
+                          color: "#101828",
+                        }}
+                      >
+                        {card?.type || "Card"}
+                      </Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "14px", padding: "6px 8px" }}>
                     <Typography
                       sx={{
                         fontSize: "14px",
-                        fontWeight: 500,
-                        color: "#101828",
+                        fontWeight: 400,
+                        color: "#475467",
                       }}
                     >
-                      {card?.type || "Card"}
+                      {card.pan}
                     </Typography>
-                  </Box>
-                </TableCell>
-                <TableCell sx={{ fontSize: "14px", padding: "6px 8px" }}>
-                  <Typography
-                    sx={{ fontSize: "14px", fontWeight: 400, color: "#475467" }}
-                  >
-                    {card.pan}
-                  </Typography>
-                </TableCell>
-                <TableCell sx={{ fontSize: "14px", padding: "6px 8px" }}>
-                  <Typography
-                    sx={{ fontSize: "14px", fontWeight: 400, color: "#475467" }}
-                  >
-                    {card?.expire}
-                  </Typography>
-                </TableCell>
-                <TableCell sx={{ fontSize: "14px", padding: "6px 8px" }}>
-                  <Typography
-                    sx={{
-                      textAlign: "center",
-                      fontSize: "14px",
-                      fontWeight: 400,
-                      color: "#000",
-                      cursor: "pointer",
-                      "&:hover": {
-                        color: "#ef4444",
-                      },
-                    }}
-                  >
-                    Delete
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "14px", padding: "6px 8px" }}>
+                    <Typography
+                      sx={{
+                        fontSize: "14px",
+                        fontWeight: 400,
+                        color: "#475467",
+                      }}
+                    >
+                      {card?.expire}
+                    </Typography>
+                  </TableCell>
+                  <TableCell sx={{ fontSize: "14px", padding: "6px 8px" }}>
+                    <Typography
+                      sx={{
+                        textAlign: "center",
+                        fontSize: "14px",
+                        fontWeight: 400,
+                        color: "#000",
+                        cursor: "pointer",
+                        "&:hover": {
+                          color: "#ef4444",
+                        },
+                      }}
+                    >
+                      Delete
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
@@ -525,7 +535,7 @@ export const AddCardComponent = ({
                   </Box>
                 </Box>
               </TabPanel>
-              <TabPanel>
+              {/* <TabPanel>
                 {!clientSecret ? (
                   "Loading..."
                 ) : (
@@ -533,7 +543,7 @@ export const AddCardComponent = ({
                     <SetupForm onSwitchToUzcard={() => setTabIndex(0)} />
                   </Elements>
                 )}
-              </TabPanel>
+              </TabPanel> */}
             </Tabs>
           ) : (
             <Box

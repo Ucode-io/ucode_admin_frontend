@@ -1,16 +1,16 @@
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
 import LaunchIcon from "@mui/icons-material/Launch";
-import {Box, Popover, Typography} from "@mui/material";
-import {makeStyles} from "@mui/styles";
-import {get} from "@ngard/tiny-get";
-import React, {useEffect, useMemo, useState} from "react";
-import {Controller, useWatch} from "react-hook-form";
-import {useTranslation} from "react-i18next";
+import { Box, Popover, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { get } from "@ngard/tiny-get";
+import React, { useEffect, useMemo, useState } from "react";
+import { Controller, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "react-query";
-import {useSelector} from "react-redux";
-import {useSearchParams} from "react-router-dom";
-import Select, {components} from "react-select";
+import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import Select, { components } from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
@@ -18,7 +18,7 @@ import {
   getRelationFieldTabsLabel,
   getRelationFieldTabsLabelLang,
 } from "../../utils/getRelationFieldLabel";
-import {pageToOffset} from "../../utils/pageToOffset";
+import { pageToOffset } from "../../utils/pageToOffset";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
 import CascadingElement from "./CascadingElement";
@@ -247,6 +247,11 @@ const AutoCompleteElement = ({
     if (!field?.table_slug) return null;
 
     const requestData = {
+      ...autoFiltersValue,
+      additional_request: {
+        additional_field: "guid",
+      },
+      view_fields: field?.view_fields?.map((f) => f.slug),
       search: debouncedValue.trim(),
       limit: 10,
       offset: pageToOffset(pageProp || page, 10),
@@ -258,10 +263,9 @@ const AutoCompleteElement = ({
         additionalValues?.flat();
     }
 
-    return constructorObjectService.getItemData(
-      field?.table_slug,
-      { ...requestData },
-    );
+    return constructorObjectService.getItemData(field?.table_slug, {
+      ...requestData,
+    });
   };
 
   const query = new URLSearchParams(window.location.search);
@@ -344,6 +348,7 @@ const AutoCompleteElement = ({
         };
       },
       onSuccess: (data) => {
+        console.log("Fetched options:", data?.options);
         setCount(data?.count);
         if (Object.values(autoFiltersValue)?.length > 0 && !openedItemValue) {
           setAllOptions(data?.options);

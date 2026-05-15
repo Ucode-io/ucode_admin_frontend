@@ -348,7 +348,6 @@ const AutoCompleteElement = ({
         };
       },
       onSuccess: (data) => {
-        console.log("Fetched options:", data?.options);
         setCount(data?.count);
         if (Object.values(autoFiltersValue)?.length > 0 && !openedItemValue) {
           setAllOptions(data?.options);

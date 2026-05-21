@@ -72,17 +72,29 @@ export const useTableProps = ({ tab }) => {
     tableSlug,
     menuId,
     viewForm,
-    currentPage,
-    setCurrentPage,
+    currentPage: contextCurrentPage,
+    setCurrentPage: contextSetCurrentPage,
     searchText,
     checkedColumns,
     navigateToEditPage,
     isRelationView,
-    limit,
-    setLimit,
+    limit: contextLimit,
+    setLimit: contextSetLimit,
     setTotalCount,
     totalCount,
   } = useViewContext();
+
+  const [relationCurrentPage, setRelationCurrentPage] = useState(1);
+  const [relationLimit, setRelationLimit] = useState(
+    parseInt(view?.default_limit) || 10,
+  );
+
+  const currentPage = isRelationView ? relationCurrentPage : contextCurrentPage;
+  const setCurrentPage = isRelationView
+    ? setRelationCurrentPage
+    : contextSetCurrentPage;
+  const limit = isRelationView ? relationLimit : contextLimit;
+  const setLimit = isRelationView ? setRelationLimit : contextSetLimit;
 
   const { fieldsMap, fieldsForm, fields } = useFieldsContext();
 
@@ -327,7 +339,7 @@ export const useTableProps = ({ tab }) => {
   const [viewsLoader, setViewsLoader] = useState(
     () => !queryClient.getQueryData(tableQueryKey),
   );
-
+  console.log("viewIdviewIdviewId", viewId);
   const {
     data: tableQueryData,
     refetch,
@@ -349,7 +361,7 @@ export const useTableProps = ({ tab }) => {
             search: tableSearch,
             [`${selectedV?.relation_table_slug || selectedV?.table_slug}_id`]:
               isRelationView ? selectedV?.detailId : undefined,
-            limit: limit,
+            limit,
             ...filters,
             ...defaultFiltersMap,
             [tab?.slug]: tab
@@ -420,7 +432,7 @@ export const useTableProps = ({ tab }) => {
   useEffect(() => {
     if (isNaN(parseInt(view?.default_limit))) return;
     else setLimit(parseInt(view?.default_limit));
-  }, [view?.default_limit, viewId]);
+  }, [view?.default_limit, viewId, isRelationView]);
 
   useEffect(() => {
     if (tableData?.length > 0) {
@@ -459,13 +471,7 @@ export const useTableProps = ({ tab }) => {
     setRows(newCombined);
     setViewsLoader(false);
     setTotalCount(dataCount ?? 0);
-  }, [
-    columns,
-    dataCount,
-    isTableQueryLoading,
-    tableData,
-    tableQueryData,
-  ]);
+  }, [columns, dataCount, isTableQueryLoading, tableData, tableQueryData]);
 
   const didMountMenuIdRef = useRef(false);
   useEffect(() => {

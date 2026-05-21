@@ -1,50 +1,51 @@
 import chakraUITheme from "@/theme/chakraUITheme";
-import {useEffect, useRef, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useQuery} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
 import {
   useLocation,
   useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import {TabPanel, Tabs} from "react-tabs";
+import { TabPanel, Tabs } from "react-tabs";
 import constructorTableService from "../../services/constructorTableService";
-import {useMenuGetByIdQuery} from "../../services/menuService";
-import {store} from "../../store";
+import { useMenuGetByIdQuery } from "../../services/menuService";
+import { store } from "../../store";
 import { listToMap, listToMapWithoutRel } from "../../utils/listToMap";
 import ViewsWithGroups from "./ViewsWithGroups";
-import {NewUiViewsWithGroups} from "@/views/table-redesign/views-with-groups";
-import {Button, ChakraProvider, Image, Text} from "@chakra-ui/react";
-import {Box, Popover, Skeleton} from "@mui/material";
+import { NewUiViewsWithGroups } from "@/views/table-redesign/views-with-groups";
+import { Button, ChakraProvider, Image, Text } from "@chakra-ui/react";
+import { Box, Popover, Skeleton } from "@mui/material";
 import NoDataPng from "../../assets/images/no-data.png";
 import PermissionWrapperV2 from "../../components/PermissionWrapper/PermissionWrapperV2";
-import {viewTypes, VIEW_TYPES_MAP} from "../../utils/constants/viewTypes";
-import {DynamicTable} from "../table-redesign";
+import { viewTypes, VIEW_TYPES_MAP } from "../../utils/constants/viewTypes";
+import { DynamicTable } from "../table-redesign";
 import ViewTypeList from "./components/ViewTypeList";
-import {viewsActions} from "../../store/views/view.slice";
+import { viewsActions } from "../../store/views/view.slice";
 
 const ObjectsPage = () => {
-  const {tableSlug} = useParams();
-  const {state} = useLocation();
+  const { tableSlug } = useParams();
+  const { state } = useLocation();
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const queryTab = searchParams.get("view");
 
-  const {i18n, t} = useTranslation();
+  const { i18n, t } = useTranslation();
   const viewSelectedIndex = useSelector(
     (state) =>
-      state?.views?.viewTab?.find((el) => el?.tableSlug === tableSlug)?.tabIndex
+      state?.views?.viewTab?.find((el) => el?.tableSlug === tableSlug)
+        ?.tabIndex,
   );
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(
-    viewSelectedIndex || 1
+    viewSelectedIndex || 1,
   );
   const [menuItem, setMenuItem] = useState(null);
   const [selectedView, setSelectedView] = useState(null);
-  const {views: viewsFromStore} = useSelector((state) => state.views);
+  const { views: viewsFromStore } = useSelector((state) => state.views);
 
   const [isViewCreateModalOpen, setIsViewCreateModalOpen] = useState(false);
   const addViewRef = useRef(null);
@@ -87,20 +88,20 @@ const ObjectsPage = () => {
         {
           data: {},
         },
-        params
+        params,
       );
     },
     {
       enabled: Boolean(tableSlug),
 
-      select: ({data}) => {
+      select: ({ data }) => {
         return {
           views:
             data?.views?.filter(
               (view) =>
                 view?.attributes?.view_permission?.view === true &&
                 view?.type !== "SECTION" &&
-                Boolean(!view?.is_relation_view)
+                Boolean(!view?.is_relation_view),
             ) ?? [],
           tableInfo: data?.table_info || {},
           fieldsMap: listToMap(data?.fields),
@@ -113,12 +114,12 @@ const ObjectsPage = () => {
             })) ?? [],
         };
       },
-      onSuccess: ({views}) => {
+      onSuccess: ({ views }) => {
         setSelectedView(views?.[0]);
         dispatch(viewsActions.setViews(views));
         if (state?.toDocsTab) setSelectedTabIndex(views?.length);
       },
-    }
+    },
   );
 
   useEffect(() => {
@@ -133,7 +134,7 @@ const ObjectsPage = () => {
     };
   }, []);
 
-  const {loader: menuLoader} = useMenuGetByIdQuery({
+  const { loader: menuLoader } = useMenuGetByIdQuery({
     menuId: searchParams.get("menuId"),
     queryParams: {
       enabled: Boolean(searchParams.get("menuId")),
@@ -151,7 +152,7 @@ const ObjectsPage = () => {
   const newUi = JSON.parse(
     !storageItem || storageItem === "undefined" || storageItem === "false"
       ? "false"
-      : "true"
+      : "true",
   );
   const ViewsComponent = newUi ? NewUiViewsWithGroups : ViewsWithGroups;
 
@@ -202,7 +203,7 @@ const ObjectsPage = () => {
 
   const getViewComponent = (type) => renderView[type] || renderView["DEFAULT"];
 
-  const computedViewTypes = viewTypes?.map((el) => ({value: el, label: el}));
+  const computedViewTypes = viewTypes?.map((el) => ({ value: el, label: el }));
 
   return (
     <>
@@ -211,7 +212,7 @@ const ObjectsPage = () => {
           {viewsFromStore?.map((view) => {
             return (
               <TabPanel key={view.id}>
-                {getViewComponent([view?.type])({view})}
+                {getViewComponent([view?.type])({ view })}
               </TabPanel>
             );
           })}
@@ -228,7 +229,8 @@ const ObjectsPage = () => {
               borderBottom="1px solid #EAECF0"
               padding="0 16px"
               display="flex"
-              alignItems="center">
+              alignItems="center"
+            >
               <PermissionWrapperV2 tableSlug={tableSlug} type="view_create">
                 <Button
                   leftIcon={<Image src="/img//plus-icon.svg" alt="Add" />}
@@ -236,7 +238,8 @@ const ObjectsPage = () => {
                   colorScheme="gray"
                   color="#475467"
                   ref={addViewRef}
-                  onClick={handleAddViewClick}>
+                  onClick={handleAddViewClick}
+                >
                   {t("add")}
                 </Button>
               </PermissionWrapperV2>
@@ -248,7 +251,8 @@ const ObjectsPage = () => {
               alignItems="center"
               flexDirection="column"
               height="100%"
-              gap="16px">
+              gap="16px"
+            >
               <img src={NoDataPng} alt="No data" width={250} />
               <Text fontSize="16px" fontWeight="500" color="#475467">
                 No data found
@@ -265,7 +269,8 @@ const ObjectsPage = () => {
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
-        }}>
+        }}
+      >
         <ViewTypeList
           views={views}
           computedViewTypes={computedViewTypes}

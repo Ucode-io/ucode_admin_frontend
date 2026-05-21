@@ -6,27 +6,27 @@ import constructorObjectService from "@/services/constructorObjectService";
 import constructorRelationService from "@/services/constructorRelationService";
 import constructorTableService from "@/services/constructorTableService";
 import layoutService from "@/services/layoutService";
-import {quickFiltersActions} from "@/store/filter/quick_filter";
-import {generateGUID} from "@/utils/generateID";
-import {mergeStringAndState} from "@/utils/jsonPath";
-import {listToMap} from "@/utils/listToMap";
-import {pageToOffset} from "@/utils/pageToOffset";
+import { quickFiltersActions } from "@/store/filter/quick_filter";
+import { generateGUID } from "@/utils/generateID";
+import { mergeStringAndState } from "@/utils/jsonPath";
+import { listToMap } from "@/utils/listToMap";
+import { pageToOffset } from "@/utils/pageToOffset";
 import FieldSettings from "@/views/Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "@/views/Constructor/Tables/Form/Relations/RelationSettings";
 import styles from "@/views/Objects/style.module.scss";
-import {DynamicTable} from "@/views/table-redesign";
-import {Drawer} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useFieldArray, useForm} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import { DynamicTable } from "@/views/table-redesign";
+import { Drawer } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import menuService from "../../services/menuService";
-import {useProjectGetByIdQuery} from "../../services/projectService";
-import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
-import {groupFieldActions} from "../../store/groupField/groupField.slice";
-import {updateQueryWithoutRerender} from "../../utils/useSafeQueryUpdater";
+import { useProjectGetByIdQuery } from "../../services/projectService";
+import { detailDrawerActions } from "../../store/detailDrawer/detailDrawer.slice";
+import { groupFieldActions } from "../../store/groupField/groupField.slice";
+import { updateQueryWithoutRerender } from "../../utils/useSafeQueryUpdater";
 
 const DrawerTableView = ({
   relationView = false,
@@ -75,21 +75,21 @@ const DrawerTableView = ({
   setSelectedView = () => {},
   ...props
 }) => {
-  const {t} = useTranslation();
-  const {navigateToForm} = useTabRouter();
+  const { t } = useTranslation();
+  const { navigateToForm } = useTabRouter();
   const navigate = useNavigate();
-  const {id, menuId, tableSlug: tableSlugFromParams, appId} = useParams();
+  const { id, menuId, tableSlug: tableSlugFromParams, appId } = useParams();
   const new_router = localStorage.getItem("new_router");
   const tableSlug =
     view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
-  const {filters, filterChangeHandler} = useFilters(tableSlug, view?.id);
+  const { filters, filterChangeHandler } = useFilters(tableSlug, view?.id);
 
   const query = new URLSearchParams(window.location.search);
-  const itemId = query.get("p")
+  const itemId = query.get("p");
 
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
-    (state) => state?.pagination?.paginationInfo
+    (state) => state?.pagination?.paginationInfo,
   );
   const [limit, setLimit] = useState(20);
   const [selectedObjectsForDelete, setSelectedObjectsForDelete] = useState([]);
@@ -108,7 +108,7 @@ const DrawerTableView = ({
   const selectedTabIndex = relationView ? drawerTabIndex : mainTabIndex;
   const projectId = useSelector((state) => state.auth.projectId);
 
-  const {data: projectInfo} = useProjectGetByIdQuery({projectId});
+  const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
 
   const [selectedViewType, setSelectedViewType] = useState(
     localStorage?.getItem("detailPage"),
@@ -136,7 +136,7 @@ const DrawerTableView = ({
     mode: "all",
   });
 
-  const {update} = useFieldArray({
+  const { update } = useFieldArray({
     control: mainForm.control,
     name: "fields",
     keyName: "key",
@@ -160,9 +160,9 @@ const DrawerTableView = ({
           relation_table_slug: tableSlug,
         },
         {},
-        tableSlug
+        tableSlug,
       );
-      const [{relations = []}, {fields = []}] = await Promise.all([
+      const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
         getFieldsData,
       ]);
@@ -227,7 +227,7 @@ const DrawerTableView = ({
     for (const key in view.attributes.fixedColumns) {
       if (view.attributes.fixedColumns.hasOwnProperty(key)) {
         if (view.attributes.fixedColumns[key]) {
-          result.push({id: key, value: view.attributes.fixedColumns[key]});
+          result.push({ id: key, value: view.attributes.fixedColumns[key] });
         }
       }
     }
@@ -243,7 +243,7 @@ const DrawerTableView = ({
 
     return customSortArray(
       uniqueColumns,
-      result.map((el) => el.id)
+      result.map((el) => el.id),
     )
       ?.map((el) => fieldsMap[el])
       ?.filter((el) => el);
@@ -272,11 +272,11 @@ const DrawerTableView = ({
 
     if (sortValues && sortValues.length > 0) {
       const matchingSort = sortValues.find(
-        (entry) => entry.tableSlug === tableSlug
+        (entry) => entry.tableSlug === tableSlug,
       );
 
       if (matchingSort) {
-        const {field, order} = matchingSort;
+        const { field, order } = matchingSort;
         const sortKey = fieldsMap[field]?.slug;
         resultObject[sortKey] = order === "ASC" ? 1 : -1;
       }
@@ -303,7 +303,7 @@ const DrawerTableView = ({
   }, [filters]);
 
   const {
-    data: {fiedlsarray, fieldView, custom_events} = {
+    data: { fiedlsarray, fieldView, custom_events } = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -343,7 +343,7 @@ const DrawerTableView = ({
     selectedV?.relation_table_slug || selectedV?.table_slug;
 
   const {
-    data: {tableData, pageCount, dataCount} = {
+    data: { tableData, pageCount, dataCount } = {
       tableData: [],
       pageCount: 1,
       fieldView: [],
@@ -361,7 +361,7 @@ const DrawerTableView = ({
         sortedDatas,
         currentPage,
         limit,
-        filters: {...filters, [tab?.slug]: tab?.value},
+        filters: { ...filters, [tab?.slug]: tab?.value },
         shouldGet,
         paginiation,
         // currentView,
@@ -409,11 +409,11 @@ const DrawerTableView = ({
       });
       setCombinedTableData((prev) => [...prev, ...result]);
     },
-    cacheTime: 0
+    cacheTime: 0,
   });
 
   const {
-    data: {layout} = {
+    data: { layout } = {
       layout: [],
     },
   } = useQuery({
@@ -468,7 +468,7 @@ const DrawerTableView = ({
           relation_table_slug: view.relation_table_slug ?? null,
           is_relation_view: view?.is_relation_view,
           detailId: row?.guid,
-        })
+        }),
       );
       setSelectedView(view);
       setSelectedRow(row);
@@ -538,8 +538,8 @@ const DrawerTableView = ({
           (param) =>
             `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
               param.value,
-              row
-            )}`
+              row,
+            )}`,
         )
         .join("&");
 
@@ -589,13 +589,13 @@ const DrawerTableView = ({
   }, [reset, tableData]);
 
   useEffect(() => {
-    if(!relationView || itemId) {
-      refetch()
+    if (!relationView || itemId) {
+      refetch();
     }
     dispatch(
       quickFiltersActions.setQuickFiltersCount(
-        view?.attributes?.quick_filters?.length ?? 0
-      )
+        view?.attributes?.quick_filters?.length ?? 0,
+      ),
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 

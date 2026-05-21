@@ -24,16 +24,16 @@ const BoardCardRowGenerator = ({
   let statusTypeOptions = [];
   if (isStatus) {
     statusTypeOptions = [
-      ...field?.attributes?.complete?.options,
-      ...field?.attributes?.todo?.options,
-      ...field?.attributes?.progress?.options,
+      ...(field?.attributes?.complete?.options ?? []),
+      ...(field?.attributes?.todo?.options ?? []),
+      ...(field?.attributes?.progress?.options ?? []),
     ];
   }
 
   const { i18n } = useTranslation();
   const value = useMemo(() => {
     if (field.type !== FIELD_TYPES.LOOKUP) return get(el, field.slug, "");
-    return getRelationFieldTableCellLabel(field, el, field.slug + "_data");
+    return getBoardRelationFieldLabel(field, el);
   }, [field, el]);
 
   switch (field?.type) {
@@ -46,18 +46,14 @@ const BoardCardRowGenerator = ({
           field={field}
           showFieldLabel={false}
           hintPosition={hintPosition}
-          isEmpty={
-            !!getRelationFieldTableCellLabel(field, el, field.slug + "_data")
-          }
+          isEmpty={!value?.length}
         >
           {/* <span style={{ width: "16px", height: "16px" }}>
             {getColumnIcon({ column: field })}
           </span> */}
           <Box>
             {/* {field?.attributes?.[`label_${i18n?.language}`]} */}
-            <Box>
-              {getRelationFieldTableCellLabel(field, el, field.slug + "_data")}
-            </Box>
+            <Box>{value}</Box>
           </Box>
           {showFieldLabel && (
             <span className={clsx(styles.rowHint, styles[hintPosition])}>
@@ -165,7 +161,12 @@ const BoardCardRowGenerator = ({
           <Box display="flex" gap="3px">
             {value &&
               value?.map((photo) => (
-                <img className={styles.miniImage} src={photo} alt="" />
+                <img
+                  key={photo}
+                  className={styles.miniImage}
+                  src={photo}
+                  alt=""
+                />
               ))}
           </Box>
         </FieldContainer>
@@ -223,6 +224,43 @@ const FieldContainer = ({
       )}
     </div>
   );
+};
+
+const getBoardRelationFieldLabel = (field, row) => {
+  const relationKeys = [
+    `${field.slug}_data`,
+    field?.table_slug ? `${field.table_slug}_id_data` : undefined,
+    field?.table_slug ? `${field.table_slug}_ids_data` : undefined,
+    field?.table_slug ? `${field.table_slug}_data` : undefined,
+  ].filter(Boolean);
+
+  return (
+    relationKeys
+      .map((key) => {
+        return (
+          getRelationLabelFromData(field, get(row, key)) ||
+          getRelationFieldTableCellLabel(field, row, key)
+        );
+      })
+      .find((label) => label?.trim?.()) ?? ""
+  );
+};
+
+const getRelationLabelFromData = (field, relationData) => {
+  if (!relationData) return "";
+
+  const rows = Array.isArray(relationData) ? relationData : [relationData];
+  const viewFields = field?.view_fields ?? field?.attributes?.view_fields ?? [];
+
+  return rows
+    .map((row) => {
+      return viewFields
+        .map((viewField) => row?.[viewField?.slug])
+        .filter((value) => value !== undefined && value !== null && value !== "")
+        .join(" ");
+    })
+    .filter((label) => label)
+    .join(", ");
 };
 
 export default BoardCardRowGenerator;

@@ -1,19 +1,18 @@
-import {useEffect, useMemo, useRef, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useQuery} from "react-query";
-import {useSelector} from "react-redux";
-import {useNavigate, useParams} from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import constructorViewService from "../../../services/constructorViewService";
-import {applyDrag} from "../../../utils/applyDrag";
-import {useProjectGetByIdQuery} from "../../../services/projectService";
+import { applyDrag } from "../../../utils/applyDrag";
+import { useProjectGetByIdQuery } from "../../../services/projectService";
 import layoutService from "../../../services/layoutService";
 import {
   useGetBoardMutation,
   useGetBoardStructureMutation,
 } from "../../../services/boardViewService";
-import {throttle} from "lodash-es";
-import {flushSync} from "react-dom";
-import { isJSONParsable } from "../../../utils/isJsonValid";
+import { throttle } from "lodash-es";
+import { flushSync } from "react-dom";
 
 export const useBoardViewProps = ({
   view,
@@ -21,13 +20,10 @@ export const useBoardViewProps = ({
   fieldsMapRel,
   visibleColumns,
   visibleRelationColumns,
-  menuItem,
   searchText,
   // checkedColumns,
-  columnsForSearch,
 }) => {
   // const searchableTypes = ["SINGLE_LINE", "MULTI_LINE"];
-  const navigate = useNavigate();
   const projectId = useSelector((state) => state.company?.projectId);
 
   const isFilterOpen = useSelector((state) => state.main?.tableViewFiltersOpen);
@@ -69,13 +65,15 @@ export const useBoardViewProps = ({
   const [subgroupsQueue, setSubgroupsQueue] = useState([]);
   const [currentSubgroupIndex, setCurrentSubgroupIndex] = useState(0);
 
-  const [isOnTop, setIsOnTop] = useState(false);
+  const [isOnTop] = useState(false);
 
   const subGroupField = fieldsMap[subGroupById];
   const subGroupFieldSlug = fieldsMap[subGroupById]?.slug;
+  const boardSubGroupFieldSlug = getBoardRequestFieldSlug(subGroupField);
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMapRel?.[groupFieldId];
+  const boardGroupFieldSlug = getBoardRequestFieldSlug(groupField);
 
   const computedColumnsFor = useMemo(() => {
     if (view.type !== "CALENDAR" && view.type !== "GANTT") {
@@ -89,7 +87,7 @@ export const useBoardViewProps = ({
     return boardData?.length > 0
       ? groups.reduce(
           (max, group) => (group.count < max.count ? group : max),
-          groups[0]
+          groups[0],
         )
       : {};
   }, [groups, boardData]);
@@ -100,7 +98,7 @@ export const useBoardViewProps = ({
     .filter(
       (item) =>
         item?.value?.length <
-        groups?.find((groupItem) => item?.name === groupItem?.name)?.count
+        groups?.find((groupItem) => item?.name === groupItem?.name)?.count,
     );
 
   const lastSubGroup = subGroups[subGroups.length - 1];
@@ -111,13 +109,17 @@ export const useBoardViewProps = ({
   const lastGroupItem = useRef(null);
 
   const getSubgroupFieldLabel = (subGroup) => {
-    return boardData?.[subGroup?.name]?.[groups[0]?.name]?.[0]?.[
-      `${subGroupFieldSlug}_data`
-    ]?.[fieldsMap?.[subGroupField?.relation_id]?.view_fields?.[0]?.slug];
+    const row = boardData?.[subGroup?.name]?.[groups[0]?.name]?.[0];
+    const relationData = getBoardRelationData(row, subGroupField);
+    return relationData?.[
+      fieldsMap?.[subGroupField?.relation_id]?.view_fields?.[0]?.slug
+    ];
   };
 
   const getGroupFieldLabel = (group) => {
-    return boardData?.[group?.name]?.[0]?.[`${groupField?.slug}_data`]?.[
+    const row = boardData?.[group?.name]?.[0];
+    const relationData = getBoardRelationData(row, groupField);
+    return relationData?.[
       fieldsMap?.[groupField?.relation_id]?.view_fields?.[0]?.slug
     ];
   };
@@ -151,7 +153,7 @@ export const useBoardViewProps = ({
         tabs,
       },
     };
-    constructorViewService.update(tableSlug, computedData).then((res) => {
+    constructorViewService.update(tableSlug, computedData).then(() => {
       // queryClient.refetchQueries(["GET_VIEWS_AND_FIELDS"]);
     });
   };
@@ -177,12 +179,12 @@ export const useBoardViewProps = ({
   };
 
   const getGroupCounts = () => {
-    if (!groupField?.slug) return;
+    if (!boardGroupFieldSlug) return;
 
     const mutateBody = {
       data: {
         group_by: {
-          field: groupField.slug,
+          field: boardGroupFieldSlug,
         },
       },
     };
@@ -191,29 +193,16 @@ export const useBoardViewProps = ({
   };
 
   useEffect(() => {
-    if (groupField?.slug) {
+    if (boardGroupFieldSlug) {
       getGroupCounts();
     }
-  }, [groupField?.slug]);
+  }, [boardGroupFieldSlug, groupFieldId]);
 
   const getColor = (el) =>
     subGroupField?.attributes?.options?.find((item) => item?.value === el)
       ?.color ?? "";
 
   const { data: projectInfo } = useProjectGetByIdQuery({ projectId });
-
-  const detectStringType = (inputString) => {
-    if (/^\d+$/.test(inputString)) {
-      return "number";
-    } else {
-      return "string";
-    }
-  };
-
-  const boardSearch =
-    detectStringType(searchText) === "number"
-      ? parseInt(searchText)
-      : searchText;
 
   const {
     data: { layout } = {
@@ -261,48 +250,66 @@ export const useBoardViewProps = ({
         setLoadingData(false);
       },
     },
-    tableSlug
+    tableSlug,
   );
 
   const mutateBoardData = (offsetProp) => {
-    if (!groupField?.slug) return;
+    if (!boardGroupFieldSlug) return;
     const fields = [
-      ...visibleColumns
-        ?.filter((item) => {
-          if (item?.type === "LOOKUP" || item?.type === "LOOKUPS") {
-            return view?.columns?.includes(item?.relation_id);
-          } else {
-            return view?.columns?.includes(item?.id);
-          }
-        })
-        ?.map((el) => el?.slug),
-      "guid",
-      "board_order",
+      ...new Set([
+        ...(visibleColumns
+          ?.filter((item) => {
+            if (item?.type === "LOOKUP" || item?.type === "LOOKUPS") {
+              return view?.columns?.includes(item?.relation_id);
+            } else {
+              return view?.columns?.includes(item?.id);
+            }
+          })
+          ?.map(getBoardRequestFieldSlug)
+          ?.filter((slug) => slug) ?? []),
+        "guid",
+        "board_order",
+      ]),
     ];
 
-    if (!fields.includes(groupField?.slug)) {
-      fields.push(groupField?.slug);
+    if (boardGroupFieldSlug && !fields.includes(boardGroupFieldSlug)) {
+      fields.push(boardGroupFieldSlug);
     }
 
-    if (subGroupFieldSlug && !fields.includes(subGroupFieldSlug)) {
-      fields.push(subGroupFieldSlug);
+    if (boardSubGroupFieldSlug && !fields.includes(boardSubGroupFieldSlug)) {
+      fields.push(boardSubGroupFieldSlug);
+    }
+
+    const boardFieldSlugMap = getBoardFieldSlugMap([
+      ...Object.values(fieldsMap ?? {}),
+      ...Object.values(fieldsMapRel ?? {}),
+      groupField,
+      subGroupField,
+    ]);
+    const boardFilters = getBoardFilters(
+      list?.[tableSlug]?.[view?.id],
+      boardFieldSlugMap,
+    );
+    const requestData = {
+      ...boardFilters,
+      group_by: {
+        field: boardGroupFieldSlug,
+      },
+      limit,
+      offset: offsetProp ?? offset,
+      fields: fields,
+      // search: boardSearch,
+      // view_fields: checkedColumns ?? [],
+    };
+
+    if (boardSubGroupFieldSlug) {
+      requestData.subgroup_by = {
+        field: boardSubGroupFieldSlug,
+      };
     }
 
     boardMutation.mutate({
-      data: {
-        group_by: {
-          field: groupField?.slug,
-        },
-        subgroup_by: {
-          field: subGroupFieldSlug,
-        },
-        limit,
-        offset: offsetProp ?? offset,
-        fields: fields,
-        // search: boardSearch,
-        // view_fields: checkedColumns ?? [],
-        ...list?.[tableSlug]?.[view?.id],
-      },
+      data: requestData,
     });
   };
 
@@ -328,7 +335,7 @@ export const useBoardViewProps = ({
         setSubgroupsQueue([data?.data?.subgroups[0]] ?? []);
       },
     },
-    tableSlug
+    tableSlug,
   );
 
   const isLoading = boardStructureMutation.isLoading;
@@ -343,7 +350,7 @@ export const useBoardViewProps = ({
         setGroupsCounts(result);
       },
     },
-    tableSlug
+    tableSlug,
   );
 
   useEffect(() => {
@@ -352,7 +359,7 @@ export const useBoardViewProps = ({
 
       if (boardData[currentSubgroup?.name]) {
         const dataLength = Object.values(
-          boardData[currentSubgroup?.name]
+          boardData[currentSubgroup?.name],
         ).flat().length;
 
         if (dataLength >= currentSubgroup.count) {
@@ -365,18 +372,18 @@ export const useBoardViewProps = ({
   }, [boardData]);
 
   const mutateBoardStructure = () => {
-    if (!groupField?.slug) return;
+    if (!boardGroupFieldSlug) return;
     const mutateBody = {
       data: {
         group_by: {
-          field: groupField?.slug,
+          field: boardGroupFieldSlug,
         },
       },
     };
 
-    if (subGroupById) {
+    if (subGroupById && boardSubGroupFieldSlug) {
       mutateBody.data.subgroup_by = {
-        field: subGroupFieldSlug,
+        field: boardSubGroupFieldSlug,
       };
     }
 
@@ -391,7 +398,7 @@ export const useBoardViewProps = ({
   useEffect(() => {
     mutateBoardStructure();
     setOffset(0);
-  }, [subGroupById, groupFieldId, groupField?.slug]);
+  }, [subGroupById, groupFieldId, boardGroupFieldSlug]);
 
   // groupField, subGroupFieldSlug, subGroupById
 
@@ -431,9 +438,9 @@ export const useBoardViewProps = ({
     const elSubGroups = boardRef.current?.querySelectorAll(`[data-sub-group]`);
 
     if (elSubGroups.length) {
-      elSubGroups?.forEach((item, index) => {
+      elSubGroups?.forEach((item) => {
         const subGroup = subGroups.find(
-          (subGroupItem) => subGroupItem?.name === item?.dataset?.subGroup
+          (subGroupItem) => subGroupItem?.name === item?.dataset?.subGroup,
         );
 
         const isElementInViewport = isInViewport(item);
@@ -456,7 +463,7 @@ export const useBoardViewProps = ({
 
   const handleSetOffsetOnScrollGroup = throttle(() => {
     const lastCard = boardRef.current?.querySelector(
-      `[data-guid = "${lastGroupItem?.current?.guid}"]`
+      `[data-guid = "${lastGroupItem?.current?.guid}"]`,
     );
 
     const isLastElementInViewport = isInViewportOrScrolledToTop(lastCard);
@@ -511,10 +518,10 @@ export const useBoardViewProps = ({
   }, [list, searchText]);
 
   useEffect(() => {
-    if (groupField?.slug) {
+    if (boardGroupFieldSlug) {
       mutateBoardData();
     }
-  }, [groupField?.slug, view?.columns]);
+  }, [boardGroupFieldSlug, groupFieldId, view?.columns]);
 
   useEffect(() => {
     const board = boardRef.current;
@@ -589,8 +596,8 @@ export const useBoardViewProps = ({
   };
 };
 
-const getMergedDataSubgroup = ({newData, prev}) => {
-  const merged = {...prev};
+const getMergedDataSubgroup = ({ newData, prev }) => {
+  const merged = { ...prev };
 
   for (const authorId in newData) {
     const newStatuses = newData[authorId];
@@ -611,8 +618,8 @@ const getMergedDataSubgroup = ({newData, prev}) => {
   return merged;
 };
 
-const getMergedDataGroup = ({newData, prev}) => {
-  const merged = {...prev};
+const getMergedDataGroup = ({ newData, prev }) => {
+  const merged = { ...prev };
 
   for (const statusKey in newData) {
     const existing = prev[statusKey] || [];
@@ -622,6 +629,83 @@ const getMergedDataGroup = ({newData, prev}) => {
   }
 
   return merged;
+};
+
+const isLookupField = (field) =>
+  field?.type === "LOOKUP" || field?.type === "LOOKUPS";
+
+const getBoardRequestFieldSlug = (field) => {
+  if (!field?.slug) return undefined;
+
+  if (!isLookupField(field) || !field?.table_slug) {
+    return field.slug;
+  }
+
+  const relationSuffix = field.type === "LOOKUPS" ? "_ids" : "_id";
+  const canonicalRelationSlug = `${field.table_slug}${relationSuffix}`;
+
+  return field.slug === canonicalRelationSlug ? field.slug : field.table_slug;
+};
+
+const hasBoardFilterValue = (value) => {
+  if (value === undefined || value === null || value === "") return false;
+  if (Array.isArray(value)) return value.length > 0;
+
+  if (typeof value === "object") {
+    return Object.values(value).some(hasBoardFilterValue);
+  }
+
+  return true;
+};
+
+const getBoardFieldSlugMap = (fields = []) => {
+  return fields.reduce((result, field) => {
+    const requestSlug = getBoardRequestFieldSlug(field);
+
+    if (field?.slug && requestSlug && field.slug !== requestSlug) {
+      result[field.slug] = requestSlug;
+    }
+
+    return result;
+  }, {});
+};
+
+const mapBoardFilterValue = (value, fieldSlugMap) => {
+  if (!value || Array.isArray(value) || typeof value !== "object") {
+    return value;
+  }
+
+  return Object.entries(value).reduce((result, [key, nestedValue]) => {
+    const mappedKey = fieldSlugMap[key] ?? key;
+    result[mappedKey] = mapBoardFilterValue(nestedValue, fieldSlugMap);
+    return result;
+  }, {});
+};
+
+const getBoardFilters = (filters = {}, fieldSlugMap = {}) => {
+  return Object.entries(filters).reduce((result, [key, value]) => {
+    if (hasBoardFilterValue(value)) {
+      const mappedKey = fieldSlugMap[key] ?? key;
+      result[mappedKey] = mapBoardFilterValue(value, fieldSlugMap);
+    }
+
+    return result;
+  }, {});
+};
+
+const getBoardRelationData = (row, field) => {
+  if (!row || !isLookupField(field)) return undefined;
+
+  const relationKeys = [
+    `${field.slug}_data`,
+    field?.table_slug ? `${field.table_slug}_id_data` : undefined,
+    field?.table_slug ? `${field.table_slug}_ids_data` : undefined,
+    field?.table_slug ? `${field.table_slug}_data` : undefined,
+  ].filter(Boolean);
+
+  const relationData = relationKeys.map((key) => row?.[key]).find(Boolean);
+
+  return Array.isArray(relationData) ? relationData[0] : relationData;
 };
 
 // const queryGenerator = (groupField, filters = {}, lan) => {

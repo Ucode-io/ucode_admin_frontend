@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect, useMemo } from "react";
 // import empty from "remote_empty_app/empty";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import SafeComponent from "../SafeComponent";
@@ -10,8 +10,9 @@ import httpsRequestV2 from "@/utils/httpsRequestV2";
 
 // const EMPTY = empty;
 
-const MicrofrontendComponent = ({ link, loginAction }) => {
-  const RemoteButton = lazy(async () => {
+const MicrofrontendComponent = ({ link, loginAction, activationKey }) => {
+  const RemoteButton = useMemo(() => lazy(async () => {
+    window.remotesMap = window.remotesMap || {};
     window.remotesMap[`remote_app_${link}`] = {
       url: link,
       format: "esm",
@@ -23,7 +24,19 @@ const MicrofrontendComponent = ({ link, loginAction }) => {
       "./Page",
     );
     return comp;
-  });
+  }), [link]);
+
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("ucode:microfrontend:activate", {
+        detail: {
+          activationKey,
+          link,
+        },
+      }),
+    );
+  }, [activationKey, link]);
+
   const { i18n } = useTranslation();
   return (
     <SafeComponent>
@@ -31,8 +44,11 @@ const MicrofrontendComponent = ({ link, loginAction }) => {
         fallback={<RingLoaderWithWrapper style={{ height: "100vh" }} />}
       >
         <RemoteButton
+          key={activationKey}
+          activationKey={activationKey}
           i18n={i18n}
           loginAction={loginAction}
+          microfrontendActivationKey={activationKey}
           sharedHttpRequest={httpsRequest}
           sharedHttpRequestV2={httpsRequestV2}
         />

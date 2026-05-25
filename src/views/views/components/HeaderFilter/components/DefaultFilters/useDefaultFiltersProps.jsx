@@ -3,43 +3,40 @@ import { useFieldsContext } from "@/views/views/providers/FieldsProvider";
 import { useTranslation } from "react-i18next";
 import { FilterDropdown } from "../FilterDropdown";
 import { useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useFilterContext } from "@/views/views/providers/FilterProvider";
+import { useViewContext } from "@/providers/ViewProvider";
 import { DefaultFilterRelation } from "../DefaultFilterRelation";
 import { DefaultFilterDate } from "../DefaultFilterDate";
 import useDebounce from "@/hooks/useDebounce";
-import menuSettingsService from "@/services/menuSettingsService";
-import { menuActions } from "@/store/menuItem/menuItem.slice";
+import constructorTableService from "@/services/constructorTableService";
 
 export const useDefaultFiltersProps = ({ handleClosePopover }) => {
   const { i18n } = useTranslation();
 
-  const { activeTable } = useSelector((state) => state.menu);
+  const { tableInfo, refetchTableInfo } = useViewContext();
 
   const { fieldsMap } = useFieldsContext();
   const { defaultFiltersMap, setDefaultFiltersMap } = useFilterContext();
 
-  const dispatch = useDispatch();
-
   const isChanged = useRef(false);
 
   const updateDefaultFilter = () => {
-    if (isChanged.current) {
-      const attributes = {
-        ...activeTable?.attributes,
+    if (!isChanged.current) return;
+
+    const updatedTable = {
+      ...tableInfo,
+      attributes: {
+        ...tableInfo?.attributes,
         default_filters: defaultFiltersMap,
-      };
+      },
+    };
 
-      const updatedTable = {
-        ...activeTable,
-        attributes,
-      };
-
-      menuSettingsService.update(updatedTable).finally(() => {
+    constructorTableService
+      .update(updatedTable)
+      .finally(() => {
+        refetchTableInfo?.();
         handleClosePopover();
       });
-      dispatch(menuActions.setActiveTable(updatedTable));
-    }
   };
 
   const allFields = Object.values(fieldsMap).filter((el) => {

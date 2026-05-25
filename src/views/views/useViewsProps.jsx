@@ -49,8 +49,6 @@ import { Pivot } from "./modules/Grid/Pivot";
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
 
-  const { activeTable } = useSelector((state) => state.menu);
-
   const { selectedView: selectedViewMain } = useSelector(
     (state) => state.views,
   );
@@ -563,7 +561,7 @@ export const useViewsProps = ({ isRelationView }) => {
   };
 
   const [defaultFiltersMap, setDefaultFiltersMap] = useState(
-    activeTable?.attributes?.default_filters || {},
+    tableInfo?.attributes?.default_filters || {},
   );
 
   const { isLoading: isLoadingTable } = useTableByIdQuery({
@@ -690,12 +688,8 @@ export const useViewsProps = ({ isRelationView }) => {
   };
 
   useEffect(() => {
-    if (activeTable?.attributes?.default_filters) {
-      setDefaultFiltersMap(activeTable?.attributes?.default_filters);
-    } else {
-      setDefaultFiltersMap({});
-    }
-  }, [activeTable?.attributes?.default_filters]);
+    setDefaultFiltersMap(tableInfo?.attributes?.default_filters || {});
+  }, [tableInfo?.id, tableInfo?.attributes?.default_filters]);
 
   return {
     viewsMap,

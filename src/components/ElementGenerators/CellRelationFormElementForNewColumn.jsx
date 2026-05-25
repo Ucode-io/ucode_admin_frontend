@@ -18,7 +18,6 @@ import {
   getRelationFieldTabsLabel,
   getRelationFieldTabsLabelLang,
 } from "../../utils/getRelationFieldLabel";
-import { pageToOffset } from "../../utils/pageToOffset";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
 import CascadingElement from "./CascadingElement";
@@ -254,7 +253,7 @@ const AutoCompleteElement = ({
       view_fields: field?.view_fields?.map((f) => f.slug),
       search: debouncedValue.trim(),
       limit: 10,
-      offset: pageToOffset(pageProp || page, 10),
+      offset: (pageProp || page) - 1,
     };
 
     if (value || itemId) {
@@ -296,7 +295,7 @@ const AutoCompleteElement = ({
             ...autoFiltersValue,
             search: debouncedValue,
             limit: 10,
-            offset: pageToOffset(page, 10),
+            offset: page - 1,
             view_fields:
               field?.view_fields?.map((field) => field.slug) ??
               field?.attributes?.view_fields?.map((field) => field.slug),
@@ -317,7 +316,14 @@ const AutoCompleteElement = ({
       },
       onSuccess: (data) => {
         if (Object.values(autoFiltersValue)?.length > 0) {
-          setAllOptions(data?.options);
+          if (page === 1) {
+            setAllOptions(data?.options);
+          } else if (data?.options?.length) {
+            setAllOptions((prevOptions) => [
+              ...(prevOptions ?? []),
+              ...(data.options ?? []),
+            ]);
+          }
         } else if (data?.options?.length) {
           setAllOptions((prevOptions) => [
             ...(prevOptions ?? []),
@@ -350,7 +356,14 @@ const AutoCompleteElement = ({
       onSuccess: (data) => {
         setCount(data?.count);
         if (Object.values(autoFiltersValue)?.length > 0 && !openedItemValue) {
-          setAllOptions(data?.options);
+          if (page === 1) {
+            setAllOptions(data?.options);
+          } else if (data?.options?.length) {
+            setAllOptions((prevOptions) => [
+              ...(prevOptions ?? []),
+              ...(data.options ?? []),
+            ]);
+          }
         } else if (openedItemValue) {
           setAllOptions([
             data?.options?.find((el) => el?.guid === openedItemValue?.guid),
@@ -467,6 +480,10 @@ const AutoCompleteElement = ({
     );
     setPage((prevPage) => prevPage + 1);
   }
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedValue, autoFiltersValue]);
 
   useEffect(() => {
     const matchingOption = allOptions?.find(

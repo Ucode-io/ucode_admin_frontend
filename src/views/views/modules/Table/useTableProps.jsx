@@ -339,7 +339,7 @@ export const useTableProps = ({ tab }) => {
   const [viewsLoader, setViewsLoader] = useState(
     () => !queryClient.getQueryData(tableQueryKey),
   );
-  console.log("viewIdviewIdviewId", view, selectedV, filters, tableQueryKey);
+
   const {
     data: tableQueryData,
     refetch,

@@ -260,6 +260,10 @@ const AutoCompleteElement = ({
     if (!field?.table_slug) return null;
 
     const requestData = {
+      ...autoFiltersValue,
+      additional_request: {
+        additional_field: "guid",
+      },
       search: debouncedValue.trim(),
       limit: 10,
       offset: pageToOffset(pageProp || page, 10),

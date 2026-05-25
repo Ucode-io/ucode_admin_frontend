@@ -1,15 +1,15 @@
-import {useSelector} from "react-redux";
-import {Parser} from "hot-formula-parser";
-import {useTranslation} from "react-i18next";
-import {Suspense, lazy, useEffect, useMemo, useState} from "react";
-import {Skeleton} from "@mui/material";
+import { useSelector } from "react-redux";
+import { Parser } from "hot-formula-parser";
+import { useTranslation } from "react-i18next";
+import { Suspense, lazy, useEffect, useMemo, useState } from "react";
+import { Skeleton } from "@mui/material";
 import CellRelationFormElementNew from "./CellRelationFormElementNew";
 
 const CellManyToManyRelationElement = lazy(
-  () => import("./CellManyToManyRelationElement")
+  () => import("./CellManyToManyRelationElement"),
 );
 const CellRelationFormElementForNewColumn = lazy(
-  () => import("./CellRelationFormElementForNewColumn")
+  () => import("./CellRelationFormElementForNewColumn"),
 );
 
 const parser = new Parser();

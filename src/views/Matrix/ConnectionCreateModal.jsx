@@ -1,26 +1,30 @@
-import {Box, Card, Modal, Typography} from "@mui/material";
-import {useParams} from "react-router-dom";
-import {useForm} from "react-hook-form";
-import {useQueryClient} from "react-query";
+import { Box, Card, Modal, Typography } from "@mui/material";
+import { useParams } from "react-router-dom";
+import { Controller, useForm } from "react-hook-form";
+import { useQueryClient } from "react-query";
 import ClearIcon from "@mui/icons-material/Clear";
-import {useMemo, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {store} from "../../store";
+import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import Select from "react-select";
+import { store } from "../../store";
 import {
   useConnectionCreateMutation,
   useConnectionGetByIdQuery,
   useConnectionUpdateMutation,
 } from "../../services/auth/connectionService";
-import {useTablesListQuery} from "../../services/constructorTableService";
-import {useFieldsListQuery} from "../../services/constructorFieldService";
-import {useRelationsListQuery} from "../../services/constructorRelationService";
-import {generateLangaugeText} from "../../utils/generateLanguageText";
+import { useTablesListQuery } from "../../services/constructorTableService";
+import { useFieldsListQuery } from "../../services/constructorFieldService";
+import { useRelationsListQuery } from "../../services/constructorRelationService";
+import { generateLangaugeText } from "../../utils/generateLanguageText";
+import useDebounce from "../../hooks/useDebounce";
 import HFTextField from "../../components/FormElements/HFTextField";
 import FRow from "../../components/FormElements/FRow";
 import HFSelect from "../../components/FormElements/HFSelect";
 import SaveButton from "../../components/Buttons/SaveButton";
 import CreateButton from "../../components/Buttons/CreateButton";
-import {showAlert} from "../../store/alert/alert.thunk";
+import { showAlert } from "../../store/alert/alert.thunk";
+
+const MAIN_TABLE_PAGE_LIMIT = 20;
 
 const ConnectionCreateModal = ({
   closeModal,
@@ -30,12 +34,12 @@ const ConnectionCreateModal = ({
   clientTypeId,
 }) => {
   const queryClient = useQueryClient();
-  const {i18n} = useTranslation();
+  const { i18n } = useTranslation();
   const envId = store.getState().company.environmentId;
   const projectId = store.getState().company.projectId;
   const [relations, setRelations] = useState([]);
 
-  const {control, handleSubmit, reset, watch, getValues} = useForm({
+  const { control, handleSubmit, reset, watch, getValues } = useForm({
     defaultValues: {
       name: "",
       table_slug: "",
@@ -49,7 +53,7 @@ const ConnectionCreateModal = ({
   const tableSlug = watch("table_slug");
   const mainTableSlug = watch("main_table_slug");
 
-  const {isLoading} = useConnectionGetByIdQuery({
+  const { isLoading } = useConnectionGetByIdQuery({
     id: connectionId,
     queryParams: {
       enabled: Boolean(modalType === "UPDATE"),
@@ -59,7 +63,7 @@ const ConnectionCreateModal = ({
     },
   });
 
-  const {mutateAsync: createConnection, isLoading: createLoading} =
+  const { mutateAsync: createConnection, isLoading: createLoading } =
     useConnectionCreateMutation({
       onSuccess: () => {
         queryClient.refetchQueries(["GET_CONNECTION_LIST"]);
@@ -67,7 +71,7 @@ const ConnectionCreateModal = ({
         closeModal();
       },
     });
-  const {mutateAsync: updateConnection, isLoading: updateLoading} =
+  const { mutateAsync: updateConnection, isLoading: updateLoading } =
     useConnectionUpdateMutation({
       onSuccess: () => {
         queryClient.refetchQueries(["GET_CONNECTION_LIST"]);
@@ -79,22 +83,62 @@ const ConnectionCreateModal = ({
   const onSubmit = (data) => {
     const relation = relations?.find((i) => i.slug === getValues().table_slug);
     if (modalType === "NEW") {
-      createConnection({...data, field_slug: relation?.field_slug});
+      createConnection({ ...data, field_slug: relation?.field_slug });
     } else {
-      updateConnection({...data, guid: connectionId});
+      updateConnection({ ...data, guid: connectionId });
     }
   };
 
-  const {data: projectTables} = useTablesListQuery({
-    params: {
-      envId: envId,
-    },
-    queryParams: {
-      select: (res) => res.tables,
-    },
-  });
+  const [mainTablePage, setMainTablePage] = useState(1);
+  const [mainTableSearch, setMainTableSearch] = useState("");
+  const [mainTableOptions, setMainTableOptions] = useState([]);
 
-  const {data: fieldsData} = useFieldsListQuery(
+  const { data: mainTablesData, isFetching: isFetchingMainTables } =
+    useTablesListQuery({
+      params: {
+        envId: envId,
+        search: mainTableSearch || undefined,
+        limit: MAIN_TABLE_PAGE_LIMIT,
+        offset: (mainTablePage - 1) * MAIN_TABLE_PAGE_LIMIT,
+      },
+    });
+
+  useEffect(() => {
+    if (!mainTablesData?.tables) return;
+    const mapped = mainTablesData.tables.map((item) => ({
+      label: item?.label,
+      value: item?.slug,
+    }));
+    setMainTableOptions((prev) =>
+      mainTablePage === 1 ? mapped : [...prev, ...mapped],
+    );
+  }, [mainTablesData, mainTablePage]);
+
+  const mainTableHasMore =
+    (mainTablesData?.count ?? 0) > mainTableOptions.length;
+
+  const handleMainTableScrollToBottom = () => {
+    if (mainTableHasMore && !isFetchingMainTables) {
+      setMainTablePage((prev) => prev + 1);
+    }
+  };
+
+  const handleMainTableSearch = useDebounce((value) => {
+    setMainTablePage(1);
+    setMainTableSearch(value);
+  }, 300);
+
+  const selectedMainTableOption = useMemo(() => {
+    if (!mainTableSlug) return null;
+    return (
+      mainTableOptions.find((opt) => opt.value === mainTableSlug) ?? {
+        label: mainTableSlug,
+        value: mainTableSlug,
+      }
+    );
+  }, [mainTableOptions, mainTableSlug]);
+
+  const { data: fieldsData } = useFieldsListQuery(
     {
       queryParams: {
         enabled: Boolean(tableSlug),
@@ -104,10 +148,10 @@ const ConnectionCreateModal = ({
         "project-id": projectId,
       },
     },
-    tableSlug
+    tableSlug,
   );
 
-  const {data: relationsData} = useRelationsListQuery({
+  const { data: relationsData } = useRelationsListQuery({
     queryParams: {
       enabled: Boolean(mainTableSlug),
     },
@@ -136,13 +180,6 @@ const ConnectionCreateModal = ({
     return array ?? [];
   }, [relationsData]);
 
-  const computedOptions = useMemo(() => {
-    return projectTables?.map((item) => ({
-      label: item?.label,
-      value: item?.slug,
-    }));
-  }, [projectTables]);
-
   const computedViewOptions = useMemo(() => {
     return fieldsData?.fields?.map((item) => ({
       label: item?.label,
@@ -163,17 +200,17 @@ const ConnectionCreateModal = ({
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">
+            <Typography variant="h4" color="white">
               {modalType === "NEW"
                 ? generateLangaugeText(
                     settingLan,
                     i18n?.language,
-                    "Create connection"
-                  ) || '"Create connection"'
+                    "Create connection",
+                  ) || "Create connection"
                 : generateLangaugeText(
                     settingLan,
                     i18n?.language,
-                    "Edit connection"
+                    "Edit connection",
                   ) || "Edit connection"}
             </Typography>
             <ClearIcon
@@ -192,9 +229,10 @@ const ConnectionCreateModal = ({
                 generateLangaugeText(
                   settingLan,
                   i18n?.language,
-                  "Table slug"
+                  "Table slug",
                 ) || "Table slug"
-              }>
+              }
+            >
               <HFTextField
                 fullWidth
                 label="Value"
@@ -208,16 +246,55 @@ const ConnectionCreateModal = ({
                 generateLangaugeText(
                   settingLan,
                   i18n?.language,
-                  "Main table slug"
+                  "Main table slug",
                 ) || "Main table slug"
-              }>
-              <HFSelect
-                fullWidth
-                label="Table"
+              }
+            >
+              <Controller
                 control={control}
                 name="main_table_slug"
-                options={computedOptions}
-                required
+                rules={{ required: "This is required field" }}
+                render={({
+                  field: { onChange, value },
+                  fieldState: { error },
+                }) => (
+                  <>
+                    <Select
+                      value={value ? selectedMainTableOption : null}
+                      options={mainTableOptions}
+                      isLoading={isFetchingMainTables}
+                      isClearable
+                      placeholder="Table"
+                      menuPortalTarget={document.body}
+                      styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                        control: (base) => ({ ...base, minHeight: 40 }),
+                      }}
+                      onChange={(opt) => onChange(opt ? opt.value : "")}
+                      onInputChange={(input, { action }) => {
+                        if (action === "input-change") {
+                          handleMainTableSearch(input);
+                        }
+                      }}
+                      onMenuScrollToBottom={handleMainTableScrollToBottom}
+                      filterOption={null}
+                      noOptionsMessage={() =>
+                        isFetchingMainTables ? "Loading..." : "No tables"
+                      }
+                    />
+                    {error?.message && (
+                      <p
+                        style={{
+                          color: "#d32f2f",
+                          fontSize: 12,
+                          margin: "4px 0 0 0",
+                        }}
+                      >
+                        {error.message}
+                      </p>
+                    )}
+                  </>
+                )}
               />
             </FRow>
             <FRow
@@ -225,9 +302,10 @@ const ConnectionCreateModal = ({
                 generateLangaugeText(
                   settingLan,
                   i18n?.language,
-                  "Table slug"
+                  "Table slug",
                 ) || "Table slug"
-              }>
+              }
+            >
               <HFSelect
                 fullWidth
                 label="Table"
@@ -242,9 +320,10 @@ const ConnectionCreateModal = ({
                 generateLangaugeText(
                   settingLan,
                   i18n?.language,
-                  "Field slug"
+                  "Field slug",
                 ) || "Field slug"
-              }>
+              }
+            >
               <HFSelect
                 fullWidth
                 label="Table"

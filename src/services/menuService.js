@@ -1,4 +1,4 @@
-import {useMutation, useQuery} from "react-query";
+import { useMutation, useQuery } from "react-query";
 import requestV3 from "../utils/requestV3";
 
 const menuService = {
@@ -7,7 +7,7 @@ const menuService = {
       params,
     });
   },
-  getByID: ({menuId, params}) =>
+  getByID: ({ menuId, params }) =>
     requestV3.get(`/menus/${menuId}`, {
       params,
     }),
@@ -23,15 +23,21 @@ const menuService = {
         "project-id": data.project_id,
       },
     }),
+  updateView: (menuId, data) =>
+    requestV3.put(`/menus/${menuId}/views`, data, {
+      params: {
+        "project-id": data.project_id,
+      },
+    }),
   create: (data) =>
     requestV3.post(`/menus`, data, {
       params: {
         "project-id": data.project_id,
       },
     }),
-  delete: ({id, projectId}) =>
+  delete: ({ id, projectId }) =>
     requestV3.delete(`/menus/${id}`, {
-      params: {"project-id": projectId},
+      params: { "project-id": projectId },
     }),
 
   getFieldsListMenu: (menuId, viewId, tableSlug, data) =>
@@ -41,16 +47,16 @@ const menuService = {
   getFieldsTableData: (menuId, viewId, tableSlug, data) =>
     requestV3.post(
       `/menus/${menuId}/views/${viewId}/tables/${tableSlug}/items/list`,
-      data
+      data,
     ),
 
   getFieldsTableDataById: (menuId, viewId, tableSlug, itemId) =>
     requestV3.get(
-      `/menus/${menuId}/views/${viewId}/tables/${tableSlug}/items/${itemId}`
+      `/menus/${menuId}/views/${viewId}/tables/${tableSlug}/items/${itemId}`,
     ),
 };
 
-export const useMenuListQuery = ({params = {}, queryParams} = {}) => {
+export const useMenuListQuery = ({ params = {}, queryParams } = {}) => {
   return useQuery(
     ["MENU_CHILD", params],
     () => {
@@ -58,17 +64,17 @@ export const useMenuListQuery = ({params = {}, queryParams} = {}) => {
     },
     {
       ...queryParams,
-    }
+    },
   );
 };
 
-export const useMenuGetByIdQuery = ({menuId, params = {}, queryParams}) => {
+export const useMenuGetByIdQuery = ({ menuId, params = {}, queryParams }) => {
   return useQuery(
-    ["MENU_GET_BY_ID", {menuId, ...params}],
+    ["MENU_GET_BY_ID", { menuId, ...params }],
     () => {
-      return menuService.getByID({menuId, params});
+      return menuService.getByID({ menuId, params });
     },
-    queryParams
+    queryParams,
   );
 };
 
@@ -76,14 +82,21 @@ export const useMenuUpdateMutation = (mutationSettings) => {
   return useMutation((data) => menuService.update(data), mutationSettings);
 };
 
+export const useMenuViewUpdateMutation = (menuId, mutationSettings) => {
+  return useMutation(
+    (data) => menuService.updateView(menuId, data),
+    mutationSettings,
+  );
+};
+
 export const useMenuCreateMutation = (mutationSettings) => {
   return useMutation((data) => menuService.create(data), mutationSettings);
 };
 
-export const usePlatformDeleteMutation = ({projectId, mutationSettings}) => {
+export const usePlatformDeleteMutation = ({ projectId, mutationSettings }) => {
   return useMutation(
-    (id) => menuService.delete({id, projectId}),
-    mutationSettings
+    (id) => menuService.delete({ id, projectId }),
+    mutationSettings,
   );
 };
 

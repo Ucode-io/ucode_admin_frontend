@@ -561,7 +561,7 @@ export const useViewsProps = ({ isRelationView }) => {
   };
 
   const [defaultFiltersMap, setDefaultFiltersMap] = useState(
-    tableInfo?.attributes?.default_filters || {},
+    view?.attributes?.default_filters || {},
   );
 
   const { isLoading: isLoadingTable } = useTableByIdQuery({
@@ -570,7 +570,6 @@ export const useViewsProps = ({ isRelationView }) => {
       enabled: !!menuItem?.table_id,
       onSuccess: (res) => {
         setAuthInfo(res?.attributes?.auth_info);
-        // setDefaultFiltersMap(res?.attributes?.default_filters || {});
         viewForm.reset(res);
       },
     },
@@ -688,8 +687,8 @@ export const useViewsProps = ({ isRelationView }) => {
   };
 
   useEffect(() => {
-    setDefaultFiltersMap(tableInfo?.attributes?.default_filters || {});
-  }, [tableInfo?.id, tableInfo?.attributes?.default_filters]);
+    setDefaultFiltersMap(view?.attributes?.default_filters || {});
+  }, [view?.id, view?.attributes?.default_filters]);
 
   return {
     viewsMap,
@@ -699,6 +698,7 @@ export const useViewsProps = ({ isRelationView }) => {
     fieldsMap,
     fieldsMapRel,
     menuId,
+    menuIdForViewsList,
     refetchViews: refetchViewsList,
     setSelectedView,
     views: isRelationView ? relationViews : viewsFromStore,

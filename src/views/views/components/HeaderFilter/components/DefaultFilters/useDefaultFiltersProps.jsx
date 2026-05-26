@@ -8,35 +8,44 @@ import { useViewContext } from "@/providers/ViewProvider";
 import { DefaultFilterRelation } from "../DefaultFilterRelation";
 import { DefaultFilterDate } from "../DefaultFilterDate";
 import useDebounce from "@/hooks/useDebounce";
-import constructorTableService from "@/services/constructorTableService";
+import { useMenuViewUpdateMutation } from "@/services/menuService";
 
 export const useDefaultFiltersProps = ({ handleClosePopover }) => {
   const { i18n } = useTranslation();
 
-  const { tableInfo, refetchTableInfo } = useViewContext();
+  const { view, menuId, menuIdForViewsList, refetchViews } = useViewContext();
 
   const { fieldsMap } = useFieldsContext();
   const { defaultFiltersMap, setDefaultFiltersMap } = useFilterContext();
 
   const isChanged = useRef(false);
 
+  const updateViewMutation = useMenuViewUpdateMutation(
+    menuIdForViewsList ?? menuId,
+    {
+      onSuccess: () => {
+        refetchViews?.();
+      },
+    },
+  );
+
   const updateDefaultFilter = () => {
     if (!isChanged.current) return;
 
-    const updatedTable = {
-      ...tableInfo,
-      attributes: {
-        ...tableInfo?.attributes,
-        default_filters: defaultFiltersMap,
+    updateViewMutation.mutate(
+      {
+        ...view,
+        attributes: {
+          ...view?.attributes,
+          default_filters: defaultFiltersMap,
+        },
       },
-    };
-
-    constructorTableService
-      .update(updatedTable)
-      .finally(() => {
-        refetchTableInfo?.();
-        handleClosePopover();
-      });
+      {
+        onSettled: () => {
+          handleClosePopover();
+        },
+      },
+    );
   };
 
   const allFields = Object.values(fieldsMap).filter((el) => {

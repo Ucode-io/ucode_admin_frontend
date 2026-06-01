@@ -1,5 +1,4 @@
 import { Box, Card, Modal, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import { useQueryClient } from "react-query";
 import ClearIcon from "@mui/icons-material/Clear";

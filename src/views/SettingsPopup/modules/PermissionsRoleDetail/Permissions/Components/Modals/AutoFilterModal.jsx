@@ -99,6 +99,7 @@ const AutoFilterModal = ({
       },
     },
   });
+
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>

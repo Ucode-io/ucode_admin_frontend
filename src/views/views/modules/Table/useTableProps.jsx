@@ -113,6 +113,9 @@ export const useTableProps = ({ tab }) => {
 
   const tableLan = useGetLang("Table");
 
+  const projectId = useSelector(
+    (state) => state.company.projectId || state.auth.projectId,
+  );
   const viewsList = useSelector((state) => state.groupField.viewsList);
   const selectedV = viewsList?.[viewsList?.length - 1];
 
@@ -294,6 +297,7 @@ export const useTableProps = ({ tab }) => {
       isRelationView,
       {
         tableSlug,
+        projectId,
         viewId,
         searchText,
         sortedDatas,
@@ -316,6 +320,7 @@ export const useTableProps = ({ tab }) => {
     [
       isRelationView,
       tableSlug,
+      projectId,
       viewId,
       searchText,
       sortedDatas,
@@ -374,7 +379,9 @@ export const useTableProps = ({ tab }) => {
         },
       );
     },
-    enabled: Boolean(tableSlug && menuId && viewId && columns?.length > 0),
+    enabled: Boolean(
+      tableSlug && projectId && menuId && viewId && columns?.length > 0,
+    ),
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],

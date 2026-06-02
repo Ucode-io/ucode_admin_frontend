@@ -193,7 +193,7 @@ const ConnectionCreateModal = ({
       value: item?.slug,
     }));
   }, [computedFilteredRelations]);
-
+  console.log("computedViewOptionscomputedViewOptions", computedViewOptions);
   return (
     <div>
       <Modal open className="child-position-center" onClose={closeModal}>

@@ -153,16 +153,15 @@ export const usePermissionsRoleDetail = () => {
   };
 
   const createCustom = (data) => {
-    // data = {
-    //   title: string,
-    //   attributes: {
-    //     description: string,
-    //     icon: string,
-    //   }
-    return request.post("/custom-permission", data).then(() => {
-      if (!data.parent_id) {
+    const payload = {
+      ...data,
+      client_type_id: activeClientType?.id,
+    };
+
+    return request.post("/custom-permission", payload).then(() => {
+      if (!payload.parent_id) {
         setCustom((prev) => ({
-          custom: prev?.custom?.length ? [...prev.custom, data] : [data],
+          custom: prev?.custom?.length ? [...prev.custom, payload] : [payload],
         }));
       }
     });

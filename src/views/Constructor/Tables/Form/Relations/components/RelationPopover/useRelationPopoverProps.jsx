@@ -156,6 +156,7 @@ export const useRelationPopoverProps = ({
     queryParams: {
       enabled: Boolean(relation?.attributes?.relation_data?.id || relation?.id),
       onSuccess: (res) => {
+        console.log("relationGetById", res);
         reset({
           ...res,
           table_from: res?.table_from?.slug ?? "",

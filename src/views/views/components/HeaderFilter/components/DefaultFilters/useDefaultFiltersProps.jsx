@@ -3,43 +3,49 @@ import { useFieldsContext } from "@/views/views/providers/FieldsProvider";
 import { useTranslation } from "react-i18next";
 import { FilterDropdown } from "../FilterDropdown";
 import { useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useFilterContext } from "@/views/views/providers/FilterProvider";
+import { useViewContext } from "@/providers/ViewProvider";
 import { DefaultFilterRelation } from "../DefaultFilterRelation";
 import { DefaultFilterDate } from "../DefaultFilterDate";
 import useDebounce from "@/hooks/useDebounce";
-import menuSettingsService from "@/services/menuSettingsService";
-import { menuActions } from "@/store/menuItem/menuItem.slice";
+import { useMenuViewUpdateMutation } from "@/services/menuService";
 
 export const useDefaultFiltersProps = ({ handleClosePopover }) => {
   const { i18n } = useTranslation();
 
-  const { activeTable } = useSelector((state) => state.menu);
+  const { view, menuId, menuIdForViewsList, refetchViews } = useViewContext();
 
   const { fieldsMap } = useFieldsContext();
   const { defaultFiltersMap, setDefaultFiltersMap } = useFilterContext();
 
-  const dispatch = useDispatch();
-
   const isChanged = useRef(false);
 
+  const updateViewMutation = useMenuViewUpdateMutation(
+    menuIdForViewsList ?? menuId,
+    {
+      onSuccess: () => {
+        refetchViews?.();
+      },
+    },
+  );
+
   const updateDefaultFilter = () => {
-    if (isChanged.current) {
-      const attributes = {
-        ...activeTable?.attributes,
-        default_filters: defaultFiltersMap,
-      };
+    if (!isChanged.current) return;
 
-      const updatedTable = {
-        ...activeTable,
-        attributes,
-      };
-
-      menuSettingsService.update(updatedTable).finally(() => {
-        handleClosePopover();
-      });
-      dispatch(menuActions.setActiveTable(updatedTable));
-    }
+    updateViewMutation.mutate(
+      {
+        ...view,
+        attributes: {
+          ...view?.attributes,
+          default_filters: defaultFiltersMap,
+        },
+      },
+      {
+        onSettled: () => {
+          handleClosePopover();
+        },
+      },
+    );
   };
 
   const allFields = Object.values(fieldsMap).filter((el) => {

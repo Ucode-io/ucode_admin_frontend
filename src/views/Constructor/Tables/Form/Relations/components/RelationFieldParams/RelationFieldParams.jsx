@@ -1,6 +1,6 @@
-import { Box, Button } from "@mui/material"
-import { ParamsHeader } from "../../../components/ParamsHeader"
-import { useRelationFieldParamsProps } from "./useRelationFieldParamsProps"
+import { Box, Button } from "@mui/material";
+import { ParamsHeader } from "../../../components/ParamsHeader";
+import { useRelationFieldParamsProps } from "./useRelationFieldParamsProps";
 import HFTextField from "@/components/FormElements/HFTextField";
 import HFSelect from "@/components/FormElements/HFSelect";
 import HFMultipleSelect from "@/components/FormElements/HFMultipleSelect";
@@ -19,7 +19,6 @@ export const RelationFieldParams = ({
   handleSubmit,
   submitHandler,
 }) => {
-
   const {
     languages,
     i18n,
@@ -34,14 +33,19 @@ export const RelationFieldParams = ({
     watch,
     register,
   });
-
-  return <Box>
-    <ParamsHeader onClose={onClose} formType={formType} />
-    <Box display="flex" flexDirection="column" rowGap="16px" >
-      <Box display="flex" gap="6px">
-        <Box display="flex" flexDirection="column" gap="6px">
-          {
-            languages?.map((lang) => (
+  console.log(
+    "computedTablesListcomputedTablesList",
+    computedTablesList,
+    watch("table_from"),
+    watch("table_to"),
+  );
+  return (
+    <Box>
+      <ParamsHeader onClose={onClose} formType={formType} />
+      <Box display="flex" flexDirection="column" rowGap="16px">
+        <Box display="flex" gap="6px">
+          <Box display="flex" flexDirection="column" gap="6px">
+            {languages?.map((lang) => (
               <HFTextField
                 key={`${lang?.slug}_from`}
                 name={`attributes.label_${lang?.slug}`}
@@ -50,12 +54,10 @@ export const RelationFieldParams = ({
                 fullWidth
                 id={`relation_label_from_${i18n?.language}`}
               />
-            ))
-          }
-        </Box>
-        <Box display="flex" flexDirection="column" gap="6px">
-          {
-            languages?.map((lang) => (
+            ))}
+          </Box>
+          <Box display="flex" flexDirection="column" gap="6px">
+            {languages?.map((lang) => (
               <HFTextField
                 key={`${lang?.slug}_to`}
                 name={`attributes.label_to_${lang?.slug}`}
@@ -64,78 +66,77 @@ export const RelationFieldParams = ({
                 fullWidth
                 id={`relation_label_to_${i18n?.language}`}
               />
-            ))
-          }
+            ))}
+          </Box>
         </Box>
-      </Box>
-      <HFSelect
-        name="table_from"
-        control={control}
-        placeholder="Table from"
-        options={computedTablesList}
-        autoFocus
-        required
-      />
-      {!isRecursiveRelation && values.type !== "Many2Dynamic" && (
         <HFSelect
-          name="table_to"
+          name="table_from"
           control={control}
-          placeholder="Table to"
+          placeholder="Table from"
           options={computedTablesList}
+          autoFocus
           required
         />
-      )}
-      <HFSelect
-        name="type"
-        control={control}
-        placeholder="Relation type"
-        options={computedRelationsTypesList}
-        required
-      />
-      <HFMultipleSelect
-        name="view_fields"
-        control={control}
-        options={computedFieldsListOptions}
-        placeholder="View fields"
-      />
-      <Box display="flex" flexDirection="column" alignItems="flex-start">
-        <FieldCheckbox
-          watch={watch}
-          register={register}
-          setValue={setValue}
+        {!isRecursiveRelation && values.type !== "Many2Dynamic" && (
+          <HFSelect
+            name="table_to"
+            control={control}
+            placeholder="Table to"
+            options={computedTablesList}
+            required
+          />
+        )}
+        <HFSelect
+          name="type"
           control={control}
-          name="attributes.table_editable"
-          label={"Disable Edit table"}
+          placeholder="Relation type"
+          options={computedRelationsTypesList}
+          required
         />
-        <FieldCheckbox
-          watch={watch}
-          register={register}
-          setValue={setValue}
+        <HFMultipleSelect
+          name="view_fields"
           control={control}
-          name="attributes.enable_multi_language"
-          label={"Enable multi language"}
+          options={computedFieldsListOptions}
+          placeholder="View fields"
         />
+        <Box display="flex" flexDirection="column" alignItems="flex-start">
+          <FieldCheckbox
+            watch={watch}
+            register={register}
+            setValue={setValue}
+            control={control}
+            name="attributes.table_editable"
+            label={"Disable Edit table"}
+          />
+          <FieldCheckbox
+            watch={watch}
+            register={register}
+            setValue={setValue}
+            control={control}
+            name="attributes.enable_multi_language"
+            label={"Enable multi language"}
+          />
+        </Box>
+        <Box>
+          <FieldMenuItem
+            onClick={() => handleSelectSetting(SETTING_TYPES.ADDITIONAL)}
+            title="Additional"
+          />
+          <FieldMenuItem
+            onClick={() => handleSelectSetting(SETTING_TYPES.AUTO_FILTER)}
+            title="Auto Filter"
+          />
+        </Box>
       </Box>
-      <Box>
-        <FieldMenuItem
-          onClick={() => handleSelectSetting(SETTING_TYPES.ADDITIONAL)}
-          title="Additional"
-        />
-        <FieldMenuItem
-          onClick={() => handleSelectSetting(SETTING_TYPES.AUTO_FILTER)}
-          title="Auto Filter"
-        />
-      </Box>
+      <Button
+        fullWidth
+        sx={{ marginTop: "8px", lineHeight: "20px", height: "36px" }}
+        size="medium"
+        variant="contained"
+        onClick={handleSubmit(submitHandler)}
+      >
+        Save
+      </Button>
     </Box>
-    <Button
-      fullWidth
-      sx={{ marginTop: "8px", lineHeight: "20px", height: "36px" }}
-      size="medium"
-      variant="contained"
-      onClick={handleSubmit(submitHandler)}
-    >
-      Save
-    </Button>
-  </Box>
-
-}
+  );
+};

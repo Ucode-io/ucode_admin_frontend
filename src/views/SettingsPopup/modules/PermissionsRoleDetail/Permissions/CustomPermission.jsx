@@ -94,6 +94,20 @@ const CustomPermissionRow = ({ watch, setValue }) => {
           </Box>
         </CTableCell>
       </CTableHeadRow>
+
+      <CTableHeadRow>
+        <CTableCell>
+          <Box sx={style}>Menu Dragging</Box>
+        </CTableCell>
+        <CTableCell>
+          <Box sx={{ justifyContent: "center", display: "flex" }}>
+            <CustomCheckbox
+              checked={watch("data.global_permission.menu_drag")}
+              onChange={(e) => handleChange(e, "menu_drag")}
+            />
+          </Box>
+        </CTableCell>
+      </CTableHeadRow>
       {/* <CTableHeadRow>
         <CTableCell>
           <Box sx={style}>Projects button</Box>

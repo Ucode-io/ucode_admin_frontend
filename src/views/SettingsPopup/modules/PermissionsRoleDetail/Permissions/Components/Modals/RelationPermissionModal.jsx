@@ -1,6 +1,6 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import {Box, Card, Modal, Typography} from "@mui/material";
-import {useFieldArray} from "react-hook-form";
+import { Box, Card, Modal, Typography } from "@mui/material";
+import { useFieldArray } from "react-hook-form";
 import TableCard from "../../../../../../../components/TableCard";
 import {
   CTable,
@@ -10,8 +10,8 @@ import {
   CTableHeadRow,
 } from "../../../../../../../components/CTable";
 import FormCheckbox from "../Checkbox/FormCheckbox";
-import {useTranslation} from "react-i18next";
-import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
+import { useTranslation } from "react-i18next";
+import { generateLangaugeText } from "../../../../../../../utils/generateLanguageText";
 
 const RelationPermissionModal = ({
   closeModal,
@@ -20,8 +20,8 @@ const RelationPermissionModal = ({
   permissionLan,
 }) => {
   const basePath = `data.tables.${tableIndex}.view_permissions`;
-  const {i18n} = useTranslation();
-  const {fields} = useFieldArray({
+  const { i18n } = useTranslation();
+  const { fields } = useFieldArray({
     control,
     name: basePath,
   });
@@ -31,11 +31,11 @@ const RelationPermissionModal = ({
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">
+            <Typography variant="h4" color="white">
               {generateLangaugeText(
                 permissionLan,
                 i18n?.language,
-                "Relation permissions"
+                "Relation permissions",
               ) || "Relation permissions"}
             </Typography>
             <ClearIcon
@@ -52,7 +52,8 @@ const RelationPermissionModal = ({
               <CTable
                 tableStyle={{
                   height: "auto",
-                }}>
+                }}
+              >
                 <CTableHead>
                   <CTableHeadRow>
                     <CTableCell w={2}>No</CTableCell>
@@ -60,14 +61,14 @@ const RelationPermissionModal = ({
                       {generateLangaugeText(
                         permissionLan,
                         i18n?.language,
-                        "Relation name"
+                        "Relation name",
                       ) || "Relation name"}
                     </CTableCell>
                     <CTableCell w={400}>
                       {generateLangaugeText(
                         permissionLan,
                         i18n?.language,
-                        "View permission"
+                        "View permission",
                       ) || "View permission"}
                     </CTableCell>
                   </CTableHeadRow>

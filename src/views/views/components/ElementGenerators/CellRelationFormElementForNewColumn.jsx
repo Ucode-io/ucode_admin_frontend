@@ -438,7 +438,8 @@ const AutoCompleteElement = ({
 
   useEffect(() => {
     const matchingOption = allOptions?.find(
-      (item) => item?.table_slug === field?.table_slug,
+      (item) =>
+        item?.table_slug === field?.table_slug && Array.isArray(item?.response),
     );
 
     if (matchingOption) {

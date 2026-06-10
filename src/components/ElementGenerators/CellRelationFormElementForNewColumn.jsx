@@ -1,16 +1,16 @@
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
 import LaunchIcon from "@mui/icons-material/Launch";
-import {Box, Popover, Typography} from "@mui/material";
-import {makeStyles} from "@mui/styles";
-import {get} from "@ngard/tiny-get";
-import React, {useEffect, useMemo, useState} from "react";
-import {Controller, useWatch} from "react-hook-form";
-import {useTranslation} from "react-i18next";
+import { Box, Popover, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { get } from "@ngard/tiny-get";
+import React, { useEffect, useMemo, useState } from "react";
+import { Controller, useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "react-query";
-import {useSelector} from "react-redux";
-import {useSearchParams} from "react-router-dom";
-import Select, {components} from "react-select";
+import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import Select, { components } from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
@@ -18,7 +18,6 @@ import {
   getRelationFieldTabsLabel,
   getRelationFieldTabsLabelLang,
 } from "../../utils/getRelationFieldLabel";
-import {pageToOffset} from "../../utils/pageToOffset";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
 import styles from "./style.module.scss";
@@ -214,11 +213,10 @@ const AutoCompleteElement = ({
       additional_request: {
         additional_field: "guid",
       },
-
       view_fields: field?.view_fields?.map((f) => f.slug),
       search: debouncedValue.trim(),
       limit: 10,
-      offset: pageToOffset(pageProp || page, 10),
+      offset: (pageProp || page) - 1,
     };
 
     if (value || itemId) {
@@ -227,13 +225,9 @@ const AutoCompleteElement = ({
         additionalValues?.flat();
     }
 
-    return constructorObjectService.getItems(
-      field?.table_slug,
-      // { data: requestData },
-      // {
-      //   language_setting: i18n?.language,
-      // },
-    );
+    return constructorObjectService.getItemData(field?.table_slug, {
+      ...requestData,
+    });
   };
 
   const query = new URLSearchParams(window.location.search);
@@ -264,7 +258,7 @@ const AutoCompleteElement = ({
             ...autoFiltersValue,
             search: debouncedValue,
             limit: 10,
-            offset: pageToOffset(page, 10),
+            offset: page - 1,
             view_fields:
               field?.view_fields?.map((field) => field.slug) ??
               field?.attributes?.view_fields?.map((field) => field.slug),
@@ -285,7 +279,14 @@ const AutoCompleteElement = ({
       },
       onSuccess: (data) => {
         if (Object.values(autoFiltersValue)?.length > 0) {
-          setAllOptions(data?.options);
+          if (page === 1) {
+            setAllOptions(data?.options);
+          } else if (data?.options?.length) {
+            setAllOptions((prevOptions) => [
+              ...(prevOptions ?? []),
+              ...(data.options ?? []),
+            ]);
+          }
         } else if (data?.options?.length) {
           setAllOptions((prevOptions) => [
             ...(prevOptions ?? []),
@@ -318,7 +319,14 @@ const AutoCompleteElement = ({
       onSuccess: (data) => {
         setCount(data?.count);
         if (Object.values(autoFiltersValue)?.length > 0 && !openedItemValue) {
-          setAllOptions(data?.options);
+          if (page === 1) {
+            setAllOptions(data?.options);
+          } else if (data?.options?.length) {
+            setAllOptions((prevOptions) => [
+              ...(prevOptions ?? []),
+              ...(data.options ?? []),
+            ]);
+          }
         } else if (openedItemValue) {
           setAllOptions([
             data?.options?.find((el) => el?.guid === openedItemValue?.guid),
@@ -435,6 +443,10 @@ const AutoCompleteElement = ({
     );
     setPage((prevPage) => prevPage + 1);
   }
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedValue, autoFiltersValue]);
 
   useEffect(() => {
     const matchingOption = allOptions?.find(

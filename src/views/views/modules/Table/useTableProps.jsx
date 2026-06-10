@@ -3,7 +3,7 @@ import constructorObjectService from "@/services/constructorObjectService";
 import { quickFiltersActions } from "@/store/filter/quick_filter";
 import { pageToOffset } from "@/utils/pageToOffset";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 import menuService from "@/services/menuService";
 import { useViewContext } from "@/providers/ViewProvider";
@@ -12,6 +12,9 @@ import { useFilterContext } from "../../providers/FilterProvider";
 import { useGetLang } from "@/hooks/useGetLang";
 import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
+
+const TABLE_DATA_CACHE_TIME = 30 * 60 * 1000;
+const EMPTY_TABLE_DATA = [];
 
 function rowToObject(rowArray) {
   const obj = {};
@@ -69,21 +72,33 @@ export const useTableProps = ({ tab }) => {
     tableSlug,
     menuId,
     viewForm,
-    currentPage,
-    setCurrentPage,
+    currentPage: contextCurrentPage,
+    setCurrentPage: contextSetCurrentPage,
     searchText,
     checkedColumns,
     navigateToEditPage,
     isRelationView,
-    limit,
-    setLimit,
+    limit: contextLimit,
+    setLimit: contextSetLimit,
     setTotalCount,
     totalCount,
   } = useViewContext();
 
+  const [relationCurrentPage, setRelationCurrentPage] = useState(1);
+  const [relationLimit, setRelationLimit] = useState(
+    parseInt(view?.default_limit) || 10,
+  );
+
+  const currentPage = isRelationView ? relationCurrentPage : contextCurrentPage;
+  const setCurrentPage = isRelationView
+    ? setRelationCurrentPage
+    : contextSetCurrentPage;
+  const limit = isRelationView ? relationLimit : contextLimit;
+  const setLimit = isRelationView ? setRelationLimit : contextSetLimit;
+
   const { fieldsMap, fieldsForm, fields } = useFieldsContext();
 
-  const [viewsLoader, setViewsLoader] = useState(true);
+  const queryClient = useQueryClient();
 
   const {
     reset,
@@ -98,6 +113,9 @@ export const useTableProps = ({ tab }) => {
 
   const tableLan = useGetLang("Table");
 
+  const projectId = useSelector(
+    (state) => state.company.projectId || state.auth.projectId,
+  );
   const viewsList = useSelector((state) => state.groupField.viewsList);
   const selectedV = viewsList?.[viewsList?.length - 1];
 
@@ -254,7 +272,12 @@ export const useTableProps = ({ tab }) => {
     }
   };
 
+  const didMountFiltersRef = useRef(false);
   useEffect(() => {
+    if (!didMountFiltersRef.current) {
+      didMountFiltersRef.current = true;
+      return;
+    }
     if (
       Object.values(filters).length > 0 &&
       Object.values(filters)?.find((el) => el !== undefined)
@@ -268,21 +291,14 @@ export const useTableProps = ({ tab }) => {
       ? parseInt(searchText)
       : searchText;
 
-  const {
-    data: { tableData, dataCount } = {
-      tableData: [],
-      pageCount: 1,
-      fieldView: [],
-      fiedlsarray: [],
-      dataCount: 0,
-    },
-    refetch,
-  } = useQuery({
-    queryKey: [
+  const tableQueryKey = useMemo(
+    () => [
       QUERY_KEYS.TABLE_DATA_KEY,
       isRelationView,
       {
-        // tableSlug,
+        tableSlug,
+        projectId,
+        viewId,
         searchText,
         sortedDatas,
         currentPage,
@@ -290,13 +306,52 @@ export const useTableProps = ({ tab }) => {
         tabValue: tab?.value,
         limit,
         orderBy,
-        // viewId,
         computedSortColumns,
         checkedColumns,
         menuId,
         defaultFiltersMap,
+        tabSlug: tab?.slug,
+        relationTableSlug: view?.relation_table_slug,
+        selectedRelationTableSlug: selectedV?.relation_table_slug,
+        selectedTableSlug: selectedV?.table_slug,
+        selectedDetailId: selectedV?.detailId,
       },
     ],
+    [
+      isRelationView,
+      tableSlug,
+      projectId,
+      viewId,
+      searchText,
+      sortedDatas,
+      currentPage,
+      filters,
+      tab?.value,
+      tab?.slug,
+      limit,
+      orderBy,
+      computedSortColumns,
+      checkedColumns,
+      menuId,
+      defaultFiltersMap,
+      view?.relation_table_slug,
+      selectedV?.relation_table_slug,
+      selectedV?.table_slug,
+      selectedV?.detailId,
+    ],
+  );
+
+  const [viewsLoader, setViewsLoader] = useState(
+    () => !queryClient.getQueryData(tableQueryKey),
+  );
+
+  const {
+    data: tableQueryData,
+    refetch,
+    isLoading: isTableQueryLoading,
+    isFetching: isTableQueryFetching,
+  } = useQuery({
+    queryKey: tableQueryKey,
     queryFn: () => {
       return menuService.getFieldsTableData(
         menuId,
@@ -311,7 +366,7 @@ export const useTableProps = ({ tab }) => {
             search: tableSearch,
             [`${selectedV?.relation_table_slug || selectedV?.table_slug}_id`]:
               isRelationView ? selectedV?.detailId : undefined,
-            limit: limit,
+            limit,
             ...filters,
             ...defaultFiltersMap,
             [tab?.slug]: tab
@@ -324,7 +379,9 @@ export const useTableProps = ({ tab }) => {
         },
       );
     },
-    enabled: false,
+    enabled: Boolean(
+      tableSlug && projectId && menuId && viewId && columns?.length > 0,
+    ),
     select: (res) => {
       return {
         tableData: res.data?.response ?? [],
@@ -348,10 +405,14 @@ export const useTableProps = ({ tab }) => {
       setRows([]);
       setViewsLoader(false);
     },
-    staleTime: 0,
-    cacheTime: 0,
+    staleTime: Infinity,
+    cacheTime: TABLE_DATA_CACHE_TIME,
+    refetchOnMount: false,
     keepPreviousData: false,
   });
+
+  const tableData = tableQueryData?.tableData ?? EMPTY_TABLE_DATA;
+  const dataCount = tableQueryData?.dataCount ?? 0;
 
   const deleteHandler = async (rowId) => {
     // setDeleteLoader(true);
@@ -378,7 +439,7 @@ export const useTableProps = ({ tab }) => {
   useEffect(() => {
     if (isNaN(parseInt(view?.default_limit))) return;
     else setLimit(parseInt(view?.default_limit));
-  }, [view?.default_limit, viewId]);
+  }, [view?.default_limit, viewId, isRelationView]);
 
   useEffect(() => {
     if (tableData?.length > 0) {
@@ -389,33 +450,17 @@ export const useTableProps = ({ tab }) => {
   }, [reset, tableData]);
 
   useEffect(() => {
-    if (tableSlug && menuId && viewId && columns?.length > 0) {
-      refetch();
-    }
     dispatch(
       quickFiltersActions.setQuickFiltersCount(
         view?.attributes?.quick_filters?.length ?? 0,
       ),
     );
-  }, [view?.attributes?.quick_filters?.length, filters, columns, menuId]);
+  }, [dispatch, view?.attributes?.quick_filters?.length]);
 
   useEffect(() => {
-    if (Object.keys(defaultFiltersMap)?.length) refetch();
-  }, [defaultFiltersMap]);
-
-  const prevViewId = useRef(viewId);
-
-  useEffect(() => {
-    if (rows == null && columns?.length) refetch();
-    else if (prevViewId.current !== viewId) {
-      prevViewId.current = viewId;
-      refetch();
-    }
-  }, [viewId, columns]);
-
-  useEffect(() => {
-    if (!tableData || tableData.length === 0 || viewsLoader || !columns?.length)
+    if (!tableQueryData || !columns?.length || isTableQueryLoading) {
       return;
+    }
 
     const newCombined = combine(tableData, columns);
 
@@ -431,9 +476,16 @@ export const useTableProps = ({ tab }) => {
     });
 
     setRows(newCombined);
-  }, [columns, tableData]);
+    setViewsLoader(false);
+    setTotalCount(dataCount ?? 0);
+  }, [columns, dataCount, isTableQueryLoading, tableData, tableQueryData]);
 
+  const didMountMenuIdRef = useRef(false);
   useEffect(() => {
+    if (!didMountMenuIdRef.current) {
+      didMountMenuIdRef.current = true;
+      return;
+    }
     if (!viewsLoader) setViewsLoader(true);
   }, [menuId]);
 
@@ -443,10 +495,6 @@ export const useTableProps = ({ tab }) => {
       setViewsLoader(false);
     }
   }, [view]);
-
-  useEffect(() => {
-    refetch();
-  }, [currentPage, limit, tableSearch]);
 
   return {
     tableLan,
@@ -469,7 +517,7 @@ export const useTableProps = ({ tab }) => {
     setLimit,
     view,
     refetch,
-    tableLoading: viewsLoader,
+    tableLoading: viewsLoader || isTableQueryLoading || isTableQueryFetching,
     setSortedDatas,
     sortedDatas,
     setFormValue,

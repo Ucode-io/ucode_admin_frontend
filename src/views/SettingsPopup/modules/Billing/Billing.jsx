@@ -3,7 +3,6 @@ import { useBillingProps } from "./useBillingProps";
 import { numberWithSpaces } from "@/utils/formatNumbers";
 import { BillingTable } from "../../components/BillingTable";
 import { TopUpBalance } from "../../components/TopUpBalance";
-import { useSearchParams } from "react-router-dom";
 import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";

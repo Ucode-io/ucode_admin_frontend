@@ -89,6 +89,7 @@ export const useRelationFieldParamsProps = ({ watch, setValue }) => {
       label: table.label,
     }));
   }, [app]);
+  console.log("appappappappapp", app);
 
   const isRecursiveRelation = useMemo(() => {
     return values.type === "Recursive";

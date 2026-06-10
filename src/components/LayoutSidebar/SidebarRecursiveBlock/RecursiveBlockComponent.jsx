@@ -1,11 +1,11 @@
 import AddIcon from "@mui/icons-material/Add";
 import PersonIcon from "@mui/icons-material/Person";
-import {Box, Button, Collapse, Tooltip} from "@mui/material";
-import {useEffect, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {BsThreeDots} from "react-icons/bs";
-import {useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
+import { Box, Button, Collapse, Tooltip } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { BsThreeDots } from "react-icons/bs";
+import { useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
 import {
   useLocation,
   useNavigate,
@@ -29,7 +29,6 @@ import { groupFieldActions } from "../../../store/groupField/groupField.slice";
 import { detailDrawerActions } from "../../../store/detailDrawer/detailDrawer.slice";
 import { NavigateByTypeOldRoute } from "../Components/OldMenuSwitchCase";
 import IconGeneratorIconjs from "../../IconPicker/IconGeneratorIconjs";
-import Permissions from "../Components/Permission";
 
 export const adminId = `${import.meta.env.VITE_ADMIN_FOLDER_ID}`;
 export const analyticsId = `${import.meta.env.VITE_ANALYTICS_FOLDER_ID}`;
@@ -54,6 +53,8 @@ const RecursiveBlock = ({
   buttonProps,
   projectSettingLan,
   menuStyles,
+  selectedFolder,
+  isSubmenu = false,
   setSelectedFolder = () => {},
   setSelectedApp = () => {},
 }) => {
@@ -106,13 +107,19 @@ const RecursiveBlock = ({
     },
   });
 
-  const activeMenu =
-    element?.type === "FOLDER"
+  const activeMenu = Boolean(isSubmenu)
+    ? element?.type === "FOLDER"
+      ? Boolean(selectedFolder?.id === element?.id)
+      : element?.id === menuItem?.id
+    : element?.type === "FOLDER"
       ? Boolean(selectedApp?.id === element?.id)
       : element?.id === menuItem?.id;
 
   const clickHandler = (e) => {
-    setSelectedApp(null);
+    if (!isSubmenu) {
+      setSelectedApp(null);
+    }
+
     if (
       (menuId === element?.id || oldRouteMenuId === element?.id) &&
       pathname.split("/").length <= 2
@@ -125,7 +132,9 @@ const RecursiveBlock = ({
 
     if (Boolean(newRouter === "true")) {
       if (element?.type === "FOLDER") {
-        setSubMenuIsOpen(true);
+        // Only toggle the submenu open/close for top-level folder clicks,
+        // not for nested folder clicks inside a submenu accordion.
+        if (!isSubmenu) setSubMenuIsOpen(true);
       } else {
         dispatch(detailDrawerActions.setMainTabIndex(0));
         dispatch(groupFieldActions.clearViews());
@@ -143,18 +152,25 @@ const RecursiveBlock = ({
       queryClient.refetchQueries("GET_CLIENT_TYPE_LIST");
     }
 
-    if (element?.type === "TABLE") {
-      setSubMenuIsOpen(false);
+    // Only close the submenu drawer for top-level (non-accordion) items.
+    // Inside a submenu accordion the open state is managed by menuChilds,
+    // so calling setSubMenuIsOpen(false) here would only cause unnecessary
+    // global state changes and re-renders.
+    if (!isSubmenu) {
+      if (element?.type === "TABLE") {
+        setSubMenuIsOpen(false);
+      }
+      if (
+        !pinIsEnabled &&
+        element.type !== "FOLDER" &&
+        element.type !== "USER_FOLDER" &&
+        element.type !== "MINIO_FOLDER" &&
+        element.type !== "WIKI_FOLDER"
+      ) {
+        setSubMenuIsOpen(false);
+      }
     }
-    if (
-      !pinIsEnabled &&
-      element.type !== "FOLDER" &&
-      element.type !== "USER_FOLDER" &&
-      element.type !== "MINIO_FOLDER" &&
-      element.type !== "WIKI_FOLDER"
-    ) {
-      setSubMenuIsOpen(false);
-    }
+
     setId(element?.id);
     setElement(element);
   };
@@ -175,6 +191,13 @@ const RecursiveBlock = ({
   const folderSettings = (e) => {
     e.stopPropagation();
     setElement(element);
+    // Only update selectedFolder for actual folder types — setting it to a
+    // TABLE/LINK/etc. changes the global selectedFolder, which causes
+    // useMenuListQuery in every AppSidebar instance to re-fire and triggers
+    // stale-closure Redux dispatches that make the accordion jump.
+    if (element?.type === "FOLDER" || element?.type === "WIKI_FOLDER") {
+      setSelectedFolder(element);
+    }
     dispatch(menuActions.setMenuItem(element));
     if (selectedApp?.id !== adminId) {
       if (
@@ -243,6 +266,7 @@ const RecursiveBlock = ({
         element={element}
         menuAddClick={menuAddClick}
         childBlockVisible={childBlockVisible}
+        setSelectedApp={setSelectedApp}
       />
       <Collapse in={childBlockVisible} unmountOnExit>
         {child?.map((childElement) => (
@@ -265,7 +289,6 @@ const RecursiveBlock = ({
             selectedApp={selectedApp}
             buttonProps={buttonProps}
             setSelectedFolder={setSelectedFolder}
-            setSelectedApp={setSelectedApp}
           />
         ))}
 
@@ -364,7 +387,10 @@ const BlockItem = ({
           }}
           className={`nav-element ${element?.type === "FOLDER" ? "childMenuFolderBtn" : "childRegularBtn"}`}
           onClick={(e) => {
-            setSelectedFolder(element);
+            console.log("click", element);
+            if (element?.type === "FOLDER") {
+              setSelectedFolder(element);
+            }
             customFunc(e);
             clickHandler(e);
           }}

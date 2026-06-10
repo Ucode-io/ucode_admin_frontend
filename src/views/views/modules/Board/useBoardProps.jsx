@@ -1,18 +1,17 @@
-import {useEffect, useMemo, useRef, useState} from "react";
-import {useSelector} from "react-redux";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import constructorViewService from "@/services/constructorViewService";
-import {applyDrag} from "@/utils/applyDrag";
+import { applyDrag } from "@/utils/applyDrag";
 import {
   useGetBoardMutation,
   useGetBoardStructureMutation,
 } from "@/services/boardViewService";
-import {throttle} from "lodash-es";
-import {flushSync} from "react-dom";
+import { throttle } from "lodash-es";
+import { flushSync } from "react-dom";
 import { useViewContext } from "@/providers/ViewProvider";
 import { useFieldsContext } from "../../providers/FieldsProvider";
 
 export const useBoardProps = () => {
-
   const {
     view,
     tableSlug,
@@ -518,8 +517,8 @@ export const useBoardProps = () => {
   };
 };
 
-const getMergedDataSubgroup = ({newData, prev}) => {
-  const merged = {...prev};
+const getMergedDataSubgroup = ({ newData, prev }) => {
+  const merged = { ...prev };
 
   for (const authorId in newData) {
     const newStatuses = newData[authorId];
@@ -540,8 +539,8 @@ const getMergedDataSubgroup = ({newData, prev}) => {
   return merged;
 };
 
-const getMergedDataGroup = ({newData, prev}) => {
-  const merged = {...prev};
+const getMergedDataGroup = ({ newData, prev }) => {
+  const merged = { ...prev };
 
   for (const statusKey in newData) {
     const existing = prev[statusKey] || [];

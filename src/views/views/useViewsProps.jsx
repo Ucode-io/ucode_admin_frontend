@@ -49,8 +49,6 @@ import { Pivot } from "./modules/Grid/Pivot";
 export const useViewsProps = ({ isRelationView }) => {
   const { views: viewsFromStore } = useSelector((state) => state.views);
 
-  const { activeTable } = useSelector((state) => state.menu);
-
   const { selectedView: selectedViewMain } = useSelector(
     (state) => state.views,
   );
@@ -563,7 +561,7 @@ export const useViewsProps = ({ isRelationView }) => {
   };
 
   const [defaultFiltersMap, setDefaultFiltersMap] = useState(
-    activeTable?.attributes?.default_filters || {},
+    view?.attributes?.default_filters || {},
   );
 
   const { isLoading: isLoadingTable } = useTableByIdQuery({
@@ -572,7 +570,6 @@ export const useViewsProps = ({ isRelationView }) => {
       enabled: !!menuItem?.table_id,
       onSuccess: (res) => {
         setAuthInfo(res?.attributes?.auth_info);
-        // setDefaultFiltersMap(res?.attributes?.default_filters || {});
         viewForm.reset(res);
       },
     },
@@ -690,12 +687,8 @@ export const useViewsProps = ({ isRelationView }) => {
   };
 
   useEffect(() => {
-    if (activeTable?.attributes?.default_filters) {
-      setDefaultFiltersMap(activeTable?.attributes?.default_filters);
-    } else {
-      setDefaultFiltersMap({});
-    }
-  }, [activeTable?.attributes?.default_filters]);
+    setDefaultFiltersMap(view?.attributes?.default_filters || {});
+  }, [view?.id, view?.attributes?.default_filters]);
 
   return {
     viewsMap,
@@ -705,6 +698,7 @@ export const useViewsProps = ({ isRelationView }) => {
     fieldsMap,
     fieldsMapRel,
     menuId,
+    menuIdForViewsList,
     refetchViews: refetchViewsList,
     setSelectedView,
     views: isRelationView ? relationViews : viewsFromStore,

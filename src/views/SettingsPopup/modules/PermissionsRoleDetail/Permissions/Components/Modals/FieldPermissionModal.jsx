@@ -1,6 +1,6 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import {Box, Card, Checkbox, Modal, Typography} from "@mui/material";
-import {useFieldArray} from "react-hook-form";
+import { Box, Card, Checkbox, Modal, Typography } from "@mui/material";
+import { useFieldArray } from "react-hook-form";
 import TableCard from "../../../../../../../components/TableCard";
 import {
   CTable,
@@ -10,8 +10,8 @@ import {
   CTableHeadRow,
 } from "../../../../../../../components/CTable";
 import FormCheckbox from "../Checkbox/FormCheckbox";
-import {useTranslation} from "react-i18next";
-import {generateLangaugeText} from "../../../../../../../utils/generateLanguageText";
+import { useTranslation } from "react-i18next";
+import { generateLangaugeText } from "../../../../../../../utils/generateLanguageText";
 import { CustomCheckbox } from "../../../../../components/CustomCheckbox";
 
 const FieldPermissions = ({
@@ -23,8 +23,8 @@ const FieldPermissions = ({
   projectSettingLan,
 }) => {
   const basePath = `data.tables.${tableIndex}.field_permissions`;
-  const {i18n} = useTranslation();
-  const {fields} = useFieldArray({
+  const { i18n } = useTranslation();
+  const { fields } = useFieldArray({
     control,
     name: basePath,
   });
@@ -45,10 +45,10 @@ const FieldPermissions = ({
   };
 
   const allViewTrue = fields?.every(
-    (permission) => permission.view_permission === true
+    (permission) => permission.view_permission === true,
   );
   const allEditTrue = fields?.every(
-    (permission) => permission.edit_permission === true
+    (permission) => permission.edit_permission === true,
   );
 
   return (
@@ -56,11 +56,11 @@ const FieldPermissions = ({
       <Modal open className="child-position-center" onClose={closeModal}>
         <Card className="PlatformModal">
           <div className="modal-header silver-bottom-border">
-            <Typography variant="h4">
+            <Typography variant="h4" color="white">
               {generateLangaugeText(
                 projectSettingLan,
                 i18n?.language,
-                "Field permissions"
+                "Field permissions",
               ) ?? "Field permissions"}
             </Typography>
             <ClearIcon
@@ -86,14 +86,14 @@ const FieldPermissions = ({
                       {generateLangaugeText(
                         projectSettingLan,
                         i18n?.language,
-                        "Field name"
+                        "Field name",
                       ) ?? "Field name"}
                     </CTableCell>
                     <CTableCell>
                       {generateLangaugeText(
                         projectSettingLan,
                         i18n?.language,
-                        "View permission"
+                        "View permission",
                       ) ?? "View permission"}
                       <CustomCheckbox
                         checked={allViewTrue ? true : false}
@@ -106,7 +106,7 @@ const FieldPermissions = ({
                       {generateLangaugeText(
                         projectSettingLan,
                         i18n?.language,
-                        "Edit permission"
+                        "Edit permission",
                       ) ?? "Edit permission"}
                       <CustomCheckbox
                         checked={allEditTrue ? true : false}

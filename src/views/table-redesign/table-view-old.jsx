@@ -6,24 +6,24 @@ import constructorObjectService from "@/services/constructorObjectService";
 import constructorRelationService from "@/services/constructorRelationService";
 import constructorTableService from "@/services/constructorTableService";
 import layoutService from "@/services/layoutService";
-import {quickFiltersActions} from "@/store/filter/quick_filter";
-import {generateGUID} from "@/utils/generateID";
-import {mergeStringAndState} from "@/utils/jsonPath";
-import {listToMap} from "@/utils/listToMap";
-import {pageToOffset} from "@/utils/pageToOffset";
+import { quickFiltersActions } from "@/store/filter/quick_filter";
+import { generateGUID } from "@/utils/generateID";
+import { mergeStringAndState } from "@/utils/jsonPath";
+import { listToMap } from "@/utils/listToMap";
+import { pageToOffset } from "@/utils/pageToOffset";
 import FieldSettings from "@/views/Constructor/Tables/Form/Fields/FieldSettings";
 import RelationSettings from "@/views/Constructor/Tables/Form/Relations/RelationSettings";
 import ModalDetailPage from "@/views/Objects/ModalDetailPage/ModalDetailPage";
 import styles from "@/views/Objects/style.module.scss";
-import {DynamicTable} from "@/views/table-redesign";
-import {Drawer} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useFieldArray, useForm} from "react-hook-form";
-import {useTranslation} from "react-i18next";
-import {useQuery, useQueryClient} from "react-query";
-import {useDispatch, useSelector} from "react-redux";
-import {useNavigate, useParams, useSearchParams} from "react-router-dom";
-import {detailDrawerActions} from "../../store/detailDrawer/detailDrawer.slice";
+import { DynamicTable } from "@/views/table-redesign";
+import { Drawer } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { detailDrawerActions } from "../../store/detailDrawer/detailDrawer.slice";
 import DrawerDetailPage from "../Objects/DrawerDetailPage";
 import OldDrawerDetailPage from "../Objects/DrawerDetailPage/OldDrawerDetailPage";
 import OldModalDetailPage from "../Objects/ModalDetailPage/OldModalDetailPage";
@@ -85,7 +85,7 @@ const TableViewOld = ({
 
   const dispatch = useDispatch();
   const paginationInfo = useSelector(
-    (state) => state?.pagination?.paginationInfo
+    (state) => state?.pagination?.paginationInfo,
   );
   const open = useSelector((state) => state?.drawer?.openDrawer);
   const [limit, setLimit] = useState(20);
@@ -150,7 +150,7 @@ const TableViewOld = ({
           relation_table_slug: tableSlug,
         },
         {},
-        tableSlug
+        tableSlug,
       );
       const [{ relations = [] }, { fields = [] }] = await Promise.all([
         getRelations,
@@ -233,7 +233,7 @@ const TableViewOld = ({
 
     return customSortArray(
       uniqueColumns,
-      result.map((el) => el.id)
+      result.map((el) => el.id),
     )
       ?.map((el) => fieldsMap[el])
       ?.filter((el) => el);
@@ -262,7 +262,7 @@ const TableViewOld = ({
 
     if (sortValues && sortValues.length > 0) {
       const matchingSort = sortValues.find(
-        (entry) => entry.tableSlug === tableSlug
+        (entry) => entry.tableSlug === tableSlug,
       );
 
       if (matchingSort) {
@@ -485,8 +485,8 @@ const TableViewOld = ({
           (param) =>
             `${mergeStringAndState(param.key, row)}=${mergeStringAndState(
               param.value,
-              row
-            )}`
+              row,
+            )}`,
         )
         .join("&");
 
@@ -542,8 +542,8 @@ const TableViewOld = ({
     refetch();
     dispatch(
       quickFiltersActions.setQuickFiltersCount(
-        view?.attributes?.quick_filters?.length ?? 0
-      )
+        view?.attributes?.quick_filters?.length ?? 0,
+      ),
     );
   }, [view?.attributes?.quick_filters?.length, refetch]);
 

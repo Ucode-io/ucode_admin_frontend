@@ -4,10 +4,10 @@ import {
   SidebarAppTooltip,
 } from "@/components/LayoutSidebar/sidebar-app-tooltip";
 import authService from "@/services/auth/authService";
-import {useCompanyListQuery} from "@/services/companyService";
-import {useEnvironmentListQuery} from "@/services/environmentService";
-import {authActions} from "@/store/auth/auth.slice";
-import {companyActions} from "@/store/company/company.slice";
+import { useCompanyListQuery } from "@/services/companyService";
+import { useEnvironmentListQuery } from "@/services/environmentService";
+import { authActions } from "@/store/auth/auth.slice";
+import { companyActions } from "@/store/company/company.slice";
 import { AccordionButton, AccordionIcon } from "@chakra-ui/icons";
 import {
   Accordion,
@@ -25,19 +25,13 @@ import {
   useDisclosure,
   useOutsideClick,
 } from "@chakra-ui/react";
-import {
-  Logout,
-  AssistantOutlined,
-} from "@mui/icons-material";
+import { Logout, AssistantOutlined } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import LogoutIcon from "@mui/icons-material/Logout";
-import {
-  Dialog,
-  Modal,
-} from "@mui/material";
+import { Dialog, Modal } from "@mui/material";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -158,6 +152,7 @@ const LayoutSidebar = ({
 
   const menuStyle = {};
   const permissions = useSelector((state) => state.auth.globalPermissions);
+  const menuDragEnabled = permissions?.menu_drag === true;
   const userRoleName = useSelector((state) => state.auth.roleInfo?.name);
 
   const handleOpenNotify = (event, type, root) => {
@@ -178,6 +173,10 @@ const LayoutSidebar = ({
 
   const setTableModal = () => {
     setTableModalOpen(true);
+    // Close the context menu before opening the modal.
+    // Without this, MUI's dual focus/scroll management between the open
+    // Menu and the new Modal causes the sidebar to jump to the top.
+    setMenu(null);
   };
   const closeTableModal = () => {
     setTableModalOpen(null);
@@ -320,6 +319,8 @@ const LayoutSidebar = ({
   );
 
   const onDrop = (dropResult) => {
+    if (!menuDragEnabled) return;
+
     const { removedIndex, addedIndex, payload } = dropResult;
 
     if (addedIndex == null && typeof removedIndex === "number" && payload) {
@@ -527,6 +528,7 @@ const LayoutSidebar = ({
                   <SidebarList
                     menuList={menuList}
                     setMenuList={setMenuList}
+                    menuDragEnabled={menuDragEnabled}
                     selectedApp={selectedApp}
                     setSelectedFolder={setSelectedFolder}
                     setSelectedApp={setSelectedApp}
@@ -549,6 +551,9 @@ const LayoutSidebar = ({
               ) : (
                 <Container
                   dragHandleSelector=".column-drag-handle"
+                  nonDragAreaSelector={
+                    menuDragEnabled ? undefined : ".column-drag-handle"
+                  }
                   groupName="main-menu"
                   onDrop={onDrop}
                   getChildPayload={(index) => menuList[index]}
@@ -967,7 +972,13 @@ const LayoutSidebar = ({
         {tableModal && (
           <TableLinkModal
             closeModal={closeTableModal}
-            selectedFolder={selectedFolder}
+            // When editing a TABLE item, `element` holds the clicked TABLE
+            // (set via setElement in folderSettings/MenuIcon onClick).
+            // `selectedFolder` holds the parent folder — only use it for
+            // create operations where element is not a TABLE.
+            selectedFolder={
+              element?.type === "TABLE" ? element : selectedFolder
+            }
             getMenuList={getMenuList}
           />
         )}
@@ -1074,7 +1085,6 @@ const MenuItemWrapper = ({ children, onMouseLeave }) => {
     </Flex>
   );
 };
-
 
 const Header = ({
   sidebarIsOpen,

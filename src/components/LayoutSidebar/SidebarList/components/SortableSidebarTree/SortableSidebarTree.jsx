@@ -47,6 +47,7 @@ export const SortableSidebarTree = ({
   menuChilds,
   getMenuLabel,
   setMenuList,
+  menuDragEnabled,
   handlers,
   setSelectedFolder,
   selectedApp,
@@ -134,6 +135,7 @@ export const SortableSidebarTree = ({
     const { active, over } = evt;
     setActiveId(null);
 
+    if (!menuDragEnabled) return;
     if (!over || active.id === over.id) return;
 
     // 1. Ищем объекты
@@ -277,20 +279,23 @@ export const SortableSidebarTree = ({
 
   return (
     <DndContext
-      sensors={sensors}
+      sensors={menuDragEnabled ? sensors : []}
       collisionDetection={closestCenter}
       measuring={{
         droppable: {
           strategy: MeasuringStrategy.Always,
         },
       }}
-      onDragStart={({ active }) => setActiveId(active.id)}
+      onDragStart={({ active }) => {
+        if (menuDragEnabled) setActiveId(active.id);
+      }}
       onDragEnd={onDragEnd}
     >
       <SortableContext
         id={ROOT_DROP_ID}
         items={menuList.map((n) => n.id)}
         strategy={verticalListSortingStrategy}
+        disabled={!menuDragEnabled}
       >
         {menuList.map((n) => (
           <TreeNode
@@ -300,6 +305,7 @@ export const SortableSidebarTree = ({
             onToggle={onToggle}
             menuChilds={menuChilds}
             getMenuLabel={getMenuLabel}
+            menuDragEnabled={menuDragEnabled}
             handlers={handlers}
             setSelectedFolder={setSelectedFolder}
             selectedApp={selectedApp}

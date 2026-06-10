@@ -160,6 +160,7 @@ const LayoutSidebar = ({
 
   const menuStyle = {};
   const permissions = useSelector((state) => state.auth.globalPermissions);
+  const menuDragEnabled = permissions?.menu_drag === true;
   const userRoleName = useSelector((state) => state.auth.roleInfo?.name);
 
   const handleOpenNotify = (event, type, root) => {
@@ -326,6 +327,8 @@ const LayoutSidebar = ({
   );
 
   const onDrop = (dropResult) => {
+    if (!menuDragEnabled) return;
+
     const { removedIndex, addedIndex, payload } = dropResult;
 
     if (addedIndex == null && typeof removedIndex === "number" && payload) {
@@ -549,6 +552,7 @@ const LayoutSidebar = ({
                   <SidebarList
                     menuList={menuList}
                     setMenuList={setMenuList}
+                    menuDragEnabled={menuDragEnabled}
                     selectedApp={selectedApp}
                     setSelectedFolder={setSelectedFolder}
                     setSelectedApp={setSelectedApp}
@@ -571,6 +575,9 @@ const LayoutSidebar = ({
               ) : (
                 <Container
                   dragHandleSelector=".column-drag-handle"
+                  nonDragAreaSelector={
+                    menuDragEnabled ? undefined : ".column-drag-handle"
+                  }
                   groupName="main-menu"
                   onDrop={onDrop}
                   getChildPayload={(index) => menuList[index]}
@@ -1050,7 +1057,9 @@ const LayoutSidebar = ({
             // (set via setElement in folderSettings/MenuIcon onClick).
             // `selectedFolder` holds the parent folder — only use it for
             // create operations where element is not a TABLE.
-            selectedFolder={element?.type === "TABLE" ? element : selectedFolder}
+            selectedFolder={
+              element?.type === "TABLE" ? element : selectedFolder
+            }
             getMenuList={getMenuList}
           />
         )}

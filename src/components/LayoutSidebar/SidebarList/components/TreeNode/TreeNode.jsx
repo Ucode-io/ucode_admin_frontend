@@ -48,6 +48,7 @@ export const TreeNode = ({
   onToggle,
   menuChilds,
   getMenuLabel,
+  menuDragEnabled,
   menuTemplate,
   handlers,
   setSelectedFolder,
@@ -88,9 +89,12 @@ export const TreeNode = ({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: node.id });
+  } = useSortable({ id: node.id, disabled: !menuDragEnabled });
 
-  const { setNodeRef: setDroppableRef, isOver } = useDroppable({ id: node.id });
+  const { setNodeRef: setDroppableRef, isOver } = useDroppable({
+    id: node.id,
+    disabled: !menuDragEnabled,
+  });
 
   const setRef = (el) => {
     setSortableRef(el);
@@ -357,6 +361,7 @@ export const TreeNode = ({
             id={node.id}
             items={filteredChildren.map((c) => c.id)}
             strategy={verticalListSortingStrategy}
+            disabled={!menuDragEnabled}
           >
             {filteredChildren.map((child) => (
               <TreeNode
@@ -366,6 +371,7 @@ export const TreeNode = ({
                 onToggle={onToggle}
                 menuChilds={menuChilds}
                 getMenuLabel={getMenuLabel}
+                menuDragEnabled={menuDragEnabled}
                 sidebarIsOpen={sidebarIsOpen}
                 handlers={handlers}
                 setSelectedFolder={setSelectedFolder}

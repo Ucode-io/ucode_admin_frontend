@@ -36,7 +36,7 @@ const CATEGORIES = [
   },
 ];
 
-const CategoryItem = ({ item = {}, activeTab, onClick = () => { } }) => {
+const CategoryItem = ({ item = {}, activeTab, onClick = () => {} }) => {
   return (
     <li className={cls.categoryItem}>
       <div className={cls.categoryLabel} onClick={onClick}>

@@ -255,7 +255,7 @@ const AppSidebar = ({
             color={
               Boolean(
                 menuId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
-                menuId === element?.id,
+                  menuId === element?.id,
               ) || menuId === element?.id
                 ? "#5F5E5A"
                 : "#A8A8A8"
@@ -500,7 +500,7 @@ const AppSidebar = ({
                   color={
                     Boolean(
                       menuId !== "c57eedc3-a954-4262-a0af-376c65b5a284" &&
-                      menuId === element?.id,
+                        menuId === element?.id,
                     ) || menuId === element?.id
                       ? "#5F5E5A"
                       : "#A8A8A8"

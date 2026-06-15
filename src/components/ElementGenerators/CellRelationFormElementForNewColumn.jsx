@@ -20,10 +20,7 @@ import {
 } from "../../utils/getRelationFieldLabel";
 import request from "../../utils/request";
 import ModalDetailPage from "../../views/Objects/ModalDetailPage/ModalDetailPage";
-import CascadingElement from "./CascadingElement";
-import RelationGroupCascading from "./RelationGroupCascading";
 import styles from "./style.module.scss";
-import zIndex from "@mui/material/styles/zIndex";
 import { useViewContext } from "@/providers/ViewProvider";
 
 const useStyles = makeStyles((theme) => ({
@@ -72,41 +69,7 @@ const CellRelationFormElementForNewColumn = ({
           },
         }}
         render={({ field: { onChange, value }, fieldState: { error } }) => {
-          return field?.attributes?.cascading_tree_table_slug ? (
-            <RelationGroupCascading
-              field={field}
-              tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
-              value={value ?? ""}
-              setFormValue={setFormValue}
-              classes={classes}
-              name={name}
-              control={control}
-              index={index}
-              setValue={(e) => {
-                onChange(e);
-                updateObject();
-              }}
-            />
-          ) : field?.attributes?.cascadings?.length > 1 ? (
-            <CascadingElement
-              field={field}
-              tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
-              value={value ?? ""}
-              setFormValue={setFormValue}
-              classes={classes}
-              name={name}
-              control={control}
-              index={index}
-              setValue={(e) => {
-                onChange(e);
-                updateObject();
-              }}
-            />
-          ) : (
+          return (
             <AutoCompleteElement
               isNewRow={isNewRow}
               tableView={tableView}
@@ -136,7 +99,7 @@ const CellRelationFormElementForNewColumn = ({
               relationView={relationView}
               fieldsMap={fieldsMap}
             />
-          );
+        )
         }}
       />
     );

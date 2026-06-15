@@ -137,6 +137,8 @@ const AutoCompleteElement = ({
   const { state } = useLocation();
   const languages = useSelector((state) => state.languages.list);
   const isSettings = window.location.pathname?.includes("settings/constructor");
+  const dispatch = useDispatch();
+  const onMenuOpen = () => setEnabled(true);
 
   const { tableSlug: viewTableSlug } = useViewContext();
 
@@ -314,7 +316,7 @@ const AutoCompleteElement = ({
     return Object.values(autoFiltersValue).join(",");
   }, [autoFiltersValue]);
 
-  const { data: optionsFromLocale } = useQuery(
+  const { data: optionsFromLocale, isFetching } = useQuery(
     ["GET_OBJECT_LIST", page, tableSlug, debouncedValue, autoFiltersValue],
     queryFn,
     {
@@ -399,7 +401,7 @@ const AutoCompleteElement = ({
     }
   };
 
-  // const inputUpdateObject = useDebounce(() => updateObject(), 500);
+
 
   const setClientTypeValue = () => {
     const value = options?.find((item) => item?.guid === clientTypeID);
@@ -584,9 +586,7 @@ const AutoCompleteElement = ({
     });
   }, [tables, relationTableSlug, field]);
 
-  const dispatch = useDispatch();
 
-  const onMenuOpen = () => setEnabled(true);
 
   return (
     <Tooltip
@@ -627,6 +627,9 @@ const AutoCompleteElement = ({
         }}
       >
         <Select
+          instanceId="post-category-select"
+          isLoading={isFetching}
+          filterOption={null}
           onMenuOpen={onMenuOpen}
           placeholder="Empty"
           defaultMenuIsOpen={false}
@@ -649,7 +652,7 @@ const AutoCompleteElement = ({
             }
           }}
           onMenuScrollToBottom={loadMoreItems}
-          // inputChangeHandler={(e) => inputChangeHandler(e)}
+
           onInputChange={(e) => {
             setInputValue(e ?? null);
             inputChangeHandler(e);
@@ -679,10 +682,7 @@ const AutoCompleteElement = ({
                           option.data,
                           activeLang ?? i18n?.language,
                         );
-                        // return (
-                        //   option?.[`${el}_${activeLang ?? i18n?.language}`] ??
-                        //   option?.[`${el}`]
-                        // );
+             
                       } else {
                         return isMulti ? el : option?.[el];
                       }
@@ -721,16 +721,7 @@ const AutoCompleteElement = ({
                       </svg>
                     </span>
                   </Box>
-                  {/* <IconGenerator
-                  icon="delete.svg"
-                  style={{ marginLeft: "10px", cursor: "pointer" }}
-                  size={15}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    deleteHandler(option.data);
-                  }}
-                /> */}
+         
                 </div>
               );
             },

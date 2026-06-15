@@ -1,25 +1,18 @@
-import {Close} from "@mui/icons-material";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import LaunchIcon from "@mui/icons-material/Launch";
-import { Autocomplete, CircularProgress, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
-import { useLocation, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
+import Select, { components } from "react-select";
 import useDebounce from "../../hooks/useDebounce";
 import useTabRouter from "../../hooks/useTabRouter";
 import constructorObjectService from "../../services/constructorObjectService";
 import { getRelationFieldTabsLabel } from "../../utils/getRelationFieldLabel";
-import request from "../../utils/request";
-import CascadingElement from "./CascadingElement";
-import styles from "./style.module.scss";
 import { pageToOffset } from "../../utils/pageToOffset";
-import Select from "react-select";
-import { CustomSingleValue } from "./components/CustomSingleValue";
+import request from "../../utils/request";
 import { CustomMultiValue } from "./components/CustomMultiValue";
-import { components } from "react-select";
+import styles from "./style.module.scss";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -81,46 +74,30 @@ const CellManyToManyRelationElement = ({
         name={name}
         defaultValue={defaultValue}
         render={({ field: { onChange, value }, fieldState: { error } }) => {
-          return field?.attributes?.cascadings?.length === 4 ? (
-            <CascadingElement
-              field={field}
-              tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
-              control={control}
-              setValue={(value) => {
-                onChange(value);
-                !isNewTableView && updateObject();
-              }}
-              value={value}
-              setFormValue={setFormValue}
-              row={row}
-              index={index}
-            />
-          ) : (
+          return (
             <AutoCompleteElement
-              relOptions={relOptions}
-              disabled={disabled}
-              isFormEdit={isFormEdit}
-              placeholder={placeholder}
-              isBlackBg={isBlackBg}
-              value={value}
-              classes={classes}
-              name={name}
-              defaultValue={defaultValue}
-              setValue={(value) => {
-                onChange(value);
-                updateObject();
-              }}
-              field={field}
-              tableSlug={field.table_slug}
-              error={error}
-              disabledHelperText={disabledHelperText}
-              setFormValue={setFormValue}
-              control={control}
-              index={index}
-              newUi={newUi}
-            />
+            relOptions={relOptions}
+            disabled={disabled}
+            isFormEdit={isFormEdit}
+            placeholder={placeholder}
+            isBlackBg={isBlackBg}
+            value={value}
+            classes={classes}
+            name={name}
+            defaultValue={defaultValue}
+            setValue={(value) => {
+              onChange(value);
+              updateObject();
+            }}
+            field={field}
+            tableSlug={field.table_slug}
+            error={error}
+            disabledHelperText={disabledHelperText}
+            setFormValue={setFormValue}
+            control={control}
+            index={index}
+            newUi={newUi}
+          />
           );
         }}
       />
@@ -152,9 +129,6 @@ const AutoCompleteElement = ({
   const [page, setPage] = useState(1);
   const [allOptions, setAllOptions] = useState([]);
   const [searchParams] = useSearchParams();
-  const menuId = searchParams.get("menuId");
-  const { state } = useLocation();
-  const isNewRouter = localStorage.getItem("new_router") === "true";
 
   const getOptionLabel = (option) => {
     return getRelationFieldTabsLabel(field, option, i18n.language);
@@ -193,42 +167,6 @@ const AutoCompleteElement = ({
     return result?.guid ? result : value;
   }, [autoFilters, filtersHandler, value]);
 
-  // const { data: optionsFromFunctions } = useQuery(
-  //   ["GET_OPENFAAS_LIST", tableSlug, autoFiltersValue, debouncedValue],
-  //   () => {
-  //     return request.post(
-  //       `/invoke_function/${field?.attributes?.function_path}`,
-  //       {
-  //         params: {
-  //           from_input: true,
-  //         },
-  //         data: {
-  //           table_slug: tableSlug,
-  //           ...autoFiltersValue,
-  //           search: debouncedValue,
-  //           limit: 10,
-  //           offset: 0,
-  //           view_fields:
-  //             field?.view_fields?.map((field) => field.slug) ??
-  //             field?.attributes?.view_fields?.map((field) => field.slug),
-  //         },
-  //       }
-  //     );
-  //   },
-  //   {
-  //     enabled: !!field?.attributes?.function_path,
-  //     select: (res) => {
-  //       const options = res?.data?.response ?? [];
-  //       const slugOptions =
-  //         res?.table_slug === tableSlug ? res?.data?.response : [];
-
-  //       return {
-  //         options,
-  //         slugOptions,
-  //       };
-  //     },
-  //   }
-  // );
   const { data: optionsFromLocale } = useQuery(
     ["GET_OBJECT_LIST", debouncedValue, autoFiltersValue, field, page],
     () => {
@@ -377,34 +315,25 @@ const AutoCompleteElement = ({
     setValue(val ?? null);
   };
 
-  // useEffect(() => {
-  //   const matchingOption = relOptions?.find(
-  //     (item) => item?.table_slug === field?.table_slug
-  //   );
-
-  //   if (matchingOption) {
-  //     setAllOptions(matchingOption.response);
-  //   }
-  // }, [relOptions, field]);
   let lastScrollTop = 0;
 
-  const handleListOnScroll = (e) => {
-    const target = e.target;
-    const count = optionsFromLocale?.count;
+  // const handleListOnScroll = (e) => {
+  //   const target = e.target;
+  //   const count = optionsFromLocale?.count;
 
-    const scrollTop = target.scrollTop;
-    const scrollHeight = target.scrollHeight;
-    const clientHeight = target.clientHeight;
+  //   const scrollTop = target.scrollTop;
+  //   const scrollHeight = target.scrollHeight;
+  //   const clientHeight = target.clientHeight;
 
-    if (
-      scrollTop + clientHeight >= scrollHeight - 50 &&
-      allOptions?.length < count
-    ) {
-      loadMoreItems();
-    }
+  //   if (
+  //     scrollTop + clientHeight >= scrollHeight - 50 &&
+  //     allOptions?.length < count
+  //   ) {
+  //     loadMoreItems();
+  //   }
 
-    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-  };
+  //   lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+  // };
 
   const customStyles = {
     control: (provided) => ({
@@ -425,17 +354,7 @@ const AutoCompleteElement = ({
       height: newUi ? "25px" : undefined,
       overflow: "auto",
     }),
-    // input: (provided, state) => {
-    //   return {
-    //     ...provided,
-    //     // position: "absolute",
-    //     // left: "0",
-    //     // height: "100%",
-    //     width: "100%",
-    //     border: "none",
-    //     // backgroundColor: "rgba(242, 241, 238, 0.6)",
-    //   };
-    // },
+
     placeholder: (provided) => ({
       ...provided,
       display: "flex",
@@ -532,7 +451,7 @@ const AutoCompleteElement = ({
               {...props}
               changeHandler={changeHandler}
               computedValue={computedValue}
-              // selectProps={{ menuIsOpen: menuOpen }}
+
             />
           ),
         }}
@@ -542,100 +461,7 @@ const AutoCompleteElement = ({
         closeMenuOnSelect
         isMulti
       />
-      {/* <Autocomplete
-        disabled={disabled}
-        options={allOptions ?? []}
-        value={computedValue}
-        popupIcon={
-          isBlackBg ? (
-            <ArrowDropDownIcon style={{ color: "#fff" }} />
-          ) : (
-            <ArrowDropDownIcon />
-          )
-        }
-        onChange={(event, newValue) => {
-          changeHandler(newValue);
-        }}
-        noOptionsText={
-          <span
-            onClick={() => navigateToForm(tableSlug, "CREATE", {}, {}, menuId)}
-            style={{ color: "#007AFF", cursor: "pointer", fontWeight: 500 }}
-          >
-            Create new
-          </span>
-        }
-        blurOnSelect
-        openOnFocus
-        getOptionLabel={(option) =>
-          getRelationFieldTabsLabel(field, option, i18n.language)
-        }
-        multiple
-        ListboxProps={{
-          onScroll: handleListOnScroll,
-        }}
-        isOptionEqualToValue={(option, value) => option.guid === value.guid}
-        renderInput={(params) => (
-          <TextField
-            className={`${isFormEdit ? "custom_textfield" : ""}`}
-            placeholder={!computedValue.length ? placeholder : ""}
-            {...params}
-            InputProps={{
-              ...params.InputProps,
-              classes: {
-                input: isBlackBg ? classes.input : "",
-              },
-              style: {
-                background: isBlackBg ? "#2A2D34" : disabled ? "#FFF" : "",
-                color: isBlackBg ? "#fff" : "",
-                height: "32px",
-                overflow: "auto",
-              },
-            }}
-            size="small"
-          />
-        )}
-        renderTags={(values, getTagProps) => {
-          return (
-            <>
-              <div className={styles.valuesWrapper}>
-                {values?.map((el, index) => (
-                  <div
-                    key={el.value}
-                    className={styles.multipleAutocompleteTags}
-                  >
-                    <p className={styles.value}>
-                      {getOptionLabel(values[index])}
-                    </p>
-
-                    <span
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        navigateToForm(tableSlug, "EDIT", values[index]);
-                      }}
-                    >
-                      <LaunchIcon
-                        style={{
-                          fontSize: "15px",
-                          marginLeft: "0px",
-                          fontWeight: "700",
-                          cursor: "pointer",
-                        }}
-                      />
-                    </span>
-
-                    <Close
-                      fontSize="12"
-                      onClick={getTagProps({ index })?.onDelete}
-                      style={{ cursor: "pointer" }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </>
-          );
-        }}
-      /> */}
+  
     </div>
   );
 };

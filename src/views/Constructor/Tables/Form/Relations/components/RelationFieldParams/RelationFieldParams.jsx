@@ -33,12 +33,6 @@ export const RelationFieldParams = ({
     watch,
     register,
   });
-  console.log(
-    "computedTablesListcomputedTablesList",
-    computedTablesList,
-    watch("table_from"),
-    watch("table_to"),
-  );
   return (
     <Box>
       <ParamsHeader onClose={onClose} formType={formType} />

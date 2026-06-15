@@ -40,6 +40,7 @@ const BoardColumn = ({
   setBoardData,
   groupItem,
   groupField,
+  canDragBoardItems,
   layoutType,
   menuItem,
   handleCreateItem,
@@ -68,6 +69,8 @@ const BoardColumn = ({
   }, 0);
 
   const onDrop = (dropResult) => {
+    if (!canDragBoardItems) return;
+
     let dropResultTemp = { ...dropResult };
 
     const payload = dropResultTemp.payload;
@@ -292,6 +295,10 @@ const BoardColumn = ({
       >
         <Container
           groupName="subtask"
+          dragHandleSelector={
+            canDragBoardItems ? undefined : ".board-card-drag-disabled"
+          }
+          shouldAcceptDrop={() => canDragBoardItems}
           getChildPayload={(i) => computedBoardData[i]}
           onDrop={(e) => {
             onDrop(e);

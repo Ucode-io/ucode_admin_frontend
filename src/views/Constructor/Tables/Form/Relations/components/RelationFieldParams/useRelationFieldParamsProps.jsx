@@ -15,11 +15,29 @@ export const useRelationFieldParamsProps = ({ watch, setValue }) => {
   };
 
   const table_from = watch("table_from");
+  const table_from_id = watch("table_from_id");
+  const table_to_id = watch("table_to_id");
   const values = watch();
 
-  const { data: app } = useQuery(["GET_TABLE_LIST"], () => {
-    return constructorTableService.getList();
-  });
+  const { data: app } = useQuery(
+    ["GET_TABLE_LIST", table_from_id, table_to_id],
+    () => {
+      const additionalValues = [table_from_id, table_to_id].filter(Boolean);
+
+      return constructorTableService.getTableList({
+        limit: 10,
+        offset: 0,
+        ...(additionalValues.length
+          ? {
+              additional_request: JSON.stringify({
+                additional_field: "id",
+                additional_values: additionalValues,
+              }),
+            }
+          : {}),
+      });
+    },
+  );
 
   const { isLoading: fieldsLoading } = useQuery(
     ["GET_VIEWS_AND_FIELDS", values?.table_to, i18n?.language],
@@ -84,12 +102,12 @@ export const useRelationFieldParamsProps = ({ watch, setValue }) => {
   );
 
   const computedTablesList = useMemo(() => {
-    return app?.tables?.map((table) => ({
+    const tables = app?.tables ?? app?.response ?? (Array.isArray(app) ? app : []);
+    return tables?.map((table) => ({
       value: table.slug,
       label: table.label,
     }));
   }, [app]);
-  console.log("appappappappapp", app);
 
   const isRecursiveRelation = useMemo(() => {
     return values.type === "Recursive";

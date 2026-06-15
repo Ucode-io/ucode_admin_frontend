@@ -108,15 +108,6 @@ function DrawerFieldGenerator({
     }
   }, [field, inviteModal]);
 
-  // const defaultValue = useMemo(() => {
-  //   if (
-  //     field?.type === "DATE" ||
-  //     field?.type === "DATE_TIME" ||
-  //     field?.type === "DATE_TIME_WITHOUT_TIME_ZONE"
-  //   ) {
-  //     return field?.attributes?.defaultValue === "now()" ? new Date() : null;
-  //   }
-  // }, [field.type, field.id, field.relation_type]);
 
   const { data: functions = [] } = useQuery(
     ["GET_FUNCTIONS_LIST"],

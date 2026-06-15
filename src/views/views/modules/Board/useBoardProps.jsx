@@ -62,6 +62,11 @@ export const useBoardProps = () => {
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMapRel?.[groupFieldId];
+  const canUpdateGroupField = hasFieldEditPermission(groupField);
+
+  const canUpdateSubGroupField =
+    !subGroupById || hasFieldEditPermission(subGroupField);
+  const canDragBoardItems = canUpdateGroupField && canUpdateSubGroupField;
 
   const computedColumnsFor = useMemo(() => {
     if (view.type !== "CALENDAR" && view.type !== "GANTT") {
@@ -252,7 +257,6 @@ export const useBoardProps = () => {
     {
       onSuccess: (data) => {
         const attributesTabs = view?.attributes?.tabs;
-
         if (attributesTabs?.length === data?.data?.groups?.length) {
           setGroups(() => {
             const tempGroups = data?.data?.groups?.map((item) => ({
@@ -486,6 +490,7 @@ export const useBoardProps = () => {
     onDrop,
     groups,
     groupField,
+    canDragBoardItems,
     getGroupFieldLabel,
     handleCreateItem,
     groupsCounts,
@@ -515,6 +520,12 @@ export const useBoardProps = () => {
     selectedView,
     setSelectedRow,
   };
+};
+
+const hasFieldEditPermission = (field) => {
+  const editPermission = field?.attributes?.field_permission?.edit_permission;
+
+  return editPermission === true || editPermission === "Yes";
 };
 
 const getMergedDataSubgroup = ({ newData, prev }) => {

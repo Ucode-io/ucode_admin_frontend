@@ -5,6 +5,7 @@ import requestV2 from "../utils/requestV2";
 const constructorTableService = {
   getList: (params, projectId) =>
     request.get("/table", {params: {...params, project_id: projectId}}),
+  getTableList: (params) => request.get("/table-list", {params}),
   getListKey: (key) => request.get(`/table/${key}`),
   getTableInfo: (tableSlug, data, params) =>
     request.post(`/table-details/${tableSlug}`, data, {params}),

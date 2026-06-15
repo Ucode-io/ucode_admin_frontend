@@ -152,6 +152,20 @@ export const AddCardComponent = ({
   //   }
   // }, [tabIndex]);
 
+<<<<<<< HEAD
+=======
+      request
+        .post("/payment/intent", {
+          amount: 1200,
+          currency: "usd",
+        })
+        .then((data) => {
+          setClientSecret(data.client_secret);
+        });
+    }
+  }, [tabIndex]);
+
+>>>>>>> 6d635cea9a5b4e8683411720918fea4200d484fc
   return (
     <Box sx={{ maxWidth: "100%", p: 3 }}>
       <Typography

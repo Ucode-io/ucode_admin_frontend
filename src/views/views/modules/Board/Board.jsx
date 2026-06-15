@@ -1,10 +1,10 @@
-import {Container, Draggable} from "react-smooth-dnd";
+import { Container, Draggable } from "react-smooth-dnd";
 import BoardColumn from "./BoardColumn";
-import {ColumnHeaderBlock} from "./components/ColumnHeaderBlock";
+import { ColumnHeaderBlock } from "./components/ColumnHeaderBlock";
 import styles from "./style.module.scss";
-import {FIELD_TYPES} from "@/utils/constants/fieldTypes";
-import {useBoardProps} from "./useBoardProps";
-import {BoardSkeleton} from "./components/BoardSkeleton";
+import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
+import { useBoardProps } from "./useBoardProps";
+import { BoardSkeleton } from "./components/BoardSkeleton";
 import clsx from "clsx";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import { useParams } from "react-router-dom";
@@ -15,6 +15,7 @@ export const Board = () => {
     onDrop,
     groups,
     groupField,
+    canDragBoardItems,
     getGroupFieldLabel,
     handleCreateItem,
     groupsCounts,
@@ -48,7 +49,7 @@ export const Board = () => {
   const { tableSlug: tableSlugFromParams } = useParams();
   const tableSlug =
     view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
-
+  console.log("groupsgroups", groups, subGroups);
   return (
     <div className={styles.container} ref={boardRef}>
       {isLoading ? (
@@ -180,6 +181,7 @@ export const Board = () => {
                             getGroupCounts={getGroupCounts}
                             groupItem={group?.name}
                             groupField={groupField}
+                            canDragBoardItems={canDragBoardItems}
                             subGroupIndex={subGroupIndex}
                             subGroupById={subGroupById}
                             subItem={subGroup?.name}
@@ -220,6 +222,7 @@ export const Board = () => {
                       getGroupCounts={getGroupCounts}
                       groupItem={group?.name}
                       groupField={groupField}
+                      canDragBoardItems={canDragBoardItems}
                       layoutType={layoutType}
                       menuItem={menuItem}
                       handleCreateItem={handleCreateItem}

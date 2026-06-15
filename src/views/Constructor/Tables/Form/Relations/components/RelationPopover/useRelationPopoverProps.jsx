@@ -87,6 +87,8 @@ export const useRelationPopoverProps = ({
     };
 
     delete data?.formula_name;
+    delete data?.table_from_id;
+    delete data?.table_to_id;
 
     setFormLoader(true);
 
@@ -156,11 +158,12 @@ export const useRelationPopoverProps = ({
     queryParams: {
       enabled: Boolean(relation?.attributes?.relation_data?.id || relation?.id),
       onSuccess: (res) => {
-        console.log("relationGetById", res);
         reset({
           ...res,
           table_from: res?.table_from?.slug ?? "",
           table_to: res?.table_to?.slug ?? "",
+          table_from_id: res?.table_from?.id ?? "",
+          table_to_id: res?.table_to?.id ?? "",
           type: res?.type ?? "",
           id: res?.id ?? "",
           editable: res?.editable ?? false,

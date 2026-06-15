@@ -115,31 +115,23 @@ const RelationFormElement = ({
             name={`${tableSlug}_id`}
             defaultValue={defaultValue}
             render={({field: {onChange, value}, fieldState: {error}}) =>
-              field?.attributes?.cascadings?.length === 2 ? (
-                <CascadingElement
-                  field={field}
-                  tableSlug={tableSlug}
-                  error={error}
-                  disabledHelperText={disabledHelperText}
-                  control={control}
-                  setValue={onChange}
-                  value={Array.isArray(value) ? value[0] : value}
-                  name={name}
-                />
-              ) : (
-                <AutoCompleteElement
-                  value={Array.isArray(value) ? value[0] : value}
-                  setValue={onChange}
-                  field={field}
-                  disabled={disabled}
-                  tableSlug={tableSlug}
-                  error={error}
-                  disabledHelperText={disabledHelperText}
-                  control={control}
-                  name={name}
-                  activeLang={activeLang}
-                />
-              )
+           {
+            return (
+              <>
+                  <AutoCompleteElement
+                    value={Array.isArray(value) ? value[0] : value}
+                    setValue={onChange}
+                    field={field}
+                    disabled={disabled}
+                    tableSlug={tableSlug}
+                    error={error}
+                    disabledHelperText={disabledHelperText}
+                    control={control}
+                    name={name}
+                    activeLang={activeLang}
+                  />
+                </>)
+           }
             }
           />
         </FEditableRow>
@@ -481,39 +473,7 @@ const AutoCompleteElement = ({
           Create new
         </div>
       )}
-      {field?.attributes?.cascadings?.length === 4 ? (
-        <CascadingSection
-          field={field}
-          tableSlug={tableSlug}
-          error={error}
-          disabledHelperText={disabledHelperText}
-          value={localValue?.guid ?? []}
-          setValue={(newValue) => {
-            changeHandler(newValue, "cascading");
-          }}
-          onInputChange={(e, newValue) => {
-            setInputValue(newValue);
-            inputChangeHandler(newValue);
-          }}
-        />
-      ) : field?.attributes?.cascading_tree_table_slug ? (
-        <GroupCascading
-          field={field}
-          tableSlug={tableSlug}
-          error={error}
-          autoFiltersValue={autoFiltersValue}
-          disabledHelperText={disabledHelperText}
-          value={localValue ?? []}
-          setFormValue={setFormValue}
-          setValue={(newValue) => {
-            changeHandler(newValue, "cascading");
-          }}
-          onInputChange={(e, newValue) => {
-            setInputValue(newValue);
-            inputChangeHandler(newValue);
-          }}
-        />
-      ) : (
+      
         <>
           <Select
             id={`select_${field?.slug}`}
@@ -581,7 +541,7 @@ const AutoCompleteElement = ({
             </div>
           )}
         </>
-      )}
+    
     </div>
   );
 };

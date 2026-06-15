@@ -1,16 +1,16 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import {Box, Button, Card, Modal, Typography} from "@mui/material";
-import {useEffect, useMemo, useState} from "react";
-import {useFieldArray, useForm} from "react-hook-form";
-import {useQueryClient} from "react-query";
+import { Box, Button, Card, Modal, Typography } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { useQueryClient } from "react-query";
 import SaveButton from "../../components/Buttons/SaveButton";
 import HFSelect from "../../components/FormElements/HFSelect";
 import menuSettingsService from "../../services/menuSettingsService";
-import {useMicrofrontendListQuery} from "../../services/microfrontendService";
+import { useMicrofrontendListQuery } from "../../services/microfrontendService";
 import HFIconPicker from "../../components/FormElements/HFIconPicker";
 import HFTextField from "../../components/FormElements/HFTextField";
-import {store} from "../../store";
-import {useSelector} from "react-redux";
+import { store } from "../../store";
+import { useSelector } from "react-redux";
 import { CloseButton } from "../../components/CloseButton";
 import cls from "./style.module.scss";
 import TextFieldWithMultiLanguage from "../../components/NewFormElements/TextFieldWithMultiLanguage/TextFieldWithMultiLanguage";
@@ -40,17 +40,16 @@ const WebsiteModal = ({
   });
 
   const onSubmit = (data) => {
-    if (menu.type === "CREATE" && menu?.root) {
-      createType(data, selectedFolder);
-    } else if (!selectedFolder?.data || selectedFolder?.type !== "FOLDER") {
-      updateType(data, selectedFolder);
-    } else {
-      createType(data, selectedFolder);
-    }
+    if (selectedFolder?.type) {
+      if (!selectedFolder?.data || selectedFolder?.type !== "FOLDER") {
+        updateType(data, selectedFolder);
+      } else {
+        createType(data, selectedFolder);
+      }
+    } else createType(data, selectedFolder);
   };
 
   const createType = (data, selectedFolder) => {
-
     menuSettingsService
       .create({
         ...data,

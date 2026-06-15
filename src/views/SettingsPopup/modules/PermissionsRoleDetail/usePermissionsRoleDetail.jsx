@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { store } from "@/store";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   useMenuPermissionGetByIdQuery,
@@ -16,10 +16,17 @@ import cls from "./styles.module.scss";
 import { settingsModalActions } from "../../../../store/settingsModal/settingsModal.slice";
 import menuSettingsService from "../../../../services/menuSettingsService";
 import request from "@/utils/request";
+import { QUERY_KEYS } from "@/utils/constants/queryKeys";
 
 export const usePermissionsRoleDetail = () => {
-  const { control, reset, watch, setValue, handleSubmit, getValues } =
-    useForm();
+  const {
+    control,
+    reset,
+    watch,
+    setValue: setFormValue,
+    handleSubmit,
+    getValues,
+  } = useForm();
   const projectId = store.getState().company.projectId;
 
   const [changedData, setChangedData] = useState([]);
@@ -47,6 +54,7 @@ export const usePermissionsRoleDetail = () => {
   const activeClientType = permissionChild?.find(
     (item) => item?.id === permissionId,
   );
+  const globalPermissionDraftsRef = useRef({});
 
   const handleOpenRoleModal = () => setCreateRoleModalOpen(true);
   const handleCloseRoleModal = () => setCreateRoleModalOpen(false);
@@ -55,6 +63,19 @@ export const usePermissionsRoleDetail = () => {
   const handleCloseUpdateModal = () => setIsUpdateModalOpen(false);
 
   const handleChangeTab = (tab) => setActiveTab(tab);
+
+  const setValue = (name, value, options) => {
+    setFormValue(name, value, options);
+
+    if (activeRoleId && name.startsWith("data.global_permission.")) {
+      const type = name.replace("data.global_permission.", "");
+
+      globalPermissionDraftsRef.current[activeRoleId] = {
+        ...getValues("data.global_permission"),
+        [type]: value,
+      };
+    }
+  };
 
   const handleOpenCategory = () => setCategoryOpen(true);
   const handleCloseCategory = () => setCategoryOpen(false);
@@ -172,6 +193,10 @@ export const usePermissionsRoleDetail = () => {
     getCustomList();
   }, [activeRoleId]);
 
+  useEffect(() => {
+    globalPermissionDraftsRef.current = {};
+  }, [permissionId]);
+
   const { data: rolePermissionData, isLoading: rolePermissionGetByIdLoading } =
     useRolePermissionGetByIdQuery({
       projectId: projectId,
@@ -197,6 +222,8 @@ export const usePermissionsRoleDetail = () => {
   } = useRolePermissionUpdateMutation({
     onSuccess: () => {
       dispatch(showAlert("Successfully updated", "success"));
+      queryClient.invalidateQueries(["GET_ROLE_PERMISION_BY_ID"]);
+      queryClient.invalidateQueries([QUERY_KEYS.TABLE_FIELDS_LIST]);
     },
   });
 
@@ -248,11 +275,6 @@ export const usePermissionsRoleDetail = () => {
       project_id: values?.project_id,
       role_id: activeRoleId,
     });
-
-    queryClient.refetchQueries([
-      "rolePermissionGetById",
-      { projectId, activeRoleId },
-    ]);
   };
 
   const onTabClick = (element, index) => {
@@ -270,10 +292,24 @@ export const usePermissionsRoleDetail = () => {
   };
 
   useEffect(() => {
-    if (rolePermissionData || menuList) {
-      reset({ ...menuList, ...rolePermissionData, ...custom });
-    }
-  }, [menuList, rolePermissionData, custom, activeClientType]);
+    if (!activeRoleId) return;
+
+    const initialValues = { ...menuList, ...rolePermissionData, ...custom };
+    const globalPermissionDraft =
+      globalPermissionDraftsRef.current[activeRoleId];
+
+    reset(
+      globalPermissionDraft
+        ? {
+            ...initialValues,
+            data: {
+              ...initialValues.data,
+              global_permission: globalPermissionDraft,
+            },
+          }
+        : initialValues,
+    );
+  }, [permissionId, activeRoleId, menuList, rolePermissionData, custom, reset]);
 
   const categories = {
     table: "Table",

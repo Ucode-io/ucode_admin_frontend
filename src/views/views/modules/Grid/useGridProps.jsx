@@ -1,7 +1,6 @@
 import { useViewContext } from "@/providers/ViewProvider"
 
 import DeleteIcon from "@mui/icons-material/Delete";
-import {differenceInCalendarDays, parseISO} from "date-fns";
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useFieldArray, useForm} from "react-hook-form";
 import {useTranslation} from "react-i18next";
@@ -32,6 +31,7 @@ import getColumnEditorParams from "./valueOptionGenerator";
 import { Flex, Text, Button as ChakraButton } from "@chakra-ui/react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { getColumnIcon } from "@/utils/constants/tableIcons";
+import {isSubscriptionBannerVisible} from "@/utils/subscriptionWarning";
 
 export const useGridProps = () => {
   const {
@@ -428,22 +428,12 @@ export const useGridProps = () => {
   const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
   const filterHeight = localStorage.getItem("filtersHeight");
 
-  const isWarning =
-    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
-    1;
-
-  const isWarningActive =
-    projectInfo?.subscription_type === "free_trial"
-      ? isWarning <= 16
-      : projectInfo?.status === "insufficient_funds" &&
-          projectInfo?.subscription_type === "paid"
-        ? isWarning <= 5
-        : isWarning <= 7;
+  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
 
-    if (isWarningActive || projectInfo?.status === "inactive") {
+    if (isSubscriptionBannerActive) {
       warningHeight = 32;
     }
     const filterHeightValue = Number(filterHeight) || 0;
@@ -457,7 +447,7 @@ export const useGridProps = () => {
     filterHeight,
     tabHeight,
     projectInfo,
-    isWarningActive,
+    isSubscriptionBannerActive,
   ]);
 
   const getMainMenuItems = (params) => {

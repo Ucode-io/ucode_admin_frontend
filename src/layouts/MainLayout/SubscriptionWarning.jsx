@@ -1,37 +1,33 @@
-import {differenceInCalendarDays, parseISO} from "date-fns";
 import React, {useMemo} from "react";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import {Box, Typography} from "@mui/material";
 import {useTranslation} from "react-i18next";
-import {useNavigate} from "react-router-dom";
+import {
+  getSubscriptionDaysLeft,
+  isSubscriptionExpired,
+  isSubscriptionWarningActive,
+} from "@/utils/subscriptionWarning";
 
 const SubscriptionWarning = ({projectInfo, handleOpenBilling}) => {
-  const navigate = useNavigate();
-  const {t, i18n} = useTranslation();
-  const projectStatus = localStorage.getItem("project_status");
+  const {t} = useTranslation();
+  const projectStatus =
+    projectInfo?.status || localStorage.getItem("project_status");
   const subscriptionType = projectInfo?.subscription_type;
   const expireDate = projectInfo?.expire_date;
 
   const daysLeft = useMemo(() => {
     if (!expireDate) return null;
-    return differenceInCalendarDays(parseISO(expireDate), new Date()) + 1;
+    return getSubscriptionDaysLeft(expireDate);
   }, [expireDate]);
 
-  if (projectStatus === "inactive")
+  if (isSubscriptionExpired(projectInfo, projectStatus))
     return <SubscribeExpired onClick={handleOpenBilling} />;
-  else if (projectStatus === "active" && daysLeft <= 7) {
-    return (
-      <WarningBanner
-        onClick={handleOpenBilling}
-        message={t("subscribtion_expire_soon")}
-        daysLeft={daysLeft}
-      />
-    );
-  } else if (
-    projectStatus === "insufficient_funds" &&
-    subscriptionType === "free_trial" &&
-    daysLeft <= 16
-  ) {
+
+  if (!isSubscriptionWarningActive(projectInfo, projectStatus)) {
+    return null;
+  }
+
+  if (subscriptionType === "free_trial") {
     return (
       <WarningBanner
         onClick={handleOpenBilling}
@@ -42,21 +38,13 @@ const SubscriptionWarning = ({projectInfo, handleOpenBilling}) => {
     );
   }
 
-  if (
-    projectStatus === "insufficient_funds" &&
-    subscriptionType === "paid" &&
-    daysLeft <= 5
-  ) {
-    return (
-      <WarningBanner
-        onClick={handleOpenBilling}
-        message={t("subscribtion_expire_soon")}
-        daysLeft={daysLeft}
-      />
-    );
-  }
-
-  return null;
+  return (
+    <WarningBanner
+      onClick={handleOpenBilling}
+      message={t("subscribtion_expire_soon")}
+      daysLeft={daysLeft}
+    />
+  );
 };
 
 const WarningBanner = ({
@@ -65,7 +53,7 @@ const WarningBanner = ({
   daysLeft,
   bgColor = "rgb(255, 244, 180)",
 }) => {
-  const {t, i18n} = useTranslation();
+  const {t} = useTranslation();
   return (
     <Box
       onClick={onClick}
@@ -95,7 +83,7 @@ const WarningBanner = ({
           {message}{" "}
           {daysLeft !== null && (
             <strong>
-              {daysLeft} {Number(daysLeft) >= 1 ? t("day") : t("days")}{" "}
+              {daysLeft} {Number(daysLeft) === 1 ? t("day") : t("days")}{" "}
               {t("left")}
             </strong>
           )}
@@ -111,7 +99,7 @@ const WarningBanner = ({
 };
 
 const SubscribeExpired = ({onClick = () => {}}) => {
-  const {t, i18n} = useTranslation();
+  const {t} = useTranslation();
   return (
     <Box
       onClick={onClick}
@@ -135,13 +123,13 @@ const SubscribeExpired = ({onClick = () => {}}) => {
           sx={{color: "#000", fontSize: 20, marginRight: "10px"}}
         />
         <Typography sx={{fontSize: "12px", fontWeight: "bold", color: "#000"}}>
-          Your subscription has expired.
+          {t("subscription_expired")}
         </Typography>
       </Box>
       <Typography sx={{fontSize: "12px", color: "#000"}}>
-        Please renew to continue accessing our services.
+        {t("expired_content")}
         <strong style={{textDecoration: "underline"}}>
-          Click here to upgrade your plan.
+          {t("click_here_upgrade")}
         </strong>
       </Typography>
     </Box>

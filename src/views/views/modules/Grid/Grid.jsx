@@ -24,7 +24,6 @@ import {
   TreeDataModule,
 } from "ag-grid-enterprise";
 import { AgGridReact } from "ag-grid-react";
-import { differenceInCalendarDays, parseISO } from "date-fns";
 import React, {
   useCallback,
   useEffect,
@@ -55,6 +54,7 @@ import { getColumnIcon } from "@/utils/constants/tableIcons";
 import { useViewContext } from "@/providers/ViewProvider";
 import { useFieldsContext } from "../../providers/FieldsProvider";
 import { QUERY_KEYS } from "@/utils/constants/queryKeys";
+import { isSubscriptionBannerVisible } from "@/utils/subscriptionWarning";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -512,19 +512,12 @@ export const Grid = () => {
   const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
   const filterHeight = localStorage.getItem("filtersHeight");
 
-  const isWarning =
-    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
-    1;
-
-  const isWarningActive =
-    projectInfo?.subscription_type === "free_trial"
-      ? isWarning <= 16
-      : isWarning <= 7;
+  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
 
-    if (isWarningActive || projectInfo?.status === "inactive") {
+    if (isSubscriptionBannerActive) {
       warningHeight = 32;
     }
     const filterHeightValue = Number(filterHeight) || 0;
@@ -538,7 +531,7 @@ export const Grid = () => {
     filterHeight,
     tabHeight,
     projectInfo,
-    isWarningActive,
+    isSubscriptionBannerActive,
   ]);
 
   return (

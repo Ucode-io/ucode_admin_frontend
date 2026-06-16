@@ -41,7 +41,7 @@ import constructorTableService, {
 import {getAllFromDB} from "../../../../utils/languageDB";
 import {generateLangaugeText} from "../../../../utils/generateLanguageText";
 import {useProjectGetByIdQuery} from "../../../../services/projectService";
-import {differenceInCalendarDays, parseISO} from "date-fns";
+import {isSubscriptionBannerVisible} from "@/utils/subscriptionWarning";
 
 const NewRouterTable = () => {
   const dispatch = useDispatch();
@@ -329,21 +329,14 @@ const NewRouterTable = () => {
     }
   }, []);
 
-  const isWarning =
-    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
-    1;
-
-  const isWarningActive =
-    projectInfo?.subscription_type === "free_trial"
-      ? isWarning <= 16
-      : isWarning <= 7;
+  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
 
   if (loader) return <PageFallback />;
 
   return (
     <>
       <div
-        className={`${isWarningActive || projectInfo?.status === "inactive" ? "pageWithStickyFooterWarning" : "pageWithStickyFooter"}`}>
+        className={`${isSubscriptionBannerActive ? "pageWithStickyFooterWarning" : "pageWithStickyFooter"}`}>
         {!id ? (
           <>
             <Tabs selectedIndex={selectedTab} direction={"ltr"}>

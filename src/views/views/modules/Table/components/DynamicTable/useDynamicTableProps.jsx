@@ -2,8 +2,8 @@ import { useViewContext } from "@/providers/ViewProvider";
 import { showAlert } from "@/store/alert/alert.thunk";
 import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
 import { DRAWER_VIEW_TYPES } from "@/utils/constants/drawerConstants";
+import { isSubscriptionBannerVisible } from "@/utils/subscriptionWarning";
 import { useFieldsContext } from "@/views/views/providers/FieldsProvider";
-import { differenceInCalendarDays, parseISO } from "date-fns";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -203,23 +203,13 @@ export const useDynamicTableProps = ({
     setLimit(item);
   };
 
-  const isWarning =
-    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
-    1;
-
-  const isWarningActive =
-    projectInfo?.subscription_type === "free_trial"
-      ? isWarning <= 16
-      : projectInfo?.status === "insufficient_funds" &&
-          projectInfo?.subscription_type === "paid"
-        ? isWarning <= 5
-        : isWarning <= 7;
+  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
 
     if (
-      (isWarningActive || projectInfo?.status === "inactive") &&
+      isSubscriptionBannerActive &&
       !isRelationView
     ) {
       warningHeight = 32;
@@ -235,7 +225,7 @@ export const useDynamicTableProps = ({
     filterHeight,
     tabHeight,
     projectInfo,
-    isWarningActive,
+    isSubscriptionBannerActive,
   ]);
 
   return {

@@ -32,7 +32,6 @@ import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrow
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Dialog, Modal } from "@mui/material";
-import { differenceInCalendarDays, parseISO } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -67,6 +66,7 @@ import { applyDrag } from "../../utils/applyDrag";
 import { generateLangaugeText } from "../../utils/generateLanguageText";
 import { isJSONParsable } from "../../utils/isJsonValid";
 import { getAllFromDB } from "../../utils/languageDB";
+import { isSubscriptionBannerVisible } from "@/utils/subscriptionWarning";
 import AddOrganization from "./AddOrganization";
 // import { AIMenu, useAIChat } from "../ProfilePanel/AIChat";
 import AppSidebar from "./AppSidebarComponentV2";
@@ -442,17 +442,7 @@ const LayoutSidebar = ({
     };
   }, []);
 
-  const isWarning =
-    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
-    1;
-
-  const isWarningActive =
-    projectInfo?.subscription_type === "free_trial"
-      ? isWarning <= 16
-      : projectInfo?.status === "insufficient_funds" &&
-          projectInfo?.subscription_type === "paid"
-        ? isWarning <= 5
-        : isWarning <= 7;
+  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
 
   const [isOpenInviteModal, setIsOpenInviteModal] = useState(false);
 
@@ -493,7 +483,7 @@ const LayoutSidebar = ({
         transition="width 200ms ease-out"
         borderRight="1px solid #EAECF0"
         bg={menuStyle?.background ?? "#fff"}
-        h={`calc(100vh - ${isWarningActive || projectInfo?.status === "inactive" ? 32 : 0}px )`}
+        h={`calc(100vh - ${isSubscriptionBannerActive ? 32 : 0}px )`}
       >
         <Flex
           position="absolute"

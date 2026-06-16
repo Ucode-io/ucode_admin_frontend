@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Autocomplete,
   FormControl,
   FormHelperText,
   InputLabel,
@@ -8,6 +9,7 @@ import {
   IconButton,
   Box,
   CircularProgress,
+  TextField as MuiTextField,
 } from "@mui/material";
 import { Controller } from "react-hook-form";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -35,6 +37,10 @@ const DropdownSelect = ({
   disabled = false,
   handleScroll = () => {},
   isLoading = false,
+  searchable = false,
+  searchValue = "",
+  searchPlaceholder = "Search...",
+  onSearchChange = () => {},
   ...props
 }) => {
   const [selectedValue, setSelectedValue] = useState(defaultValue || "");
@@ -59,6 +65,85 @@ const DropdownSelect = ({
         field: { onChange: onFormChange, value },
         fieldState: { error },
       }) => {
+        if (searchable) {
+          const selectedOption =
+            options?.find(
+              (option) => option?.value === (value || selectedValue),
+            ) || null;
+
+          return (
+            <FormControl style={{ width }}>
+              <Autocomplete
+                value={selectedOption}
+                inputValue={searchValue}
+                options={options}
+                loading={isLoading}
+                disabled={disabled}
+                disableClearable={!isClearable}
+                filterOptions={(items) => items}
+                getOptionLabel={(option) => option?.label ?? ""}
+                isOptionEqualToValue={(option, selectedOption) =>
+                  option?.value === selectedOption?.value
+                }
+                onChange={(_, option) => {
+                  const nextValue = option?.value || "";
+
+                  onFormChange(nextValue);
+                  onChange(nextValue);
+                  setSelectedValue(nextValue);
+                  onSearchChange(option?.label || "", {
+                    skipQuery: Boolean(option),
+                  });
+                  if (option) getOnchangeField(option);
+                }}
+                onInputChange={(_, inputValue, reason) => {
+                  if (reason === "input" || reason === "clear") {
+                    onSearchChange(inputValue);
+                  }
+                }}
+                onOpen={onOpen}
+                ListboxProps={{
+                  onScroll: (event) => {
+                    const target = event.currentTarget;
+                    if (
+                      target.scrollTop + target.clientHeight >=
+                      target.scrollHeight - 5
+                    ) {
+                      handleScroll(event);
+                    }
+                  },
+                  style: {
+                    maxHeight: 300,
+                    overflowY: "auto",
+                  },
+                }}
+                renderInput={(params) => (
+                  <MuiTextField
+                    {...params}
+                    label={label}
+                    placeholder={placeholder || searchPlaceholder}
+                    size="small"
+                    error={Boolean(error)}
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {isLoading && <CircularProgress size={20} />}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
+                {...props}
+              />
+              {!disabledHelperText && error?.message && (
+                <FormHelperText error>{error?.message}</FormHelperText>
+              )}
+            </FormControl>
+          );
+        }
+
         return (
           <FormControl style={{ width }}>
             <InputLabel size="small">{label}</InputLabel>

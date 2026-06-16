@@ -937,8 +937,12 @@ export default function FieldCreateModal({
                   <Box
                     width={"100%"}
                     paddingY={"6px"}
-                    onMouseEnter={() => {
-                      setOpenedDropdown(dropdownTypes.changeType);
+                    onClick={() => {
+                      setOpenedDropdown((prev) =>
+                        prev === dropdownTypes.changeType
+                          ? null
+                          : dropdownTypes.changeType,
+                      );
                     }}
                   >
                     <Dropdown

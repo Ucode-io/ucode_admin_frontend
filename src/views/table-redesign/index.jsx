@@ -54,9 +54,9 @@ import RectangleIconButton from "@/components/Buttons/RectangleIconButton";
 import "./data-table.scss";
 import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {TableDataSkeleton} from "../../components/TableDataSkeleton";
-import {differenceInCalendarDays, parseISO} from "date-fns";
 import {useGetLang} from "../../hooks/useGetLang";
 import {FIELD_TYPES} from "../../utils/constants/fieldTypes";
+import {isSubscriptionBannerVisible} from "@/utils/subscriptionWarning";
 
 const mockColumns = Array.from({length: 5}, (_, index) => ({
   attributes: {
@@ -346,22 +346,12 @@ export const DynamicTable = ({
     );
   };
 
-  const isWarning =
-    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
-    1;
-
-  const isWarningActive =
-    projectInfo?.subscription_type === "free_trial"
-      ? isWarning <= 16
-      : projectInfo?.status === "insufficient_funds" &&
-          projectInfo?.subscription_type === "paid"
-        ? isWarning <= 5
-        : isWarning <= 7;
+  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
 
-    if (isWarningActive || projectInfo?.status === "inactive") {
+    if (isSubscriptionBannerActive) {
       warningHeight = 32;
     }
     const filterHeightValue = Boolean(view?.attributes?.quick_filters?.length)
@@ -378,7 +368,7 @@ export const DynamicTable = ({
     filterHeight,
     tabHeight,
     projectInfo,
-    isWarningActive,
+    isSubscriptionBannerActive,
   ]);
 
   const [isLoading, setIsLoading] = useState(false);

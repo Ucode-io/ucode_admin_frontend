@@ -25,8 +25,8 @@ import styles from "./styles.module.scss";
 import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import {useProjectGetByIdQuery} from "../../../services/projectService";
 import {store} from "../../../store";
-import {differenceInCalendarDays, parseISO} from "date-fns";
 import OldModalDetailPage from "../ModalDetailPage/OldModalDetailPage";
+import {isSubscriptionBannerVisible} from "@/utils/subscriptionWarning";
 
 const TableView = ({
   filterVisible,
@@ -557,27 +557,17 @@ const TableView = ({
     );
   }, []);
 
-  const isWarning =
-    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
-    1;
-
-  const isWarningActive =
-    projectInfo?.subscription_type === "free_trial"
-      ? isWarning <= 16
-      : projectInfo?.status === "insufficient_funds" &&
-          projectInfo?.subscription_type === "paid"
-        ? isWarning <= 5
-        : isWarning <= 7;
+  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
 
-    if (isWarningActive || projectInfo?.status === "inactive") {
+    if (isSubscriptionBannerActive) {
       warningHeight = 32;
     }
 
     return 32;
-  }, [projectInfo, isWarningActive]);
+  }, [projectInfo, isSubscriptionBannerActive]);
 
   return (
     <div id="wrapper_drag" className={styles.wrapper}>

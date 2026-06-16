@@ -11,13 +11,16 @@ import { store } from "../../store";
 import styles from "./style.module.scss";
 import SubscriptionWarning from "./SubscriptionWarning";
 import { SettingsPopup } from "../../views/SettingsPopup/SettingsPopup";
-import { differenceInCalendarDays, parseISO } from "date-fns";
 import { TAB_COMPONENTS } from "../../utils/constants/settingsPopup";
 import useSearchParams from "../../hooks/useSearchParams";
 import { ToastContainer } from "react-toastify";
 import { iconCategoryActions } from "../../store/IconCategory/iconCategory.slice";
 import AddingGroup from "./AddingGroup";
 import { settingsModalActions } from "@/store/settingsModal/settingsModal.slice";
+import {
+  isSubscriptionExpired,
+  isSubscriptionWarningActive,
+} from "@/utils/subscriptionWarning";
 
 const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
   const dispatch = useDispatch();
@@ -99,17 +102,8 @@ const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
     handleOpenProfileModal();
   };
 
-  const isWarning =
-    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
-    1;
-
-  const isWarningActive =
-    projectInfo?.subscription_type === "free_trial"
-      ? isWarning <= 16
-      : projectStatus === "insufficient_funds" &&
-          projectInfo?.subscription_type === "paid"
-        ? isWarning <= 5
-        : isWarning <= 7;
+  const isWarningActive = isSubscriptionWarningActive(projectInfo, projectStatus);
+  const isExpired = isSubscriptionExpired(projectInfo, projectStatus);
 
   useEffect(() => {
     if (searchParams.get("stripeRedirect") === "true") {
@@ -127,7 +121,7 @@ const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
           handleOpenBilling={handleOpenBilling}
         />
         <div
-          className={`${isWarningActive || (projectInfo?.status === "inactive" && !location?.pathname?.includes("constructor")) ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}
+          className={`${isWarningActive || (isExpired && !location?.pathname?.includes("constructor")) ? styles.layoutWarning : styles.layout} ${darkMode ? styles.dark : ""}`}
         >
           {favicon && <Favicon url={favicon} />}
           <LayoutSidebar

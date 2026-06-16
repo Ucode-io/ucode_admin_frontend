@@ -25,7 +25,6 @@ import {
   TreeDataModule,
 } from "ag-grid-enterprise";
 import {AgGridReact} from "ag-grid-react";
-import {differenceInCalendarDays, parseISO} from "date-fns";
 import React, {
   lazy,
   useCallback,
@@ -51,6 +50,7 @@ import {generateGUID} from "../../../utils/generateID";
 import {pageToOffset} from "../../../utils/pageToOffset";
 import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import {getColumnIcon} from "../../table-redesign/icons";
+import {isSubscriptionBannerVisible} from "@/utils/subscriptionWarning";
 import AggridFooter from "./AggridFooter";
 import NoFieldsComponent from "./AggridNewDesignHeader/NoFieldsComponent";
 import CustomLoadingOverlay from "./CustomLoadingOverlay";
@@ -568,19 +568,12 @@ function AgGridTableView(props) {
   const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
   const filterHeight = localStorage.getItem("filtersHeight");
 
-  const isWarning =
-    differenceInCalendarDays(parseISO(projectInfo?.expire_date), new Date()) +
-    1;
-
-  const isWarningActive =
-    projectInfo?.subscription_type === "free_trial"
-      ? isWarning <= 16
-      : isWarning <= 7;
+  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;
 
-    if (isWarningActive || projectInfo?.status === "inactive") {
+    if (isSubscriptionBannerActive) {
       warningHeight = 32;
     }
     const filterHeightValue = Number(filterHeight) || 0;
@@ -594,7 +587,7 @@ function AgGridTableView(props) {
     filterHeight,
     tabHeight,
     projectInfo,
-    isWarningActive,
+    isSubscriptionBannerActive,
   ]);
 
   return (

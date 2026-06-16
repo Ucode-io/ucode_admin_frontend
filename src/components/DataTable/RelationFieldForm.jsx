@@ -10,6 +10,7 @@ import {useQuery} from "react-query";
 import HFMultipleSelect from "../FormElements/HFMultipleSelect";
 import DropdownSelect from "../NewFormElements/DropdownSelect";
 import { useSelector } from "react-redux";
+import useDebounce from "../../hooks/useDebounce";
 
 export default function RelationFieldForm({
   control,
@@ -22,6 +23,8 @@ export default function RelationFieldForm({
 
   const [page, setPage] = useState(1);
   const [allTables, setAllTables] = useState([]);
+  const [tableSearch, setTableSearch] = useState("");
+  const [debouncedTableSearch, setDebouncedTableSearch] = useState("");
   const limit = 20;
 
   useEffect(() => {
@@ -33,6 +36,7 @@ export default function RelationFieldForm({
       envId: envId,
       offset: (page - 1) * limit,
       limit,
+      search: debouncedTableSearch,
     },
     // queryParams: {
     //   select: (res) => {
@@ -44,6 +48,10 @@ export default function RelationFieldForm({
     //   },
     // },
   });
+
+  const handleTableSearch = useDebounce((value) => {
+    setDebouncedTableSearch(value);
+  }, 300);
 
   const { data: relatedTableFields } = useQuery(
     ["GET_TABLE_FIELDS", relatedTableSlug],
@@ -93,6 +101,13 @@ export default function RelationFieldForm({
     }
   };
 
+  const handleSearchChange = (value) => {
+    setTableSearch(value);
+    setPage(1);
+    setAllTables([]);
+    handleTableSearch(value);
+  };
+
   return (
     <Box className={style.relation}>
       {fieldWatch.relation_type !== "Recursive" && (
@@ -107,6 +122,10 @@ export default function RelationFieldForm({
           className={style.input}
           handleScroll={handleScroll}
           isLoading={isFetching}
+          searchable
+          searchValue={tableSearch}
+          searchPlaceholder="Search"
+          onSearchChange={handleSearchChange}
         />
       )}
       <HFMultipleSelect

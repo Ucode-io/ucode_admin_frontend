@@ -33,6 +33,7 @@ import { tablePaginationReducer } from "./pagination/paginationV2.slice";
 import { drawerBreadcrumbReducer } from "./drawerBreadcrumb/drawerBreadcrumb.slice";
 import { codeEditorReducer } from "./codeEditor/codeEditor.slice";
 import { generatedUiReducer } from "./generatedUi/generatedUi.slice";
+import { aiChatReducer } from "./aiChat/aiChat.slice";
 
 const mainPersistConfig = {
   key: "main",
@@ -212,6 +213,7 @@ const rootReducer = combineReducers({
   projectInfo: projectInfoReducer,
   codeEditor: persistReducer(codeEditorPersistConfig, codeEditorReducer),
   generatedUi: persistReducer(generatedUiPersistConfig, generatedUiReducer),
+  aiChat: aiChatReducer,
 });
 
 export default rootReducer;

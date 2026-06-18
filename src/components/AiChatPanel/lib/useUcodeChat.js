@@ -98,9 +98,13 @@ function makeStep(event) {
 
 const initialState = {
   chatId: null,
+  title: null, // current conversation title, or null for a fresh chat
   messages: [],
   run: null, // live assistant turn, or null
   sending: false,
+  sessions: [],
+  sessionsLoading: false,
+  sessionsLoaded: false,
 };
 
 function reducer(state, action) {
@@ -108,16 +112,46 @@ function reducer(state, action) {
     case "SET_CHAT":
       return { ...state, chatId: action.chatId };
 
+    case "SET_TITLE":
+      return { ...state, title: action.title };
+
     case "LOAD_MESSAGES":
-      return { ...state, messages: action.messages, run: null };
+      return {
+        ...state,
+        messages: action.messages,
+        title: action.title ?? state.title,
+        run: null,
+      };
+
+    case "SESSIONS_LOADING":
+      return { ...state, sessionsLoading: true };
+
+    case "SESSIONS_LOADED":
+      return {
+        ...state,
+        sessions: action.sessions,
+        sessionsLoading: false,
+        sessionsLoaded: true,
+      };
+
+    case "SESSIONS_INVALIDATE":
+      // Force the next history-open to refetch (e.g. after a new chat).
+      return { ...state, sessionsLoaded: false };
 
     case "RESET":
-      return { ...initialState };
+      // Keep the fetched sessions list across a "new chat".
+      return {
+        ...initialState,
+        sessions: state.sessions,
+        sessionsLoaded: state.sessionsLoaded,
+      };
 
     case "SEND_START":
       return {
         ...state,
         sending: true,
+        // First message of a fresh chat becomes its title.
+        title: state.title || (state.messages.length === 0 ? action.content : null),
         messages: [
           ...state.messages,
           { id: uid(), role: "user", content: action.content },
@@ -185,6 +219,8 @@ export function useUcodeChat() {
           });
           chatId = chat?.id || chat?.chat_id;
           dispatch({ type: "SET_CHAT", chatId });
+          // A new chat now exists — let the history refetch next time it opens.
+          dispatch({ type: "SESSIONS_INVALIDATE" });
         }
         if (!chatId) throw new Error("Не удалось создать чат");
 
@@ -212,28 +248,57 @@ export function useUcodeChat() {
     [state.chatId, state.sending],
   );
 
-  const loadChat = useCallback(async (chatId) => {
-    abortRef.current?.abort();
+  const loadSessions = useCallback(
+    async (force = false) => {
+    if (!force && (state.sessionsLoaded || state.sessionsLoading)) return;
+    dispatch({ type: "SESSIONS_LOADING" });
     try {
-      const messages = await ucodeChatService.getMessages(chatId);
-      dispatch({
-        type: "LOAD_MESSAGES",
-        messages: Array.isArray(messages) ? messages : messages?.messages || [],
+      const res = await ucodeChatService.getChats({
+        order_by: "updated_at",
+        order_direction: "desc",
+        limit: 20,
+        offset: 0,
+        type: "ucode",
       });
-      dispatch({ type: "SET_CHAT", chatId });
+      const chats = Array.isArray(res) ? res : res?.chats || [];
+      dispatch({ type: "SESSIONS_LOADED", sessions: chats });
     } catch {
-      dispatch({ type: "SET_CHAT", chatId });
+      dispatch({ type: "SESSIONS_LOADED", sessions: [] });
+    }
+    },
+    [state.sessionsLoaded, state.sessionsLoading],
+  );
+
+  const loadChat = useCallback(async (chatId, title = null) => {
+    abortRef.current?.abort();
+    dispatch({ type: "SET_CHAT", chatId });
+    if (title) dispatch({ type: "SET_TITLE", title });
+    try {
+      const res = await ucodeChatService.getMessages(chatId);
+      const list = Array.isArray(res) ? res : res?.messages || [];
+      const messages = list.map((m, i) => ({
+        id: m.id || `hist-${chatId}-${i}`,
+        role: m.role === "assistant" ? "assistant" : "user",
+        content: m.content,
+      }));
+      dispatch({ type: "LOAD_MESSAGES", messages, title });
+    } catch {
+      /* keep chatId/title already set */
     }
   }, []);
 
   return {
     chatId: state.chatId,
+    title: state.title,
     messages: state.messages,
     run: state.run,
     sending: state.sending,
+    sessions: state.sessions,
+    sessionsLoading: state.sessionsLoading,
     send,
     reset,
     loadChat,
+    loadSessions,
   };
 }
 

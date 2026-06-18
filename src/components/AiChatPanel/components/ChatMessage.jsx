@@ -1,5 +1,6 @@
 import { Sparkles } from "lucide-react";
 import { BuildTimeline } from "./BuildTimeline";
+import { Markdown } from "./Markdown";
 import cls from "../styles.module.scss";
 
 /**
@@ -26,7 +27,7 @@ export const ChatMessage = ({ message, liveRun }) => {
       {message.content ? (
         <div className={cls.assistantBubble}>
           <Sparkles size={15} className={cls.assistantBubbleIcon} />
-          <div className={cls.assistantBubbleText}>{message.content}</div>
+          <Markdown>{message.content}</Markdown>
         </div>
       ) : null}
     </div>

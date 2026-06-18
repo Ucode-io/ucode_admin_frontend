@@ -50,13 +50,25 @@ const SUGGESTIONS = [
   },
 ];
 
-const SESSIONS = [
-  { id: 1, title: "Create users table", time: "Today, 14:32" },
-  { id: 2, title: "Build orders relation", time: "Today, 11:08" },
-  { id: 3, title: "Function for invoices", time: "Yesterday, 18:45" },
-  { id: 4, title: "Find my project ID", time: "Jun 16, 09:20" },
-  { id: 5, title: "Connect Postgres source", time: "Jun 15, 16:02" },
-];
+/** First line of a chat title, trimmed to a readable length. */
+const sessionTitle = (title) => {
+  const firstLine = (title || "").split("\n")[0].trim();
+  const text = firstLine || "Без названия";
+  return text.length > 48 ? `${text.slice(0, 48)}…` : text;
+};
+
+/** "17 июн, 14:40" style timestamp from an ISO date. */
+const formatSessionTime = (iso) => {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleString("ru-RU", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 
 export const AiChatPanel = () => {
   const dispatch = useDispatch();
@@ -65,13 +77,37 @@ export const AiChatPanel = () => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [input, setInput] = useState("");
 
-  const { messages, run, sending, send, reset } = useUcodeChat();
+  const {
+    title,
+    messages,
+    run,
+    sending,
+    sessions,
+    sessionsLoading,
+    send,
+    reset,
+    loadChat,
+    loadSessions,
+  } = useUcodeChat();
 
   if (!isOpen) return null;
 
   const hasConversation = messages.length > 0 || !!run;
 
   const handleClose = () => dispatch(aiChatActions.closeAiChat());
+
+  const toggleHistory = () => {
+    setIsHistoryOpen((prev) => {
+      const next = !prev;
+      if (next) loadSessions();
+      return next;
+    });
+  };
+
+  const handleSelectSession = (chatId, chatTitle) => {
+    setIsHistoryOpen(false);
+    loadChat(chatId, chatTitle);
+  };
 
   const handleSend = () => {
     const text = input.trim();
@@ -100,16 +136,18 @@ export const AiChatPanel = () => {
   return (
     <div className={cls.panel}>
       <div className={cls.header}>
-        <div className={cls.title}>
+        <div className={cls.title} title={title || "New conversation"}>
           <AutoAwesomeIcon fontSize="small" />
-          New conversation
+          <span className={cls.titleText}>
+            {title ? sessionTitle(title) : "New conversation"}
+          </span>
         </div>
         <div className={cls.headerActions}>
           <div className={cls.historyWrap}>
             <button
               className={`${cls.iconBtn} ${isHistoryOpen ? cls.iconBtnActive : ""}`}
               aria-label="history"
-              onClick={() => setIsHistoryOpen((prev) => !prev)}
+              onClick={toggleHistory}
             >
               <HistoryIcon fontSize="small" />
             </button>
@@ -122,26 +160,34 @@ export const AiChatPanel = () => {
                 <div className={cls.historyMenu}>
                   <div className={cls.historyMenuTitle}>Sessions</div>
                   <div className={cls.historyList}>
-                    {SESSIONS.map((session) => (
-                      <button
-                        className={cls.historyItem}
-                        key={session.id}
-                        onClick={() => setIsHistoryOpen(false)}
-                      >
-                        <ChatBubbleOutlineIcon
-                          fontSize="small"
-                          className={cls.historyItemIcon}
-                        />
-                        <div className={cls.historyItemText}>
-                          <span className={cls.historyItemTitle}>
-                            {session.title}
-                          </span>
-                          <span className={cls.historyItemTime}>
-                            {session.time}
-                          </span>
-                        </div>
-                      </button>
-                    ))}
+                    {sessionsLoading ? (
+                      <div className={cls.historyEmpty}>Загрузка…</div>
+                    ) : sessions.length === 0 ? (
+                      <div className={cls.historyEmpty}>Нет сессий</div>
+                    ) : (
+                      sessions.map((session) => (
+                        <button
+                          className={cls.historyItem}
+                          key={session.id}
+                          onClick={() =>
+                            handleSelectSession(session.id, session.title)
+                          }
+                        >
+                          <ChatBubbleOutlineIcon
+                            fontSize="small"
+                            className={cls.historyItemIcon}
+                          />
+                          <div className={cls.historyItemText}>
+                            <span className={cls.historyItemTitle}>
+                              {sessionTitle(session.title)}
+                            </span>
+                            <span className={cls.historyItemTime}>
+                              {formatSessionTime(session.updated_at)}
+                            </span>
+                          </div>
+                        </button>
+                      ))
+                    )}
                   </div>
                 </div>
               </>

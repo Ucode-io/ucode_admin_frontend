@@ -9,6 +9,11 @@ export const Markdown = ({ children, className = "" }) => (
       remarkPlugins={[remarkGfm]}
       components={{
         a: (props) => <a {...props} target="_blank" rel="noreferrer" />,
+        table: (props) => (
+          <div className={cls.tableWrap}>
+            <table {...props} />
+          </div>
+        ),
       }}
     >
       {children}

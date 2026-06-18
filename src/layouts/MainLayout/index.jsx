@@ -2,7 +2,7 @@ import { CssBaseline, createTheme } from "@mui/material";
 import { ThemeProvider } from "@mui/styles";
 import { useEffect, useState } from "react";
 import Favicon from "react-favicon";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useLocation, useParams } from "react-router-dom";
 import LayoutSidebar from "../../components/LayoutSidebar";
 import { useProjectGetByIdQuery } from "../../services/projectService";
@@ -30,6 +30,10 @@ const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
 
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
   const location = useLocation();
+
+  const aiChatExpanded = useSelector(
+    (state) => state.aiChat.isOpen && state.aiChat.expanded,
+  );
 
   const { data: projectInfo } = useProjectGetByIdQuery({
     projectId,
@@ -140,6 +144,7 @@ const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
                 ? styles.contentLayout
                 : styles.content
             }
+            style={aiChatExpanded ? { display: "none" } : undefined}
           >
             <Outlet />
             <ToastContainer hideProgressBar />

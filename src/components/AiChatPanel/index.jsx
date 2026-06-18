@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import HistoryIcon from "@mui/icons-material/History";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
@@ -73,6 +75,7 @@ const formatSessionTime = (iso) => {
 export const AiChatPanel = () => {
   const dispatch = useDispatch();
   const isOpen = useSelector((state) => state.aiChat.isOpen);
+  const expanded = useSelector((state) => state.aiChat.expanded);
 
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -134,7 +137,7 @@ export const AiChatPanel = () => {
   };
 
   return (
-    <div className={cls.panel}>
+    <div className={`${cls.panel} ${expanded ? cls.panelExpanded : ""}`}>
       <div className={cls.header}>
         <div className={cls.title} title={title || "New conversation"}>
           <AutoAwesomeIcon fontSize="small" />
@@ -199,6 +202,17 @@ export const AiChatPanel = () => {
             onClick={handleNewChat}
           >
             <AddIcon fontSize="small" />
+          </button>
+          <button
+            className={cls.iconBtn}
+            aria-label={expanded ? "collapse" : "full screen"}
+            onClick={() => dispatch(aiChatActions.toggleAiChatExpand())}
+          >
+            {expanded ? (
+              <CloseFullscreenIcon fontSize="small" />
+            ) : (
+              <OpenInFullIcon fontSize="small" />
+            )}
           </button>
           <button
             className={cls.iconBtn}

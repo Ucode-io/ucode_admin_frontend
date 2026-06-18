@@ -16,6 +16,7 @@ import useSearchParams from "../../hooks/useSearchParams";
 import { ToastContainer } from "react-toastify";
 import { iconCategoryActions } from "../../store/IconCategory/iconCategory.slice";
 import AddingGroup from "./AddingGroup";
+import { AiChatPanel } from "@/components/AiChatPanel";
 import { settingsModalActions } from "@/store/settingsModal/settingsModal.slice";
 import {
   isSubscriptionExpired,
@@ -143,6 +144,7 @@ const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
             <Outlet />
             <ToastContainer hideProgressBar />
           </div>
+          <AiChatPanel />
         </div>
 
         {openProfileModal && (

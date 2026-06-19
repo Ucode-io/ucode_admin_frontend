@@ -1,18 +1,16 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import AddIcon from "@mui/icons-material/Add";
-import CloseIcon from "@mui/icons-material/Close";
-import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import HistoryIcon from "@mui/icons-material/History";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import RocketLaunchOutlinedIcon from "@mui/icons-material/RocketLaunchOutlined";
-import SyncAltIcon from "@mui/icons-material/SyncAlt";
-import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import BadgeOutlinedIcon from "@mui/icons-material/BadgeOutlined";
-import StorageOutlinedIcon from "@mui/icons-material/StorageOutlined";
+import {
+  AddIcon,
+  CloseIcon,
+  RepeatClockIcon,
+  ArrowUpIcon,
+  LinkIcon,
+  HamburgerIcon,
+  PlusSquareIcon,
+} from "@chakra-ui/icons";
+import { Sparkles, Maximize2, Minimize2 } from "lucide-react";
+import { ChatIcon, TableIcon, SearchIcon } from "@/utils/constants/icons";
 
 import { aiChatActions } from "@/store/aiChat/aiChat.slice";
 import { useUcodeChat } from "./lib/useUcodeChat";
@@ -21,31 +19,31 @@ import cls from "./styles.module.scss";
 
 const SUGGESTIONS = [
   {
-    icon: <RocketLaunchOutlinedIcon fontSize="small" />,
+    icon: <TableIcon width="18" height="18" color="#667085" />,
     title: "Создать таблицу",
     subtitle: "Помоги начать",
     prompt: "Создай таблицу товаров с названием, ценой и категорией",
   },
   {
-    icon: <SyncAltIcon fontSize="small" />,
+    icon: <LinkIcon boxSize="18px" />,
     title: "Построить связь",
     subtitle: "Проведи по шагам",
     prompt: "Свяжи таблицы order_item и product связью многие-к-одному",
   },
   {
-    icon: <Inventory2OutlinedIcon fontSize="small" />,
+    icon: <HamburgerIcon boxSize="18px" />,
     title: "Раздел меню",
     subtitle: "Создать раздел каталога",
     prompt: "Создай раздел меню «Каталог» и помести в него таблицу product",
   },
   {
-    icon: <BadgeOutlinedIcon fontSize="small" />,
+    icon: <PlusSquareIcon boxSize="18px" />,
     title: "Добавить записи",
     subtitle: "Заполнить данными",
     prompt: "Добавь 5 тестовых записей в таблицу product",
   },
   {
-    icon: <StorageOutlinedIcon fontSize="small" />,
+    icon: <SearchIcon width="18" height="18" color="#667085" />,
     title: "Прочитать схему",
     subtitle: "Показать структуру проекта",
     prompt: "Прочитай и опиши текущую схему проекта",
@@ -140,7 +138,7 @@ export const AiChatPanel = () => {
     <div className={`${cls.panel} ${expanded ? cls.panelExpanded : ""}`}>
       <div className={cls.header}>
         <div className={cls.title} title={title || "New conversation"}>
-          <AutoAwesomeIcon fontSize="small" />
+          <Sparkles size={16} />
           <span className={cls.titleText}>
             {title ? sessionTitle(title) : "New conversation"}
           </span>
@@ -152,7 +150,7 @@ export const AiChatPanel = () => {
               aria-label="history"
               onClick={toggleHistory}
             >
-              <HistoryIcon fontSize="small" />
+              <RepeatClockIcon boxSize="16px" />
             </button>
             {isHistoryOpen && (
               <>
@@ -176,10 +174,9 @@ export const AiChatPanel = () => {
                             handleSelectSession(session.id, session.title)
                           }
                         >
-                          <ChatBubbleOutlineIcon
-                            fontSize="small"
-                            className={cls.historyItemIcon}
-                          />
+                          <span className={cls.historyItemIcon}>
+                            <ChatIcon width="16" height="16" />
+                          </span>
                           <div className={cls.historyItemText}>
                             <span className={cls.historyItemTitle}>
                               {sessionTitle(session.title)}
@@ -201,25 +198,21 @@ export const AiChatPanel = () => {
             aria-label="new chat"
             onClick={handleNewChat}
           >
-            <AddIcon fontSize="small" />
+            <AddIcon boxSize="15px" />
           </button>
           <button
             className={cls.iconBtn}
             aria-label={expanded ? "collapse" : "full screen"}
             onClick={() => dispatch(aiChatActions.toggleAiChatExpand())}
           >
-            {expanded ? (
-              <CloseFullscreenIcon fontSize="small" />
-            ) : (
-              <OpenInFullIcon fontSize="small" />
-            )}
+            {expanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
           </button>
           <button
             className={cls.iconBtn}
             aria-label="close"
             onClick={handleClose}
           >
-            <CloseIcon fontSize="small" />
+            <CloseIcon boxSize="13px" />
           </button>
         </div>
       </div>
@@ -278,7 +271,7 @@ export const AiChatPanel = () => {
                 onClick={handleSend}
                 disabled={sending || !input.trim()}
               >
-                <ArrowUpwardIcon fontSize="small" />
+                <ArrowUpIcon boxSize="18px" />
               </button>
             </div>
           </div>

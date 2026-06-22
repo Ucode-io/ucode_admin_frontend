@@ -33,6 +33,11 @@
   }
 }
 
+.labeledRow {
+  align-items: flex-start;
+  padding: 5px;
+}
+
 .coloredElement {
   display: block !important;
   min-width: auto !important;
@@ -43,6 +48,35 @@
   display: inline-flex;
   align-items: center;
   column-gap: 8px;
+}
+
+.labeledRowWrapper {
+  align-items: start;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 16px minmax(0, 1fr);
+  width: 100%;
+}
+
+.labeledContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.fieldIcon {
+  align-items: center;
+  display: inline-flex;
+  height: 16px;
+  justify-content: center;
+  width: 16px;
+
+  svg,
+  img {
+    height: 16px;
+    width: 16px;
+  }
 }
 
 .rowHint {
@@ -89,6 +123,26 @@
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.boardLabel {
+  color: #737982;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.labeledValue {
+  box-sizing: border-box;
+  color: #101828;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 20px;
+  padding-left: 0;
+  width: 100%;
 }
 
 .photorow {

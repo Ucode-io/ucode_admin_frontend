@@ -85,7 +85,7 @@ import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import { SidebarList } from "./SidebarList";
 import { Container } from "react-smooth-dnd";
 // import { AiProjectsModal } from "../AiProjectsModal";
-import { aiChatActions } from "../../store/aiChat/aiChat.slice";
+import { AiAgentButton } from "../AiChatPanel/AiAgentButton";
 import "./style.scss";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
@@ -764,28 +764,13 @@ const LayoutSidebar = ({
                     }
                   >
                     <SidebarActionTooltip id="ai-agent" title="AI Agent">
-                      {/* <AiProjectsModal> */}
-                      <Flex
-                        w={sidebarIsOpen ? "100%" : 36}
-                        alignItems="center"
-                        justifyContent={sidebarIsOpen ? "flex-start" : "center"}
-                        gap={8}
-                        onClick={() => {
-                          dispatch(aiChatActions.openAiChat());
-                        }}
+                      <AiAgentButton
+                        w={sidebarIsOpen ? "100%" : "36px"}
+                        px={sidebarIsOpen ? "12px" : "0px"}
+                        justifyContent="center"
+                        label={sidebarIsOpen ? "AI Agent" : ""}
                         {...getActionProps("ai-agent")}
-                      >
-                        <Box
-                          pl={sidebarIsOpen ? "5px" : 0}
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                        >
-                          <AssistantOutlined />
-                        </Box>
-                        {sidebarIsOpen ? <span>AI Agent</span> : null}
-                      </Flex>
-                      {/* </AiProjectsModal> */}
+                      />
                     </SidebarActionTooltip>
                   </MenuItemWrapper>
                   <MenuItemWrapper

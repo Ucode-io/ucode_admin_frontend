@@ -17,6 +17,7 @@ import { ToastContainer } from "react-toastify";
 import { iconCategoryActions } from "../../store/IconCategory/iconCategory.slice";
 import AddingGroup from "./AddingGroup";
 import { AiChatPanel } from "@/components/AiChatPanel";
+import { AiAgentButton } from "@/components/AiChatPanel/AiAgentButton";
 import { settingsModalActions } from "@/store/settingsModal/settingsModal.slice";
 import {
   isSubscriptionExpired,
@@ -146,6 +147,18 @@ const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
             }
             style={aiChatExpanded ? { display: "none" } : undefined}
           >
+            {location.pathname === "/" && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "16px",
+                  right: "16px",
+                  zIndex: 5,
+                }}
+              >
+                <AiAgentButton />
+              </div>
+            )}
             <Outlet />
             <ToastContainer hideProgressBar />
           </div>

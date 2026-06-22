@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import {
   IconButton,
   Menu,
@@ -21,6 +21,7 @@ export const FieldOptions = ({ field, view, tableSlug, tableLan }) => {
   const { refetchTableInfo } = useViewContext();
 
   const queryClient = useQueryClient();
+  const menuButtonRef = useRef(null);
   const [selectedField, setSelectedField] = useState(null);
   const [menuAnchor, setMenuAnchor] = useState(null);
 
@@ -35,6 +36,7 @@ export const FieldOptions = ({ field, view, tableSlug, tableLan }) => {
 
   const handleMenuOpen = (e) => {
     e.stopPropagation();
+    setMenuAnchor(e.currentTarget);
     setAnchorMenu(e.currentTarget);
   };
 
@@ -44,8 +46,7 @@ export const FieldOptions = ({ field, view, tableSlug, tableLan }) => {
 
   const handleEditClick = (e) => {
     e.stopPropagation();
-    setAnchorEl(e.currentTarget);
-    setMenuAnchor(e.currentTarget);
+    setAnchorEl(menuButtonRef.current);
     setFormType("UPDATE");
     setSelectedField(field);
     handleMenuClose();
@@ -70,6 +71,7 @@ export const FieldOptions = ({ field, view, tableSlug, tableLan }) => {
   return (
     <MaterialUIProvider>
       <IconButton
+        ref={menuButtonRef}
         size="small"
         onClick={handleMenuOpen}
         onMouseDown={(e) => e.stopPropagation()}

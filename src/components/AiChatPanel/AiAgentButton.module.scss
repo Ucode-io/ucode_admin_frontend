@@ -1,0 +1,35 @@
+.aiBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(to right, #8b5cf6, #6366f1);
+  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.35);
+  transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+
+  &:hover {
+    background: linear-gradient(to right, #7c3aed, #4f46e5);
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.45);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    background: linear-gradient(to right, #6d28d9, #4338ca);
+    transform: translateY(0);
+  }
+}
+
+.noShadow {
+  box-shadow: none;
+
+  &:hover {
+    box-shadow: none;
+  }
+}

@@ -55,7 +55,7 @@ const BoardCardRowGenerator = ({
             {/* {field?.attributes?.[`label_${i18n?.language}`]} */}
             <Box>{value}</Box>
           </Box>
-          {showFieldLabel && (
+          {showFieldLabel && !field?.attributes?.show_label_on_board && (
             <span className={clsx(styles.rowHint, styles[hintPosition])}>
               {field?.attributes?.[`label_${i18n?.language}`]}
             </span>
@@ -202,22 +202,63 @@ const FieldContainer = ({
   hintPosition,
   isEmpty,
 }) => {
+  const { i18n } = useTranslation();
+  const showLabelOnBoard = Boolean(
+    field?.attributes?.show_label_on_board,
+  );
+  const fieldLabel =
+    field?.attributes?.[`label_${i18n.language}`] || field?.label;
+
+  if (
+    isEmpty ||
+    children === "" ||
+    children === null ||
+    children === undefined
+  ) {
+    return null;
+  }
+
   return (
     <div
       key={field.id}
-      className={clsx(styles.row, { [styles.isEmpty]: !children || isEmpty })}
+      className={clsx(styles.row, {
+        [styles.isEmpty]: !children || isEmpty,
+        [styles.labeledRow]: showLabelOnBoard,
+      })}
     >
       {/* <div className={styles.label}>{field.label}:</div> */}
-      <div className={styles.rowWrapper}>
-        <span style={{ width: "16px", height: "16px", flexShrink: "0" }}>
-          {getColumnIcon({ column: field })}
-        </span>
-        <div className={styles.value}>
-          {/* {value ? format(new Date(value), "dd.MM.yyyy") : "---"} */}
-          {children}
-        </div>
+      <div
+        className={clsx(styles.rowWrapper, {
+          [styles.labeledRowWrapper]: showLabelOnBoard,
+        })}
+      >
+        {showLabelOnBoard ? (
+          <>
+            <span className={styles.fieldIcon}>
+              {getColumnIcon({ column: field })}
+            </span>
+            <div className={styles.labeledContent}>
+              {fieldLabel && (
+                <span className={styles.boardLabel}>{fieldLabel}</span>
+              )}
+              <div className={clsx(styles.value, styles.labeledValue)}>
+                {children}
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <span style={{ width: "16px", height: "16px", flexShrink: "0" }}>
+              {getColumnIcon({ column: field })}
+            </span>
+            <div className={styles.value}>
+              {/* {value ? format(new Date(value), "dd.MM.yyyy") : "---"} */}
+              {children}
+            </div>
+          </>
+        )}
       </div>
-      {showFieldLabel && (
+      {showFieldLabel && !showLabelOnBoard && (
         <span className={clsx(styles.rowHint, styles[hintPosition])}>
           {field?.label}
         </span>

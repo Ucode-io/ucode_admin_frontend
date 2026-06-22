@@ -1,16 +1,19 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  AddIcon,
-  CloseIcon,
-  RepeatClockIcon,
-  ArrowUpIcon,
-  LinkIcon,
-  HamburgerIcon,
-  PlusSquareIcon,
-} from "@chakra-ui/icons";
-import { Sparkles, Maximize2, Minimize2 } from "lucide-react";
-import { ChatIcon, TableIcon, SearchIcon } from "@/utils/constants/icons";
+  Sparkles,
+  Maximize2,
+  Minimize2,
+  History,
+  Plus,
+  X,
+  ArrowUp,
+  MessageSquare,
+  Link2,
+  Menu,
+  ListPlus,
+} from "lucide-react";
+import { TableIcon, SearchIcon } from "@/utils/constants/icons";
 
 import { aiChatActions } from "@/store/aiChat/aiChat.slice";
 import { useUcodeChat } from "./lib/useUcodeChat";
@@ -25,19 +28,19 @@ const SUGGESTIONS = [
     prompt: "Создай таблицу товаров с названием, ценой и категорией",
   },
   {
-    icon: <LinkIcon boxSize="18px" />,
+    icon: <Link2 size={18} />,
     title: "Построить связь",
     subtitle: "Проведи по шагам",
     prompt: "Свяжи таблицы order_item и product связью многие-к-одному",
   },
   {
-    icon: <HamburgerIcon boxSize="18px" />,
+    icon: <Menu size={18} />,
     title: "Раздел меню",
     subtitle: "Создать раздел каталога",
     prompt: "Создай раздел меню «Каталог» и помести в него таблицу product",
   },
   {
-    icon: <PlusSquareIcon boxSize="18px" />,
+    icon: <ListPlus size={18} />,
     title: "Добавить записи",
     subtitle: "Заполнить данными",
     prompt: "Добавь 5 тестовых записей в таблицу product",
@@ -77,6 +80,15 @@ export const AiChatPanel = () => {
 
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [input, setInput] = useState("");
+  const inputRef = useRef(null);
+
+  // Auto-grow the textarea with its content (capped by CSS max-height, then scrolls).
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [input]);
 
   const {
     title,
@@ -126,7 +138,7 @@ export const AiChatPanel = () => {
 
   const handleSuggestion = (prompt) => {
     if (sending) return;
-    send(prompt);
+    setInput(prompt);
   };
 
   const handleNewChat = () => {
@@ -150,7 +162,7 @@ export const AiChatPanel = () => {
               aria-label="history"
               onClick={toggleHistory}
             >
-              <RepeatClockIcon boxSize="16px" />
+              <History size={16} />
             </button>
             {isHistoryOpen && (
               <>
@@ -175,7 +187,7 @@ export const AiChatPanel = () => {
                           }
                         >
                           <span className={cls.historyItemIcon}>
-                            <ChatIcon width="16" height="16" />
+                            <MessageSquare size={16} />
                           </span>
                           <div className={cls.historyItemText}>
                             <span className={cls.historyItemTitle}>
@@ -198,7 +210,7 @@ export const AiChatPanel = () => {
             aria-label="new chat"
             onClick={handleNewChat}
           >
-            <AddIcon boxSize="15px" />
+            <Plus size={16} />
           </button>
           <button
             className={cls.iconBtn}
@@ -212,7 +224,7 @@ export const AiChatPanel = () => {
             aria-label="close"
             onClick={handleClose}
           >
-            <CloseIcon boxSize="13px" />
+            <X size={16} />
           </button>
         </div>
       </div>
@@ -254,6 +266,7 @@ export const AiChatPanel = () => {
       <div className={cls.footer}>
         <div className={cls.inputBox}>
           <textarea
+            ref={inputRef}
             className={cls.input}
             placeholder="What can we help you with?"
             aria-label="Message the AI agent"
@@ -271,7 +284,7 @@ export const AiChatPanel = () => {
                 onClick={handleSend}
                 disabled={sending || !input.trim()}
               >
-                <ArrowUpIcon boxSize="18px" />
+                <ArrowUp size={18} />
               </button>
             </div>
           </div>

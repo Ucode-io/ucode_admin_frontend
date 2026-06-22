@@ -25,7 +25,7 @@ import {
   useDisclosure,
   useOutsideClick,
 } from "@chakra-ui/react";
-import { Logout, AssistantOutlined } from "@mui/icons-material";
+import { Logout } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
@@ -85,7 +85,7 @@ import { viewsActions } from "@/store/views/view.slice";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import { SidebarList } from "./SidebarList";
 // import { AiProjectsModal } from "../AiProjectsModal";
-import { aiChatActions } from "../../store/aiChat/aiChat.slice";
+import { AiAgentButton } from "../AiChatPanel/AiAgentButton";
 import "./style.scss";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
@@ -850,58 +850,19 @@ const LayoutSidebar = ({
                   </Flex>
                   <Flex
                     position="relative"
-                    h={30}
+                    h={32}
                     mx={8}
                     mb={4}
                     alignItems="center"
-                    whiteSpace="nowrap"
-                    borderRadius={6}
-                    color="#475467"
-                    fontSize={14}
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                    _hover={{
-                      bg: "#EAECF0",
-                      ".accordionFolderIcon": {
-                        display: "none",
-                      },
-                      ".accordionIcon": {
-                        display: "block",
-                      },
-                    }}
-                    cursor="pointer"
-                    onMouseLeave={
-                      sidebarIsOpen
-                        ? undefined
-                        : () =>
-                            dispatch(
-                              mainActions.setSidebarHighlightedAction(null),
-                            )
-                    }
                   >
                     <SidebarActionTooltip id="ai-agent" title="AI Agent">
-                      {/* <AiProjectsModal> */}
-                      <Flex
-                        w={sidebarIsOpen ? "100%" : 36}
-                        alignItems="center"
-                        justifyContent={sidebarIsOpen ? "flex-start" : "center"}
-                        gap={8}
-                        onClick={() => {
-                          dispatch(aiChatActions.openAiChat());
-                        }}
+                      <AiAgentButton
+                        w={sidebarIsOpen ? "100%" : "36px"}
+                        px={sidebarIsOpen ? "12px" : "0px"}
+                        justifyContent="center"
+                        label={sidebarIsOpen ? "AI Agent" : ""}
                         {...getActionProps("ai-agent")}
-                      >
-                        <Box
-                          pl={sidebarIsOpen ? "5px" : 0}
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                        >
-                          <AssistantOutlined />
-                        </Box>
-                        {sidebarIsOpen ? <span>AI Agent</span> : null}
-                      </Flex>
-                      {/* </AiProjectsModal> */}
+                      />
                     </SidebarActionTooltip>
                   </Flex>
                 </Box>

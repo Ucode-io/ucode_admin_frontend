@@ -351,10 +351,14 @@
   outline: none;
   resize: none;
   font-size: 15px;
+  line-height: 1.45;
   color: #1a1a1a;
   font-family: inherit;
   background: transparent;
-  max-height: 120px;
+  min-height: 22px;
+  max-height: 140px;
+  overflow-y: auto;
+  display: block;
 
   &::placeholder {
     color: #98a2b3;

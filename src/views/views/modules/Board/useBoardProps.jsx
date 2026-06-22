@@ -63,7 +63,6 @@ export const useBoardProps = () => {
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMapRel?.[groupFieldId];
   const canUpdateGroupField = hasFieldEditPermission(groupField);
-
   const canUpdateSubGroupField =
     !subGroupById || hasFieldEditPermission(subGroupField);
   const canDragBoardItems = canUpdateGroupField && canUpdateSubGroupField;

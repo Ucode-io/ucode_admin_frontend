@@ -6,6 +6,7 @@ import HFSelect from "@/components/FormElements/HFSelect";
 import HFMultipleSelect from "@/components/FormElements/HFMultipleSelect";
 import { FieldCheckbox } from "../../../components/FieldCheckbox/FieldCheckbox";
 import { FieldMenuItem } from "../../../components/FieldMenuItem";
+import HFSwitch from "@/components/FormElements/HFSwitch";
 
 export const RelationFieldParams = ({
   onClose,
@@ -94,6 +95,14 @@ export const RelationFieldParams = ({
           placeholder="View fields"
         />
         <Box display="flex" flexDirection="column" alignItems="flex-start">
+          {formType !== "CREATE" && (
+            <HFSwitch
+              control={control}
+              name="attributes.show_label_on_board"
+              label="Show label on board"
+              disabledHelperText
+            />
+          )}
           <FieldCheckbox
             watch={watch}
             register={register}

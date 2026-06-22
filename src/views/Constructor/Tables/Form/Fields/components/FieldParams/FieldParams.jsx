@@ -30,6 +30,7 @@ import { getColumnIconPath } from "../../../../../../table-redesign/icons";
 import SVG from "react-inlinesvg";
 import { NButton } from "@/components/NButton";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
+import HFSwitch from "@/components/FormElements/HFSwitch";
 
 export const FieldParams = ({
   tableName = "",
@@ -631,6 +632,16 @@ export const FieldParams = ({
               </Box>
             )}
             <Box display="flex" flexDirection="column">
+              {formType !== "CREATE" && (
+                <Box>
+                  <HFSwitch
+                    control={control}
+                    name="attributes.show_label_on_board"
+                    label="Show label on board"
+                    disabledHelperText
+                  />
+                </Box>
+              )}
               {activeType?.value === FIELD_TYPES.MULTISELECT && (
                 <>
                   <Box>

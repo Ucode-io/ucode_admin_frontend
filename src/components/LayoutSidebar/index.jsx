@@ -85,7 +85,6 @@ import { viewsActions } from "@/store/views/view.slice";
 import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import { SidebarList } from "./SidebarList";
 // import { AiProjectsModal } from "../AiProjectsModal";
-import { AiAgentButton } from "../AiChatPanel/AiAgentButton";
 import "./style.scss";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
@@ -846,23 +845,6 @@ const LayoutSidebar = ({
                         </Box>
                         {sidebarIsOpen ? <span>Settings</span> : null}
                       </Flex>
-                    </SidebarActionTooltip>
-                  </Flex>
-                  <Flex
-                    position="relative"
-                    h={32}
-                    mx={8}
-                    mb={4}
-                    alignItems="center"
-                  >
-                    <SidebarActionTooltip id="ai-agent" title="AI Agent">
-                      <AiAgentButton
-                        w={sidebarIsOpen ? "100%" : "36px"}
-                        px={sidebarIsOpen ? "12px" : "0px"}
-                        justifyContent="center"
-                        label={sidebarIsOpen ? "AI Agent" : ""}
-                        {...getActionProps("ai-agent")}
-                      />
                     </SidebarActionTooltip>
                   </Flex>
                 </Box>

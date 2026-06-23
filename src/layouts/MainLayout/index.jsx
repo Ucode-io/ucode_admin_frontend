@@ -32,6 +32,7 @@ const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
   const [searchParams, setSearchParams, updateSearchParam] = useSearchParams();
   const location = useLocation();
 
+  const aiChatOpen = useSelector((state) => state.aiChat.isOpen);
   const aiChatExpanded = useSelector(
     (state) => state.aiChat.isOpen && state.aiChat.expanded,
   );
@@ -147,7 +148,7 @@ const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
             }
             style={aiChatExpanded ? { display: "none" } : undefined}
           >
-            {location.pathname === "/" && (
+            {location.pathname === "/" && !aiChatOpen && (
               <div
                 style={{
                   position: "absolute",

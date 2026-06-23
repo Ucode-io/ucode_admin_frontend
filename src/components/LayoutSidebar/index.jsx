@@ -751,7 +751,7 @@ const LayoutSidebar = ({
                         {sidebarIsOpen ? <span>Settings</span> : null}
                       </Flex>
                     </SidebarActionTooltip>
-                  </Flex>
+                  </MenuItemWrapper>
                 </Box>
               )}
             </div>

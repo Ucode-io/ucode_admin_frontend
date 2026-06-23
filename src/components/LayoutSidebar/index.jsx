@@ -85,7 +85,6 @@ import { detailDrawerActions } from "@/store/detailDrawer/detailDrawer.slice";
 import { SidebarList } from "./SidebarList";
 import { Container } from "react-smooth-dnd";
 // import { AiProjectsModal } from "../AiProjectsModal";
-import { AiAgentButton } from "../AiChatPanel/AiAgentButton";
 import "./style.scss";
 
 const DEFAULT_ADMIN = "DEFAULT ADMIN";
@@ -752,65 +751,7 @@ const LayoutSidebar = ({
                         {sidebarIsOpen ? <span>Settings</span> : null}
                       </Flex>
                     </SidebarActionTooltip>
-                  </MenuItemWrapper>
-                  <MenuItemWrapper
-                    onMouseLeave={
-                      sidebarIsOpen
-                        ? undefined
-                        : () =>
-                            dispatch(
-                              mainActions.setSidebarHighlightedAction(null),
-                            )
-                    }
-                  >
-                    <SidebarActionTooltip id="ai-agent" title="AI Agent">
-                      <AiAgentButton
-                        w={sidebarIsOpen ? "100%" : "36px"}
-                        px={sidebarIsOpen ? "12px" : "0px"}
-                        justifyContent="center"
-                        label={sidebarIsOpen ? "AI Agent" : ""}
-                        {...getActionProps("ai-agent")}
-                      />
-                    </SidebarActionTooltip>
-                  </MenuItemWrapper>
-                  <MenuItemWrapper
-                    onMouseLeave={
-                      sidebarIsOpen
-                        ? undefined
-                        : () =>
-                            dispatch(
-                              mainActions.setSidebarHighlightedAction(null),
-                            )
-                    }
-                  >
-                    <SidebarActionTooltip
-                      id="generate-dashboard"
-                      title="Generate Dashboard"
-                    >
-                      <Flex
-                        w={sidebarIsOpen ? "100%" : 36}
-                        alignItems="center"
-                        justifyContent={sidebarIsOpen ? "flex-start" : "center"}
-                        gap={8}
-                        onClick={() => {
-                          navigate("/ai-agent", {
-                            state: { isGenerateDashboard: true },
-                          });
-                        }}
-                        {...getActionProps("generate-dashboard")}
-                      >
-                        <Box
-                          pl={sidebarIsOpen ? "5px" : 0}
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                        >
-                          <AssistantOutlined />
-                        </Box>
-                        {sidebarIsOpen ? <span>Generate Dashboard</span> : null}
-                      </Flex>
-                    </SidebarActionTooltip>
-                  </MenuItemWrapper>
+                  </Flex>
                 </Box>
               )}
             </div>

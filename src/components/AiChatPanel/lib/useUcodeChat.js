@@ -216,6 +216,7 @@ export function useUcodeChat() {
         if (!chatId) {
           const chat = await ucodeChatService.createChat({
             title: content.slice(0, 60),
+            type: "ucode",
           });
           chatId = chat?.id || chat?.chat_id;
           dispatch({ type: "SET_CHAT", chatId });

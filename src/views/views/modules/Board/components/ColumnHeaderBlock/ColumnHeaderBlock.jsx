@@ -2,10 +2,11 @@ import cls from "./styles.module.scss";
 import {IconButton} from "@mui/material";
 import {Add} from "@mui/icons-material";
 import {useRef} from "react";
-import {FIELD_TYPES} from "@/utils/constants/fieldTypes";
+import {findBoardGroupOption} from "@/utils/boardGroupOption";
 
 export const ColumnHeaderBlock = ({
   group,
+  groupField,
   handleCreateItem,
   counts,
   field,
@@ -14,21 +15,11 @@ export const ColumnHeaderBlock = ({
 }) => {
   const fixedElement = useRef(null);
 
-  const item = computedColumnsFor?.find((field) => field?.slug === groupSlug);
+  const item =
+    computedColumnsFor?.find((field) => field?.slug === groupSlug) ??
+    groupField;
 
-  const color =
-    item?.type === FIELD_TYPES.STATUS
-      ? item?.attributes?.todo?.options?.find(
-          (item) => item?.label === group?.name,
-        )?.color ||
-        item?.attributes?.complete?.options?.find(
-          (item) => item?.label === group?.name,
-        )?.color ||
-        item?.attributes?.progress?.options?.find(
-          (item) => item?.label === group?.name,
-        )?.color
-      : item?.attributes?.options?.find((item) => item?.label === group?.name)
-          ?.color;
+  const color = findBoardGroupOption(item, group?.name)?.color;
 
   return (
     <div

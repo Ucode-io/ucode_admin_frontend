@@ -8,8 +8,11 @@ import { BoardSkeleton } from "./components/BoardSkeleton";
 import clsx from "clsx";
 import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { getBoardGroupLabel } from "@/utils/boardGroupOption";
 
 export const Board = () => {
+  const { i18n } = useTranslation();
   const {
     isLoading,
     onDrop,
@@ -49,7 +52,6 @@ export const Board = () => {
   const { tableSlug: tableSlugFromParams } = useParams();
   const tableSlug =
     view?.relation_table_slug || tableSlugFromParams || view?.table_slug;
-  console.log("groupsgroups", groups, subGroups);
   return (
     <div className={styles.container} ref={boardRef}>
       {isLoading ? (
@@ -93,7 +95,11 @@ export const Board = () => {
                         : groupField?.type === FIELD_TYPES.LOOKUP ||
                             groupField?.type === FIELD_TYPES.LOOKUPS
                           ? getGroupFieldLabel(group)
-                          : group?.name
+                          : getBoardGroupLabel(
+                              groupField,
+                              group?.name,
+                              i18n.language,
+                            )
                     }
                     group={group}
                     groupField={groupField}
@@ -144,7 +150,11 @@ export const Board = () => {
                             : subGroupField?.type === FIELD_TYPES.LOOKUP ||
                                 subGroupField?.type === FIELD_TYPES.LOOKUPS
                               ? getSubgroupFieldLabel(subGroup)
-                              : subGroup?.name}
+                              : getBoardGroupLabel(
+                                  subGroupField,
+                                  subGroup?.name,
+                                  i18n.language,
+                                )}
                         </span>
                       </span>
                     </button>

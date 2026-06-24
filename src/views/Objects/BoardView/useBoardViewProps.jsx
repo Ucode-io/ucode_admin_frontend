@@ -75,6 +75,12 @@ export const useBoardViewProps = ({
   const groupField = fieldsMapRel?.[groupFieldId];
   const boardGroupFieldSlug = getBoardRequestFieldSlug(groupField);
 
+  useEffect(() => {
+    if (groupField) {
+      console.log("[Board] full group field definition", groupField);
+    }
+  }, [groupField]);
+
   const computedColumnsFor = useMemo(() => {
     if (view.type !== "CALENDAR" && view.type !== "GANTT") {
       return visibleColumns;
@@ -231,6 +237,7 @@ export const useBoardViewProps = ({
   const boardMutation = useGetBoardMutation(
     {
       onSuccess: (data) => {
+        console.log("[Board] full board response", data);
         setCount(data?.data?.count ?? 0);
         if (offset === 0) {
           setBoardData(data?.data?.response ?? {});
@@ -316,6 +323,7 @@ export const useBoardViewProps = ({
   const boardStructureMutation = useGetBoardStructureMutation(
     {
       onSuccess: (data) => {
+        console.log("[Board] full structure response", data);
         const attributesTabs = view?.attributes?.tabs;
 
         if (attributesTabs?.length === data?.data?.groups?.length) {

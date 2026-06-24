@@ -62,6 +62,13 @@ export const useBoardProps = () => {
 
   const groupFieldId = view?.group_fields?.[0];
   const groupField = fieldsMapRel?.[groupFieldId];
+
+  useEffect(() => {
+    if (groupField) {
+      console.log("[Board] full group field definition", groupField);
+    }
+  }, [groupField]);
+
   const canUpdateGroupField = hasFieldEditPermission(groupField);
   const canUpdateSubGroupField =
     !subGroupById || hasFieldEditPermission(subGroupField);
@@ -188,6 +195,7 @@ export const useBoardProps = () => {
   const boardMutation = useGetBoardMutation(
     {
       onSuccess: (data) => {
+        console.log("[Board] full board response", data);
         setCount(data?.data?.count ?? 0);
         if (offset === 0) {
           setBoardData(data?.data?.response ?? {});
@@ -255,6 +263,7 @@ export const useBoardProps = () => {
   const boardStructureMutation = useGetBoardStructureMutation(
     {
       onSuccess: (data) => {
+        console.log("[Board] full structure response", data);
         const attributesTabs = view?.attributes?.tabs;
         if (attributesTabs?.length === data?.data?.groups?.length) {
           setGroups(() => {

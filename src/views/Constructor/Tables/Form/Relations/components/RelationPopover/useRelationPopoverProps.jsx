@@ -89,6 +89,8 @@ export const useRelationPopoverProps = ({
     delete data?.formula_name;
     delete data?.table_from_id;
     delete data?.table_to_id;
+    delete data?.table_from_label;
+    delete data?.table_to_label;
 
     setFormLoader(true);
 
@@ -164,6 +166,8 @@ export const useRelationPopoverProps = ({
           table_to: res?.table_to?.slug ?? "",
           table_from_id: res?.table_from?.id ?? "",
           table_to_id: res?.table_to?.id ?? "",
+          table_from_label: res?.table_from?.label ?? "",
+          table_to_label: res?.table_to?.label ?? "",
           type: res?.type ?? "",
           id: res?.id ?? "",
           editable: res?.editable ?? false,

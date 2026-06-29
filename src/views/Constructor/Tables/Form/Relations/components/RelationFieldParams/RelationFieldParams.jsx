@@ -24,6 +24,9 @@ export const RelationFieldParams = ({
     languages,
     i18n,
     computedTablesList,
+    handleTableInputChange,
+    handleTablesScroll,
+    tablesLoading,
     values,
     isRecursiveRelation,
     computedRelationsTypesList,
@@ -70,6 +73,14 @@ export const RelationFieldParams = ({
           placeholder="Table from"
           options={computedTablesList}
           autoFocus
+          isSearchable
+          filterOptions={(options) => options}
+          loading={tablesLoading}
+          onInputChange={handleTableInputChange}
+          ListboxProps={{
+            onScroll: handleTablesScroll,
+            style: { maxHeight: 300, overflowY: "auto" },
+          }}
           required
         />
         {!isRecursiveRelation && values.type !== "Many2Dynamic" && (
@@ -78,6 +89,14 @@ export const RelationFieldParams = ({
             control={control}
             placeholder="Table to"
             options={computedTablesList}
+            isSearchable
+            filterOptions={(options) => options}
+            loading={tablesLoading}
+            onInputChange={handleTableInputChange}
+            ListboxProps={{
+              onScroll: handleTablesScroll,
+              style: { maxHeight: 300, overflowY: "auto" },
+            }}
             required
           />
         )}

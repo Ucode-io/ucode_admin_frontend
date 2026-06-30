@@ -8,7 +8,7 @@ COPY . ./
 RUN yarn install --network-timeout 1000000000
 
 RUN export $(cat .env | xargs) && \
-    NODE_OPTIONS=--max_old_space_size=4096 yarn build --mode $ENVIROMENT
+    NODE_OPTIONS=--max_old_space_size=4096 yarn build --mode "${ENVIRONMENT:-production}"
 
 FROM nginx:alpine
 COPY --from=builder /app/build /build

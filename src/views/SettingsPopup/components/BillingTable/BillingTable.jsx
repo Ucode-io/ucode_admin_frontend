@@ -1,5 +1,12 @@
 import { format } from "date-fns";
 import { numberWithSpaces } from "../../../../utils/formatNumbers";
+
+const safeFormatDate = (value, pattern = "dd.MM.yyyy, HH:mm") => {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (isNaN(date.getTime())) return "—";
+  return format(date, pattern);
+};
 import { BackupTable as BackupTableIcon } from "@mui/icons-material";
 import {
   Box,
@@ -148,7 +155,7 @@ export const BillingTable = () => {
                       color: "#64748B",
                     }}
                   >
-                    {format(new Date(row.created_at), "dd.MM.yyyy, HH:mm")}
+                    {safeFormatDate(row.created_at)}
                   </TableCell>
                   <TableCell>
                     <Box

@@ -338,8 +338,8 @@ export const AddCardComponent = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {cards
-              ?.filter((card) => card.type !== "VISA")
+            {(cards ?? [])
+              .filter((card) => card.type !== "VISA")
               .map((card, index) => (
                 <TableRow
                   key={index}

@@ -16,6 +16,8 @@ import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import ModalDetailPage from "../ModalDetailPage/ModalDetailPage";
+import { useTranslation } from "react-i18next";
+import { getBoardGroupLabel } from "../../../utils/boardGroupOption";
 
 const BoardView = ({
   relationView = false,
@@ -36,6 +38,7 @@ const BoardView = ({
   setLayoutType = () => {},
   setFormValue = () => {},
 }) => {
+  const { i18n } = useTranslation();
   const {
     isLoading,
     new_list,
@@ -151,7 +154,11 @@ const BoardView = ({
                         : groupField?.type === FIELD_TYPES.LOOKUP ||
                             groupField?.type === FIELD_TYPES.LOOKUPS
                           ? getGroupFieldLabel(group)
-                          : group?.name
+                          : getBoardGroupLabel(
+                              groupField,
+                              group?.name,
+                              i18n.language,
+                            )
                     }
                     group={group}
                     groupField={groupField}
@@ -212,7 +219,11 @@ const BoardView = ({
                             : subGroupField?.type === FIELD_TYPES.LOOKUP ||
                                 subGroupField?.type === FIELD_TYPES.LOOKUPS
                               ? getSubgroupFieldLabel(subGroup)
-                              : subGroup?.name}
+                              : getBoardGroupLabel(
+                                  subGroupField,
+                                  subGroup?.name,
+                                  i18n.language,
+                                )}
                         </span>
                       </span>
                     </button>

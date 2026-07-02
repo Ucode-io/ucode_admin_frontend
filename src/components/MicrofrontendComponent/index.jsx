@@ -37,6 +37,14 @@ const MicrofrontendComponent = ({ link, loginAction, activationKey }) => {
     );
   }, [activationKey, link]);
 
+  const environment = useMemo(
+    () =>
+      window.location.hostname.includes("u-code.io")
+        ? "production"
+        : "staging",
+    [],
+  );
+
   const { i18n } = useTranslation();
   return (
     <SafeComponent>
@@ -46,6 +54,7 @@ const MicrofrontendComponent = ({ link, loginAction, activationKey }) => {
         <RemoteButton
           key={activationKey}
           activationKey={activationKey}
+          environment={environment}
           i18n={i18n}
           loginAction={loginAction}
           microfrontendActivationKey={activationKey}

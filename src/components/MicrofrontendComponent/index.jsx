@@ -3,6 +3,7 @@ import { Suspense, lazy, useEffect, useMemo } from "react";
 import RingLoaderWithWrapper from "../Loaders/RingLoader/RingLoaderWithWrapper";
 import SafeComponent from "../SafeComponent";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import httpsRequest from "@/utils/httpsRequest";
 import httpsRequestV2 from "@/utils/httpsRequestV2";
 
@@ -37,12 +38,16 @@ const MicrofrontendComponent = ({ link, loginAction, activationKey }) => {
     );
   }, [activationKey, link]);
 
+  const environmentName = useSelector(
+    (state) => state?.company?.environmentItem?.name,
+  );
+
   const environment = useMemo(
     () =>
-      window.location.hostname.includes("u-code.io")
+      environmentName?.toLowerCase() === "production"
         ? "production"
         : "staging",
-    [],
+    [environmentName],
   );
 
   const { i18n } = useTranslation();

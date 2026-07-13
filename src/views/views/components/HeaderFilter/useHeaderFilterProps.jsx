@@ -64,6 +64,7 @@ export const useHeaderFilterProps = () => {
 
   const [isChanged, setIsChanged] = useState(false);
   const [isPopupOpen, setPopupOpen] = useState(false);
+  const [isRefreshingTableData, setIsRefreshingTableData] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [viewAnchorEl, setViewAnchorEl] = useState(null);
@@ -150,6 +151,16 @@ export const useHeaderFilterProps = () => {
 
   const handleOpenPopup = () => setPopupOpen(true);
   const handleClosePopup = () => setPopupOpen(false);
+
+  const handleRefreshTableData = async () => {
+    setIsRefreshingTableData(true);
+
+    try {
+      await queryClient.refetchQueries([QUERY_KEYS.TABLE_DATA_KEY]);
+    } finally {
+      setIsRefreshingTableData(false);
+    }
+  };
 
   const tableUpdateMutation = useUpdateTableMutation({
     onSuccess: () => {
@@ -278,5 +289,7 @@ export const useHeaderFilterProps = () => {
     handleCloseViews,
     selectedTabIndex,
     itemId,
+    handleRefreshTableData,
+    isRefreshingTableData,
   };
 };

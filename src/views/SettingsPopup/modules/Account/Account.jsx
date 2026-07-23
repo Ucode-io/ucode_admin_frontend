@@ -27,6 +27,12 @@ export const Account = () => {
     handleClose,
   } = useAccountProps();
 
+  const orderedSessions = [...(sessions ?? [])].sort(
+    (firstSession, secondSession) =>
+      Number(secondSession.is_current === true) -
+      Number(firstSession.is_current === true),
+  );
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <ContentTitle>{t("profile")}</ContentTitle>
@@ -123,7 +129,7 @@ export const Account = () => {
         gap={2}
         marginBottom={2}
       >
-        {sessions?.map((device, index) => (
+        {orderedSessions.map((device) => (
           <DeviceCard
             key={device.id}
             onDeleteClick={deleteSession}

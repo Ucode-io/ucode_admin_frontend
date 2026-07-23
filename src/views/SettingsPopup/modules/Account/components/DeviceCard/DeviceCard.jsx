@@ -1,4 +1,4 @@
-import { Card, CardContent, Typography, Button } from '@mui/material';
+import { Card, CardContent, Typography, Button, Chip, Box } from '@mui/material';
 import { format } from 'date-fns';
 import { BiTrash } from 'react-icons/bi';
 
@@ -48,6 +48,7 @@ const parseUserAgent = (userAgent) => {
 export const DeviceCard = ({ device, onDeleteClick }) => {
 
   const { deviceType, osInfo, browser } = parseUserAgent(device?.data)
+  const isCurrentSession = device?.is_current === true;
 
   return (
     <Card
@@ -57,7 +58,10 @@ export const DeviceCard = ({ device, onDeleteClick }) => {
         position: 'relative',
         transition: 'transform 0.3s',
         boxShadow: "none",
-        border: "1px solid rgba(55, 53, 47, 0.09)"
+        border: isCurrentSession
+          ? "1px solid #2e7d32"
+          : "1px solid rgba(55, 53, 47, 0.09)",
+        backgroundColor: isCurrentSession ? "rgba(46, 125, 50, 0.04)" : undefined,
       }}
     >
       <Button 
@@ -80,16 +84,25 @@ export const DeviceCard = ({ device, onDeleteClick }) => {
         <BiTrash size={16} color="red" />
       </Button>
       <CardContent sx={{padding: 0, paddingBottom: "0 !important"}}>
-        <Typography 
-          sx={{
-            fontWeight: 400,
-            maxWidth: "90%",
-            color: "rgb(29, 27, 22)",
-          }}
-          variant="h6"
-        >
-          {deviceType}
-        </Typography>
+        <Box display="flex" alignItems="center" gap={1} paddingRight="40px">
+          <Typography
+            sx={{
+              fontWeight: 400,
+              color: "rgb(29, 27, 22)",
+            }}
+            variant="h6"
+          >
+            {deviceType}
+          </Typography>
+          {isCurrentSession && (
+            <Chip
+              label="Current session"
+              color="success"
+              size="small"
+              sx={{ height: "22px", fontSize: "12px" }}
+            />
+          )}
+        </Box>
         <Typography marginBottom={1}>
           {osInfo} {browser}
         </Typography>

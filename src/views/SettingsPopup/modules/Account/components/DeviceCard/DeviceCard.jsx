@@ -109,9 +109,15 @@ export const DeviceCard = ({ device, onDeleteClick }) => {
         <Typography fontSize="14px" marginBottom={1}>
           <strong>IP:</strong> {device.ip}
         </Typography>
-        <Typography fontSize="14px">
+        <Typography fontSize="14px" marginBottom={1}>
           <strong>Created at: </strong>{format(new Date(device.created_at), "MMMM d, yyyy 'at' kk:mm")}
         </Typography>
+        {device.last_activity && (
+          <Typography fontSize="14px">
+            <strong>Last activity: </strong>
+            {format(new Date(device.last_activity), "MMMM d, yyyy 'at' kk:mm")}
+          </Typography>
+        )}
       </CardContent>
   </Card>
   );

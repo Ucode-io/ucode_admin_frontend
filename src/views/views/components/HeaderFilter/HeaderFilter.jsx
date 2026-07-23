@@ -26,6 +26,7 @@ import MaterialUIProvider from "@/providers/MaterialUIProvider";
 import { ViewButton } from "./components/ViewButton";
 import { Skeleton } from "@mui/material";
 import PivotTableChartIcon from "@mui/icons-material/PivotTableChart";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 export const HeaderFilter = ({
   noDates,
@@ -79,6 +80,8 @@ export const HeaderFilter = ({
     handleCloseViews,
     selectedTabIndex,
     itemId,
+    handleRefreshTableData,
+    isRefreshingTableData,
   } = useHeaderFilterProps();
 
   return (
@@ -215,14 +218,25 @@ export const HeaderFilter = ({
           viewType !== VIEW_TYPES_MAP.WEBSITE && (
             <Box display="flex">
               {viewType === VIEW_TYPES_MAP.TABLE && (
-                <IconButton
-                  fontSize="1.7rem"
-                  variant="ghost"
-                  color={orderBy ? "#0365F2" : "#475467"}
-                  sx={{ color: orderBy ? "#0365F2" : "#475467" }}
-                  icon={<SortIcon color="currentColor" />}
-                  onClick={handleSortClick}
-                />
+                <>
+                  <IconButton
+                    aria-label="Refresh table data"
+                    fontSize="1.4rem"
+                    variant="ghost"
+                    color="#475467"
+                    icon={<RefreshIcon fontSize="inherit" />}
+                    onClick={handleRefreshTableData}
+                    isLoading={isRefreshingTableData}
+                  />
+                  <IconButton
+                    fontSize="1.7rem"
+                    variant="ghost"
+                    color={orderBy ? "#0365F2" : "#475467"}
+                    sx={{ color: orderBy ? "#0365F2" : "#475467" }}
+                    icon={<SortIcon color="currentColor" />}
+                    onClick={handleSortClick}
+                  />
+                </>
               )}
               <SortPopover
                 tableSlug={tableSlug}

@@ -83,6 +83,7 @@ export const DynamicTable = ({
     handleCloseTextEditor,
     handleOpenTextEditor,
     scrollRef,
+    view,
   } = useDynamicTableProps({
     columns,
     isResizable,
@@ -91,6 +92,10 @@ export const DynamicTable = ({
     fields,
     handleChange,
   });
+
+  // ponytail: the selected view already knows its column count, so the skeleton keeps the
+  // same width as the real table and the header does not jump when it is replaced.
+  const skeletonColCount = renderColumns?.length || view?.columns?.length || 8;
 
   return (
     <div
@@ -128,11 +133,14 @@ export const DynamicTable = ({
                 }}
               />
               {tableLoading
-                ? Array.from({ length: 8 }).map((_, index) => (
+                ? Array.from({ length: skeletonColCount }).map((_, index) => (
                     <th
                       key={index}
+                      // ponytail: real <Th> is w="auto", so a fixed width here dumped all
+                      // leftover table width onto the sticky "+" column (table is width:100%).
                       style={{
-                        width: "316px",
+                        minWidth: "180px",
+                        width: `${100 / skeletonColCount}%`,
                         padding: "6px",
                         background: "#fff",
                       }}
@@ -192,7 +200,7 @@ export const DynamicTable = ({
           </thead>
           <tbody>
             {tableLoading || rows?.[0]?.length === 0 ? (
-              <TableDataSkeleton colLength={10} />
+              <TableDataSkeleton colLength={skeletonColCount + 1} />
             ) : (
               rows?.map((row, index) => {
                 return (

@@ -59,6 +59,8 @@ function DrawerFormDetailPage({
     data?.tabs?.[selectedTabIndex]?.sections || [],
   );
 
+  console.log({ sections });
+
   useEffect(() => {
     setSections(data?.tabs?.[0]?.sections || []);
   }, [data]);
@@ -131,26 +133,6 @@ function DrawerFormDetailPage({
     );
   }, [data, rootForm.watch("attributes.layout_heading")]);
 
-  const getFieldLanguageLabel = (el) => {
-    if (el?.type === FIELD_TYPES.LOOKUP || el?.type === FIELD_TYPES.LOOKUPS) {
-      return (
-        el?.attributes?.[`label_${i18n?.language}`] ||
-        el?.attributes?.label ||
-        el?.attributes?.label_en ||
-        ""
-      );
-    }
-    if (el?.enable_multilanguage) {
-      return el?.attributes?.show_label
-        ? `${el?.label} (${activeLang ?? slugSplit(el?.slug)})`
-        : el?.attributes?.[`label_${i18n?.language}`];
-    } else {
-      if (el?.show_label === false) return "";
-      else
-        return el?.attributes?.[`label_${i18n.language}`] || el?.label || " ";
-    }
-  };
-
   const isMultiLanguage = useMemo(() => {
     const allFields = [];
     selectedTab?.sections?.map((section) => {
@@ -165,6 +147,30 @@ function DrawerFormDetailPage({
             field?.attributes?.enable_multi_language) === true,
     );
   }, [selectedTab]);
+
+  const getFieldLanguageLabel = (el) => {
+    console.log({ activeLang, el });
+    if (el?.type === FIELD_TYPES.LOOKUP || el?.type === FIELD_TYPES.LOOKUPS) {
+      return (
+        el?.attributes?.[`label_${i18n?.language}`] ||
+        el?.attributes?.label ||
+        el?.attributes?.label_en ||
+        ""
+      );
+    }
+    if (isMultiLanguage) {
+      return el?.attributes?.show_label
+        ? `${el?.label} (${activeLang ?? slugSplit(el?.slug)})`
+        : el?.attributes?.[
+            activeLang ? `label_${activeLang}` : `label_${i18n?.language}`
+          ];
+    } else {
+      if (el?.show_label === false) return "";
+      else
+        return el?.attributes?.[`label_${i18n.language}`] || el?.label || " ";
+    }
+  };
+
 
   useEffect(() => {
     if (isMultiLanguage) {

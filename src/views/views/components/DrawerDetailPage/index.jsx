@@ -1,11 +1,5 @@
 import cls from "./style.module.scss";
-import {
-  Box,
-  CircularProgress,
-  Drawer,
-  DrawerContent,
-  DrawerOverlay,
-} from "@chakra-ui/react";
+import { Box, Drawer, DrawerContent, DrawerOverlay } from "@chakra-ui/react";
 import React, {
   lazy,
   Suspense,
@@ -35,6 +29,8 @@ import { DRAWER_VIEW_TYPES } from "@/utils/constants/drawerConstants";
 import { useViewContext } from "@/providers/ViewProvider";
 import clsx from "clsx";
 import { menuService } from "@/services/menuService/menu.service";
+import { useQueryClient } from "react-query";
+import { DrawerFormSkeleton } from "./DrawerFormSkeleton";
 import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 import { FIELD_TYPES } from "@/utils/constants/fieldTypes";
 
@@ -72,6 +68,9 @@ function DrawerDetailPage({
   const [sections, setSections] = useState([]);
 
   const [layoutData, setLayoutData] = useState({});
+  const [isLayoutLoading, setIsLayoutLoading] = useState(true);
+
+  const queryClient = useQueryClient();
 
   const query = new URLSearchParams(window.location.search);
   const viewId = query.get("dv");
@@ -132,10 +131,16 @@ function DrawerDetailPage({
   };
 
   const getData = async () => {
-    const layout = await layoutService.getLayout(tableSlug, menuId, {
+    // ponytail: same key/params as useGetLayout in useViewsProps, so the two callers that
+    // both want this layout share one request instead of firing identical GETs in parallel.
+    const params = {
       "table-slug": tableSlug,
       language_setting: i18n?.language,
-    });
+    };
+    const layout = await queryClient.fetchQuery(
+      ["GET_LAYOUT", tableSlug, menuId, params],
+      () => layoutService.getLayout(tableSlug, menuId, params),
+    );
 
     try {
       const filteredTabs = {
@@ -175,6 +180,7 @@ function DrawerDetailPage({
 
       setLayoutData(computedLayout);
       setSections(sortSections(sections));
+      setIsLayoutLoading(false);
 
       // const relations =
       //   layout?.tabs?.map((el) => ({
@@ -193,6 +199,7 @@ function DrawerDetailPage({
       // );
     } catch (error) {
       console.error(error);
+      setIsLayoutLoading(false);
     }
   };
 
@@ -353,6 +360,8 @@ function DrawerDetailPage({
   useEffect(() => {
     if (open && tableSlug) {
       getData();
+    } else if (!open) {
+      setIsLayoutLoading(true);
     }
   }, [itemId, selectedView, open, tableSlug]);
 
@@ -387,18 +396,13 @@ function DrawerDetailPage({
         }}
       >
         <Box zIndex={9}>
-          <Suspense
-            fallback={
-              <div className={cls.fallback}>
-                <CircularProgress />
-              </div>
-            }
-          >
+          <Suspense fallback={<DrawerFormSkeleton />}>
             <Views
               isRelationView
               handleCloseDrawer={handleClose}
               rootForm={rootForm}
               layoutData={layoutData}
+              isLayoutLoading={isLayoutLoading}
               onSectionSubmit={onSubmit}
               updateLayout={updateLayout}
               handleMouseDown={handleMouseDown}

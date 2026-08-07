@@ -7,6 +7,8 @@ import { HeaderFilter } from "./components/HeaderFilter";
 import { FilterProvider } from "./providers/FilterProvider";
 import { FieldsProvider } from "./providers/FieldsProvider";
 import DrawerDetailPage from "./components/DrawerDetailPage";
+import { DrawerFormSkeleton } from "./components/DrawerDetailPage/DrawerFormSkeleton";
+import { VIEW_TYPES_MAP } from "@/utils/constants/viewTypes";
 
 export const Views = ({
   isRelationView = false,
@@ -15,6 +17,7 @@ export const Views = ({
   updateLayout = () => {},
   handleMouseDown = () => {},
   layoutData = {},
+  isLayoutLoading = false,
   rootForm,
 }) => {
   const {
@@ -85,12 +88,21 @@ export const Views = ({
     navigateToEditPage,
     refetchMainDataList,
     isLoadingTableInfo,
+    isTableMetaReady,
     viewsLoader,
     setViewsLoader,
     isLoadingViews,
     defaultFiltersMap,
     setDefaultFiltersMap,
   } = useViewsProps({ isRelationView });
+
+  // ponytail: viewType is undefined until the drawer's views list lands, and getView()
+  // returns an empty fragment for it — that was the blank panel.
+  const isDrawerContentLoading =
+    isRelationView &&
+    (!viewType ||
+      (viewType === VIEW_TYPES_MAP.SECTION &&
+        (isLayoutLoading || !isTableMetaReady)));
 
   return (
     <ChakraProvider theme={chakraUITheme}>
@@ -157,6 +169,7 @@ export const Views = ({
           refetchMainDataList,
           navigateCreatePage,
           isLoadingTableInfo,
+          isTableMetaReady,
           viewsLoader,
           setViewsLoader,
         }}
@@ -191,7 +204,7 @@ export const Views = ({
               isLoadingViews={isLoadingViews}
             />
 
-            {getView(viewType)}
+            {isDrawerContentLoading ? <DrawerFormSkeleton /> : getView(viewType)}
 
             {!isRelationView && (
               <DrawerDetailPage

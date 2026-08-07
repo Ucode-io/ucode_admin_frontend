@@ -82,6 +82,7 @@ export const useTableProps = ({ tab }) => {
     setLimit: contextSetLimit,
     setTotalCount,
     totalCount,
+    isTableMetaReady,
   } = useViewContext();
 
   const [relationCurrentPage, setRelationCurrentPage] = useState(1);
@@ -312,9 +313,14 @@ export const useTableProps = ({ tab }) => {
         defaultFiltersMap,
         tabSlug: tab?.slug,
         relationTableSlug: view?.relation_table_slug,
-        selectedRelationTableSlug: selectedV?.relation_table_slug,
-        selectedTableSlug: selectedV?.table_slug,
-        selectedDetailId: selectedV?.detailId,
+        // ponytail: selectedV only reaches the request when isRelationView. Keying the main
+        // table on it made every row click (which pushes detailId via groupFieldActions.addView)
+        // refetch the whole list behind the opening drawer.
+        selectedRelationTableSlug: isRelationView
+          ? selectedV?.relation_table_slug
+          : undefined,
+        selectedTableSlug: isRelationView ? selectedV?.table_slug : undefined,
+        selectedDetailId: isRelationView ? selectedV?.detailId : undefined,
       },
     ],
     [
@@ -379,8 +385,15 @@ export const useTableProps = ({ tab }) => {
         },
       );
     },
+    // ponytail: isTableMetaReady keeps this from firing with the previous menu's
+    // viewId/tableSlug while the new views list + table fields are still in flight.
     enabled: Boolean(
-      tableSlug && projectId && menuId && viewId && columns?.length > 0,
+      isTableMetaReady &&
+        tableSlug &&
+        projectId &&
+        menuId &&
+        viewId &&
+        columns?.length > 0,
     ),
     select: (res) => {
       return {
@@ -490,7 +503,7 @@ export const useTableProps = ({ tab }) => {
   }, [menuId]);
 
   useEffect(() => {
-    if (viewsLoader && view.id && !view?.columns?.length) {
+    if (viewsLoader && view?.id && !view?.columns?.length) {
       setRows([]);
       setViewsLoader(false);
     }
@@ -517,7 +530,11 @@ export const useTableProps = ({ tab }) => {
     setLimit,
     view,
     refetch,
-    tableLoading: viewsLoader || isTableQueryLoading || isTableQueryFetching,
+    tableLoading:
+      !isTableMetaReady ||
+      viewsLoader ||
+      isTableQueryLoading ||
+      isTableQueryFetching,
     setSortedDatas,
     sortedDatas,
     setFormValue,

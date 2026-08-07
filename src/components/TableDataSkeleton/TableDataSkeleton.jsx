@@ -8,11 +8,11 @@ export const TableDataSkeleton = ({
 }) => {
   return (
     <>
-      {Array.from({ length: rowLength }).map(() => (
-        <CTableRow key={Math.random()}>
-          {Array.from({ length: colLength })?.map(() => {
+      {Array.from({ length: rowLength }).map((_, rowIndex) => (
+        <CTableRow key={rowIndex}>
+          {Array.from({ length: colLength })?.map((_, colIndex) => {
             return (
-              <CTableCell key={Math.random()}>
+              <CTableCell key={colIndex}>
                 <Skeleton
                   variant="rounded"
                   animation="wave"

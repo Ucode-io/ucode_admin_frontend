@@ -353,6 +353,7 @@ export const useViewsProps = ({ isRelationView }) => {
       : menuId;
 
   const {
+    data: viewsListData,
     refetch: refetchViewsList,
     isRefetching,
     isLoading: isLoadingViews,
@@ -482,8 +483,7 @@ export const useViewsProps = ({ isRelationView }) => {
       visibleRelationColumns: [],
     },
     isLoading: isLoadingInfo,
-    isFetching: isFetchingTableInfo,
-    isRefetching: isRefetchingTableInfo,
+    isPreviousData: isPreviousTableInfo,
     refetch: refetchTableInfo,
   } = useGetTableInfo(
     {
@@ -537,9 +537,18 @@ export const useViewsProps = ({ isRelationView }) => {
     },
   );
 
-  const isLoadingTableInfo = isRefetchingTableInfo
-    ? false
-    : isFetchingTableInfo || isLoadingInfo;
+  // ponytail: useGetTableInfo is keyed by tableSlug only and keeps previous data, so right
+  // after switching tables `fieldsMap` still describes the OLD table. isPreviousData is the
+  // only signal saying "these fields don't belong to the selected table yet".
+  const isLoadingTableInfo = isLoadingInfo || isPreviousTableInfo;
+
+  // The views list is fetched per menuId. Until that response is applied, `selectedView` is
+  // still the previous menu's view, so viewId/tableSlug/columns are all stale.
+  const isViewsReady = isRelationView
+    ? true
+    : Boolean(viewsListData?.views?.some((el) => el?.id === selectedView?.id));
+
+  const isTableMetaReady = isViewsReady && !isLoadingTableInfo;
 
   const tableName =
     tableInfo?.attributes?.[`label_${i18n.language}`] || tableInfo?.label;
@@ -757,6 +766,7 @@ export const useViewsProps = ({ isRelationView }) => {
     fields,
     isLoadingTable,
     isLoadingTableInfo,
+    isTableMetaReady,
     selectedTabIndex,
     navigateToEditPage,
     refetchMainDataList,

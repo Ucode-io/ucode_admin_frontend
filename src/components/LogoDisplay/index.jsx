@@ -14,7 +14,7 @@ const LogoDisplay = ({ url, name }) => {
       e.stopPropagation()
       window.open(url, "_blank")
     }}>
-      <img src={url} className="logo-image" alt="logo" />
+      <img src={url} className="logo-image" alt="logo" loading="lazy" decoding="async" />
     </div>
   )
 }

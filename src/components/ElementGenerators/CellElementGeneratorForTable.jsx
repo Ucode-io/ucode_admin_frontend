@@ -9,7 +9,13 @@ import {useMemo} from "react";
 import {formatDate} from "../../utils/dateFormatter";
 import {numberWithSpaces} from "../../utils/formatNumbers";
 import {generateLink} from "../../utils/generateYandexLink";
-import {getRelationFieldTableCellLabel} from "../../utils/getRelationFieldLabel";
+import {
+  getRelationCellLabel,
+  getRelationFieldTableCellLabel,
+} from "../../utils/getRelationFieldLabel";
+import i18next from "../../i18next";
+import {store} from "../../store";
+import {getColumnIconPath} from "../../utils/constants/tableIcons";
 import {parseBoolean} from "../../utils/parseBoolean";
 import IconGenerator from "../IconPicker/IconGenerator";
 import LogoDisplay from "../LogoDisplay";
@@ -22,7 +28,6 @@ import PhotoIcon from "@mui/icons-material/Photo";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {makeStyles} from "@mui/styles";
 import FunctionsIcon from "@mui/icons-material/Functions";
-import DateRangeIcon from "@mui/icons-material/DateRange";
 import SingleLine from "./SingleLine";
 import Many2OneValue from "./Many2OneValue";
 import IconGeneratorIconjs from "../IconPicker/IconGeneratorIconjs";
@@ -38,6 +43,51 @@ const useStyles = makeStyles(() => ({
     padding: "0 10px",
   },
 }));
+
+// ponytail: та же иконка, что редактор рисует в rightSection своего инпута.
+// Карта тип -> иконка уже есть в tableIcons, свой набор не заводим.
+const TypeIcon = ({field}) => {
+  const src = getColumnIconPath({column: field});
+  if (!src) return null;
+  return (
+    <img
+      src={src}
+      alt=""
+      width="16"
+      height="16"
+      style={{flexShrink: 0, opacity: 0.6}}
+    />
+  );
+};
+
+const TYPE_HINT = {
+  DATE: "DD.MM.YYYY",
+  DATE_TIME: "DD.MM.YYYY HH:MM",
+  DATE_TIME_WITHOUT_TIME_ZONE: "DD.MM.YYYY HH:MM",
+  TIME: "HH:MM",
+};
+
+// ponytail: типы, которые сами рисуют осмысленную «пустоту» (тег Нет),
+// подменять плейсхолдером нельзя — иначе потеряется значение false.
+const HAS_OWN_EMPTY_STATE = new Set(["CHECKBOX", "SWITCH", "BUTTON"]);
+
+const CellPlaceholder = ({field}) => (
+  <Box
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: "6px",
+      padding: "0 10px",
+      width: "100%",
+      color: "#989ea0",
+    }}>
+    <span className="text-nowrap">
+      {field?.attributes?.placeholder || TYPE_HINT[field?.type] || ""}
+    </span>
+    <TypeIcon field={field} />
+  </Box>
+);
 
 const CellElementGeneratorForTable = ({field = {}, row}) => {
   const classes = useStyles();
@@ -122,12 +172,44 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
     return field.render(row);
   }
 
+  // ponytail: пустая ячейка ничего не говорила о типе. LOOKUP считаем пустым
+  // только когда нет ни объекта связи, ни guid — иначе ниже сработает фолбэк.
+  const rawValue =
+    field.type === "LOOKUP"
+      ? row?.[`${field.slug}_data`] ?? row?.[field.slug]
+      : get(row, field.slug, "");
+
+  const isEmpty =
+    rawValue === null ||
+    rawValue === undefined ||
+    rawValue === "" ||
+    (Array.isArray(rawValue) && rawValue.length === 0);
+
+  if (isEmpty && !HAS_OWN_EMPTY_STATE.has(field.type))
+    return <CellPlaceholder field={field} />;
+
   switch (field.type) {
     case "LOOKUPS":
       return <Many2ManyValue field={field} value={value} />;
 
-    case "LOOKUP":
-      return <Many2OneValue field={field} value={row?.[field?.slug]} />;
+    // ponytail: объект связи уже приезжает в строке как `${slug}_data`.
+    // Many2OneValue дозапрашивал его сам — 33 лишних запроса на таблицу.
+    // Если бэк почему-то _data не отдал, оставляем старый путь с дозапросом.
+    case "LOOKUP": {
+      const related = row?.[`${field.slug}_data`];
+      if (!related)
+        return <Many2OneValue field={field} value={row?.[field?.slug]} />;
+      return (
+        <Box className={classes.box}>
+          {getRelationCellLabel(
+            field,
+            related,
+            i18next.language,
+            store.getState()?.languages?.list?.map((el) => el.slug)
+          )}
+        </Box>
+      );
+    }
 
     case "SINGLE_LINE":
       return <SingleLine field={field} value={value} row={row} />;
@@ -136,17 +218,18 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
       return (
         <Box className={classes.formula_box}>
           <span className="text-nowrap">{formatDate(value)}</span>
-          <DateRangeIcon />
+          <TypeIcon field={field} />
         </Box>
       );
 
     case "NUMBER":
       return (
         <Box className={classes.box}>
-          {value !== undefined && typeof value === "number"
+          {typeof value === "number"
             ? numberWithSpaces(value?.toFixed(1))
-            : value === undefined
-              ? value
+            : // ponytail: пустое число — пустая ячейка, а не 0
+              value === undefined || value === null || value === ""
+              ? ""
               : 0}
         </Box>
       );
@@ -155,7 +238,7 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
       return (
         <Box className={classes.formula_box}>
           <span className="text-nowrap">{formatDate(value, "DATE_TIME")}</span>
-          <DateRangeIcon />
+          <TypeIcon field={field} />
         </Box>
       );
 
@@ -183,7 +266,16 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
     case "DATE_TIME_WITHOUT_TIME_ZONE":
       return (
         <Box className={classes.formula_box}>
-          {timeValue} <DateRangeIcon />
+          {timeValue} <TypeIcon field={field} />
+        </Box>
+      );
+
+    // ponytail: TIME падал в default и рисовался без иконки типа
+    case "TIME":
+      return (
+        <Box className={classes.formula_box}>
+          <span className="text-nowrap">{value}</span>
+          <TypeIcon field={field} />
         </Box>
       );
 
@@ -349,6 +441,62 @@ const CellElementGeneratorForTable = ({field = {}, row}) => {
           <CloudUploadIcon />
         </Box>
       );
+
+    // ponytail: без этих двух кейсов массивы ссылок падали в default и
+    // печатались в ячейку как JSON. Показываем первый элемент и счётчик.
+    case "MULTI_IMAGE": {
+      const images = Array.isArray(value) ? value : [];
+      return (
+        <Box
+          className={classes.box}
+          style={{display: "flex", alignItems: "center", gap: "4px"}}>
+          {images.length ? (
+            <>
+              <img
+                src={images[0]}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                style={{
+                  width: "27px",
+                  height: "25px",
+                  objectFit: "cover",
+                  borderRadius: "4px",
+                  flexShrink: 0,
+                }}
+              />
+              {images.length > 1 && (
+                <span style={{fontSize: "12px", color: "#777"}}>
+                  +{images.length - 1}
+                </span>
+              )}
+            </>
+          ) : (
+            <PhotoLibraryIcon style={{opacity: 0.4}} />
+          )}
+        </Box>
+      );
+    }
+
+    case "MULTI_FILE": {
+      const files = Array.isArray(value) ? value : [];
+      return (
+        <Box
+          className={classes.box}
+          style={{display: "flex", alignItems: "center", gap: "4px"}}>
+          <AttachFileIcon
+            style={{
+              width: "18px",
+              height: "18px",
+              opacity: files.length ? 1 : 0.4,
+            }}
+          />
+          {files.length > 0 && (
+            <span style={{fontSize: "12px"}}>{files.length}</span>
+          )}
+        </Box>
+      );
+    }
 
     default:
       if (typeof value === "object")

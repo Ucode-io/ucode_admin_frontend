@@ -154,6 +154,27 @@ export const getRelationFieldTableCellLabel = (field, option, tableSlug) => {
   return label;
 };
 
+// ponytail: одна и та же цепочка фолбэков, что и в редакторе связи
+// (CellRelationFormElementNew -> optionLabel). Нужна, чтобы read-only ячейка и
+// открытый дропдаун показывали одну и ту же подпись: без фолбэков поля с пустым
+// view_fields рисовались пустыми, хотя объект связи в строке есть.
+export const getRelationCellLabel = (field, option, lang, languages) => {
+  if (!option) return "";
+
+  if (field?.attributes?.enable_multi_language) {
+    return getRelationFieldTabsLabelLang(field, option, lang, languages) ?? "";
+  }
+
+  return (
+    getRelationFieldTabsLabel(field, option, lang)?.trim() ||
+    option?.name ||
+    option?.title ||
+    option?.label ||
+    option?.guid ||
+    ""
+  );
+};
+
 export const getLabelWithViewFields = (viewFields, option) => {
   let label = "";
 

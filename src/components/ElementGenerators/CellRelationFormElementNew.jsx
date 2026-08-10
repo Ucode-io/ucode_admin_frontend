@@ -83,8 +83,8 @@ const CellRelationFormElementNew = ({
                 onChange(e);
                 isTableView && updateObject();
               }}
-              field={field}
               isTableView={isTableView}
+              field={field}
               defaultValue={defaultValue}
               tableSlug={field.table_slug}
               error={error}
@@ -110,6 +110,7 @@ const CellRelationFormElementNew = ({
 const AutoCompleteElement = ({
   relOptions,
   field,
+  isTableView,
   value,
   tableSlug,
   name,
@@ -287,7 +288,12 @@ const AutoCompleteElement = ({
     ],
     queryFn,
     {
-      enabled: Boolean(field?.table_slug),
+      // ponytail: список опций нужен только когда открыт дропдаун.
+      // Раньше enabled был всегда true -> каждая LOOKUP-ячейка каждой строки
+      // слала свой POST /object/get-list (20 строк x N колонок).
+      // Отображаемое значение берётся из localValue (row[`${slug}_data`]),
+      // от этого запроса оно не зависит.
+      enabled: Boolean(field?.table_slug) && menuIsOpen,
       select: (res) => {
         const options = res?.data?.response ?? [];
 
@@ -317,8 +323,6 @@ const AutoCompleteElement = ({
       new Set(allOptions?.map(JSON.stringify)),
     ).map(JSON.parse);
 
-    console.log(view?.table_slug, uniqueObjects);
-
     if (field?.table_slug === "client_type") {
       return uniqueObjects?.filter(
         (item) => item?.table_slug === view?.table_slug,
@@ -336,8 +340,11 @@ const AutoCompleteElement = ({
 
   const computedValue = useMemo(() => {
     const findedOption = allOptions?.find((el) => el?.guid === value);
-    return findedOption ? [findedOption] : [];
-  }, [allOptions, value, relOptions]);
+    if (findedOption) return [findedOption];
+    // ponytail: пока дропдаун не открывали, allOptions пуст — берём объект
+    // из самой строки, чтобы autofill ниже отработал как раньше.
+    return localValue?.guid === value && value ? [localValue] : [];
+  }, [allOptions, value, relOptions, localValue]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -426,6 +433,59 @@ const AutoCompleteElement = ({
   // }, [debouncedValue, autoFiltersValue]);
 
 
+  const optionLabel = (option) => {
+    if (!option) return "";
+    if (field?.attributes?.enable_multi_language) {
+      return (
+        getRelationFieldTabsLabelLang(
+          field,
+          option,
+          i18n?.language,
+          languages,
+        ) ?? ""
+      );
+    }
+    return (
+      getRelationFieldTabsLabel(field, option, i18n?.language) ||
+      option?.name ||
+      option?.title ||
+      option?.label ||
+      option?.guid ||
+      ""
+    );
+  };
+
+  const openRelated = (data) => {
+    if (!isNewRouter) {
+      navigateToForm(tableSlug, "EDIT", localValue, {}, menuId);
+      return;
+    }
+    dispatch(detailDrawerActions.openDrawer());
+    dispatch(groupFieldActions.clearViewsPath());
+    dispatch(groupFieldActions.clearViews());
+    dispatch(
+      groupFieldActions.addView({
+        id: data?.table_id,
+        detailId: data?.guid,
+        is_relation_view: true,
+        table_slug: data?.table_slug,
+        label: field?.attributes?.[`label_${i18n?.language}`] || "",
+        relation_table_slug: data?.table_slug,
+      }),
+    );
+    dispatch(
+      groupFieldActions.addViewPath({
+        id: data?.table_id,
+        detailId: data?.guid,
+        is_relation_view: true,
+        table_slug: data?.table_slug,
+        label: field?.attributes?.[`label_${i18n?.language}`] || "",
+      }),
+    );
+    updateQueryWithoutRerender("p", data?.guid);
+    updateQueryWithoutRerender("field_slug", field?.table_slug);
+  };
+
   const CustomSingleValue = (props) => (
     <components.SingleValue {...props}>
       <div
@@ -447,35 +507,7 @@ const AutoCompleteElement = ({
             }}
             onClick={(e) => {
               e.stopPropagation();
-              if (isNewRouter) {
-                const { data } = props;
-                dispatch(detailDrawerActions.openDrawer());
-                dispatch(groupFieldActions.clearViewsPath());
-                dispatch(groupFieldActions.clearViews());
-                dispatch(
-                  groupFieldActions.addView({
-                    id: data?.table_id,
-                    detailId: data?.guid,
-                    is_relation_view: true,
-                    table_slug: data?.table_slug,
-                    label: field?.attributes?.[`label_${i18n?.language}`] || "",
-                    relation_table_slug: data?.table_slug,
-                  }),
-                );
-                dispatch(
-                  groupFieldActions.addViewPath({
-                    id: data?.table_id,
-                    detailId: data?.guid,
-                    is_relation_view: true,
-                    table_slug: data?.table_slug,
-                    label: field?.attributes?.[`label_${i18n?.language}`] || "",
-                  }),
-                );
-                updateQueryWithoutRerender("p", props?.data?.guid);
-                updateQueryWithoutRerender("field_slug", field?.table_slug);
-              } else {
-                navigateToForm(tableSlug, "EDIT", localValue, {}, menuId);
-              }
+              openRelated(props?.data);
             }}
           >
             <LaunchIcon
@@ -504,6 +536,7 @@ const AutoCompleteElement = ({
       return null;
     }
   }, [relationView, allOptions]);
+
 
   return (
     <div className={styles.autocompleteWrapper}>
@@ -571,8 +604,9 @@ const AutoCompleteElement = ({
         menuIsOpen={menuIsOpen}
         filterOption={null}
         onMenuOpen={() => {
+          // ponytail: refetch() тут больше не нужен — enabled сам включает
+          // запрос по menuIsOpen, иначе дропдаун дёргает бэк дважды.
           setMenuIsOpen(true);
-          refetch();
         }}
         onMenuClose={() => {
           setMenuIsOpen(false);
@@ -596,27 +630,7 @@ const AutoCompleteElement = ({
         )}
         menuShouldScrollIntoView
         styles={customStyles}
-        getOptionLabel={(option) => {
-          if (!option) return "";
-          if (field?.attributes?.enable_multi_language) {
-            return (
-              getRelationFieldTabsLabelLang(
-                field,
-                option,
-                i18n?.language,
-                languages,
-              ) ?? ""
-            );
-          }
-          return (
-            getRelationFieldTabsLabel(field, option, i18n?.language) ||
-            option?.name ||
-            option?.title ||
-            option?.label ||
-            option?.guid ||
-            ""
-          );
-        }}
+        getOptionLabel={optionLabel}
         getOptionValue={(option) => option?.guid ?? option?.value ?? option?.id}
         isOptionSelected={(option, value) => {
           if (Array.isArray(value)) {

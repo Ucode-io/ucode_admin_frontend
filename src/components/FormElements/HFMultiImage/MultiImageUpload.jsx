@@ -133,31 +133,36 @@ function MultiImageUpload({
                 cursor: disabled ? "not-allowed" : "pointer",
               }}
             >
-              {value?.map((img, index) => (
-                <>
-                  <Box
-                    key={index}
-                    sx={{
-                      height: "25px",
-                      width: "27px",
-                      borderRadius: "4px",
-                      overflow: "hidden",
-                      padding: "0 0 0 0",
-                    }}
-                    title={parseImgPhoto(img)}
-                  >
-                    <img
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                      src={img}
-                      alt="img"
-                    />
-                  </Box>
-                </>
-              ))}
+              {/* ponytail: в таблице показываем только первое фото + счётчик.
+                  Рендер всего массива тянул с CDN оригиналы всех фото всех строк
+                  (~106 картинок / ~135 МБ на страницу) в ячейку 27x25 px. */}
+              <Box
+                sx={{
+                  height: "25px",
+                  width: "27px",
+                  borderRadius: "4px",
+                  overflow: "hidden",
+                  flexShrink: 0,
+                }}
+                title={parseImgPhoto(value[0])}
+              >
+                <img
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                  src={value[0]}
+                  alt="img"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </Box>
+              {value.length > 1 && (
+                <span style={{fontSize: "12px", color: "#777"}}>
+                  +{value.length - 1}
+                </span>
+              )}
             </Box>
           ) : (
             <Box
@@ -178,6 +183,8 @@ function MultiImageUpload({
                 style={{ width: "100%", height: "100%", border: "none" }}
                 src={value?.[0]}
                 type="text"
+                loading="lazy"
+                decoding="async"
               />
 
               <Box
@@ -308,7 +315,7 @@ function MultiImageUpload({
                     handleFullScreen(item);
                   }}
                 >
-                  <img src={item} alt="photo" />
+                  <img src={item} alt="photo" loading="lazy" decoding="async" />
 
                   <button
                     onClick={(e) => {

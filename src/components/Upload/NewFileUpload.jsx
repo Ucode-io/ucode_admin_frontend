@@ -164,7 +164,7 @@ export default function NewFileUpload({
                 }}
                 onClick={(e) => closeButtonHandler(e)}>
                 <DeleteIcon style={{width: "17px", height: "17px"}} />
-                Remove Image
+                Remove File
               </Button>
 
               <Button
@@ -181,7 +181,7 @@ export default function NewFileUpload({
                   inputRef.current.click();
                 }}>
                 <ChangeCircleIcon />
-                Change Image
+                Change File
               </Button>
             </Box>
             <input
@@ -190,7 +190,6 @@ export default function NewFileUpload({
               style={{
                 display: "none",
               }}
-              accept=".jpg, .jpeg, .png, .gif"
               className="hidden"
               ref={inputRef}
               tabIndex={tabIndex}

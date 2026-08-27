@@ -77,6 +77,11 @@ export const AiChatPanel = () => {
   const dispatch = useDispatch();
   const isOpen = useSelector((state) => state.aiChat.isOpen);
   const expanded = useSelector((state) => state.aiChat.expanded);
+  // Право `chat` приходит только когда включено: false бэк режет omitempty.
+  const chatAllowed = useSelector((state) => {
+    const rights = state.auth.globalPermissions;
+    return !rights || rights.chat === true;
+  });
 
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -103,7 +108,7 @@ export const AiChatPanel = () => {
     loadSessions,
   } = useUcodeChat();
 
-  if (!isOpen) return null;
+  if (!isOpen || !chatAllowed) return null;
 
   const hasConversation = messages.length > 0 || !!run;
 

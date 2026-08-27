@@ -5,7 +5,7 @@ import MinioHeader from "./components/MinioHeader";
 import MinioFilterBlock from "./components/MinioFilterBlock";
 import { useMinioObjectListQuery } from "../../../../services/fileService";
 import FileUploadModal from "./components/FileUploadModal";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MinioFiles from "./components/Miniofiles";
 import { store } from "../../../../store";
 import { useSearchParams } from "react-router-dom";
@@ -62,19 +62,22 @@ const MinioPage = ({ modal = false }) => {
     },
   });
 
+  // ponytail: IntersectionObserver instead of a window scroll listener — works both
+  // on the standalone page and inside the settings modal (its own scroll container).
+  const sentinelRef = useRef(null);
+
   useEffect(() => {
-    const handleScroll = (e) => {
-      const { scrollHeight, scrollTop, clientHeight } = e.target.documentElement;
-      if (
-        scrollHeight - (scrollTop + clientHeight) < 100 &&
-        list?.length < minios?.count &&
-        !isLoading
-      ) {
-        setOffset((prev) => prev + limit);
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const node = sentinelRef.current;
+    if (!node || isLoading || !(list?.length < minios?.count)) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setOffset((prev) => prev + limit);
+      },
+      { rootMargin: "100px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
   }, [list?.length, minios?.count, isLoading]);
 
   const openModal = () => {
@@ -125,6 +128,7 @@ const MinioPage = ({ modal = false }) => {
           selectedCards={selectedCards}
           size={size}
         />
+        <div ref={sentinelRef} style={{ height: 1 }} />
       </Box>
 
       {fileModalIsOpen && (

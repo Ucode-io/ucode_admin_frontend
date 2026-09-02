@@ -54,7 +54,7 @@ import { getColumnIcon } from "@/utils/constants/tableIcons";
 import { useViewContext } from "@/providers/ViewProvider";
 import { useFieldsContext } from "../../providers/FieldsProvider";
 import { QUERY_KEYS } from "@/utils/constants/queryKeys";
-import { isSubscriptionBannerVisible } from "@/utils/subscriptionWarning";
+import { useSubscriptionBannerVisible } from "@/utils/subscriptionWarning";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -512,7 +512,7 @@ export const Grid = () => {
   const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
   const filterHeight = localStorage.getItem("filtersHeight");
 
-  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
+  const isSubscriptionBannerActive = useSubscriptionBannerVisible(projectInfo);
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;

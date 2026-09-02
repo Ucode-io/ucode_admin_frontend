@@ -31,7 +31,7 @@ import getColumnEditorParams from "./valueOptionGenerator";
 import { Flex, Text, Button as ChakraButton } from "@chakra-ui/react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { getColumnIcon } from "@/utils/constants/tableIcons";
-import {isSubscriptionBannerVisible} from "@/utils/subscriptionWarning";
+import {useSubscriptionBannerVisible} from "@/utils/subscriptionWarning";
 
 export const useGridProps = () => {
   const {
@@ -428,7 +428,7 @@ export const useGridProps = () => {
   const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
   const filterHeight = localStorage.getItem("filtersHeight");
 
-  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
+  const isSubscriptionBannerActive = useSubscriptionBannerVisible(projectInfo);
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;

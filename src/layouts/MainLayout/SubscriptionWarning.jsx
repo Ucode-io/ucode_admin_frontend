@@ -1,15 +1,19 @@
 import React, {useMemo} from "react";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import {Box, Typography} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import {Box, IconButton, Typography} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {
   getSubscriptionDaysLeft,
   isSubscriptionExpired,
   isSubscriptionWarningActive,
+  useSubscriptionBannerDismissed,
+  dismissSubscriptionBanner,
 } from "@/utils/subscriptionWarning";
 
 const SubscriptionWarning = ({projectInfo, handleOpenBilling}) => {
   const {t} = useTranslation();
+  const dismissed = useSubscriptionBannerDismissed();
   const projectStatus =
     projectInfo?.status || localStorage.getItem("project_status");
   const subscriptionType = projectInfo?.subscription_type;
@@ -19,6 +23,8 @@ const SubscriptionWarning = ({projectInfo, handleOpenBilling}) => {
     if (!expireDate) return null;
     return getSubscriptionDaysLeft(expireDate);
   }, [expireDate]);
+
+  if (dismissed) return null;
 
   if (isSubscriptionExpired(projectInfo, projectStatus))
     return <SubscribeExpired onClick={handleOpenBilling} />;
@@ -44,6 +50,22 @@ const SubscriptionWarning = ({projectInfo, handleOpenBilling}) => {
       message={t("subscribtion_expire_soon")}
       daysLeft={daysLeft}
     />
+  );
+};
+
+const CloseBannerButton = () => {
+  const {t} = useTranslation();
+  return (
+    <IconButton
+      aria-label={t("close")}
+      size="small"
+      onClick={(e) => {
+        e.stopPropagation();
+        dismissSubscriptionBanner();
+      }}
+      sx={{position: "absolute", right: "8px", padding: "2px", color: "#000"}}>
+      <CloseIcon sx={{fontSize: 16}} />
+    </IconButton>
   );
 };
 
@@ -94,6 +116,7 @@ const WarningBanner = ({
           {t("click_here_upgrade")}
         </strong>
       </Typography>
+      <CloseBannerButton />
     </Box>
   );
 };
@@ -132,6 +155,7 @@ const SubscribeExpired = ({onClick = () => {}}) => {
           {t("click_here_upgrade")}
         </strong>
       </Typography>
+      <CloseBannerButton />
     </Box>
   );
 };

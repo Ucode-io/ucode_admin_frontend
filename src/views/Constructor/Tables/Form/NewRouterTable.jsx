@@ -41,7 +41,7 @@ import constructorTableService, {
 import {getAllFromDB} from "../../../../utils/languageDB";
 import {generateLangaugeText} from "../../../../utils/generateLanguageText";
 import {useProjectGetByIdQuery} from "../../../../services/projectService";
-import {isSubscriptionBannerVisible} from "@/utils/subscriptionWarning";
+import {useSubscriptionBannerVisible} from "@/utils/subscriptionWarning";
 
 const NewRouterTable = () => {
   const dispatch = useDispatch();
@@ -329,7 +329,7 @@ const NewRouterTable = () => {
     }
   }, []);
 
-  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
+  const isSubscriptionBannerActive = useSubscriptionBannerVisible(projectInfo);
 
   if (loader) return <PageFallback />;
 

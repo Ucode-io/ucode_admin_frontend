@@ -22,6 +22,7 @@ import { settingsModalActions } from "@/store/settingsModal/settingsModal.slice"
 import {
   isSubscriptionExpired,
   isSubscriptionWarningActive,
+  useSubscriptionBannerDismissed,
 } from "@/utils/subscriptionWarning";
 
 const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
@@ -109,8 +110,11 @@ const MainLayout = ({ setFavicon, favicon, resetQueryClient }) => {
     handleOpenProfileModal();
   };
 
-  const isWarningActive = isSubscriptionWarningActive(projectInfo, projectStatus);
-  const isExpired = isSubscriptionExpired(projectInfo, projectStatus);
+  const bannerDismissed = useSubscriptionBannerDismissed();
+  const isWarningActive =
+    !bannerDismissed && isSubscriptionWarningActive(projectInfo, projectStatus);
+  const isExpired =
+    !bannerDismissed && isSubscriptionExpired(projectInfo, projectStatus);
 
   useEffect(() => {
     if (searchParams.get("stripeRedirect") === "true") {

@@ -56,7 +56,7 @@ import {generateLangaugeText} from "../../utils/generateLanguageText";
 import {TableDataSkeleton} from "../../components/TableDataSkeleton";
 import {useGetLang} from "../../hooks/useGetLang";
 import {FIELD_TYPES} from "../../utils/constants/fieldTypes";
-import {isSubscriptionBannerVisible} from "@/utils/subscriptionWarning";
+import {useSubscriptionBannerVisible} from "@/utils/subscriptionWarning";
 
 const mockColumns = Array.from({length: 5}, (_, index) => ({
   attributes: {
@@ -346,7 +346,7 @@ export const DynamicTable = ({
     );
   };
 
-  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
+  const isSubscriptionBannerActive = useSubscriptionBannerVisible(projectInfo);
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;

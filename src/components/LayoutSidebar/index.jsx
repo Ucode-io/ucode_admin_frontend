@@ -65,7 +65,7 @@ import { applyDrag } from "../../utils/applyDrag";
 import { generateLangaugeText } from "../../utils/generateLanguageText";
 import { isJSONParsable } from "../../utils/isJsonValid";
 import { getAllFromDB } from "../../utils/languageDB";
-import { isSubscriptionBannerVisible } from "@/utils/subscriptionWarning";
+import { useSubscriptionBannerVisible } from "@/utils/subscriptionWarning";
 import AddOrganization from "./AddOrganization";
 // import { AIMenu, useAIChat } from "../ProfilePanel/AIChat";
 import AppSidebar from "./AppSidebarComponentV2";
@@ -418,7 +418,7 @@ const LayoutSidebar = ({
     };
   }, []);
 
-  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
+  const isSubscriptionBannerActive = useSubscriptionBannerVisible(projectInfo);
 
   const [isOpenInviteModal, setIsOpenInviteModal] = useState(false);
 

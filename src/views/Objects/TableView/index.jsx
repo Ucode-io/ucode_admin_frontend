@@ -26,7 +26,7 @@ import ObjectDataTable from "../../../components/DataTable/ObjectDataTable";
 import {useProjectGetByIdQuery} from "../../../services/projectService";
 import {store} from "../../../store";
 import OldModalDetailPage from "../ModalDetailPage/OldModalDetailPage";
-import {isSubscriptionBannerVisible} from "@/utils/subscriptionWarning";
+import {useSubscriptionBannerVisible} from "@/utils/subscriptionWarning";
 
 const TableView = ({
   filterVisible,
@@ -557,7 +557,7 @@ const TableView = ({
     );
   }, []);
 
-  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
+  const isSubscriptionBannerActive = useSubscriptionBannerVisible(projectInfo);
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;

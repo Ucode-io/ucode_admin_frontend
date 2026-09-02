@@ -2,7 +2,7 @@ import { useViewContext } from "@/providers/ViewProvider";
 import { showAlert } from "@/store/alert/alert.thunk";
 import { tableSizeAction } from "@/store/tableSize/tableSizeSlice";
 import { DRAWER_VIEW_TYPES } from "@/utils/constants/drawerConstants";
-import { isSubscriptionBannerVisible } from "@/utils/subscriptionWarning";
+import { useSubscriptionBannerVisible } from "@/utils/subscriptionWarning";
 import { useFieldsContext } from "@/views/views/providers/FieldsProvider";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -203,7 +203,7 @@ export const useDynamicTableProps = ({
     setLimit(item);
   };
 
-  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
+  const isSubscriptionBannerActive = useSubscriptionBannerVisible(projectInfo);
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;

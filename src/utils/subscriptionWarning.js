@@ -1,4 +1,5 @@
 import {differenceInCalendarDays, isValid, parseISO} from "date-fns";
+import {useSyncExternalStore} from "react";
 
 const getProjectStatus = (projectInfo, fallbackStatus) =>
   projectInfo?.status || fallbackStatus;
@@ -51,3 +52,28 @@ export const isSubscriptionWarningActive = (projectInfo, fallbackStatus) => {
 export const isSubscriptionBannerVisible = (projectInfo, fallbackStatus) =>
   isSubscriptionExpired(projectInfo, fallbackStatus) ||
   isSubscriptionWarningActive(projectInfo, fallbackStatus);
+
+// ponytail: sessionStorage + a listener set instead of a redux slice — the flag
+// dies with the tab, which is exactly the "show again after re-login" requirement.
+const DISMISS_KEY = "subscription_banner_dismissed";
+const dismissListeners = new Set();
+
+const subscribeDismiss = (onChange) => {
+  dismissListeners.add(onChange);
+  return () => dismissListeners.delete(onChange);
+};
+
+const isBannerDismissed = () =>
+  sessionStorage.getItem(DISMISS_KEY) === "true";
+
+export const dismissSubscriptionBanner = () => {
+  sessionStorage.setItem(DISMISS_KEY, "true");
+  dismissListeners.forEach((onChange) => onChange());
+};
+
+export const useSubscriptionBannerDismissed = () =>
+  useSyncExternalStore(subscribeDismiss, isBannerDismissed);
+
+export const useSubscriptionBannerVisible = (projectInfo, fallbackStatus) =>
+  !useSubscriptionBannerDismissed() &&
+  isSubscriptionBannerVisible(projectInfo, fallbackStatus);

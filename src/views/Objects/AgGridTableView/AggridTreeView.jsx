@@ -76,7 +76,7 @@ import {updateQueryWithoutRerender} from "../../../utils/useSafeQueryUpdater";
 import {groupFieldActions} from "../../../store/groupField/groupField.slice";
 import {mergeStringAndState} from "../../../utils/jsonPath";
 import useTabRouter from "../../../hooks/useTabRouter";
-import {isSubscriptionBannerVisible} from "@/utils/subscriptionWarning";
+import {useSubscriptionBannerVisible} from "@/utils/subscriptionWarning";
 
 ModuleRegistry.registerModules([
   MenuModule,
@@ -669,7 +669,7 @@ function AggridTreeView(props) {
   const tabHeight = document.querySelector("#tabsHeight")?.offsetHeight ?? 0;
   const filterHeight = localStorage.getItem("filtersHeight");
 
-  const isSubscriptionBannerActive = isSubscriptionBannerVisible(projectInfo);
+  const isSubscriptionBannerActive = useSubscriptionBannerVisible(projectInfo);
 
   const calculatedHeight = useMemo(() => {
     let warningHeight = 0;

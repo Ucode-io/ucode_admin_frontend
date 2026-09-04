@@ -14,6 +14,7 @@ import {
 
 import styles from "./styles.module.scss";
 import { FunctionLogs } from "./components/FunctionLogs";
+import { Usage } from "./components/Usage";
 
 export const ActivityLogs = () => {
   const {
@@ -78,6 +79,9 @@ export const ActivityLogs = () => {
         </TabPanel>
         <TabPanel>
           <FunctionLogs />
+        </TabPanel>
+        <TabPanel>
+          <Usage />
         </TabPanel>
       </TabPanels>
     </Tabs>

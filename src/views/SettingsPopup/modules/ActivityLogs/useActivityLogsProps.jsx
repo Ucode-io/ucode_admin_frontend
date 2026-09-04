@@ -17,6 +17,10 @@ export const useActivityLogsProps = () => {
       name: "Function Logs",
       guid: "function-logs",
     },
+    {
+      name: "Usage",
+      guid: "usage",
+    },
   ];
 
   const [actionValue, setActionValue] = useState({});

@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Box, Typography } from "@mui/material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import {
   Flex,
   Switch,
@@ -62,12 +64,36 @@ const FILTER_LABELS = {
   method: "Method",
 };
 
+// Те же подписи, что в разрезе Sender: bearer — человек, api_key — интеграция.
+const AUTH_LABELS = { bearer: "User", api_key: "API key" };
+
+// Бэк отдаёт маршрут по строке на тип авторизации — человеку это одна строка.
+// Складываем в одну, а разбивку по авторизации прячем в аккордеон.
+const groupRoutes = (top) => {
+  const groups = new Map();
+
+  for (const row of top) {
+    const key = `${row.source} ${routeLabel(row)}`;
+    const group = groups.get(key);
+    if (group) {
+      group.count += row.count;
+      group.percent = Math.round((group.percent + row.percent) * 100) / 100;
+      group.parts.push(row);
+    } else {
+      groups.set(key, { ...row, key, parts: [row] });
+    }
+  }
+
+  return [...groups.values()].sort((a, b) => b.count - a.count);
+};
+
 export const Usage = () => {
   const [clientOnly, setClientOnly] = useState(false);
   const [groupBy, setGroupBy] = useState("route");
   const [filters, setFilters] = useState({});
   // Подписи для чипов: в фильтр уходит id, а показать надо имя.
   const [filterLabels, setFilterLabels] = useState({});
+  const [opened, setOpened] = useState({});
 
   const params = {
     group_by: groupBy,
@@ -84,7 +110,8 @@ export const Usage = () => {
     queryParams: { staleTime: 60000 },
   });
 
-  const rows = data?.top ?? [];
+  const rows =
+    groupBy === "route" ? groupRoutes(data?.top ?? []) : (data?.top ?? []);
   const hasFilters = Object.keys(filters).length > 0;
 
   const percentUsed =
@@ -284,55 +311,109 @@ export const Usage = () => {
               />
             ) : (
               <>
-                {rows.map((row, index) => (
-                  <CTableRow
-                    className={cls.row}
-                    key={`${groupBy}-${row.actor_id || ""}-${row.bucket || ""}-${routeLabel(row)}-${index}`}
-                    onClick={isDrillable ? () => drillDown(row) : undefined}
-                    style={isDrillable ? { cursor: "pointer" } : undefined}
-                  >
-                    {groupBy === "route" && (
-                      <>
+                {rows.map((row, index) => {
+                  const open = Boolean(opened[row.key]);
+
+                  return (
+                    <Fragment
+                      key={`${groupBy}-${row.actor_id || ""}-${row.bucket || ""}-${routeLabel(row)}-${index}`}
+                    >
+                      <CTableRow
+                        className={cls.row}
+                        onClick={isDrillable ? () => drillDown(row) : undefined}
+                        style={isDrillable ? { cursor: "pointer" } : undefined}
+                      >
+                        {groupBy === "route" && (
+                          <>
+                            <CTableCell className={cls.tBodyCell}>
+                              <Box display="flex" alignItems="center" gap="4px">
+                                {/* Стрелка раскрывает разбивку по авторизации;
+                                    клик по остальной строке — drill-down. */}
+                                <Box
+                                  display="flex"
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    setOpened((state) => ({
+                                      ...state,
+                                      [row.key]: !open,
+                                    }));
+                                  }}
+                                >
+                                  {open ? (
+                                    <KeyboardArrowDownIcon
+                                      sx={{ fontSize: 16 }}
+                                    />
+                                  ) : (
+                                    <KeyboardArrowRightIcon
+                                      sx={{ fontSize: 16 }}
+                                    />
+                                  )}
+                                </Box>
+                                {row.source === "admin" ? "Admin" : "Client"}
+                              </Box>
+                            </CTableCell>
+                            <CTableCell className={cls.tBodyCell}>
+                              {routeLabel(row)}
+                            </CTableCell>
+                          </>
+                        )}
+                        {groupBy === "actor" && (
+                          <>
+                            <CTableCell className={cls.tBodyCell}>
+                              {AUTH_LABELS[row.auth_type] || "—"}
+                            </CTableCell>
+                            <CTableCell className={cls.tBodyCell}>
+                              {senderLabel(row)}
+                            </CTableCell>
+                          </>
+                        )}
+                        {groupBy === "collection" && (
+                          <CTableCell className={cls.tBodyCell}>
+                            {row.collection || "—"}
+                          </CTableCell>
+                        )}
+                        {groupBy === "time" && (
+                          <CTableCell className={cls.tBodyCell}>
+                            {timeLabel(row.bucket)}
+                          </CTableCell>
+                        )}
                         <CTableCell className={cls.tBodyCell}>
-                          {row.source === "admin" ? "Builder" : "Client"}
+                          {numberWithSpaces(row.count)}
                         </CTableCell>
                         <CTableCell className={cls.tBodyCell}>
-                          {routeLabel(row)}
+                          {row.percent}%
                         </CTableCell>
-                      </>
-                    )}
-                    {groupBy === "actor" && (
-                      <>
-                        <CTableCell className={cls.tBodyCell}>
-                          {row.auth_type === "api_key"
-                            ? "API key"
-                            : row.auth_type === "bearer"
-                              ? "User"
-                              : "—"}
-                        </CTableCell>
-                        <CTableCell className={cls.tBodyCell}>
-                          {senderLabel(row)}
-                        </CTableCell>
-                      </>
-                    )}
-                    {groupBy === "collection" && (
-                      <CTableCell className={cls.tBodyCell}>
-                        {row.collection || "—"}
-                      </CTableCell>
-                    )}
-                    {groupBy === "time" && (
-                      <CTableCell className={cls.tBodyCell}>
-                        {timeLabel(row.bucket)}
-                      </CTableCell>
-                    )}
-                    <CTableCell className={cls.tBodyCell}>
-                      {numberWithSpaces(row.count)}
-                    </CTableCell>
-                    <CTableCell className={cls.tBodyCell}>
-                      {row.percent}%
-                    </CTableCell>
-                  </CTableRow>
-                ))}
+                      </CTableRow>
+
+                      {/* Та же цифра, разложенная по типу авторизации. */}
+                      {groupBy === "route" &&
+                        open &&
+                        row.parts.map((part, partIndex) => (
+                          <CTableRow key={partIndex} className={cls.row}>
+                            <CTableCell className={cls.tBodyCell} />
+                            <CTableCell
+                              className={cls.tBodyCell}
+                              style={{ color: "#475467", fontSize: "12px" }}
+                            >
+                              {AUTH_LABELS[part.auth_type] || "—"}
+                            </CTableCell>
+                            <CTableCell
+                              className={cls.tBodyCell}
+                              style={{ color: "#475467", fontSize: "12px" }}
+                            >
+                              {numberWithSpaces(part.count)}
+                            </CTableCell>
+                            <CTableCell
+                              className={cls.tBodyCell}
+                              style={{ color: "#475467", fontSize: "12px" }}
+                            >
+                              {part.percent}%
+                            </CTableCell>
+                          </CTableRow>
+                        ))}
+                    </Fragment>
+                  );
+                })}
                 {/* «Прочее» — хвост за пределами top и трафик до выката
                     разбивки. Раскрывать его нечем, поэтому не кликабельно. */}
                 {data?.other > 0 && (

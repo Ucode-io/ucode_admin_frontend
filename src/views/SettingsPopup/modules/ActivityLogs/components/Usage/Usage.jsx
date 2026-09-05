@@ -16,6 +16,7 @@ import { TableDataSkeleton } from "@/components/TableDataSkeleton";
 import { ContentTitle } from "../../../../components/ContentTitle";
 import { numberWithSpaces } from "@/utils/formatNumbers";
 import { useApiUsageBreakdownQuery } from "@/services/pricingService";
+import { useUsersListQuery } from "@/services/userService";
 import cls from "../../styles/styles.module.scss";
 
 // Маршрут приходит шаблоном (/v2/items/:collection), таблица — отдельным полем.
@@ -24,14 +25,20 @@ const routeLabel = (row) =>
 
 const AUTH_LABELS = { bearer: "User", api_key: "API key" };
 
-// actor_name заполнен только у ключей; у Bearer показываем короткий id —
-// резолвить имя на каждый запрос слишком дорого для бэка.
-const senderLabel = (row) => {
-  const name =
-    row.actor_name || (row.actor_id ? `${row.actor_id.slice(0, 8)}…` : "");
+// actor_name заполнен только у ключей; для Bearer бэк отдаёт голый id —
+// имя резолвим сами по списку пользователей проекта (см. RouteSenders).
+// Пустой auth_type — трафик, который шлюз посчитал в лимит, но не смог
+// привязать к автору: служебные и неавторизованные запросы.
+const senderLabel = (row, names) => {
   const auth = AUTH_LABELS[row.auth_type];
-  if (auth && name) return `${auth} · ${name}`;
-  return auth || name || "Not identified";
+  if (!auth) return "No authorization";
+
+  const name =
+    row.actor_name ||
+    names?.get(row.actor_id) ||
+    (row.actor_id ? `${row.actor_id.slice(0, 8)}…` : "");
+
+  return name ? `${auth} · ${name}` : `${auth} — not identified`;
 };
 
 // Бэк отдаёт маршрут по строке на тип авторизации — человеку это одна строка.
@@ -69,6 +76,21 @@ const RouteSenders = ({ row, clientOnly }) => {
     queryParams: { staleTime: 60000 },
   });
 
+  // Один список на все раскрытия: id → имя. Упадёт — останется короткий id.
+  const { data: senderNames } = useUsersListQuery({
+    params: { limit: 1000 },
+    queryParams: {
+      staleTime: 300000,
+      select: (res) =>
+        new Map(
+          (res?.users ?? []).map((user) => [
+            user.id,
+            user.name || user.email || user.login,
+          ]),
+        ),
+    },
+  });
+
   const senders = data?.top ?? [];
 
   return (
@@ -87,7 +109,7 @@ const RouteSenders = ({ row, clientOnly }) => {
         <CTableRow key={index} className={cls.row}>
           <CTableCell className={cls.tBodyCell} />
           <CTableCell className={cls.tBodyCell} style={subCell}>
-            {senderLabel(sender)}
+            {senderLabel(sender, senderNames)}
           </CTableCell>
           <CTableCell className={cls.tBodyCell} style={subCell}>
             {numberWithSpaces(sender.count)}

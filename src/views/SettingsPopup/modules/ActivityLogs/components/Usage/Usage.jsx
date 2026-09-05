@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Box, Typography } from "@mui/material";
-import { Flex, Switch, Text } from "@chakra-ui/react";
+import {
+  Flex,
+  Switch,
+  Tag,
+  TagCloseButton,
+  TagLabel,
+  Text,
+} from "@chakra-ui/react";
 import {
   CTable,
   CTableBody,
@@ -15,29 +22,127 @@ import { ContentTitle } from "../../../../components/ContentTitle";
 import { numberWithSpaces } from "@/utils/formatNumbers";
 import { useApiUsageBreakdownQuery } from "@/services/pricingService";
 import cls from "../../styles/styles.module.scss";
+import styles from "../../styles.module.scss";
+
+const GROUPS = [
+  { key: "route", label: "Request" },
+  { key: "actor", label: "Sender" },
+  { key: "collection", label: "Table" },
+  { key: "time", label: "Time" },
+];
 
 // Маршрут приходит шаблоном (/v2/items/:collection), таблица — отдельным полем.
 const routeLabel = (row) =>
   `${row.method} ${row.collection ? row.route.replace(":collection", row.collection) : row.route}`;
 
+// actor_name заполнен только у ключей. У Bearer его нет — показываем id
+// пользователя, резолвить имя на каждый запрос слишком дорого для бэка.
+const senderLabel = (row) =>
+  row.actor_name || row.actor_id || "Not identified";
+
+// Ведро приходит без таймзоны, но оно в UTC — иначе браузер прочитает его
+// как локальное время и сдвинет график.
+const timeLabel = (bucket) => {
+  if (!bucket) return "";
+  const date = new Date(`${bucket.replace(" ", "T")}Z`);
+  if (Number.isNaN(date.getTime())) return bucket;
+  return date.toLocaleString([], {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+const FILTER_LABELS = {
+  route: "Request",
+  collection: "Table",
+  actor_id: "Sender",
+  auth_type: "Auth",
+  method: "Method",
+};
+
 export const Usage = () => {
   const [clientOnly, setClientOnly] = useState(false);
+  const [groupBy, setGroupBy] = useState("route");
+  const [filters, setFilters] = useState({});
+  // Подписи для чипов: в фильтр уходит id, а показать надо имя.
+  const [filterLabels, setFilterLabels] = useState({});
+
+  const params = {
+    group_by: groupBy,
+    ...filters,
+    ...(clientOnly ? { source: "client" } : {}),
+    // Для временного ряда бэк сам ставит потолок в месяц 15-минутных точек.
+    ...(groupBy === "time" ? {} : { limit: 10 }),
+  };
 
   // Чаще минуты обновлять нет смысла: до базы цифры доезжают раз в 10 минут,
   // а каждый запрос сюда сам расходует лимит.
   const { data, isLoading } = useApiUsageBreakdownQuery({
-    params: { limit: 10 },
+    params,
     queryParams: { staleTime: 60000 },
   });
 
-  const top = data?.top ?? [];
-  // source у ручки нет — админский трафик (работа в билдере) фильтруем на фронте.
-  const rows = clientOnly ? top.filter((row) => row.source === "client") : top;
+  const rows = data?.top ?? [];
+  const hasFilters = Object.keys(filters).length > 0;
 
   const percentUsed =
     data && !data.unlimited && data.limit
       ? Math.min(100, (data.used / data.limit) * 100)
       : null;
+
+  // Пустые значения не кладём: у админских маршрутов нет коллекции, и такой
+  // фильтр дал бы чип без подписи, ничего при этом не сужая.
+  const addFilter = (next, labels, nextGroup) => {
+    const filled = Object.fromEntries(
+      Object.entries(next).filter(([, value]) => value),
+    );
+    setFilters((prev) => ({ ...prev, ...filled }));
+    setFilterLabels((prev) => ({ ...prev, ...labels }));
+    setGroupBy(nextGroup);
+  };
+
+  const removeFilter = (key) => {
+    setFilters((prev) => {
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  };
+
+  const resetAll = () => {
+    setFilters({});
+    setFilterLabels({});
+    setGroupBy("route");
+  };
+
+  // Клик по строке сужает выборку и переключает на следующий разрез.
+  // Время — последний уровень, дальше раскрывать нечего.
+  const drillDown = (row) => {
+    if (groupBy === "route") {
+      addFilter(
+        { route: row.route, method: row.method, collection: row.collection },
+        { route: routeLabel(row) },
+        "actor",
+      );
+    } else if (groupBy === "collection") {
+      addFilter(
+        { collection: row.collection },
+        { collection: row.collection || "—" },
+        "actor",
+      );
+    } else if (groupBy === "actor") {
+      addFilter(
+        { actor_id: row.actor_id, auth_type: row.auth_type },
+        { actor_id: senderLabel(row), auth_type: row.auth_type },
+        "time",
+      );
+    }
+  };
+
+  const isDrillable = groupBy !== "time";
+  const columnsCount = groupBy === "route" ? 4 : 3;
 
   return (
     <Box marginTop="20px" height="100%">
@@ -64,16 +169,69 @@ export const Usage = () => {
         </Typography>
       )}
 
-      <Flex align="center" gap="8px" mb="8px">
-        <Switch
-          size="sm"
-          isChecked={clientOnly}
-          onChange={(event) => setClientOnly(event.target.checked)}
-        />
-        <Text fontSize="12px" color="#475467">
-          Client API only
-        </Text>
+      <Flex align="center" gap="12px" mb="8px" wrap="wrap">
+        <Flex
+          className={styles.react_tab}
+          p="4px"
+          bg="#f9fafb"
+          borderRadius="8px"
+          h="32px"
+          border="1px solid #EAECF0"
+        >
+          {GROUPS.map((group) => (
+            <Box
+              key={group.key}
+              onClick={() => setGroupBy(group.key)}
+              className={`${groupBy === group.key ? styles.reactTabIteActive : styles.reactTabItem} ${styles.userTab}`}
+              sx={{ fontSize: "12px", cursor: "pointer" }}
+            >
+              {group.label}
+            </Box>
+          ))}
+        </Flex>
+
+        <Flex align="center" gap="8px">
+          <Switch
+            size="sm"
+            isChecked={clientOnly}
+            onChange={(event) => setClientOnly(event.target.checked)}
+          />
+          <Text fontSize="12px" color="#475467">
+            Client API only
+          </Text>
+        </Flex>
       </Flex>
+
+      {hasFilters && (
+        <Flex align="center" gap="6px" mb="8px" wrap="wrap">
+          {Object.keys(filters).map((key) => (
+            <Tag key={key} size="sm" borderRadius="6px" bg="#EFF8FF">
+              <TagLabel fontSize="11px" color="#175CD3">
+                {FILTER_LABELS[key] ?? key}: {filterLabels[key] ?? filters[key]}
+              </TagLabel>
+              <TagCloseButton onClick={() => removeFilter(key)} />
+            </Tag>
+          ))}
+          <Text
+            fontSize="11px"
+            color="#475467"
+            cursor="pointer"
+            textDecoration="underline"
+            onClick={resetAll}
+          >
+            Reset
+          </Text>
+        </Flex>
+      )}
+
+      {/* Под фильтром доли считаются от отобранного, а не от месячного расхода —
+          бэк присылает percent уже по этому правилу, здесь только поясняем. */}
+      {hasFilters && data && (
+        <Text fontSize="11px" color="#475467" mb="6px">
+          {numberWithSpaces(data.matched)} of {numberWithSpaces(data.used)}{" "}
+          requests match the current filter
+        </Text>
+      )}
 
       <TableCard cardStyles={{ padding: "1px", height: "100%" }}>
         <CTable
@@ -83,10 +241,28 @@ export const Usage = () => {
           wrapperStyle={{ height: "100%" }}
         >
           <CTableHead>
-            <CTableCell className={cls.tableHeadCell} width={90}>
-              Source
-            </CTableCell>
-            <CTableCell className={cls.tableHeadCell}>Request</CTableCell>
+            {groupBy === "route" && (
+              <>
+                <CTableCell className={cls.tableHeadCell} width={90}>
+                  Source
+                </CTableCell>
+                <CTableCell className={cls.tableHeadCell}>Request</CTableCell>
+              </>
+            )}
+            {groupBy === "actor" && (
+              <>
+                <CTableCell className={cls.tableHeadCell} width={90}>
+                  Auth
+                </CTableCell>
+                <CTableCell className={cls.tableHeadCell}>Sender</CTableCell>
+              </>
+            )}
+            {groupBy === "collection" && (
+              <CTableCell className={cls.tableHeadCell}>Table</CTableCell>
+            )}
+            {groupBy === "time" && (
+              <CTableCell className={cls.tableHeadCell}>Time</CTableCell>
+            )}
             <CTableCell className={cls.tableHeadCell} width={110}>
               Requests
             </CTableCell>
@@ -96,25 +272,59 @@ export const Usage = () => {
           </CTableHead>
           <CTableBody
             loader={isLoading}
-            columnsCount={4}
+            columnsCount={columnsCount}
             dataLength={rows.length}
             style={{ height: "100%" }}
           >
             {isLoading ? (
-              <TableDataSkeleton colLength={4} rowLength={10} height={33} />
+              <TableDataSkeleton
+                colLength={columnsCount}
+                rowLength={10}
+                height={33}
+              />
             ) : (
               <>
-                {rows.map((row) => (
+                {rows.map((row, index) => (
                   <CTableRow
                     className={cls.row}
-                    key={`${row.source}-${routeLabel(row)}`}
+                    key={`${groupBy}-${row.actor_id || ""}-${row.bucket || ""}-${routeLabel(row)}-${index}`}
+                    onClick={isDrillable ? () => drillDown(row) : undefined}
+                    style={isDrillable ? { cursor: "pointer" } : undefined}
                   >
-                    <CTableCell className={cls.tBodyCell}>
-                      {row.source === "admin" ? "Builder" : "Client"}
-                    </CTableCell>
-                    <CTableCell className={cls.tBodyCell}>
-                      {routeLabel(row)}
-                    </CTableCell>
+                    {groupBy === "route" && (
+                      <>
+                        <CTableCell className={cls.tBodyCell}>
+                          {row.source === "admin" ? "Builder" : "Client"}
+                        </CTableCell>
+                        <CTableCell className={cls.tBodyCell}>
+                          {routeLabel(row)}
+                        </CTableCell>
+                      </>
+                    )}
+                    {groupBy === "actor" && (
+                      <>
+                        <CTableCell className={cls.tBodyCell}>
+                          {row.auth_type === "api_key"
+                            ? "API key"
+                            : row.auth_type === "bearer"
+                              ? "User"
+                              : "—"}
+                        </CTableCell>
+                        <CTableCell className={cls.tBodyCell}>
+                          {senderLabel(row)}
+                        </CTableCell>
+                      </>
+                    )}
+                    {groupBy === "collection" && (
+                      <CTableCell className={cls.tBodyCell}>
+                        {row.collection || "—"}
+                      </CTableCell>
+                    )}
+                    {groupBy === "time" && (
+                      <CTableCell className={cls.tBodyCell}>
+                        {timeLabel(row.bucket)}
+                      </CTableCell>
+                    )}
                     <CTableCell className={cls.tBodyCell}>
                       {numberWithSpaces(row.count)}
                     </CTableCell>
@@ -124,11 +334,16 @@ export const Usage = () => {
                   </CTableRow>
                 ))}
                 {/* «Прочее» — хвост за пределами top и трафик до выката
-                    разбивки. Источника у него нет, в клиентском срезе не показываем. */}
-                {!clientOnly && data?.other > 0 && (
+                    разбивки. Раскрывать его нечем, поэтому не кликабельно. */}
+                {data?.other > 0 && (
                   <CTableRow className={cls.row}>
-                    <CTableCell className={cls.tBodyCell} />
                     <CTableCell className={cls.tBodyCell}>Other</CTableCell>
+                    {groupBy === "route" && (
+                      <CTableCell className={cls.tBodyCell} />
+                    )}
+                    {groupBy === "actor" && (
+                      <CTableCell className={cls.tBodyCell} />
+                    )}
                     <CTableCell className={cls.tBodyCell}>
                       {numberWithSpaces(data.other)}
                     </CTableCell>
@@ -138,7 +353,7 @@ export const Usage = () => {
               </>
             )}
             <EmptyDataComponent
-              columnsCount={4}
+              columnsCount={columnsCount}
               isVisible={!isLoading && !rows.length}
             />
           </CTableBody>
